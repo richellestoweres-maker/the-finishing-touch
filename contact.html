@@ -4,39 +4,48 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact – The Finishing Touch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="nav">
-    <div class="brand"><div class="logo"></div><span>The Finishing Touch</span></div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="intake.html">Request a Quote</a>
-      <a class="active" href="contact.html">Contact</a>
-    </nav>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand"><span class="vase-logo"></span><span class="brand-name">The Finishing Touch</span></div>
+      <nav class="main-nav">
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a class="active" href="contact.html">Contact</a>
+        <a class="btn btn-outline" href="intake.html">Request a quote</a>
+      </nav>
+    </div>
   </header>
 
   <section class="page-hero"><h1>Contact</h1></section>
 
-  <section class="two-col">
-    <form id="contactForm" class="form">
-      <label>Name<input name="name" required></label>
-      <label>Email<input name="email" type="email" required></label>
-      <label>Phone<input name="phone"></label>
-      <label>Message<textarea name="message" rows="5" required></textarea></label>
-      <button class="btn" type="submit">Send</button>
-      <p id="contactStatus" class="status"></p>
-    </form>
-
-    <div class="panel">
-      <h3>Direct</h3>
-      <p><strong>Phone:</strong> (832) 596-5042</p>
-      <p><strong>Email:</strong> contact.thefinishingtouch.tx@gmail.com</p>
-      <p><strong>Facebook:</strong> facebook.com/thefinishingtouch.tx</p>
+  <section class="section contact-strip">
+    <div class="container contact-grid">
+      <form id="contactForm" class="contact-form">
+        <h3>Send a message</h3>
+        <label>Name<input name="name" required></label>
+        <label>Email<input name="email" type="email" required></label>
+        <label>Phone<input name="phone"></label>
+        <label>Message<textarea name="message" rows="5" required></textarea></label>
+        <button class="btn btn-solid" type="submit">Send</button>
+        <p id="contactStatus" class="status"></p>
+      </form>
+      <div class="contact-details">
+        <p><span class="icon">📞</span> (832) 596-5042</p>
+        <p><span class="icon">✉️</span> contact.thefinishingtouch.tx@gmail.com</p>
+        <p><span class="icon"></span> facebook.com/thefinishingtouch.tx</p>
+      </div>
     </div>
   </section>
 
-  <footer class="footer">© 2025 The Finishing Touch</footer>
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
+  </footer>
   <script src="script.js"></script>
 </body>
 </html>
