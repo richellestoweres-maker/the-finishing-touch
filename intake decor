@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Decorating Intake – The Finishing Touch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body{background:#fbf8f4}
+    .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .intake-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
+    .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-1{display:grid;gap:14px}
+    .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
+    .submit-row{text-align:center;margin-top:16px}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand"><span class="vase-logo"></span><span class="brand-name">The Finishing Touch</span></div>
+      <nav class="main-nav">
+        <a href="index.html">About</a>
+        <a href="index.html#services">Services</a>
+        <a href="intake-cleaning.html">Cleaning</a>
+        <a href="intake-organizing.html">Organizing</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="intake-wrap">
+    <h1 class="intake-title">The Finishing Touch</h1>
+    <div class="intake-script">Interior Decorating Intake</div>
+
+    <form id="intakeFormDecor" class="grid-1">
+      <div class="grid-2">
+        <label>Full Name<input name="name" required></label>
+        <label>Email<input name="email" type="email" required></label>
+        <label>Service Address<input name="address"></label>
+        <label>Phone<input name="phone"></label>
+      </div>
+
+      <div class="fieldset grid-2">
+        <label>Room Type
+          <select name="room">
+            <option>Living Room</option>
+            <option>Bedroom</option>
+            <option>Dining Room</option>
+            <option>Home Office</option>
+          </select>
+        </label>
+        <label># of Rooms (this type)<input name="count" type="number" min="1" value="1"></label>
+        <label>Style Notes / Inspiration<input name="notes"></label>
+        <label>Budget Range
+          <select name="budget">
+            <option>$500–$1,000</option><option>$1,000–$2,500</option><option>$2,500–$5,000</option><option>$5,000+</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="fieldset grid-2">
+        <label>Add-ons (comma separated)
+          <input name="addons" placeholder="moodboard, sourcing, install, window treatments, art hanging">
+        </label>
+        <label>Preferred Payment
+          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
+        </label>
+      </div>
+
+      <div class="submit-row">
+        <button class="btn btn-solid" type="submit">Get Decorating Estimate</button>
+        <p id="estimateDecor" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <p id="emailStatusDecor" style="opacity:.9"></p>
+      </div>
+    </form>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('YOUR_EMAILJS_PUBLIC_KEY');</script>
+  <script src="script.js"></script>
+</body>
+</html>
