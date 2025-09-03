@@ -1,0 +1,43 @@
+:root{
+  --bg:#e9dfd3;
+  --paper:#f6f2ed;
+  --ink:#5b524e;
+  --accent:#d1bfae;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-serif, Georgia, 'Times New Roman', serif;background:var(--paper);color:var(--ink)}
+h1,h2,h3{margin:0 0 .5rem}
+p{line-height:1.6}
+
+.nav{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;padding:14px 22px}
+.nav a{color:var(--ink);text-decoration:none;margin-left:18px;font-weight:600;opacity:.9}
+.nav a.active{border-bottom:2px solid var(--ink)}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800}
+.logo{width:22px;height:30px;background:radial-gradient(#fff,#eee);border-radius:6px}
+
+.hero{min-height:54vh;display:grid;place-items:center;background:
+  linear-gradient(transparent,rgba(0,0,0,.15)),
+  url('https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=60') center/cover;}
+.hero .hero-inner{max-width:900px;color:#fff;text-align:center;padding:2rem}
+.overline{font-family:ui-sans-serif, system-ui;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.btn{display:inline-block;background:var(--accent);color:#2d2928;padding:.8rem 1.2rem;border-radius:999px;text-decoration:none;font-weight:700;border:none;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:34px}
+.card{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:0 10px 35px rgba(0,0,0,.06)}
+
+.page-hero{padding:48px 24px;text-align:center;background:var(--bg)}
+.two-col{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;padding:28px}
+.panel{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:0 10px 35px rgba(0,0,0,.06)}
+
+.form,.form-wide{display:grid;gap:14px;background:#fff;padding:18px;border-radius:var(--radius);box-shadow:0 10px 35px rgba(0,0,0,.06)}
+.form-wide{max-width:980px;margin:24px auto}
+label{display:grid;gap:6px;font-weight:600}
+input,select,textarea{padding:.7rem;border:1px solid #d9d1c8;border-radius:12px;background:#fcfbf9;color:var(--ink)}
+fieldset{border:0;border-top:1px solid #e5dbcf;padding-top:14px;margin-top:6px}
+legend{font-weight:800;padding:0 6px}
+
+.estimate{font-size:1.25rem;font-weight:800;margin-top:10px}
+.status{opacity:.9}
+
+.footer{padding:18px;text-align:center;opacity:.8}
+@media (max-width:860px){.two-col{grid-template-columns:1fr}}

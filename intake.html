@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Client Intake – The Finishing Touch</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+    });
+  </script>
+</head>
+<body>
+  <header class="nav">
+    <div class="brand"><div class="logo"></div><span>The Finishing Touch</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a class="active" href="intake.html">Request a Quote</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="page-hero"><h1>Client Intake Form</h1>
+    <p>Please complete for an instant ballpark estimate.</p>
+  </section>
+
+  <form id="intakeForm" class="form form-wide">
+    <fieldset>
+      <legend>Client Info</legend>
+      <label>Full Name<input name="name" required></label>
+      <label>Email<input name="email" type="email" required></label>
+      <label>Phone<input name="phone"></label>
+      <label>Service Address<input name="address"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Home</legend>
+      <label>Square Footage
+        <select name="sqft">
+          <option>&lt;1000</option><option>1000–2000</option>
+          <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
+        </select>
+      </label>
+      <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
+      <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
+      <label>Stories
+        <select name="stories"><option>1</option><option>2</option></select>
+      </label>
+      <label>Pets in Home?
+        <select name="pets"><option>No</option><option>Yes</option></select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Service</legend>
+      <label>Type
+        <select name="service">
+          <option>Initial Clean</option>
+          <option>Standard Clean</option>
+          <option>Deep Clean</option>
+          <option>Move-In / Move-Out Clean</option>
+          <option>Airbnb Turnover</option>
+          <option>Organizing</option>
+        </select>
+      </label>
+      <label>Frequency
+        <select name="frequency">
+          <option>one-time</option><option>weekly</option>
+          <option>biweekly</option><option>monthly</option>
+        </select>
+      </label>
+      <label>Add-ons (comma separated)
+        <input name="addons" placeholder="oven, fridge, windows, baseboards, laundry">
+      </label>
+      <label>Notes / Areas of Focus
+        <textarea name="notes" rows="4"></textarea>
+      </label>
+    </fieldset>
+
+    <button class="btn" type="submit">Get Instant Estimate</button>
+    <p id="estimate" class="estimate"></p>
+    <p id="emailStatus" class="status"></p>
+  </form>
+
+  <footer class="footer">© 2025 The Finishing Touch</footer>
+  <script src="script.js"></script>
+</body>
+</html>
