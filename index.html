@@ -4,51 +4,110 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Finishing Touch – Luxury Interior Services</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <header class="nav">
-    <div class="brand">
-      <div class="logo"></div>
-      <span>The Finishing Touch</span>
+<body class="page-home">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+      <nav class="main-nav">
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="intake.html">Book Now</a>
+        <a class="btn btn-outline" href="intake.html">Request a quote</a>
+      </nav>
     </div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="#services">Services</a>
-      <a href="intake.html">Request a Quote</a>
-      <a href="contact.html">Contact</a>
-    </nav>
   </header>
 
+  <!-- Hero -->
   <section class="hero">
-    <div class="hero-inner">
-      <p class="overline">Luxury Interior Services</p>
-      <h1>Curating clean, styled, and peaceful living spaces.</h1>
-      <a class="btn" href="intake.html">Book Your Luxury Clean</a>
+    <div class="hero-media">
+      <img src="images/brand-collage.jpg" alt="Neutral interior styled by The Finishing Touch">
+      <div class="hero-scrim"></div>
+    </div>
+    <div class="container hero-content">
+      <p class="script-kicker">Luxury Interior Services</p>
+      <h1 class="hero-title">The Finishing Touch</h1>
+      <p class="hero-sub">Curating clean, styled, and peaceful living spaces.</p>
+      <a class="btn btn-solid" href="intake.html">Book Your Luxury Clean</a>
     </div>
   </section>
 
-  <section id="services" class="grid">
-    <article class="card">
-      <h3>Standard Cleaning</h3>
-      <p>For everyday peace of mind.</p>
-    </article>
-    <article class="card">
-      <h3>Deep Cleaning</h3>
-      <p>Refresh and reset your home.</p>
-    </article>
-    <article class="card">
-      <h3>Staging & Styling</h3>
-      <p>Elevate spaces for showings.</p>
-    </article>
-    <article class="card">
-      <h3>Organization</h3>
-      <p>Declutter and create calm.</p>
-    </article>
+  <!-- Services cards -->
+  <section id="services" class="section services">
+    <div class="container cards">
+      <article class="card">
+        <div class="card-icon">🏠</div>
+        <h3>Standard Cleaning</h3>
+        <p>For everyday peace of mind</p>
+      </article>
+      <article class="card">
+        <div class="card-icon">🧽</div>
+        <h3>Deep Cleaning</h3>
+        <p>Refresh and reset your home</p>
+      </article>
+      <article class="card">
+        <div class="card-icon">🌾</div>
+        <h3>Staging &amp; Styling</h3>
+        <p>Elevate spaces for showings</p>
+      </article>
+      <article class="card">
+        <div class="card-icon">🗂️</div>
+        <h3>Organization</h3>
+        <p>Declutter and create calm</p>
+      </article>
+    </div>
   </section>
 
-  <footer class="footer">
-    © 2025 The Finishing Touch • Serving Galveston, Harris & Brazoria County
+  <!-- About split -->
+  <section id="about" class="section about">
+    <div class="container about-grid">
+      <div class="about-photo">
+        <img src="images/brand-collage.jpg" alt="Neutral palette, candlelight, styled interiors">
+      </div>
+      <div class="about-copy">
+        <h2>About</h2>
+        <p>
+          At The Finishing Touch, we specialize in transforming homes into serene sanctuaries.
+          Combining meticulous cleaning with refined styling, we bring a touch of luxury and
+          tranquility to every space. Experience the art of comfortable, elegant living tailored
+          to your needs.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact strip -->
+  <section class="section contact-strip">
+    <div class="container contact-grid">
+      <form class="contact-form" action="https://formspree.io/f/your-id" method="POST">
+        <h3>Contact</h3>
+        <label>Name<input name="name" required></label>
+        <label>Email<input name="email" type="email" required></label>
+        <label>Message<textarea name="message" rows="3" required></textarea></label>
+        <button class="btn btn-solid" type="submit">Request a Quote</button>
+      </form>
+      <div class="contact-details">
+        <p><span class="icon">📞</span> (832) 596-5042</p>
+        <p><span class="icon">✉️</span> contact.thefinishingtouch.tx@gmail.com</p>
+        <p><span class="icon"></span> facebook.com/thefinishingtouch.tx</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
   </footer>
 </body>
 </html>
