@@ -3,15 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Client Intake Form – The Finishing Touch</title>
-
+  <title>Cleaning Intake – The Finishing Touch</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-    .intake-title{font-family:"Playfair Display",serif;text-align:center;margin:6px 0 2px;font-size:2.1rem}
-    .intake-script{font-family:"Allura",cursive;text-align:center;font-size:2rem;margin:0 0 12px;color:#524a46}
+    .intake-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
+    .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
     .intake-note{max-width:760px;margin:0 auto 18px;text-align:center;opacity:.9}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .grid-1{display:grid;gap:14px}
@@ -22,14 +21,12 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand">
-        <span class="vase-logo"></span>
-        <span class="brand-name">The Finishing Touch</span>
-      </div>
+      <div class="brand"><span class="vase-logo"></span><span class="brand-name">The Finishing Touch</span></div>
       <nav class="main-nav">
         <a href="index.html">About</a>
         <a href="index.html#services">Services</a>
-        <a href="#">Policies</a>
+        <a href="intake-organizing.html">Organizing</a>
+        <a href="intake-decor.html">Decorating</a>
         <a href="contact.html">Contact</a>
       </nav>
     </div>
@@ -37,17 +34,13 @@
 
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
-    <div class="intake-script">Client Intake Form</div>
+    <div class="intake-script">Cleaning Intake Form</div>
+    <p class="intake-note">Fill this out for an instant ballpark estimate.</p>
 
-    <p class="intake-note">
-      Thank you so much for your interest! Please fill out the following so we can create a customized
-      ballpark quote and cleaning plan. <em>Currently open Monday–Friday.</em>
-    </p>
-
-    <form id="intakeForm" class="grid-1">
+    <form id="intakeFormCleaning" class="grid-1">
       <div class="grid-2">
         <label>Full Name<input name="name" required></label>
-        <label>Email Address<input name="email" type="email" required></label>
+        <label>Email<input name="email" type="email" required></label>
         <label>Service Address<input name="address"></label>
         <label>Phone<input name="phone"></label>
       </div>
@@ -60,23 +53,23 @@
             <option>Deep Clean</option>
             <option>Move-In / Move-Out Clean</option>
             <option>Airbnb Turnover</option>
-            <option>Organizing</option>
           </select>
         </label>
-
         <label>Frequency
           <select name="frequency">
             <option>one-time</option><option>weekly</option>
             <option>biweekly</option><option>monthly</option>
           </select>
         </label>
+        <label>Last Pro Clean<input name="last_cleaned" placeholder="e.g., 3 months ago"></label>
+        <label>Availability<input name="availability" placeholder="e.g., Tue/Thu mornings"></label>
       </div>
 
       <div class="fieldset grid-2">
         <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
         <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
-        <label>Other Rooms (office, playroom, dining, etc.)<input name="other_rooms" type="number" min="0" value="0"></label>
-        <label>Approx. Square Footage
+        <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
+        <label>Square Footage
           <select name="sqft">
             <option>&lt;1000</option><option>1000–2000</option>
             <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
@@ -85,28 +78,27 @@
         <label>Stories
           <select name="stories"><option>1</option><option>2</option></select>
         </label>
-        <label>Pets in the Home (type & number)<input name="pets" /></label>
+        <label>Pets (type & number)<input name="pets" /></label>
+        <label>Areas of Focus<input name="notes" /></label>
       </div>
 
       <div class="fieldset grid-2">
-        <label>Add-ons (comma separated)
-          <input name="addons" placeholder="oven, fridge, windows, baseboards, laundry">
-        </label>
-        <label>Preferred Payment Method
-          <select name="pay">
-            <option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option>
-          </select>
+        <label>Add-ons<input name="addons" placeholder="oven, fridge, windows, baseboards, laundry"></label>
+        <label>Payment Method
+          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
         </label>
       </div>
 
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Submit</button>
-        <p id="estimate" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
-        <p id="emailStatus" style="opacity:.9"></p>
+        <button class="btn btn-solid" type="submit">Get Instant Estimate</button>
+        <p id="estimateCleaning" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <p id="emailStatusCleaning" style="opacity:.9"></p>
       </div>
     </form>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('YOUR_EMAILJS_PUBLIC_KEY');</script>
   <script src="script.js"></script>
 </body>
 </html>
