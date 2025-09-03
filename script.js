@@ -1,34 +1,120 @@
-// Pricing helpers
-const baseBySqft = {"<1000":220,"1000–2000":290,"2000–3000":360,"3000–4000":440,"4000+":520};
-const svcMult = {"Initial Clean":1,"Deep Clean":1.2,"Move-In / Move-Out Clean":1.35,"Standard Clean":0.65,"Airbnb Turnover":0.55,"Organizing":0};
-const freqDisc = {"weekly":0.85,"biweekly":0.90,"monthly":0.95,"one-time":1};
+/* ============================
+   COMPETITIVE PRICING MATRIX
+   ============================ */
+
+// Base tiers by square footage
+const initialBySqft = {
+  "<1000": 250, "1000–2000": 300, "2000–3000": 375,
+  "3000–4000": 450, "4000+": 520
+};
+const standardBySqft = {
+  "<1000": 170, "1000–2000": 200, "2000–3000": 250,
+  "3000–4000": 300, "4000+": 360
+};
+
+// Service multipliers (relative to Initial)
+const serviceMult = {
+  "Initial Clean": 1.0,
+  "Deep Clean": 1.2,
+  "Move-In / Move-Out Clean": 1.35,
+  "Airbnb Turnover": 0.55, // fallback if not using bedroom-based formula
+  "Organizing": 0          // handled separately
+};
+
+// Frequency discounts (applies to Standard Clean only)
+const freqDisc = {
+  "weekly": 0.85,
+  "biweekly": 0.90,
+  "monthly": 0.95,
+  "one-time": 1
+};
+
+// Modifiers
+const perExtraBathroom = 20; // per bath above 2
+const perExtraBedroom  = 12; // per BR above 3
+const perOtherRoom     = 10; // offices, dining, playroom
+const twoStoryFee      = 20;
+const petFee           = 12;
+
+// Add-on menu
+const addonPrices = {
+  "oven": 35,
+  "fridge": 30,
+  "refrigerator": 30,
+  "windows": 80,
+  "window": 80,
+  "baseboards": 60,
+  "laundry": 18
+};
+
+// Airbnb flat-fee by bedrooms
+function airbnbByBedrooms(beds) {
+  const b = Number(beds) || 0;
+  if (b <= 1) return 120;
+  if (b === 2) return 140;
+  if (b === 3) return 160;
+  if (b === 4) return 180;
+  return 200;
+}
+
+/* ============================
+   CALCULATOR
+   ============================ */
+function parseAddons(addonStr="") {
+  const txt = addonStr.toLowerCase();
+  let total = 0;
+  for (const key of Object.keys(addonPrices)) {
+    if (txt.includes(key)) total += addonPrices[key];
+  }
+  return total;
+}
 
 function calcEstimate(data){
-  if (data.service==="Organizing") return 55*2; // 2 hr min
-  let base = baseBySqft[data.sqft] || 290;
-  base *= (svcMult[data.service] ?? 1);
+  const sqft = data.sqft || "1000–2000";
+  const service = data.service || "Initial Clean";
+  const frequency = data.frequency || "one-time";
 
-  const baths = Math.max(0, (parseInt(data.baths)||0) - 2)*18;
-  const beds  = Math.max(0, (parseInt(data.beds)||0)  - 3)*12;
-  const story = data.stories==="2" ? 20 : 0;
-  const pets  = /yes/i.test(data.pets) ? 12 : 0;
+  const beds = Number(data.beds || 0);
+  const baths = Number(data.baths || 0);
+  const otherRooms = Number(data.other_rooms || 0);
+  const stories = String(data.stories || "1");
+  const pets = String(data.pets || "");
 
-  const addons = (data.addons||"").toLowerCase();
-  let addon = 0;
-  if (addons.includes("oven")) addon+=35;
-  if (addons.includes("fridge")) addon+=30;
-  if (addons.includes("window")) addon+=60;
-  if (addons.includes("baseboard")) addon+=40;
-  if (addons.includes("laundry")) addon+=15;
+  // Organizing is hourly (2-hr min at $55/hr)
+  if (service === "Organizing") return 55 * 2;
 
-  let est = base + baths + beds + story + pets + addon;
+  let base = 0;
 
-  if (data.service==="Standard Clean"){
-    est *= (freqDisc[data.frequency] || 1);
+  if (service === "Standard Clean") {
+    base = standardBySqft[sqft] ?? 200;
+  } else if (service === "Airbnb Turnover") {
+    base = airbnbByBedrooms(beds); // OR fallback multiplier if you prefer
+  } else {
+    const initial = initialBySqft[sqft] ?? 300;
+    base = initial * (serviceMult[service] ?? 1);
   }
+
+  // Modifiers
+  const extraBaths = Math.max(0, baths - 2) * perExtraBathroom;
+  const extraBeds  = Math.max(0, beds - 3) * perExtraBedroom;
+  const extraRooms = Math.max(0, otherRooms) * perOtherRoom;
+  const storyFee   = stories === "2" ? twoStoryFee : 0;
+  const petsFee    = pets.trim() ? petFee : 0;
+  const addonsFee  = parseAddons(data.addons || "");
+
+  let est = base + extraBaths + extraBeds + extraRooms + storyFee + petsFee + addonsFee;
+
+  // Apply discount for Standard frequency
+  if (service === "Standard Clean") {
+    est *= (freqDisc[frequency] || 1);
+  }
+
   return Math.round(est);
 }
 
+/* ============================
+   FORM HOOKS
+   ============================ */
 const intakeForm = document.getElementById('intakeForm');
 if (intakeForm){
   intakeForm.addEventListener('submit', async (e)=>{
@@ -37,9 +123,11 @@ if (intakeForm){
     const data = Object.fromEntries(fd.entries());
     const est = calcEstimate(data);
 
+    // Show estimate on page
     const estEl = document.getElementById('estimate');
     estEl.textContent = `Ballpark Estimate: $${est}`;
 
+    // Optional email via EmailJS
     const statusEl = document.getElementById('emailStatus');
     try{
       await emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
@@ -50,6 +138,7 @@ if (intakeForm){
         sqft: data.sqft,
         beds: data.beds,
         baths: data.baths,
+        other_rooms: data.other_rooms || "0",
         stories: data.stories,
         frequency: data.frequency,
         addons: data.addons || "None",
@@ -59,12 +148,13 @@ if (intakeForm){
       });
       statusEl.textContent = "Your estimate has been emailed. We’ll follow up to confirm scheduling!";
     }catch(err){
-      statusEl.textContent = "Estimate shown above. Email failed—please double-check your connection or email address.";
+      statusEl.textContent = "Estimate shown above. Email failed—please double-check your email or connection.";
       console.error(err);
     }
   });
 }
 
+// Contact form (optional)
 const contactForm = document.getElementById('contactForm');
 if (contactForm){
   contactForm.addEventListener('submit', async (e)=>{
