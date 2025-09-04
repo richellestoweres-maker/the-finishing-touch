@@ -60,9 +60,7 @@
       </div>
 
       <div class="fieldset grid-2">
-        <label>Add-ons (comma separated)
-          <input name="addons" placeholder="moodboard, sourcing, install, window treatments, art hanging">
-        </label>
+        <label>Add-ons<input name="addons" placeholder="moodboard, sourcing, install, window treatments, art hanging"></label>
         <label>Preferred Payment
           <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
         </label>
