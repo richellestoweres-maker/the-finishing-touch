@@ -42,8 +42,8 @@
       </div>
 
       <div class="fieldset grid-2">
-        <label>Spaces to Organize (count)<input name="spaces" type="number" min="1" value="1"></label>
-        <label>Complexity per Space
+        <label>Spaces to Organize<input name="spaces" type="number" min="1" value="1"></label>
+        <label>Complexity
           <select name="complexity"><option>Light</option><option>Moderate</option><option>Heavy</option></select>
         </label>
         <label>Organizers on Team
@@ -53,9 +53,7 @@
       </div>
 
       <div class="fieldset grid-2">
-        <label>Add-ons (comma separated)
-          <input name="addons" placeholder="bins/labels, haul-away, donation drop-off">
-        </label>
+        <label>Add-ons<input name="addons" placeholder="bins/labels, haul-away, donation drop-off"></label>
         <label>Preferred Payment
           <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
         </label>
