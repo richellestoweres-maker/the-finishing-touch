@@ -76,28 +76,19 @@ function calcCleaning(data){
 /* ============================
    ORGANIZING — COMPETITIVE PRICING
    ============================ */
-// $65/hr per organizer; 3-hr minimum.
-// Hours per space by complexity: Light=1, Moderate=2, Heavy=3.
-const ORG_HOURLY = 65;  // per organizer
-const ORG_MIN_HOURS = 3;
+const ORG_HOURLY = 65;     // per organizer
+const ORG_MIN_HOURS = 3;   // minimum
 const hoursPerSpace = {"Light":1,"Moderate":2,"Heavy":3};
-
 const addonPricesOrganizing = {
   "bins":25, "labels":20, "bins/labels":40, "haul-away":35, "donation":30, "donation drop-off":30
 };
-
 function calcOrganizing(data){
   const spaces = Math.max(1, Number(data.spaces||1));
   const complexity = data.complexity || "Moderate";
   const team = Math.max(1, Number(data.team||1));
-
   const hoursEach = hoursPerSpace[complexity] || 2;
-  let estHours = spaces * hoursEach;
-
-  // Respect 3-hr minimum per organizer
-  estHours = Math.max(ORG_MIN_HOURS, estHours);
+  let estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
   const labor = estHours * ORG_HOURLY * team;
-
   const addons = parseAddonsList(data.addons, addonPricesOrganizing);
   return Math.round(labor + addons);
 }
@@ -105,14 +96,12 @@ function calcOrganizing(data){
 /* ============================
    DECORATING — COMPETITIVE PRICING
    ============================ */
-// Base design fee per room type
 const decorBase = {
   "Living Room": 500,
   "Bedroom": 400,
   "Dining Room": 450,
   "Home Office": 450
 };
-// Add-ons
 const addonPricesDecor = {
   "moodboard":75,
   "sourcing":150, "shopping":150,
@@ -120,7 +109,6 @@ const addonPricesDecor = {
   "window treatments":200,
   "art hanging":100
 };
-
 function calcDecor(data){
   const room = data.room || "Living Room";
   const count = Math.max(1, Number(data.count||1));
@@ -130,80 +118,102 @@ function calcDecor(data){
 }
 
 /* ============================
-   FORM HOOKS + EMAIL (EmailJS)
+   FORM HOOKS + (OPTIONAL) EMAILJS
    ============================ */
-function sendEstimateEmail(templateId, vars, statusEl){
-  return emailjs.send("YOUR_SERVICE_ID", templateId, vars)
-    .then(()=> statusEl.textContent = "Your estimate has been emailed. Check your inbox!")
-    .catch(err=>{
-      console.error(err);
-      statusEl.textContent = "Estimate shown above. Email failed—please double-check your email.";
-    });
-}
 
-// CLEANING form
+// CLEANING
 const formCleaning = document.getElementById('intakeFormCleaning');
 if (formCleaning){
-  formCleaning.addEventListener('submit', (e)=>{
+  formCleaning.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const fd = new FormData(formCleaning);
     const data = Object.fromEntries(fd.entries());
     const est = calcCleaning(data);
     document.getElementById('estimateCleaning').textContent = `Ballpark Estimate: $${est}`;
-    const status = document.getElementById('emailStatusCleaning');
 
-    // Send email
-    sendEstimateEmail("YOUR_TEMPLATE_ID_CLEANING", {
-      to_email: data.email, to_name: data.name || "there",
-      estimate: `$${est}`, service: data.service, sqft: data.sqft,
-      beds: data.beds, baths: data.baths, other_rooms: data.other_rooms || "0",
-      stories: data.stories, frequency: data.frequency,
-      addons: data.addons || "None", notes: data.notes || "",
-      phone: data.phone || "", address: data.address || "",
-      // Include a live link in the email (replace with your booking link or site)
-      action_link: "https://YOUR-USERNAME.github.io/the-finishing-touch/intake-cleaning.html"
-    }, status);
+    const status = document.getElementById('emailStatusCleaning');
+    if (window.emailjs){
+      try{
+        await emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_CLEANING",{
+          to_email: data.email, to_name: data.name || "there",
+          estimate: `$${est}`, service: data.service, sqft: data.sqft,
+          beds: data.beds, baths: data.baths, other_rooms: data.other_rooms || "0",
+          stories: data.stories, frequency: data.frequency,
+          addons: data.addons || "None", notes: data.notes || "",
+          phone: data.phone || "", address: data.address || "",
+          action_link: "https://YOUR-USERNAME.github.io/the-finishing-touch/intake-cleaning.html"
+        });
+        status.textContent = "Your estimate has been emailed. Check your inbox!";
+      }catch(err){ status.textContent = "Estimate shown above. Email failed."; console.error(err); }
+    }
   });
 }
 
-// ORGANIZING form
+// ORGANIZING
 const formOrg = document.getElementById('intakeFormOrganizing');
 if (formOrg){
-  formOrg.addEventListener('submit', (e)=>{
+  formOrg.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const fd = new FormData(formOrg);
     const data = Object.fromEntries(fd.entries());
     const est = calcOrganizing(data);
     document.getElementById('estimateOrganizing').textContent = `Ballpark Estimate: $${est}`;
-    const status = document.getElementById('emailStatusOrganizing');
 
-    sendEstimateEmail("YOUR_TEMPLATE_ID_ORG", {
-      to_email: data.email, to_name: data.name || "there",
-      estimate: `$${est}`, spaces: data.spaces, complexity: data.complexity,
-      team: data.team, addons: data.addons || "None",
-      notes: data.notes || "", phone: data.phone || "", address: data.address || "",
-      action_link: "https://YOUR-USERNAME.github.io/the-finishing-touch/intake-organizing.html"
-    }, status);
+    const status = document.getElementById('emailStatusOrganizing');
+    if (window.emailjs){
+      try{
+        await emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_ORG",{
+          to_email: data.email, to_name: data.name || "there",
+          estimate: `$${est}`, spaces: data.spaces, complexity: data.complexity,
+          team: data.team, addons: data.addons || "None",
+          notes: data.notes || "", phone: data.phone || "", address: data.address || "",
+          action_link: "https://YOUR-USERNAME.github.io/the-finishing-touch/intake-organizing.html"
+        });
+        status.textContent = "Your estimate has been emailed. Check your inbox!";
+      }catch(err){ status.textContent = "Estimate shown above. Email failed."; console.error(err); }
+    }
   });
 }
 
-// DECOR form
+// DECOR
 const formDecor = document.getElementById('intakeFormDecor');
 if (formDecor){
-  formDecor.addEventListener('submit', (e)=>{
+  formDecor.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const fd = new FormData(formDecor);
     const data = Object.fromEntries(fd.entries());
     const est = calcDecor(data);
     document.getElementById('estimateDecor').textContent = `Ballpark Estimate: $${est}`;
-    const status = document.getElementById('emailStatusDecor');
 
-    sendEstimateEmail("YOUR_TEMPLATE_ID_DECOR", {
-      to_email: data.email, to_name: data.name || "there",
-      estimate: `$${est}`, room: data.room, count: data.count,
-      addons: data.addons || "None", budget: data.budget || "",
-      notes: data.notes || "", phone: data.phone || "", address: data.address || "",
-      action_link: "https://YOUR-USERNAME.github.io/the-finishing-touch/intake-decor.html"
-    }, status);
+    const status = document.getElementById('emailStatusDecor');
+    if (window.emailjs){
+      try{
+        await emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_DECOR",{
+          to_email: data.email, to_name: data.name || "there",
+          estimate: `$${est}`, room: data.room, count: data.count,
+          addons: data.addons || "None", budget: data.budget || "",
+          notes: data.notes || "", phone: data.phone || "", address: data.address || "",
+          action_link: "https://YOUR-USERNAME.github.io/the-finishing-touch/intake-decor.html"
+        });
+        status.textContent = "Your estimate has been emailed. Check your inbox!";
+      }catch(err){ status.textContent = "Estimate shown above. Email failed."; console.error(err); }
+    }
+  });
+}
+
+// HOMEPAGE CONTACT (optional EmailJS send)
+const contactForm = document.getElementById('contactForm');
+if (contactForm){
+  contactForm.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(contactForm);
+    const payload = Object.fromEntries(fd.entries());
+    const status = document.getElementById('contactStatus');
+    if (!window.emailjs){ status.textContent = "Thanks! We’ll be in touch shortly."; return; }
+    try{
+      await emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_CONTACT",payload);
+      status.textContent = "Thanks! We’ll be in touch shortly.";
+      contactForm.reset();
+    }catch(err){ status.textContent = "Message not sent. Please try again."; console.error(err); }
   });
 }
