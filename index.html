@@ -14,14 +14,22 @@
         <span class="vase-logo" aria-hidden="true"></span>
         <span class="brand-name">The Finishing Touch</span>
       </div>
-      <nav class="main-nav">
-        <a href="#services">Services</a>
-        <a href="#about">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="intake-cleaning.html">Cleaning Quote</a>
-        <a href="intake-organizing.html">Organizing Quote</a>
-        <a class="btn btn-outline" href="intake-decor.html">Decorating Quote</a>
-      </nav>
+    <nav class="main-nav">
+  <a href="#services">Services</a>
+  <a href="#about">About</a>
+  <a href="contact.html">Contact</a>
+
+  <!-- Quote Dropdown -->
+  <div class="quote-dropdown">
+    <button class="btn btn-solid" id="quoteBtn" aria-expanded="false">Get Your Quote ▾</button>
+    <div class="quote-menu" id="quoteMenu" role="menu" aria-hidden="true">
+      <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
+      <a role="menuitem" href="intake-organizing.html">Organizing</a>
+      <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+    </div>
+  </div>
+</nav>
+
     </div>
   </header>
 
@@ -79,3 +87,4 @@
   </footer>
 </body>
 </html>
+
