@@ -23,8 +23,10 @@
         <a href="#contact">Contact</a>
 
         <!-- Quote Dropdown -->
-        <div class="quote-dropdown">
-          <a class="btn btn-solid" id="quoteBtn" href="#" aria-expanded="false">Get Your Quote ▾</a>
+        <div class="quote-dropdown" id="quoteDropdown">
+          <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
+            Get Your Quote ▾
+          </button>
           <div class="quote-menu" id="quoteMenu" role="menu" aria-hidden="true">
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
@@ -45,7 +47,8 @@
       <p class="script-kicker">Luxury Interior Services</p>
       <h1 class="hero-title">The Finishing Touch</h1>
       <p class="hero-sub">Curating clean, styled, and peaceful living spaces.</p>
-      <a class="btn btn-outline" href="#contact">Request a Quote</a>
+      <!-- TEMP: route to Cleaning intake; replace with your Calendly URL when ready -->
+      <a class="btn btn-outline" href="intake-cleaning.html" id="bookBtn">Book Your Luxury Clean</a>
     </div>
   </section>
 
@@ -101,15 +104,16 @@
     </div>
   </footer>
 
-  <!-- Small script for the quote dropdown -->
+  <!-- Dropdown script -->
   <script>
     (function(){
+      const dd = document.getElementById('quoteDropdown');
       const btn = document.getElementById('quoteBtn');
-      const dd = document.querySelector('.quote-dropdown');
       const menu = document.getElementById('quoteMenu');
+
       function toggle(open){
         dd.classList.toggle('open', open);
-        btn.setAttribute('aria-expanded', open);
+        btn.setAttribute('aria-expanded', String(open));
         menu.setAttribute('aria-hidden', String(!open));
       }
       btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
@@ -118,11 +122,10 @@
     })();
   </script>
 
-  <!-- EmailJS (optional if you want email from homepage contact form) -->
+  <!-- (Optional) EmailJS for contact form; can be added later -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
-    // If you want contact form emails, fill these in and uncomment the handler in script.js
-    // emailjs.init('YOUR_EMAILJS_PUBLIC_KEY');
+    // emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); // Optional if you want contact emails
   </script>
   <script src="script.js"></script>
 </body>
