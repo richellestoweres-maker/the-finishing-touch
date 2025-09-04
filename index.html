@@ -81,10 +81,36 @@
       </div>
     </div>
   </section>
+  <script>
+  (function(){
+    const btn = document.getElementById('quoteBtn');
+    const dd = document.querySelector('.quote-dropdown');
+    const menu = document.getElementById('quoteMenu');
+
+    function toggle(open){
+      dd.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open);
+      menu.setAttribute('aria-hidden', !open);
+    }
+
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      toggle(!dd.classList.contains('open'));
+    });
+    document.addEventListener('click', (e)=>{
+      if (!dd.contains(e.target)) toggle(false);
+    });
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape') toggle(false);
+    });
+  })();
+</script>
+
 
   <footer class="site-footer">
     <div class="container"><p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p></div>
   </footer>
 </body>
 </html>
+
 
