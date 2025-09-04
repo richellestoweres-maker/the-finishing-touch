@@ -6,7 +6,6 @@
   --card:#fffdfb;
   --accent:#d2bda9;
   --shadow:0 10px 30px rgba(0,0,0,.08);
-  --radius:18px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -32,7 +31,7 @@ h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--taupe-900);mar
   position:absolute; right:0; top:110%;
   background:#fff; border:1px solid #e3d9ce; border-radius:12px;
   box-shadow:0 12px 28px rgba(0,0,0,.12);
-  display:none; min-width:220px; padding:8px; z-index:40;
+  display:none; min-width:220px; padding:8px; z-index:1000;
 }
 .quote-dropdown.open .quote-menu{display:block}
 .quote-dropdown .quote-menu a{
