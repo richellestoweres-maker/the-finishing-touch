@@ -9,9 +9,9 @@
   --radius:18px;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--taupe-800);
-  font-family:"Manrope",sans-serif;line-height:1.6;}
-h1,h2,h3{font-family:"Playfair Display",serif;color:var(--taupe-900);}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--taupe-800);font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--taupe-900);margin:0 0 .5rem}
 .container{width:min(1120px,92%);margin:0 auto}
 
 /* Header */
@@ -20,14 +20,28 @@ h1,h2,h3{font-family:"Playfair Display",serif;color:var(--taupe-900);}
 .brand{display:flex;align-items:center;gap:.7rem}
 .vase-logo{width:24px;height:32px;border-radius:8px;background:radial-gradient(#fff,#f2eee9);display:inline-block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
 .brand-name{font-family:"Playfair Display",serif;font-weight:600;letter-spacing:.2px;color:var(--taupe-900)}
-.main-nav{display:flex;align-items:center;gap:26px}
+.main-nav{display:flex;align-items:center;gap:22px}
 .main-nav a{color:var(--taupe-900);text-decoration:none;font-weight:600;opacity:.95}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:999px;font-weight:700;cursor:pointer;text-decoration:none}
 .btn-outline{border:1.5px solid var(--taupe-900);color:var(--taupe-900);background:transparent}
 .btn-solid{background:var(--accent);color:#2a2624;border:0}
 
+/* Quote dropdown */
+.quote-dropdown{position:relative}
+.quote-dropdown .quote-menu{
+  position:absolute; right:0; top:110%;
+  background:#fff; border:1px solid #e3d9ce; border-radius:12px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+  display:none; min-width:220px; padding:8px; z-index:40;
+}
+.quote-dropdown.open .quote-menu{display:block}
+.quote-dropdown .quote-menu a{
+  display:block; padding:10px 12px; text-decoration:none; color:var(--taupe-900); border-radius:10px; font-weight:600;
+}
+.quote-dropdown .quote-menu a:hover{background:#f6f2ed}
+
 /* Hero */
-.hero{position:relative}
+.hero{position:relative;isolation:isolate}
 .hero-media{position:relative;height:56vh;min-height:420px;overflow:hidden}
 .hero-media img{width:100%;height:100%;object-fit:cover;object-position:center}
 .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.45))}
@@ -43,6 +57,7 @@ h1,h2,h3{font-family:"Playfair Display",serif;color:var(--taupe-900);}
 .services{background:#f3ece4}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
 .card{background:var(--card);border-radius:14px;padding:22px;text-align:center;box-shadow:var(--shadow)}
+.card h3{margin:.4rem 0}
 
 /* About */
 .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
@@ -54,21 +69,14 @@ h1,h2,h3{font-family:"Playfair Display",serif;color:var(--taupe-900);}
 .contact-form,.contact-details{background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)}
 label{display:grid;gap:6px;font-weight:600}
 input,textarea,select{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:var(--taupe-900)}
-.quote-dropdown{position:relative}
-.quote-dropdown .quote-menu{
-  position:absolute; right:0; top:110%;
-  background:#fff; border:1px solid #e3d9ce; border-radius:12px;
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
-  display:none; min-width:220px; padding:8px;
-  z-index:40;
-}
-.quote-dropdown .quote-menu a{
-  display:block; padding:10px 12px; text-decoration:none; color:var(--taupe-900); border-radius:10px; font-weight:600;
-}
-.quote-dropdown .quote-menu a:hover{background:#f6f2ed}
-.quote-dropdown.open .quote-menu{display:block}
-
+.status{opacity:.9}
 
 /* Footer */
-.site-footer{background:#efe6db;border-top:1px solid #e2d6c9;text-align:center;padding:16px 0;color:var(--taupe-900);font-weight:600}
+.site-footer{background:#efe6db;border-top:1px solid #e2d6c9}
+.site-footer p{margin:0;padding:16px 0;text-align:center;color:var(--taupe-900);font-weight:600}
 
+/* Responsive */
+@media (max-width:1000px){
+  .about-grid,.contact-grid{grid-template-columns:1fr}
+  .hero-title{font-size:2.4rem}
+}
