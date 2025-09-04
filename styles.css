@@ -54,6 +54,21 @@ h1,h2,h3{font-family:"Playfair Display",serif;color:var(--taupe-900);}
 .contact-form,.contact-details{background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)}
 label{display:grid;gap:6px;font-weight:600}
 input,textarea,select{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:var(--taupe-900)}
+.quote-dropdown{position:relative}
+.quote-dropdown .quote-menu{
+  position:absolute; right:0; top:110%;
+  background:#fff; border:1px solid #e3d9ce; border-radius:12px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+  display:none; min-width:220px; padding:8px;
+  z-index:40;
+}
+.quote-dropdown .quote-menu a{
+  display:block; padding:10px 12px; text-decoration:none; color:var(--taupe-900); border-radius:10px; font-weight:600;
+}
+.quote-dropdown .quote-menu a:hover{background:#f6f2ed}
+.quote-dropdown.open .quote-menu{display:block}
+
 
 /* Footer */
 .site-footer{background:#efe6db;border-top:1px solid #e2d6c9;text-align:center;padding:16px 0;color:var(--taupe-900);font-weight:600}
+
