@@ -22,11 +22,9 @@
     <div class="container header-inner">
       <div class="brand"><span class="vase-logo"></span><span class="brand-name">The Finishing Touch</span></div>
       <nav class="main-nav">
-        <a href="index.html">About</a>
         <a href="index.html#services">Services</a>
-        <a href="intake-cleaning.html">Cleaning</a>
-        <a href="intake-decor.html">Decorating</a>
-        <a href="contact.html">Contact</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
       </nav>
     </div>
   </header>
