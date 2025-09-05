@@ -59,12 +59,11 @@ function calcCleaning(data){
 /* ============================
    CLEANING — TIME ESTIMATE (2-person team, HIDDEN)
    ============================ */
-/* 👇 Replace these with your real Square booking URLs (Square → Appointments → Online Booking → Share).
-   Create service variations (Small/Medium/Large/XL) with matching durations. */
-const SQUARE_CLEAN_SMALL  = "https://squareup.com/appointments/book/YOUR_SMALL_SERVICE";   // ≤2.5h team
-const SQUARE_CLEAN_MEDIUM = "https://squareup.com/appointments/book/YOUR_MEDIUM_SERVICE";  // ≤3.5h team
-const SQUARE_CLEAN_LARGE  = "https://squareup.com/appointments/book/YOUR_LARGE_SERVICE";   // ≤5h team
-const SQUARE_CLEAN_XL     = "https://squareup.com/appointments/book/YOUR_XL_SERVICE";      // >5h team
+/* ✅ Your real Square links */
+const SQUARE_CLEAN_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN"; // Small Clean (≤2.5h team)
+const SQUARE_CLEAN_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ"; // Medium Clean (≤3.5h team)
+const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/REPLACE_WITH_YOUR_LARGE_SERVICE_LINK"; // ← TODO: paste Large Clean link here (≤5h team)
+const SQUARE_CLEAN_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK"; // XL Clean (>5h team)
 
 const addonHoursCleaning = {
   "oven":0.25, "fridge":0.25, "refrigerator":0.25,
@@ -120,10 +119,10 @@ function estimateHoursCleaning(data){
 }
 
 function squareUrlForCleaning(teamHours){
-  if (teamHours <= 2.5) return SQUARE_CLEAN_SMALL;
-  if (teamHours <= 3.5) return SQUARE_CLEAN_MEDIUM;
-  if (teamHours <= 5)   return SQUARE_CLEAN_LARGE;
-  return SQUARE_CLEAN_XL;
+  if (teamHours <= 2.5) return SQUARE_CLEAN_SMALL;   // Small
+  if (teamHours <= 3.5) return SQUARE_CLEAN_MEDIUM;  // Medium
+  if (teamHours <= 5)   return SQUARE_CLEAN_LARGE;   // Large
+  return SQUARE_CLEAN_XL;                             // XL
 }
 
 function ensureScheduleButton(estElId, url){
