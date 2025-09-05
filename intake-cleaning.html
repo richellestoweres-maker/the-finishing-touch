@@ -4,8 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cleaning Intake – The Finishing Touch</title>
+
+  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -16,23 +20,53 @@
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
+
+    /* Minimal dropdown styles in case your global CSS doesn't include them */
+    .quote-dropdown{position:relative;display:inline-block}
+    .quote-button, .btn.btn-solid{cursor:pointer}
+    .quote-menu{
+      position:absolute; right:0; top:calc(100% + 6px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:10px;
+      box-shadow:0 10px 30px rgba(0,0,0,.06);
+      padding:8px; min-width:220px; display:none; z-index:50;
+    }
+    .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
+    .quote-menu a:hover{background:#f3ece6}
+    .quote-dropdown.open .quote-menu{display:block}
+    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
   </style>
 </head>
 <body>
+  <!-- Header with working dropdown -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand"><span class="vase-logo"></span><span class="brand-name">The Finishing Touch</span></div>
+      <div class="brand">
+        <a href="index.html" class="brand-link">
+          <span class="vase-logo" aria-hidden="true"></span>
+          <span class="brand-name">The Finishing Touch</span>
+        </a>
+      </div>
       <nav class="main-nav">
         <a href="index.html#services">Services</a>
         <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
-        <div class="quote-dropdown">
-          <a class="btn btn-solid" href="intake-cleaning.html">Get Your Quote ▾</a>
+
+        <!-- Quote Dropdown (works on this page) -->
+        <div class="quote-dropdown" id="quoteDropdown">
+          <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
+            Get Your Quote ▾
+          </button>
+          <div class="quote-menu" id="quoteMenu" role="menu" aria-hidden="true">
+            <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
+            <a role="menuitem" href="intake-organizing.html">Organizing</a>
+            <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+          </div>
         </div>
       </nav>
     </div>
   </header>
 
+  <!-- Main -->
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Cleaning Intake Form</div>
@@ -98,8 +132,29 @@
     </form>
   </main>
 
+  <!-- EmailJS (optional, only if you're using email) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>emailjs.init('YOUR_EMAILJS_PUBLIC_KEY');</script>
+  <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
+
+  <!-- Tiny dropdown behavior (self-contained so it works here without edits elsewhere) -->
+  <script>
+    (function(){
+      const dd  = document.getElementById('quoteDropdown');
+      const btn = document.getElementById('quoteBtn');
+      const menu= document.getElementById('quoteMenu');
+      if (!dd || !btn || !menu) return;
+      function toggle(open){
+        dd.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        menu.setAttribute('aria-hidden', String(!open));
+      }
+      btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
+      document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
+    })();
+  </script>
+
+  <!-- Your site JS (pricing + Square routing) -->
   <script src="script.js"></script>
 </body>
 </html>
