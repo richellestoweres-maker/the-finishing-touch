@@ -62,7 +62,7 @@ function calcCleaning(data){
 /* ✅ Your real Square links */
 const SQUARE_CLEAN_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN"; // Small Clean (≤2.5h team)
 const SQUARE_CLEAN_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ"; // Medium Clean (≤3.5h team)
-const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/REPLACE_WITH_YOUR_LARGE_SERVICE_LINK"; // ← TODO: paste Large Clean link here (≤5h team)
+const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7P-WWWNHSAV"; // ← TODO: paste Large Clean link here (≤5h team)
 const SQUARE_CLEAN_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK"; // XL Clean (>5h team)
 
 const addonHoursCleaning = {
@@ -277,3 +277,4 @@ if (contactForm){
     }catch(err){ status.textContent = "Message not sent. Please try again."; console.error(err); }
   });
 }
+
