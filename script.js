@@ -57,6 +57,90 @@ function calcCleaning(data){
 }
 
 /* ============================
+   CLEANING — TIME ESTIMATE (2-person team, HIDDEN)
+   ============================ */
+/* 👇 Replace these with your real Square booking URLs (Square → Appointments → Online Booking → Share).
+   Create service variations (Small/Medium/Large/XL) with matching durations. */
+const SQUARE_CLEAN_SMALL  = "https://squareup.com/appointments/book/YOUR_SMALL_SERVICE";   // ≤2.5h team
+const SQUARE_CLEAN_MEDIUM = "https://squareup.com/appointments/book/YOUR_MEDIUM_SERVICE";  // ≤3.5h team
+const SQUARE_CLEAN_LARGE  = "https://squareup.com/appointments/book/YOUR_LARGE_SERVICE";   // ≤5h team
+const SQUARE_CLEAN_XL     = "https://squareup.com/appointments/book/YOUR_XL_SERVICE";      // >5h team
+
+const addonHoursCleaning = {
+  "oven":0.25, "fridge":0.25, "refrigerator":0.25,
+  "windows":1.5, "window":1.5, "baseboards":1.0, "laundry":0.5
+};
+function parseAddonsHours(txt, hoursMap){
+  txt = (txt||"").toLowerCase(); let total = 0;
+  for (const k of Object.keys(hoursMap)){ if (txt.includes(k)) total += hoursMap[k]; }
+  return total;
+}
+const roundHalf = n => Math.round(n*2)/2;
+
+function estimateHoursCleaning(data){
+  const sqft = data.sqft || "1000–2000";
+  const service = data.service || "Initial Clean";
+  const beds = Number(data.beds||0);
+  const baths = Number(data.baths||0);
+  const otherRooms = Number(data.other_rooms||0);
+  const stories = String(data.stories||"1");
+
+  // base hours for a solo cleaner
+  let solo = 2;
+  if (sqft === "<1000") solo = 2;
+  else if (sqft === "1000–2000") solo = 3;
+  else if (sqft === "2000–3000") solo = 4;
+  else if (sqft === "3000–4000") solo = 5;
+  else solo = 6; // 4000+
+
+  // Airbnb depends more on bedrooms
+  if (service === "Airbnb Turnover"){
+    if (beds <= 1) solo = 2;
+    else if (beds === 2) solo = 2.5;
+    else if (beds === 3) solo = 3;
+    else if (beds === 4) solo = 3.5;
+    else solo = 4;
+  }
+
+  // extras
+  solo += Math.max(0, beds - 3) * 0.5;   // +30m per bedroom over 3
+  solo += Math.max(0, baths - 2) * 0.75; // +45m per bath over 2
+  solo += Math.max(0, otherRooms) * 0.25;// +15m per “other room”
+  if (stories === "2") solo += 0.25;     // +15m stairs/travel
+  solo += parseAddonsHours(data.addons, addonHoursCleaning);
+
+  // service multipliers
+  if (service === "Deep Clean") solo *= 1.5;
+  if (service === "Move-In / Move-Out Clean") solo *= 2;
+  if (service === "Initial Clean") solo *= 1.2;
+
+  solo = roundHalf(solo);
+  const team = roundHalf(solo / 2); // 2-person team
+  return { soloHours: solo, teamHours: team };
+}
+
+function squareUrlForCleaning(teamHours){
+  if (teamHours <= 2.5) return SQUARE_CLEAN_SMALL;
+  if (teamHours <= 3.5) return SQUARE_CLEAN_MEDIUM;
+  if (teamHours <= 5)   return SQUARE_CLEAN_LARGE;
+  return SQUARE_CLEAN_XL;
+}
+
+function ensureScheduleButton(estElId, url){
+  const estEl = document.getElementById(estElId);
+  let btn = document.getElementById("scheduleOnSquareCleaning");
+  if (!btn){
+    btn = document.createElement("a");
+    btn.id = "scheduleOnSquareCleaning";
+    btn.className = "btn btn-solid";
+    btn.style.marginTop = "10px";
+    btn.textContent = "Schedule on Square";
+    estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+  }
+  btn.href = url; btn.target = "_blank"; btn.rel = "noopener";
+}
+
+/* ============================
    ORGANIZING — COMPETITIVE PRICING
    ============================ */
 const ORG_HOURLY=65, ORG_MIN_HOURS=3;
@@ -98,19 +182,32 @@ function sendEstimateEmail(serviceId, templateId, vars, statusEl){
     .catch(err=>{ console.error(err); statusEl.textContent = "Estimate shown above. Email failed."; });
 }
 
-/* CLEANING form */
+/* CLEANING form — SHOW PRICE ONLY, PICK SQUARE LINK BEHIND THE SCENES */
 const formCleaning = document.getElementById('intakeFormCleaning');
 if (formCleaning){
   formCleaning.addEventListener('submit', (e)=>{
     e.preventDefault();
     const data = Object.fromEntries(new FormData(formCleaning).entries());
-    const est = calcCleaning(data);
-    document.getElementById('estimateCleaning').textContent = `Ballpark Estimate: $${est}`;
+
+    // 1) PRICE (shown to client)
+    const price = calcCleaning(data);
+    const estEl = document.getElementById('estimateCleaning');
+    estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+
+    // 2) TIME (hidden) → choose correct Square URL
+    const { teamHours } = estimateHoursCleaning(data);
+    const squareUrl = squareUrlForCleaning(teamHours);
+
+    // 3) Create/refresh “Schedule on Square” button
+    ensureScheduleButton('estimateCleaning', squareUrl);
+
+    // 4) Optional: email (without time)
     sendEstimateEmail(
       "YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_CLEANING",
       {
         to_email: data.email, to_name: data.name || "there",
-        estimate:`$${est}`, service:data.service, sqft:data.sqft,
+        estimate:`$${price}`,
+        service:data.service, sqft:data.sqft,
         beds:data.beds, baths:data.baths, other_rooms:data.other_rooms||"0",
         stories:data.stories, frequency:data.frequency,
         addons:data.addons||"None", notes:data.notes||"",
