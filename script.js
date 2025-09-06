@@ -140,6 +140,111 @@ function ensureScheduleButton(estElId, url){
 }
 
 /* ============================
+   ORGANIZING — TIME ESTIMATE & SQUARE ROUTING (HIDDEN)
+   ============================ */
+
+/* Square links for hidden services (create like Cleaning, with durations+buffers) */
+const SQUARE_ORG_SMALL  = "https://book.squareup.com/appointments/..."; // ≤2.5h team
+const SQUARE_ORG_MEDIUM = "https://book.squareup.com/appointments/..."; // ≤4h team
+const SQUARE_ORG_LARGE  = "https://book.squareup.com/appointments/..."; // ≤6h team
+const SQUARE_ORG_XL     = "https://book.squareup.com/appointments/..."; // >6h team
+
+function estimateHoursOrganizing(data){
+  // Base solo hours by area & size
+  const area = data.org_area || "Closet";
+  const size = data.org_size || "Medium";
+  const baseMap = {
+    "Closet":        {Small:2,   Medium:3,   Large:4},
+    "Pantry":        {Small:2,   Medium:3,   Large:4},
+    "Kitchen":       {Small:3,   Medium:4.5, Large:6},
+    "Bedroom":       {Small:2.5, Medium:3.5, Large:5},
+    "Bathroom":      {Small:1.5, Medium:2.5, Large:3.5},
+    "Garage":        {Small:3,   Medium:5,   Large:7},
+    "Laundry Room":  {Small:2,   Medium:3,   Large:4},
+    "Office":        {Small:2.5, Medium:4,   Large:5.5},
+    "Playroom":      {Small:2.5, Medium:4,   Large:5.5},
+    "Whole Home (multi-area)": {Small:6, Medium:8, Large:12}
+  };
+  let solo = (baseMap[area]?.[size] ?? 3.5);
+
+  // Complexity multipliers
+  const clutter = data.org_clutter || "Moderate";
+  if (clutter === "Light") solo *= 0.9;
+  if (clutter === "Moderate") solo *= 1.0;
+  if (clutter === "Heavy") solo *= 1.35;
+
+  const decision = data.org_decision_speed || "Average";
+  if (decision === "Fast") solo *= 0.9;
+  if (decision === "Average") solo *= 1.0;
+  if (decision === "Slow") solo *= 1.25;
+
+  // Inventory adjustments
+  const volume = data.org_volume || "Medium";
+  if (volume === "Low") solo += 0.0;
+  if (volume === "Medium") solo += 0.5;
+  if (volume === "High") solo += 1.0;
+
+  const containers = data.org_containers || "None";
+  if (containers === "Some (up to 10)") solo += 0.5;
+  if (containers === "Many (10+)") solo += 1.0;
+
+  // Logistics
+  const access = data.org_access || "Easy (ground floor)";
+  if (access === "Stairs") solo += 0.5;
+  if (access === "Tight spaces / HOA constraints") solo += 0.75;
+
+  const haul = data.org_haul || "None";
+  if (haul === "1–3 bags/boxes") solo += 0.5;
+  if (haul === "4–8 bags/boxes") solo += 1.0;
+  if (haul === "Carload+") solo += 1.5;
+
+  // Round and convert to team hours (default team=2)
+  const roundHalf = n => Math.round(n*2)/2;
+  solo = roundHalf(solo);
+  const teamCount = Math.max(1, Number(data.team || 2));
+  const teamHours = roundHalf(solo / teamCount);
+  return { soloHours: solo, teamHours };
+}
+
+function squareUrlForOrganizing(teamHours){
+  if (teamHours <= 2.5) return SQUARE_ORG_SMALL;
+  if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;
+  if (teamHours <= 6)   return SQUARE_ORG_LARGE;
+  return SQUARE_ORG_XL;
+}
+
+/* Hook into the existing Organizing form submit (keep your price email if you want) */
+const formOrg = document.getElementById('intakeFormOrganizing');
+if (formOrg){
+  formOrg.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(formOrg).entries());
+    const price = calcOrganizing(data); // you already had this
+    document.getElementById('estimateOrganizing').textContent = `Ballpark Estimate: $${price}`;
+
+    const { teamHours } = estimateHoursOrganizing(data);
+    const url = squareUrlForOrganizing(teamHours);
+
+    // Reuse the cleaning helper to render the button
+    ensureScheduleButton('estimateOrganizing', url);
+
+    // (Optional) email
+    sendEstimateEmail(
+      "YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_ORG",
+      {
+        to_email:data.email, to_name:data.name||"there",
+        estimate:`$${price}`, spaces:data.spaces||"", complexity:data.org_clutter||"",
+        team:data.team||"2", addons:data.addons||"None",
+        notes:data.notes||"", phone:data.phone||"", address:data.address||"",
+        action_link:"https://YOUR-USERNAME.github.io/the-finishing-touch/intake-organizing.html"
+      },
+      document.getElementById('emailStatusOrganizing')
+    );
+  });
+}
+
+
+/* ============================
    ORGANIZING — COMPETITIVE PRICING
    ============================ */
 const ORG_HOURLY=65, ORG_MIN_HOURS=3;
@@ -277,4 +382,5 @@ if (contactForm){
     }catch(err){ status.textContent = "Message not sent. Please try again."; console.error(err); }
   });
 }
+
 
