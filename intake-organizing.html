@@ -156,7 +156,6 @@
         </label>
       </div>
 
-      <!-- ✅ Added submit row with button -->
       <div class="submit-row">
         <button class="btn btn-solid" type="submit">Get Organizing Estimate</button>
         <p id="estimateOrganizing" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
@@ -187,7 +186,7 @@
     })();
   </script>
 
-  <!-- Site JS -->
-  <script src="script.js"></script>
+  <!-- Site JS (cache-busted + deferred so forms work consistently) -->
+  <script src="script.js?v=5" defer></script>
 </body>
 </html>
