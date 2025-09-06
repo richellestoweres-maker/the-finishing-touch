@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
+  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -19,8 +19,7 @@
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
-
-    /* Minimal dropdown styles in case your global CSS doesn't include them */
+    .btn{display:inline-block}
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -36,7 +35,7 @@
   </style>
 </head>
 <body>
-  <!-- Header with working dropdown -->
+  <!-- Header with dropdown -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -49,8 +48,6 @@
         <a href="index.html#services">Services</a>
         <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
-
-        <!-- Quote Dropdown (works on this page) -->
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
             Get Your Quote ▾
@@ -77,96 +74,102 @@
         <label>Phone<input name="phone"></label>
       </div>
 
-     <div class="fieldset grid-2">
-  <!-- Scope -->
-  <label>Area Type
-    <select name="org_area">
-      <option>Closet</option>
-      <option>Kitchen</option>
-      <option>Pantry</option>
-      <option>Bedroom</option>
-      <option>Bathroom</option>
-      <option>Garage</option>
-      <option>Laundry Room</option>
-      <option>Office</option>
-      <option>Playroom</option>
-      <option>Whole Home (multi-area)</option>
-    </select>
-  </label>
-  <label>Area Size
-    <select name="org_size">
-      <option>Small</option>
-      <option>Medium</option>
-      <option>Large</option>
-    </select>
-  </label>
+      <div class="fieldset grid-2">
+        <!-- Scope -->
+        <label>Area Type
+          <select name="org_area">
+            <option>Closet</option>
+            <option>Kitchen</option>
+            <option>Pantry</option>
+            <option>Bedroom</option>
+            <option>Bathroom</option>
+            <option>Garage</option>
+            <option>Laundry Room</option>
+            <option>Office</option>
+            <option>Playroom</option>
+            <option>Whole Home (multi-area)</option>
+          </select>
+        </label>
+        <label>Area Size
+          <select name="org_size">
+            <option>Small</option>
+            <option selected>Medium</option>
+            <option>Large</option>
+          </select>
+        </label>
 
-  <!-- Complexity drivers -->
-  <label>Current Clutter Level
-    <select name="org_clutter">
-      <option>Light</option>
-      <option>Moderate</option>
-      <option>Heavy</option>
-    </select>
-  </label>
-  <label>Decision Speed (purge/sort)
-    <select name="org_decision_speed">
-      <option>Fast</option>
-      <option>Average</option>
-      <option>Slow</option>
-    </select>
-  </label>
+        <!-- Complexity drivers -->
+        <label>Current Clutter Level
+          <select name="org_clutter">
+            <option>Light</option>
+            <option selected>Moderate</option>
+            <option>Heavy</option>
+          </select>
+        </label>
+        <label>Decision Speed (purge/sort)
+          <select name="org_decision_speed">
+            <option>Fast</option>
+            <option selected>Average</option>
+            <option>Slow</option>
+          </select>
+        </label>
 
-  <!-- Inventory/containers -->
-  <label>Estimated Items Volume
-    <select name="org_volume">
-      <option>Low</option>
-      <option>Medium</option>
-      <option>High</option>
-    </select>
-  </label>
-  <label>Container Needs (bins/labels)
-    <select name="org_containers">
-      <option>None</option>
-      <option>Some (up to 10)</option>
-      <option>Many (10+)</option>
-    </select>
-  </label>
+        <!-- Inventory/containers -->
+        <label>Estimated Items Volume
+          <select name="org_volume">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+          </select>
+        </label>
+        <label>Container Needs (bins/labels)
+          <select name="org_containers">
+            <option selected>None</option>
+            <option>Some (up to 10)</option>
+            <option>Many (10+)</option>
+          </select>
+        </label>
 
-  <!-- Logistics -->
-  <label>Access / Constraints
-    <select name="org_access">
-      <option>Easy (ground floor)</option>
-      <option>Stairs</option>
-      <option>Tight spaces / HOA constraints</option>
-    </select>
-  </label>
-  <label>Haul-Away / Donation Volume
-    <select name="org_haul">
-      <option>None</option>
-      <option>1–3 bags/boxes</option>
-      <option>4–8 bags/boxes</option>
-      <option>Carload+</option>
-    </select>
-  </label>
+        <!-- Logistics -->
+        <label>Access / Constraints
+          <select name="org_access">
+            <option selected>Easy (ground floor)</option>
+            <option>Stairs</option>
+            <option>Tight spaces / HOA constraints</option>
+          </select>
+        </label>
+        <label>Haul-Away / Donation Volume
+          <select name="org_haul">
+            <option selected>None</option>
+            <option>1–3 bags/boxes</option>
+            <option>4–8 bags/boxes</option>
+            <option>Carload+</option>
+          </select>
+        </label>
 
-  <!-- Team size you’re sending -->
-  <label>Organizers on Team
-    <select name="team"><option>1</option><option selected>2</option><option>3</option></select>
-  </label>
+        <!-- Team size -->
+        <label>Organizers on Team
+          <select name="team"><option>1</option><option selected>2</option><option>3</option></select>
+        </label>
+        <label>Notes / Focus Areas
+          <input name="notes" placeholder="e.g., zones for kids, seasonal storage" />
+        </label>
+      </div>
 
-  <!-- Notes still welcome but optional -->
-  <label>Notes / Focus Areas
-    <input name="notes" placeholder="e.g., zones for kids, seasonal storage" />
-  </label>
-</div>
+      <!-- ✅ Added submit row with button -->
+      <div class="submit-row">
+        <button class="btn btn-solid" type="submit">Get Organizing Estimate</button>
+        <p id="estimateOrganizing" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <p id="emailStatusOrganizing" style="opacity:.9"></p>
+      </div>
+    </form>
+  </main>
 
-
-  <!-- EmailJS (optional, only if you're using email) -->
+  <!-- EmailJS (optional) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
-  <!-- Tiny dropdown behavior (self-contained so it works here without edits elsewhere) -->
+  <!-- Tiny dropdown behavior -->
   <script>
     (function(){
       const dd  = document.getElementById('quoteDropdown');
@@ -184,7 +187,7 @@
     })();
   </script>
 
-  <!-- Your site JS (pricing + Square routing) -->
+  <!-- Site JS -->
   <script src="script.js"></script>
 </body>
 </html>
