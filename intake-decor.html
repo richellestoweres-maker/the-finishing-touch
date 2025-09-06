@@ -77,30 +77,82 @@
         <label>Phone<input name="phone"></label>
       </div>
 
-      <div class="fieldset grid-2">
-        <label>Room Type
-          <select name="room">
-            <option>Living Room</option>
-            <option>Bedroom</option>
-            <option>Dining Room</option>
-            <option>Home Office</option>
-          </select>
-        </label>
-        <label># of Rooms<input name="count" type="number" min="1" value="1"></label>
-        <label>Style Notes / Inspiration<input name="notes"></label>
-        <label>Budget Range
-          <select name="budget">
-            <option>$500–$1,000</option><option>$1,000–$2,500</option><option>$2,500–$5,000</option><option>$5,000+</option>
-          </select>
-        </label>
-      </div>
+     <div class="fieldset grid-2">
+  <!-- Project type -->
+  <label>Project Type
+    <select name="decor_type">
+      <option>Interior Decorating (refresh)</option>
+      <option>Interior Decorating (full room)</option>
+      <option>Staging — Occupied</option>
+      <option>Staging — Vacant</option>
+    </select>
+  </label>
+  <label>Rooms Involved
+    <select name="decor_room">
+      <option>Living Room</option>
+      <option>Bedroom</option>
+      <option>Dining Room</option>
+      <option>Home Office</option>
+      <option>Kitchen / Nook</option>
+      <option>Entryway</option>
+      <option>Multiple Rooms</option>
+    </select>
+  </label>
 
-      <div class="fieldset grid-2">
-        <label>Add-ons<input name="addons" placeholder="moodboard, sourcing, install, window treatments, art hanging"></label>
-        <label>Preferred Payment
-          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
-        </label>
-      </div>
+  <!-- Scope / sourcing -->
+  <label>Scope Level
+    <select name="decor_scope">
+      <option>Light refresh (styling)</option>
+      <option>Refresh + small sourcing</option>
+      <option>Full design (sourcing + install)</option>
+    </select>
+  </label>
+  <label>Furniture Sourcing Needed?
+    <select name="decor_furniture">
+      <option>No</option>
+      <option>Yes — a few pieces</option>
+      <option>Yes — multiple pieces</option>
+    </select>
+  </label>
+
+  <!-- Install complexity -->
+  <label>Install Complexity
+    <select name="decor_install">
+      <option>Light (art, textiles)</option>
+      <option>Moderate (art + small furniture)</option>
+      <option>Heavy (multiple furniture + window treatments)</option>
+    </select>
+  </label>
+  <label>Shopping Trips
+    <select name="decor_shopping">
+      <option>0</option><option>1</option><option>2</option><option>3+</option>
+    </select>
+  </label>
+
+  <!-- Logistics -->
+  <label>Access / Parking
+    <select name="decor_access">
+      <option>Easy</option>
+      <option>Stairs / elevator</option>
+      <option>HOA / tight timing</option>
+    </select>
+  </label>
+  <label>Rooms Count
+    <input name="count" type="number" min="1" value="1">
+  </label>
+
+  <!-- Budget & notes -->
+  <label>Budget Range
+    <select name="budget">
+      <option>$500–$1,000</option><option>$1,000–$2,500</option>
+      <option>$2,500–$5,000</option><option>$5,000+</option>
+    </select>
+  </label>
+  <label>Notes / Style Inspiration
+    <input name="notes" placeholder="mood, palette, Pinterest, must-keeps">
+  </label>
+</div>
+
 
       <div class="submit-row">
         <button class="btn btn-solid" type="submit">Get Decorating Estimate</button>
