@@ -19,20 +19,23 @@ h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--taupe-900);mar
 .brand{display:flex;align-items:center;gap:.7rem}
 
 /* ✅ Vase logo uses your uploaded PNG (logo-vase.png) */
-.vase-logo{
-  width:28px;
-  height:36px;
-  display:inline-block;
-  background-image:url('logo-vase.png');
-  background-repeat:no-repeat;
-  background-size:contain;
-  background-position:center;
-  vertical-align:middle;
-  border-radius:4px; /* softens edges if PNG has straight bounds */
-  margin-right:2px;
+.vase-logo {
+  width: 34px;         /* slightly larger than before */
+  height: 44px;
+  display: inline-block;
+  background-image: url('logo-vase.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  vertical-align: middle;
+  margin-right: 8px;   /* more breathing room between vase + text */
 }
-@media (min-width:900px){
-  .vase-logo{ width:32px; height:42px; }
+
+@media (min-width: 900px) {
+  .vase-logo {
+    width: 40px;       /* upscale further for desktop */
+    height: 52px;
+  }
 }
 
 .brand-name{font-family:"Playfair Display",serif;font-weight:600;letter-spacing:.2px;color:var(--taupe-900)}
@@ -102,5 +105,6 @@ input,textarea,select{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
