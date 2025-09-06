@@ -78,129 +78,123 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- 2–6. Project questions (refined) -->
-      <div class="fieldset grid-2">
-        <!-- Project goals -->
-        <label>Primary Goal
-          <select name="goal">
-            <option>Personal refresh</option>
-            <option>Selling / Staging</option>
-            <option>Airbnb / Short-term rental</option>
-          </select>
-        </label>
-        <label>Spaces to Focus On
-          <select name="decor_room">
-            <option>Living Room</option>
-            <option>Bedroom</option>
-            <option>Dining Room</option>
-            <option>Home Office</option>
-            <option>Kitchen / Nook</option>
-            <option>Entryway</option>
-            <option>Multiple Rooms</option>
-            <option>Whole Home</option>
-            <option>Outdoor Space</option>
-          </select>
-        </label>
+     <div class="fieldset grid-2">
+  <!-- Project goals -->
+  <label>Primary Goal
+    <select name="goal">
+      <option>Personal refresh</option>
+      <option>Selling / Staging</option>
+      <option>Airbnb / Short-term rental</option>
+    </select>
+  </label>
+  <label>Spaces to Focus On
+    <select name="decor_room">
+      <option>Living Room</option>
+      <option>Bedroom</option>
+      <option>Dining Room</option>
+      <option>Home Office</option>
+      <option>Kitchen / Nook</option>
+      <option>Entryway</option>
+      <option>Multiple Rooms</option>
+      <option>Whole Home</option>
+      <option>Outdoor Space</option>
+    </select>
+  </label>
 
-        <!-- Style & vision -->
-        <label>Style / Feel Desired
-          <input name="style" placeholder="e.g., modern, cozy, coastal, luxury">
-        </label>
-        <label>Inspiration Links
-          <input name="inspo" placeholder="Pinterest/Instagram links, colors, textures">
-        </label>
-        <label>What do you love now?
-          <input name="love_now" placeholder="features to keep or highlight">
-        </label>
-        <label>What would you change?
-          <input name="change_most" placeholder="pain points or must-fix items">
-        </label>
+  <!-- Style & vision -->
+  <label>Style / Feel Desired
+    <input name="style" placeholder="e.g., modern, cozy, coastal, luxury">
+  </label>
+  <label>Inspiration Links
+    <input name="inspo" placeholder="Pinterest/Instagram links, colors, textures">
+  </label>
+  <label>What do you love now?
+    <input name="love_now" placeholder="features to keep or highlight">
+  </label>
+  <label>What would you change?
+    <input name="change_most" placeholder="pain points or must-fix items">
+  </label>
 
-        <!-- Function & lifestyle -->
-        <label>Who uses the space?
-          <select name="users">
-            <option>Adults</option><option>Kids</option><option>Pets</option><option>Guests</option>
-          </select>
-        </label>
-        <label>Top Priority
-          <select name="priority">
-            <option>Comfort & livability</option>
-            <option>Style & aesthetics</option>
-            <option>Durability & easy maintenance</option>
-          </select>
-        </label>
-        <label>Must-Keep Items
-          <input name="must_keep" placeholder="furniture, art, heirlooms">
-        </label>
+  <!-- Function & lifestyle -->
+  <label>Who uses the space?
+    <select name="users">
+      <option>Adults</option><option>Kids</option><option>Pets</option><option>Guests</option>
+    </select>
+  </label>
+  <label>Top Priority
+    <select name="priority">
+      <option>Comfort & livability</option>
+      <option>Style & aesthetics</option>
+      <option>Durability & easy maintenance</option>
+    </select>
+  </label>
+  <label>Must-Keep Items
+    <input name="must_keep" placeholder="furniture, art, heirlooms">
+  </label>
 
-        <!-- Scope / service level -->
-        <label>Service Level
-          <select name="decor_scope">
-            <option>Light refresh (styling)</option>
-            <option>Refresh + small sourcing</option>
-            <option>Full design (sourcing + install)</option>
-          </select>
-        </label>
-        <label>Furniture Sourcing Needed?
-          <select name="decor_furniture">
-            <option>No</option>
-            <option>Yes — a few pieces</option>
-            <option>Yes — multiple pieces</option>
-          </select>
-        </label>
-        <label>Install Complexity
-          <select name="decor_install">
-            <option>Light (art, textiles)</option>
-            <option>Moderate (art + small furniture)</option>
-            <option>Heavy (multiple furniture + window treatments)</option>
-          </select>
-        </label>
+  <!-- Scope / service level -->
+  <label>Service Level
+    <select name="decor_scope">
+      <option>Light refresh (styling only)</option>
+      <option>Refresh + small sourcing</option>
+      <option>Full room redesign</option>
+    </select>
+  </label>
+  <label>Furniture Sourcing Needed?
+    <select name="decor_furniture">
+      <option>No</option>
+      <option>Yes — a few pieces</option>
+      <option>Yes — multiple pieces</option>
+    </select>
+  </label>
 
-        <!-- For Sellers / Airbnb -->
-        <label>Home Status (if selling)
-          <select name="staging_status">
-            <option>N/A</option>
-            <option>Occupied</option>
-            <option>Vacant</option>
-          </select>
-        </label>
-        <label>Airbnb Theme (if applicable)
-          <input name="airbnb_theme" placeholder="e.g., coastal retreat, modern loft">
-        </label>
+  <!-- For Sellers / Airbnb -->
+  <label>Home Status (if selling)
+    <select name="staging_status">
+      <option>N/A</option>
+      <option>Occupied</option>
+      <option>Vacant</option>
+    </select>
+  </label>
+  <label>Airbnb Theme (if applicable)
+    <input name="airbnb_theme" placeholder="e.g., coastal retreat, modern loft">
+  </label>
 
-        <!-- Budget & timeline -->
-        <label>Budget Range
-          <select name="budget">
-            <option>$500–$1,000</option><option>$1,000–$2,500</option>
-            <option>$2,500–$5,000</option><option>$5,000+</option>
-          </select>
-        </label>
-        <label>Timeline
-          <select name="timeline">
-            <option>ASAP</option><option>1–2 months</option><option>3–6 months</option><option>Flexible</option>
-          </select>
-        </label>
+  <!-- Budget & timeline -->
+  <label>Budget Range
+    <select name="budget">
+      <option>$500–$1,000</option><option>$1,000–$2,500</option>
+      <option>$2,500–$5,000</option><option>$5,000+</option>
+    </select>
+  </label>
+  <label>Timeline
+    <select name="timeline">
+      <option>ASAP</option><option>1–2 months</option>
+      <option>3–6 months</option><option>Flexible</option>
+    </select>
+  </label>
 
-        <!-- Logistics / rooms count -->
-        <label>Access / Parking
-          <select name="decor_access">
-            <option>Easy</option>
-            <option>Stairs / elevator</option>
-            <option>HOA / tight timing</option>
-          </select>
-        </label>
-        <label>Rooms Count
-          <input name="count" type="number" min="1" value="1">
-        </label>
+  <!-- Logistics -->
+  <label>Rooms Count
+    <input name="count" type="number" min="1" value="1">
+  </label>
+  <label>Access / Parking
+    <select name="decor_access">
+      <option>Easy</option>
+      <option>Stairs / elevator</option>
+      <option>HOA / tight timing</option>
+    </select>
+  </label>
 
-        <!-- Notes & payment -->
-        <label>Notes / Special Requests
-          <input name="notes" placeholder="anything else we should know">
-        </label>
-        <label>Payment Preference
-          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
-        </label>
-      </div>
+  <!-- Notes & payment -->
+  <label>Notes / Special Requests
+    <input name="notes" placeholder="anything else we should know">
+  </label>
+  <label>Payment Preference
+    <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
+  </label>
+</div>
+
 
       <div class="submit-row">
         <button class="btn btn-solid" type="submit">Get Decorating Estimate</button>
