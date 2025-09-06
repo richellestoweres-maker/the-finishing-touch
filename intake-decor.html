@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
+  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -20,7 +20,7 @@
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
 
-    /* Minimal dropdown styles in case your global CSS doesn't include them */
+    /* Dropdown (in case global CSS doesn’t apply here) */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -50,7 +50,7 @@
         <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
 
-        <!-- Quote Dropdown (works on this page) -->
+        <!-- Quote Dropdown -->
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
             Get Your Quote ▾
@@ -69,25 +69,26 @@
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Interior Decorating Intake</div>
 
-    <form id="intakeFormDecor" class="grid-1">
+    <form id="intakeFormDecor" class="grid-1" novalidate>
+      <!-- 1. Contact Info -->
       <div class="grid-2">
-        <label>Full Name<input name="name" required></label>
-        <label>Email<input name="email" type="email" required></label>
-        <label>Service Address<input name="address"></label>
-        <label>Phone<input name="phone"></label>
+        <label>Full Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Service Address<input name="address" autocomplete="street-address"></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
+      <!-- 2–6. Project questions (refined) -->
       <div class="fieldset grid-2">
-        <!-- Project type -->
-        <label>Project Type
-          <select name="decor_type">
-            <option>Interior Decorating (refresh)</option>
-            <option>Interior Decorating (full room)</option>
-            <option>Staging — Occupied</option>
-            <option>Staging — Vacant</option>
+        <!-- Project goals -->
+        <label>Primary Goal
+          <select name="goal">
+            <option>Personal refresh</option>
+            <option>Selling / Staging</option>
+            <option>Airbnb / Short-term rental</option>
           </select>
         </label>
-        <label>Rooms Involved
+        <label>Spaces to Focus On
           <select name="decor_room">
             <option>Living Room</option>
             <option>Bedroom</option>
@@ -96,11 +97,44 @@
             <option>Kitchen / Nook</option>
             <option>Entryway</option>
             <option>Multiple Rooms</option>
+            <option>Whole Home</option>
+            <option>Outdoor Space</option>
           </select>
         </label>
 
-        <!-- Scope / sourcing -->
-        <label>Scope Level
+        <!-- Style & vision -->
+        <label>Style / Feel Desired
+          <input name="style" placeholder="e.g., modern, cozy, coastal, luxury">
+        </label>
+        <label>Inspiration Links
+          <input name="inspo" placeholder="Pinterest/Instagram links, colors, textures">
+        </label>
+        <label>What do you love now?
+          <input name="love_now" placeholder="features to keep or highlight">
+        </label>
+        <label>What would you change?
+          <input name="change_most" placeholder="pain points or must-fix items">
+        </label>
+
+        <!-- Function & lifestyle -->
+        <label>Who uses the space?
+          <select name="users">
+            <option>Adults</option><option>Kids</option><option>Pets</option><option>Guests</option>
+          </select>
+        </label>
+        <label>Top Priority
+          <select name="priority">
+            <option>Comfort & livability</option>
+            <option>Style & aesthetics</option>
+            <option>Durability & easy maintenance</option>
+          </select>
+        </label>
+        <label>Must-Keep Items
+          <input name="must_keep" placeholder="furniture, art, heirlooms">
+        </label>
+
+        <!-- Scope / service level -->
+        <label>Service Level
           <select name="decor_scope">
             <option>Light refresh (styling)</option>
             <option>Refresh + small sourcing</option>
@@ -114,8 +148,6 @@
             <option>Yes — multiple pieces</option>
           </select>
         </label>
-
-        <!-- Install complexity -->
         <label>Install Complexity
           <select name="decor_install">
             <option>Light (art, textiles)</option>
@@ -123,13 +155,33 @@
             <option>Heavy (multiple furniture + window treatments)</option>
           </select>
         </label>
-        <label>Shopping Trips
-          <select name="decor_shopping">
-            <option>0</option><option>1</option><option>2</option><option>3+</option>
+
+        <!-- For Sellers / Airbnb -->
+        <label>Home Status (if selling)
+          <select name="staging_status">
+            <option>N/A</option>
+            <option>Occupied</option>
+            <option>Vacant</option>
+          </select>
+        </label>
+        <label>Airbnb Theme (if applicable)
+          <input name="airbnb_theme" placeholder="e.g., coastal retreat, modern loft">
+        </label>
+
+        <!-- Budget & timeline -->
+        <label>Budget Range
+          <select name="budget">
+            <option>$500–$1,000</option><option>$1,000–$2,500</option>
+            <option>$2,500–$5,000</option><option>$5,000+</option>
+          </select>
+        </label>
+        <label>Timeline
+          <select name="timeline">
+            <option>ASAP</option><option>1–2 months</option><option>3–6 months</option><option>Flexible</option>
           </select>
         </label>
 
-        <!-- Logistics -->
+        <!-- Logistics / rooms count -->
         <label>Access / Parking
           <select name="decor_access">
             <option>Easy</option>
@@ -141,15 +193,12 @@
           <input name="count" type="number" min="1" value="1">
         </label>
 
-        <!-- Budget & notes -->
-        <label>Budget Range
-          <select name="budget">
-            <option>$500–$1,000</option><option>$1,000–$2,500</option>
-            <option>$2,500–$5,000</option><option>$5,000+</option>
-          </select>
+        <!-- Notes & payment -->
+        <label>Notes / Special Requests
+          <input name="notes" placeholder="anything else we should know">
         </label>
-        <label>Notes / Style Inspiration
-          <input name="notes" placeholder="mood, palette, Pinterest, must-keeps">
+        <label>Payment Preference
+          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
         </label>
       </div>
 
@@ -161,11 +210,11 @@
     </form>
   </main>
 
-  <!-- EmailJS (optional, only if you're using email) -->
+  <!-- EmailJS (optional) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
-  <!-- Tiny dropdown behavior -->
+  <!-- Dropdown behavior (local to this page) -->
   <script>
     (function(){
       const dd  = document.getElementById('quoteDropdown');
