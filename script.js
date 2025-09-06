@@ -243,6 +243,104 @@ if (formOrg){
   });
 }
 
+/* ============================
+   DECOR/STAGING — TIME ESTIMATE & SQUARE ROUTING (HIDDEN)
+   ============================ */
+
+/* Square links for hidden services */
+const SQUARE_DECOR_SMALL  = "https://book.squareup.com/appointments/..."; // ≤2.5h team
+const SQUARE_DECOR_MEDIUM = "https://book.squareup.com/appointments/..."; // ≤4h team
+const SQUARE_DECOR_LARGE  = "https://book.squareup.com/appointments/..."; // ≤6h team
+const SQUARE_DECOR_XL     = "https://book.squareup.com/appointments/..."; // >6h team
+
+function estimateHoursDecor(data){
+  const type = data.decor_type || "Interior Decorating (refresh)";
+  const scope = data.decor_scope || "Light refresh (styling)";
+  const room = data.decor_room || "Living Room";
+  const count = Math.max(1, Number(data.count||1));
+
+  // Base solo hours per room (very light starting points)
+  const basePerRoom = {
+    "Living Room": 3,
+    "Bedroom": 2.5,
+    "Dining Room": 2.5,
+    "Home Office": 2.5,
+    "Kitchen / Nook": 2.5,
+    "Entryway": 1.5,
+    "Multiple Rooms": 3 // will multiply by count anyway
+  };
+  let solo = (basePerRoom[room] ?? 2.5) * count;
+
+  // Scope multiplier
+  if (scope === "Light refresh (styling)") solo *= 1.0;
+  if (scope === "Refresh + small sourcing") solo *= 1.3;
+  if (scope === "Full design (sourcing + install)") solo *= 1.8;
+
+  // Project type adjustments
+  if (type.includes("Staging — Occupied")) solo *= 1.2;
+  if (type.includes("Staging — Vacant"))   solo *= 1.6;
+
+  // Furniture sourcing
+  const furn = data.decor_furniture || "No";
+  if (furn === "Yes — a few pieces") solo += 1.0;
+  if (furn === "Yes — multiple pieces") solo += 2.0;
+
+  // Install complexity
+  const install = data.decor_install || "Light (art, textiles)";
+  if (install === "Moderate (art + small furniture)") solo += 1.0;
+  if (install === "Heavy (multiple furniture + window treatments)") solo += 2.0;
+
+  // Shopping trips
+  const trips = Number(data.decor_shopping || 0);
+  if (trips > 0) solo += trips * 1.0; // 1 hr per trip (prep + checkout)
+
+  // Access
+  const access = data.decor_access || "Easy";
+  if (access === "Stairs / elevator") solo += 0.5;
+  if (access === "HOA / tight timing") solo += 0.75;
+
+  // Round & convert to team hours (team=2 default)
+  const roundHalf = n => Math.round(n*2)/2;
+  solo = roundHalf(solo);
+  const teamHours = roundHalf(solo / 2);
+  return { soloHours: solo, teamHours };
+}
+
+function squareUrlForDecor(teamHours){
+  if (teamHours <= 2.5) return SQUARE_DECOR_SMALL;
+  if (teamHours <= 4)   return SQUARE_DECOR_MEDIUM;
+  if (teamHours <= 6)   return SQUARE_DECOR_LARGE;
+  return SQUARE_DECOR_XL;
+}
+
+/* Hook into Decor form submit */
+const formDecor = document.getElementById('intakeFormDecor');
+if (formDecor){
+  formDecor.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(formDecor).entries());
+    const price = calcDecor(data); // your existing price logic
+    document.getElementById('estimateDecor').textContent = `Ballpark Estimate: $${price}`;
+
+    const { teamHours } = estimateHoursDecor(data);
+    const url = squareUrlForDecor(teamHours);
+    ensureScheduleButton('estimateDecor', url);
+
+    // (Optional) email
+    sendEstimateEmail(
+      "YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_DECOR",
+      {
+        to_email:data.email, to_name:data.name||"there",
+        estimate:`$${price}`, room:data.decor_room||data.room||"", count:data.count||"1",
+        addons:data.addons||"None", budget:data.budget||"",
+        notes:data.notes||"", phone:data.phone||"", address:data.address||"",
+        action_link:"https://YOUR-USERNAME.github.io/the-finishing-touch/intake-decor.html"
+      },
+      document.getElementById('emailStatusDecor')
+    );
+  });
+}
+
 
 /* ============================
    ORGANIZING — COMPETITIVE PRICING
@@ -382,5 +480,6 @@ if (contactForm){
     }catch(err){ status.textContent = "Message not sent. Please try again."; console.error(err); }
   });
 }
+
 
 
