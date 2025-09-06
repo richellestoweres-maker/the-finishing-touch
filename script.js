@@ -143,11 +143,11 @@ function ensureScheduleButton(estElId, url){
    ORGANIZING — TIME ESTIMATE & SQUARE ROUTING (HIDDEN)
    ============================ */
 
-/* Square links for hidden services (create like Cleaning, with durations+buffers) */
-const SQUARE_ORG_SMALL  = "https://book.squareup.com/appointments/..."; // ≤2.5h team
-const SQUARE_ORG_MEDIUM = "https://book.squareup.com/appointments/..."; // ≤4h team
-const SQUARE_ORG_LARGE  = "https://book.squareup.com/appointments/..."; // ≤6h team
-const SQUARE_ORG_XL     = "https://book.squareup.com/appointments/..."; // >6h team
+/* ✅ Real Square links for Organizing */
+const SQUARE_ORG_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN"; // ≤2.5h team
+const SQUARE_ORG_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E"; // ≤4h team
+const SQUARE_ORG_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC"; // ≤6h team
+const SQUARE_ORG_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS"; // >6h team
 
 function estimateHoursOrganizing(data){
   // Base solo hours by area & size
@@ -207,33 +207,56 @@ function estimateHoursOrganizing(data){
 }
 
 function squareUrlForOrganizing(teamHours){
-  if (teamHours <= 2.5) return SQUARE_ORG_SMALL;
-  if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;
-  if (teamHours <= 6)   return SQUARE_ORG_LARGE;
-  return SQUARE_ORG_XL;
+  if (teamHours <= 2.5) return SQUARE_ORG_SMALL;   // Small
+  if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;  // Medium
+  if (teamHours <= 6)   return SQUARE_ORG_LARGE;   // Large
+  return SQUARE_ORG_XL;                            // XL
 }
 
-/* Hook into the existing Organizing form submit (keep your price email if you want) */
+/* Create/refresh the Organizing schedule button (unique ID so it won't clash) */
+function ensureScheduleButtonOrganizing(estElId, url){
+  const estEl = document.getElementById(estElId);
+  if (!estEl) return;
+  let btn = document.getElementById("scheduleOnSquareOrganizing");
+  if (!btn){
+    btn = document.createElement("a");
+    btn.id = "scheduleOnSquareOrganizing";
+    btn.className = "btn btn-solid";
+    btn.style.marginTop = "10px";
+    btn.textContent = "Schedule on Square";
+    estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+  }
+  btn.href = url;
+  btn.target = "_blank";
+  btn.rel = "noopener";
+}
+
+/* Hook into the Organizing form submit */
 const formOrg = document.getElementById('intakeFormOrganizing');
 if (formOrg){
   formOrg.addEventListener('submit', (e)=>{
     e.preventDefault();
     const data = Object.fromEntries(new FormData(formOrg).entries());
-    const price = calcOrganizing(data); // you already had this
-    document.getElementById('estimateOrganizing').textContent = `Ballpark Estimate: $${price}`;
 
+    // 1) Price shown to client
+    const price = calcOrganizing(data);
+    const estEl = document.getElementById('estimateOrganizing');
+    if (estEl) estEl.textContent = `Ballpark Estimate: $${price}`;
+
+    // 2) Hidden time → Square link
     const { teamHours } = estimateHoursOrganizing(data);
     const url = squareUrlForOrganizing(teamHours);
 
-    // Reuse the cleaning helper to render the button
-    ensureScheduleButton('estimateOrganizing', url);
+    // 3) Button (unique to Organizing)
+    ensureScheduleButtonOrganizing('estimateOrganizing', url);
 
-    // (Optional) email
+    // 4) Optional: email (no time shown)
     sendEstimateEmail(
       "YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_ORG",
       {
         to_email:data.email, to_name:data.name||"there",
-        estimate:`$${price}`, spaces:data.spaces||"", complexity:data.org_clutter||"",
+        estimate:`$${price}`,
+        spaces:data.spaces||"", complexity:data.org_clutter||"",
         team:data.team||"2", addons:data.addons||"None",
         notes:data.notes||"", phone:data.phone||"", address:data.address||"",
         action_link:"https://YOUR-USERNAME.github.io/the-finishing-touch/intake-organizing.html"
@@ -480,6 +503,7 @@ if (contactForm){
     }catch(err){ status.textContent = "Message not sent. Please try again."; console.error(err); }
   });
 }
+
 
 
 
