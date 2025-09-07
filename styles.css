@@ -1,5 +1,5 @@
 :root{
-  --taupe-900:#524a46;
+  --taupe-900:#524a46; /* text & icon taupe */
   --taupe-800:#5b524e;
   --taupe-100:#efe7de;
   --paper:#fbf8f4;
@@ -8,6 +8,7 @@
   --shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
+/* Base */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -27,19 +28,19 @@ h1,h2,h3{
 /* Header */
 .site-header{
   background:linear-gradient(#efe6db,#e9dfd3);
-  border-bottom:1px solid #eadfd4
+  border-bottom:1px solid #eadfd4;
 }
 .header-inner{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:14px 0
+  padding:14px 0;
 }
 .brand{display:flex;align-items:center;gap:.7rem}
 
-/* ✅ Vase logo uses your uploaded PNG (logo-vase.png) */
+/* Vase logo PNG */
 .vase-logo{
-  width:34px;         /* slightly larger than before */
+  width:34px;
   height:44px;
   display:inline-block;
   background-image:url('logo-vase.png');
@@ -47,7 +48,7 @@ h1,h2,h3{
   background-size:contain;
   background-position:center;
   vertical-align:middle;
-  margin-right:8px;   /* breathing room between vase + text */
+  margin-right:8px;
 }
 @media (min-width:900px){
   .vase-logo{ width:40px; height:52px; }
@@ -57,37 +58,37 @@ h1,h2,h3{
   font-family:"Playfair Display",serif;
   font-weight:600;
   letter-spacing:.2px;
-  color:var(--taupe-900)
+  color:var(--taupe-900);
 }
 .main-nav{display:flex;align-items:center;gap:22px}
 .main-nav a{
   color:var(--taupe-900);
   text-decoration:none;
   font-weight:600;
-  opacity:.95
+  opacity:.95;
 }
 
-/* Buttons (base) */
+/* Buttons */
 .btn{
   display:inline-block;
   padding:.7rem 1rem;
   border-radius:999px;
   font-weight:700;
   cursor:pointer;
-  text-decoration:none
+  text-decoration:none;
 }
 .btn-outline{
   border:1.5px solid var(--taupe-900);
   color:var(--taupe-900);
-  background:transparent
+  background:transparent;
 }
 .btn-solid{
   background:var(--accent);
   color:#2a2624;
-  border:0
+  border:0;
 }
 
-/* NEW: Top-right auth button */
+/* Top-right auth button */
 .btn-auth{
   padding:.55rem .9rem;
   border:1.5px solid var(--taupe-900);
@@ -100,7 +101,7 @@ h1,h2,h3{
 }
 .btn-auth:hover{ background:#f6f2ed; }
 
-/* Quote dropdown (generic / header) */
+/* Quote dropdown – generic style (also used in hero) */
 .quote-dropdown{position:relative}
 .quote-dropdown .quote-menu{
   position:absolute; right:0; top:110%;
@@ -121,17 +122,17 @@ h1,h2,h3{
 .hero-media img{width:100%;height:100%;object-fit:cover;object-position:center}
 .hero-scrim{
   position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.45))
+  background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.45));
 }
 .hero-content{
   position:absolute;inset:0;display:grid;place-items:center;
-  text-align:center;color:#fff
+  text-align:center;color:#fff;
 }
 .script-kicker{font-family:"Allura",cursive;font-size:2rem}
 .hero-title{font-size:3rem;margin:.5rem 0}
 .hero-sub{margin:0 0 1.1rem}
 
-/* NEW: Bold hero “Get Your Quote” button & dropdown */
+/* Bold hero “Get Your Quote” */
 .btn-quote{
   display:inline-block;
   padding:.9rem 1.25rem;
@@ -145,7 +146,7 @@ h1,h2,h3{
 }
 .btn-quote:hover{ background:rgba(255,255,255,.16); }
 
-/* Hero dropdown container/menu */
+/* Hero dropdown position */
 .hero .quote-dropdown{ position:relative; display:inline-block; margin-top:.2rem; }
 .hero .quote-menu{
   position:absolute; left:0; top:calc(100% + 8px);
@@ -168,7 +169,7 @@ h1,h2,h3{
 .cards{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:22px
+  gap:22px;
 }
 .card{
   background:var(--card);
@@ -184,19 +185,20 @@ h1,h2,h3{
 }
 .card h3{margin:.4rem 0}
 
-/* Single, clean service-icon rule */
+/* Service icons (your PNGs) */
 .service-icon{
   width:48px;
   height:auto;
   margin:0 auto 12px auto;
   display:block;
+  filter: none; /* keep original taupe colors from your PNGs */
 }
 
 /* About */
 .about-grid{
   display:grid;
   grid-template-columns:1.1fr .9fr;
-  gap:30px;align-items:center
+  gap:30px;align-items:center;
 }
 .about-photo img{width:100%;border-radius:16px;box-shadow:var(--shadow)}
 
@@ -205,15 +207,15 @@ h1,h2,h3{
 .contact-grid{
   display:grid;
   grid-template-columns:1.1fr .9fr;
-  gap:28px
+  gap:28px;
 }
 .contact-form,.contact-details{
-  background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)
+  background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow);
 }
 label{display:grid;gap:6px;font-weight:600}
 input,textarea,select{
   border:1px solid #e3d9ce;border-radius:12px;
-  padding:.75rem;background:#fffdfb;color:var(--taupe-900)
+  padding:.75rem;background:#fffdfb;color:var(--taupe-900);
 }
 .status{opacity:.9}
 
@@ -221,7 +223,7 @@ input,textarea,select{
 .site-footer{background:#efe6db;border-top:1px solid #e2d6c9}
 .site-footer p{
   margin:0;padding:16px 0;text-align:center;
-  color:var(--taupe-900);font-weight:600
+  color:var(--taupe-900);font-weight:600;
 }
 
 /* Responsive */
