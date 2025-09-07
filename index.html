@@ -210,8 +210,214 @@
 
   <!-- Site JS (defer = no reload flicker) -->
   <script src="script.js?v=6" defer></script>
+
+  <!-- === Finishing Touch — AI Concierge Chat === -->
+<div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+<div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
+  <div class="ftt-chat-header">
+    <div>
+      <div class="ftt-title">The Finishing Touch</div>
+      <div class="ftt-subtitle">AI Concierge • human on request</div>
+    </div>
+    <button class="ftt-close" aria-label="Close chat">×</button>
+  </div>
+
+  <div id="ftt-thread" class="ftt-thread"></div>
+
+  <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+    <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+    <button class="ftt-send" type="submit">Send</button>
+  </form>
+
+  <div class="ftt-quick">
+    <button data-q="pricing">Pricing</button>
+    <button data-q="availability">Availability</button>
+    <button data-q="services">Services</button>
+    <button data-q="book">Book now</button>
+    <button data-q="human">Talk to a person</button>
+  </div>
+</div>
+
+<script>
+/* ====== CONFIG (edit these) ====== */
+const FTT = {
+  timezone: "America/Chicago",
+  intakeAnchor: "#intake",
+  bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+  email: "contact.thefinishingtouch.tx@gmail.com",
+  facebookPage: "thefinishingtouch.tx",
+  messengerDeepLink: "https://m.me/thefinishingtouch.tx", // handoff path
+  // Business hours (local): Mon–Fri 9–5
+  hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
+};
+
+/* ====== Tiny AI-lite brain (intent rules) ====== */
+function detectIntent(text) {
+  const t = text.toLowerCase();
+
+  if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
+  if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+  if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+  if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
+  if (/(area|serve|location|where|zip|city)/.test(t)) return "service_area";
+  if (/(book|booking|schedule now)/.test(t)) return "book";
+  if (/(cancel|resched|policy)/.test(t)) return "policies";
+  if (/(move[-\s]?out|moveout|make ready)/.test(t)) return "moveout";
+  return "fallback";
+}
+
+function isWithinBusinessHours() {
+  try {
+    const now = new Date();
+    // Convert to Central time without external libs (approx by locale)
+    const locale = "en-US";
+    const options = { timeZone: FTT.timezone, hour12: false, weekday: "short", hour: "2-digit", minute: "2-digit" };
+    const parts = new Intl.DateTimeFormat(locale, options).formatToParts(now);
+    const hh = +(parts.find(p=>p.type==="hour")?.value || "0");
+    const mm = +(parts.find(p=>p.type==="minute")?.value || "0");
+    const dayShort = parts.find(p=>p.type==="weekday")?.value || "";
+    const dayMap = {Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6};
+    const wd = dayMap[dayShort] ?? now.getDay();
+
+    const [oH,oM] = FTT.hours.open.split(":").map(Number);
+    const [cH,cM] = FTT.hours.close.split(":").map(Number);
+    const afterOpen = (hh>oH) || (hh===oH && mm>=oM);
+    const beforeClose = (hh<cH) || (hh===cH && mm<=cM);
+    return FTT.hours.days.includes(wd) && afterOpen && beforeClose;
+  } catch { return false; }
+}
+
+/* ====== Responses ====== */
+function answer(intent, userText) {
+  const hoursNote = isWithinBusinessHours()
+    ? "We’re online now—ask me anything or say “human” to chat with a person."
+    : "We’re offline at the moment, but I can still help or route your message to a person.";
+
+  const intakeLink = `<a href="${FTT.intakeAnchor}">Start Intake</a>`;
+  const bookLink = `<a href="${FTT.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
+
+  switch (intent) {
+    case "pricing":
+      return [
+        "Here’s a quick pricing overview (final quote depends on size/condition):",
+        "• Initial/Deep Clean: typically $350–$400 for average homes.",
+        "• Standard Maintenance: commonly $275–$300.",
+        "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + ".",
+        hoursNote
+      ].join("<br>");
+    case "availability":
+      return [
+        "We update availability live in Square.",
+        bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.",
+        hoursNote
+      ].join("<br>");
+    case "services":
+      return [
+        "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
+        "• Deep/Initial: top-to-bottom detail.",
+        "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
+        "• Move-Out/Make-Ready: includes inside cabinets, fridge, oven (by request).",
+        "Want the full checklist? " + intakeLink + " and I’ll tailor it to your home."
+      ].join("<br>");
+    case "service_area":
+      return "We serve League City, Friendswood, Pearland, Kemah, Galveston, and nearby areas. Not sure if you’re in range? Drop your ZIP and I’ll confirm.";
+    case "moveout":
+      return [
+        "Move-Out / Make-Ready includes high-detail surfaces, baseboards, appliances (add-on), cabinets (inside), and fixtures.",
+        "Share square footage + number of beds/baths via " + intakeLink + " and I’ll estimate time and price."
+      ].join("<br>");
+    case "policies":
+      return "Cancellation policy: clients provide 24-hour notice (fee may apply), contractors 48-hour notice. We’ll confirm details in your intake.";
+    case "book":
+      return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
+    case "human":
+      return [
+        "Absolutely. I’ll hand you to a person.",
+        isWithinBusinessHours()
+          ? `Tap <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
+          : `We’re offline. You can still <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT.email}">${FTT.email}</a> and we’ll reply ASAP.`
+      ].join("<br>");
+    default:
+      return [
+        "I can help with pricing, availability, services, service area, and move-outs.",
+        "Try asking “what’s your pricing?” or “do you have Friday slots?”",
+        "Say “human” any time to talk to a person."
+      ].join("<br>");
+  }
+}
+
+/* ====== UI wiring ====== */
+const el = {
+  launcher: document.getElementById("ftt-chat-launcher"),
+  panel: document.getElementById("ftt-chat"),
+  thread: document.getElementById("ftt-thread"),
+  close: null,
+  input: null,
+  form: null,
+  quick: null,
+};
+
+function addMsg(html, who="bot") {
+  const b = document.createElement("div");
+  b.className = `ftt-bubble ${who}`;
+  b.innerHTML = html;
+  el.thread.appendChild(b);
+  el.thread.scrollTop = el.thread.scrollHeight;
+}
+
+function greet() {
+  addMsg("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.", "bot");
+}
+
+function initChat() {
+  el.close = el.panel.querySelector(".ftt-close");
+  el.input = document.getElementById("ftt-input");
+  el.form = document.getElementById("ftt-inputbar");
+  el.quick = document.querySelector(".ftt-quick");
+
+  el.launcher.addEventListener("click", () => {
+    el.panel.hidden = false;
+    if (!el.thread.dataset.greeted) {
+      greet();
+      el.thread.dataset.greeted = "1";
+    }
+    el.input.focus();
+  });
+
+  el.close.addEventListener("click", () => {
+    el.panel.hidden = true;
+  });
+
+  el.form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = el.input.value.trim();
+    if (!text) return;
+    addMsg(text, "me");
+    el.input.value = "";
+    setTimeout(() => {
+      const intent = detectIntent(text);
+      addMsg(answer(intent, text), "bot");
+      // Optional: send transcript to your inbox via Formspree or a serverless function.
+    }, 200);
+  });
+
+  el.quick.addEventListener("click", (e) => {
+    if (e.target.matches("button[data-q]")) {
+      const q = e.target.getAttribute("data-q");
+      const canned = {pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human"}[q];
+      addMsg(e.target.textContent, "me");
+      setTimeout(()=> addMsg(answer(canned, e.target.textContent), "bot"), 200);
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initChat);
+</script>
+
 </body>
 </html>
+
 
 
 
