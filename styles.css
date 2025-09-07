@@ -83,6 +83,14 @@ h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--taupe-900);mar
   margin-bottom: 12px;
   display: inline-block;
 }
+.service-icon {
+  width: 48px; 
+  height: auto;
+  margin-bottom: 12px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /* About */
 .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
@@ -105,6 +113,7 @@ input,textarea,select{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
