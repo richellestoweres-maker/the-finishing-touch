@@ -388,36 +388,35 @@ try {
   }
 } catch (err){ console.error("Organizing handler error:", err); }
 
-  /* DECOR form */
-  try {
-    const formDecor = document.getElementById('intakeFormDecor');
-    if (formDecor){
-      formDecor.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(formDecor).entries());
+ /* DECOR form */
+try {
+  const formDecor = document.getElementById('intakeFormDecor');
+  if (formDecor){
+    formDecor.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(formDecor).entries());
 
-        const price = calcDecor(data);
-        const estEl = document.getElementById('estimateDecor');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+      // Optional: show estimate once before redirect
+      const price = calcDecor(data);
+      const estEl = document.getElementById('estimateDecor');
+      if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
 
-        const { teamHours } = estimateHoursDecor(data);
-        const url = squareUrlForDecor(teamHours);
-        ensureScheduleButton('estimateDecor', url, 'scheduleOnSquareDecor');
+      const { teamHours } = estimateHoursDecor(data);
+      const url = squareUrlForDecor(teamHours);
 
-        sendEstimateEmail(
-          "YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_DECOR",
-          {
-            to_email:data.email, to_name:data.name||"there",
-            estimate:`$${price}`, room:data.decor_room||data.room||"", count:data.count||"1",
-            addons:data.addons||"None", budget:data.budget||"",
-            notes:data.notes||"", phone:data.phone||"", address:data.address||"",
-            action_link:"https://YOUR-USERNAME.github.io/the-finishing-touch/intake-decor.html"
-          },
-          document.getElementById('emailStatusDecor')
-        );
-      });
-    }
-  } catch (err){ console.error("Decor handler error:", err); }
+      // Safety: ensure it's a direct service link (calendar-only UX)
+      if (!/\/services\//.test(url)) {
+        console.warn("Square URL is not a direct service link. Calendar-only may fail:", url);
+      }
+
+      // Optional fallback button (keep if you like)
+      ensureScheduleButton('estimateDecor', url, 'scheduleOnSquareDecor');
+
+      // 🚀 Auto-redirect straight to the calendar
+      window.location.href = url;
+    });
+  }
+} catch (err){ console.error("Decor handler error:", err); }
 
   /* CONTACT form (homepage) */
   try {
@@ -444,6 +443,7 @@ try {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
 
 
