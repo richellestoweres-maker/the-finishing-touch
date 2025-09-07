@@ -169,7 +169,7 @@ h1,h2,h3{
 .cards{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:22px;
+  gap:22px
 }
 .card{
   background:var(--card);
@@ -185,14 +185,37 @@ h1,h2,h3{
 }
 .card h3{margin:.4rem 0}
 
-/* Service icons (your PNGs) */
-.service-icon{
-  width:48px;
-  height:auto;
-  margin:0 auto 12px auto;
-  display:block;
-  filter: none; /* keep original taupe colors from your PNGs */
+/* ✅ Replace your old .service-icon rules with this */
+.service-icon {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  margin-bottom: 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
+
+/* Cleaning – spray bottle */
+.icon-clean {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 2h6v2H9V2zm7 3V4h2v2l-2 6h-2l2-7zM5 9h6l2 7h2v6H3v-6h2l-2-7zm2 2-1 5h6l-1-5H7z'/></svg>");
+}
+
+/* Staging – vase with pampas */
+.icon-staging {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2a2 2 0 0 1 2 2v3h-4V4a2 2 0 0 1 2-2zm-2 7h4l2 10a4 4 0 0 1-4 4 4 4 0 0 1-4-4l2-10z'/></svg>");
+}
+
+/* Organizing – stacked boxes */
+.icon-organizing {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 3h8v6H3V3zm10 0h8v6h-8V3zM3 11h8v10H3V11zm10 0h8v10h-8V11z'/></svg>");
+}
+
+/* Holiday – ornament */
+.icon-holiday {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2a2 2 0 0 0-2 2v2a8 8 0 1 0 4 0V4a2 2 0 0 0-2-2zm0 8a6 6 0 1 1 0 12 6 6 0 0 1 0-12z'/></svg>");
+}
+
 
 /* About */
 .about-grid{
@@ -231,6 +254,7 @@ input,textarea,select{
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
