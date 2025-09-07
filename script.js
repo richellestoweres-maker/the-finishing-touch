@@ -358,37 +358,35 @@ try {
 } catch (err){ console.error("Cleaning handler error:", err); }
 
 
-  /* ORGANIZING form */
-  try {
-    const formOrg = document.getElementById('intakeFormOrganizing');
-    if (formOrg){
-      formOrg.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(formOrg).entries());
+ /* ORGANIZING form */
+try {
+  const formOrg = document.getElementById('intakeFormOrganizing');
+  if (formOrg){
+    formOrg.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(formOrg).entries());
 
-        const estPrice = calcOrganizing(data);
-        const estEl = document.getElementById('estimateOrganizing');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong>`;
+      // Optional: show estimate once before redirect
+      const estPrice = calcOrganizing(data);
+      const estEl = document.getElementById('estimateOrganizing');
+      if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong>`;
 
-        const { teamHours } = estimateHoursOrganizing(data);
-        const url = squareUrlForOrganizing(teamHours);
-        ensureScheduleButton('estimateOrganizing', url, 'scheduleOnSquareOrganizing');
+      const { teamHours } = estimateHoursOrganizing(data);
+      const url = squareUrlForOrganizing(teamHours);
 
-        sendEstimateEmail(
-          "YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_ORG",
-          {
-            to_email: data.email, to_name: data.name || "there",
-            estimate:`$${estPrice}`,
-            spaces:data.spaces||"", complexity:data.org_clutter||"",
-            team:data.team||"2", addons:data.addons||"None",
-            notes:data.notes||"", phone:data.phone||"", address:data.address||"",
-            action_link:"https://YOUR-USERNAME.github.io/the-finishing-touch/intake-organizing.html"
-          },
-          document.getElementById('emailStatusOrganizing')
-        );
-      });
-    }
-  } catch (err){ console.error("Organizing handler error:", err); }
+      // Safety: ensure it's a direct service link (calendar-only UX)
+      if (!/\/services\//.test(url)) {
+        console.warn("Square URL is not a direct service link. Calendar-only may fail:", url);
+      }
+
+      // Optional fallback button (keep if you like)
+      ensureScheduleButton('estimateOrganizing', url, 'scheduleOnSquareOrganizing');
+
+      // 🚀 Auto-redirect straight to the calendar
+      window.location.href = url;
+    });
+  }
+} catch (err){ console.error("Organizing handler error:", err); }
 
   /* DECOR form */
   try {
@@ -446,6 +444,7 @@ try {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
 
 
