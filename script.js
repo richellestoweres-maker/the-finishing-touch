@@ -40,7 +40,7 @@ function ensureScheduleButton(estElId, url, buttonId){
 }
 
 /* =================================================
-   CLEANING — COMPETITIVE PRICING (your original)
+   CLEANING — COMPETITIVE PRICING
    ================================================= */
 const initialBySqft = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
 const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
@@ -102,11 +102,10 @@ function calcCleaning(data){
 /* =================================================
    CLEANING — TIME ESTIMATE (2-person team, HIDDEN)
    ================================================= */
-/* ✅ Your real Square links */
-const SQUARE_CLEAN_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN"; // ≤2.5h team
-const SQUARE_CLEAN_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ"; // ≤3.5h team
-const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7P-WWWNHSAV"; // ≤5h team (verify)
-const SQUARE_CLEAN_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK"; // >5h team
+const SQUARE_CLEAN_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
+const SQUARE_CLEAN_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
+const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7P-WWWNHSAV";
+const SQUARE_CLEAN_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK";
 
 const addonHoursCleaning = {
   "oven":0.25, "fridge":0.25, "refrigerator":0.25,
@@ -121,7 +120,6 @@ function estimateHoursCleaning(data){
   const otherRooms = Number(data.other_rooms||0);
   const stories = String(data.stories||"1");
 
-  // base solo hours
   let solo = 2;
   if (sqft === "<1000") solo = 2;
   else if (sqft === "1000–2000") solo = 3;
@@ -129,7 +127,6 @@ function estimateHoursCleaning(data){
   else if (sqft === "3000–4000") solo = 5;
   else solo = 6;
 
-  // Airbnb uses bedrooms more
   if (service === "Airbnb Turnover"){
     if (beds <= 1) solo = 2;
     else if (beds === 2) solo = 2.5;
@@ -138,20 +135,18 @@ function estimateHoursCleaning(data){
     else solo = 4;
   }
 
-  // extras
-  solo += Math.max(0, beds - 3)  * 0.5;   // +30m per bedroom over 3
-  solo += Math.max(0, baths - 2) * 0.75;  // +45m per bath over 2
-  solo += Math.max(0, otherRooms) * 0.25; // +15m per “other room”
-  if (stories === "2") solo += 0.25;      // +15m stairs/travel
+  solo += Math.max(0, beds - 3)  * 0.5;
+  solo += Math.max(0, baths - 2) * 0.75;
+  solo += Math.max(0, otherRooms) * 0.25;
+  if (stories === "2") solo += 0.25;
   solo += parseAddonsHours(data.addons, addonHoursCleaning);
 
-  // service multipliers
   if (service === "Deep Clean") solo *= 1.5;
   if (service === "Move-In / Move-Out Clean") solo *= 2;
   if (service === "Initial Clean") solo *= 1.2;
 
   solo = roundHalf(solo);
-  const team = roundHalf(solo / 2); // 2-person team
+  const team = roundHalf(solo / 2);
   return { soloHours: solo, teamHours: team };
 }
 function squareUrlForCleaning(teamHours){
@@ -170,7 +165,7 @@ const addonPricesOrganizing = {"bins":25,"labels":20,"bins/labels":40,"haul-away
 
 function calcOrganizing(data){
   const spaces = Math.max(1, Number(data.spaces||1));
-  const complexity = data.complexity || "Moderate"; // fallback if page uses simple selector
+  const complexity = data.complexity || "Moderate";
   const team = Math.max(1, Number(data.team||1));
   const hoursEach = hoursPerSpace[complexity] || 2;
   let estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
@@ -182,13 +177,12 @@ function calcOrganizing(data){
 /* ======================================
    ORGANIZING — TIME & SQUARE ROUTING
    ====================================== */
-const SQUARE_ORG_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN"; // ≤2.5h
-const SQUARE_ORG_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E"; // ≤4h
-const SQUARE_ORG_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC"; // ≤6h
-const SQUARE_ORG_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS"; // >6h
+const SQUARE_ORG_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN";
+const SQUARE_ORG_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E";
+const SQUARE_ORG_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC";
+const SQUARE_ORG_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS";
 
 function estimateHoursOrganizing(data){
-  // Base solo hours by area & size
   const area = data.org_area || "Closet";
   const size = data.org_size || "Medium";
   const baseMap = {
@@ -200,7 +194,6 @@ function estimateHoursOrganizing(data){
   };
   let solo = (baseMap[area]?.[size] ?? 3.5);
 
-  // Complexity multipliers
   const clutter = data.org_clutter || "Moderate";
   if (clutter === "Light") solo *= 0.9;
   if (clutter === "Moderate") solo *= 1.0;
@@ -211,7 +204,6 @@ function estimateHoursOrganizing(data){
   if (decision === "Average") solo *= 1.0;
   if (decision === "Slow") solo *= 1.25;
 
-  // Inventory adjustments
   const volume = data.org_volume || "Medium";
   if (volume === "Medium") solo += 0.5;
   if (volume === "High") solo += 1.0;
@@ -220,7 +212,6 @@ function estimateHoursOrganizing(data){
   if (containers === "Some (up to 10)") solo += 0.5;
   if (containers === "Many (10+)") solo += 1.0;
 
-  // Logistics
   const access = data.org_access || "Easy (ground floor)";
   if (access === "Stairs") solo += 0.5;
   if (access === "Tight spaces / HOA constraints") solo += 0.75;
@@ -230,7 +221,6 @@ function estimateHoursOrganizing(data){
   if (haul === "4–8 bags/boxes") solo += 1.0;
   if (haul === "Carload+") solo += 1.5;
 
-  // Convert to team hours (default team=2 unless specified)
   const teamCount = Math.max(1, Number(data.team || 2));
   solo = roundHalf(solo);
   const teamHours = roundHalf(solo / teamCount);
@@ -260,10 +250,10 @@ function calcDecor(data){
 /* ======================================
    DECOR/STAGING — TIME & SQUARE ROUTING
    ====================================== */
-const SQUARE_DECOR_SMALL  = "https://book.squareup.com/appointments/..."; // ≤2.5h team
-const SQUARE_DECOR_MEDIUM = "https://book.squareup.com/appointments/..."; // ≤4h team
-const SQUARE_DECOR_LARGE  = "https://book.squareup.com/appointments/..."; // ≤6h team
-const SQUARE_DECOR_XL     = "https://book.squareup.com/appointments/..."; // >6h team
+const SQUARE_DECOR_SMALL  = "https://book.squareup.com/appointments/...";
+const SQUARE_DECOR_MEDIUM = "https://book.squareup.com/appointments/...";
+const SQUARE_DECOR_LARGE  = "https://book.squareup.com/appointments/...";
+const SQUARE_DECOR_XL     = "https://book.squareup.com/appointments/...";
 
 function estimateHoursDecor(data){
   const type = data.decor_type || "Interior Decorating (refresh)";
@@ -313,17 +303,30 @@ function squareUrlForDecor(teamHours){
    Optional: EmailJS helper
    ====================================== */
 function sendEstimateEmail(serviceId, templateId, vars, statusEl){
-  if (!window.emailjs) return; // skip silently if not configured
+  if (!window.emailjs) return;
   emailjs.send(serviceId, templateId, vars)
     .then(()=> { if (statusEl) statusEl.textContent = "Your estimate has been emailed. Check your inbox!"; })
     .catch(err => { console.error(err); if (statusEl) statusEl.textContent = "Estimate shown above. Email failed."; });
 }
 
 /* ==========================================================
-   WIRE EVERYTHING AFTER DOM IS PARSED (prevents page reload)
+   WIRE EVERYTHING AFTER DOM PARSE
    ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("script.js loaded");
+  /* Hero dropdown */
+  const dd  = document.getElementById('quoteDropdownHero');
+  const btn = document.getElementById('quoteBtnHero');
+  const menu= document.getElementById('quoteMenuHero');
+  if (dd && btn && menu){
+    const toggle = (open) => {
+      dd.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      menu.setAttribute('aria-hidden', String(!open));
+    };
+    btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
+    document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
+    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
+  }
 
   /* CLEANING form */
   try {
@@ -366,12 +369,10 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(formOrg).entries());
 
-        // Your simpler price model (kept as-is)
         const estPrice = calcOrganizing(data);
         const estEl = document.getElementById('estimateOrganizing');
         if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong>`;
 
-        // Hidden time → right Square service
         const { teamHours } = estimateHoursOrganizing(data);
         const url = squareUrlForOrganizing(teamHours);
         ensureScheduleButton('estimateOrganizing', url, 'scheduleOnSquareOrganizing');
@@ -433,6 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = document.getElementById('contactStatus');
         if (!window.emailjs){
           if (status) status.textContent = "Thanks! We’ll be in touch shortly.";
+          contactForm.reset();
           return;
         }
         try{
@@ -447,6 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
+
 
 
 
