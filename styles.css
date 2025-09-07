@@ -239,6 +239,54 @@ input,textarea,select{
 }
 .status{opacity:.9}
 
+/* === Finishing Touch Chat styles === */
+#ftt-chat-launcher{
+  position: fixed; right: 20px; bottom: 20px;
+  width: 56px; height: 56px; border-radius: 50%;
+  display:flex; align-items:center; justify-content:center;
+  background:#0f172a; color:#fff; font-size:22px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25); cursor:pointer; z-index: 9999;
+}
+#ftt-chat{
+  position: fixed; right: 20px; bottom: 90px; width: 360px; max-width: 90vw;
+  background:#fff; border:1px solid #eee; border-radius: 16px; overflow: hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.25); z-index: 9999; font-family: system-ui, sans-serif;
+}
+.ftt-chat-header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 14px; background:#0f172a; color:#fff;
+}
+.ftt-title{ font-weight:700; }
+.ftt-subtitle{ font-size:12px; opacity:.8; }
+.ftt-close{ background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; }
+.ftt-thread{
+  max-height: 50vh; overflow:auto; padding:12px; background:#f8fafc;
+  display:flex; flex-direction:column; gap:10px;
+}
+.ftt-bubble{
+  max-width: 85%; padding:10px 12px; border-radius:12px; line-height:1.35;
+  font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.ftt-bubble.bot{ background:#fff; border:1px solid #eef2f7; align-self:flex-start; }
+.ftt-bubble.me{ background:#0ea5e9; color:#fff; align-self:flex-end; }
+.ftt-inputbar{
+  display:flex; gap:8px; padding:10px; border-top:1px solid #eef2f7; background:#fff;
+}
+#ftt-input{
+  flex:1; border:1px solid #e5e7eb; border-radius:10px; padding:10px; font-size:14px;
+}
+.ftt-send{
+  background:#0f172a; color:#fff; border:none; border-radius:10px; padding:0 14px; cursor:pointer;
+}
+.ftt-quick{ display:flex; gap:6px; padding:8px 10px; flex-wrap:wrap; background:#fff; border-top:1px solid #eef2f7; }
+.ftt-quick button{
+  font-size:12px; border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer;
+}
+@media (max-width: 480px){
+  #ftt-chat{ right:10px; bottom:80px; width:92vw; }
+}
+
+
 /* Footer */
 .site-footer{background:#efe6db;border-top:1px solid #e2d6c9}
 .site-footer p{
@@ -251,6 +299,7 @@ input,textarea,select{
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
