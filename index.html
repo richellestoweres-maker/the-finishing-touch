@@ -10,48 +10,51 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="page-home">
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand">
-        <span class="vase-logo" aria-hidden="true"></span>
-        <span class="brand-name">The Finishing Touch</span>
+  
+<!-- Header -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">
+      <span class="vase-logo" aria-hidden="true"></span>
+      <span class="brand-name">The Finishing Touch</span>
+    </div>
+
+    <nav class="main-nav">
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+
+      <!-- NEW: Auth button replaces the old header quote dropdown -->
+      <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-media">
+    <img src="bed-banner.png" alt="Luxury styled bedroom by The Finishing Touch">
+    <div class="hero-scrim"></div>
+  </div>
+
+  <div class="container hero-content">
+    <p class="script-kicker">Luxury Interior Services</p>
+    <h1 class="hero-title">The Finishing Touch</h1>
+    <p class="hero-sub">Curating clean, styled, and peaceful living spaces.</p>
+
+    <!-- NEW: Hero Quote Dropdown (bolder, replaces 'Book Your Luxury Clean') -->
+    <div class="quote-dropdown" id="quoteDropdownHero">
+      <button class="btn btn-quote" id="quoteBtnHero" aria-expanded="false" aria-controls="quoteMenuHero">
+        Get Your Quote ▾
+      </button>
+      <div class="quote-menu" id="quoteMenuHero" role="menu" aria-hidden="true">
+        <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
+        <a role="menuitem" href="intake-organizing.html">Organizing</a>
+        <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
       </div>
-      <nav class="main-nav">
-        <a href="#services">Services</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-
-        <!-- Quote Dropdown -->
-        <div class="quote-dropdown" id="quoteDropdown">
-          <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
-            Get Your Quote ▾
-          </button>
-          <div class="quote-menu" id="quoteMenu" role="menu" aria-hidden="true">
-            <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
-            <a role="menuitem" href="intake-organizing.html">Organizing</a>
-            <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-          </div>
-        </div>
-      </nav>
     </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-media">
-      <!-- Updated to your root-level image -->
-      <img src="bed-banner.png" alt="Luxury styled bedroom by The Finishing Touch">
-      <div class="hero-scrim"></div>
-    </div>
-    <div class="container hero-content">
-      <p class="script-kicker">Luxury Interior Services</p>
-      <h1 class="hero-title">The Finishing Touch</h1>
-      <p class="hero-sub">Curating clean, styled, and peaceful living spaces.</p>
-      <!-- TEMP: route to Cleaning intake; replace with your Calendly URL when ready -->
-      <a class="btn btn-outline" href="intake-cleaning.html" id="bookBtn">Book Your Luxury Clean</a>
-    </div>
-  </section>
+  </div>
+</section>
 
 <!-- Services -->
 <section id="services" class="section services">
@@ -160,6 +163,7 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
