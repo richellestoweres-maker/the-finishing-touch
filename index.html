@@ -111,22 +111,91 @@
   </section>
 
   <!-- Contact -->
-  <section id="contact" class="section contact-strip">
-    <div class="container contact-grid">
-      <form id="contactForm" class="contact-form">
-        <h3>Contact</h3>
-        <label>Name<input name="name" required></label>
-        <label>Email<input name="email" type="email" required></label>
-        <label>Message<textarea name="message" rows="3" required></textarea></label>
-        <button class="btn btn-solid" type="submit">Send</button>
-        <p id="contactStatus" class="status"></p>
-      </form>
-      <div class="contact-details">
-        <p><span class="icon">✉️</span> contact.thefinishingtouch.tx@gmail.com</p>
-        <p><span class="icon"></span> facebook.com/thefinishingtouch.tx</p>
+<section id="contact" class="section contact-strip">
+  <div class="container contact-grid">
+    <!-- Left: Smart contact form (optional) -->
+    <form id="contactForm" class="contact-form" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+      <h3>Contact</h3>
+
+      <label>
+        Name
+        <input name="name" required>
+      </label>
+
+      <label>
+        Email
+        <input name="email" type="email" required>
+      </label>
+
+      <label>
+        Message
+        <textarea name="message" rows="3" required></textarea>
+      </label>
+
+      <!-- Hidden meta so you know which page the message came from -->
+      <input type="hidden" name="source" value="The Finishing Touch – Contact section">
+
+      <button class="btn btn-solid" type="submit">Send</button>
+      <p id="contactStatus" class="status" aria-live="polite"></p>
+
+      <p class="microcopy">
+        Prefer faster booking? <a href="#intake">Start the Client Intake</a> and we’ll route you straight to scheduling.
+      </p>
+    </form>
+
+    <!-- Right: Direct actions + social -->
+    <div class="contact-details">
+      <h3>Connect</h3>
+
+      <!-- Primary funnel -->
+      <div class="cta-stack">
+        <a class="btn btn-primary" href="#intake" aria-label="Start Client Intake">
+          <i class="fas fa-clipboard-list" aria-hidden="true"></i> Start Intake
+        </a>
+        <a class="btn btn-outline" href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9" target="_blank" rel="noopener" aria-label="Book now">
+          <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
+        </a>
+      </div>
+
+      <!-- Direct contact (no phone) -->
+      <ul class="link-list">
+        <li>
+          <a href="mailto:contact.thefinishingtouch.tx@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            contact.thefinishingtouch.tx@gmail.com
+          </a>
+        </li>
+        <li>
+          <a href="https://facebook.com/thefinishingtouch.tx" target="_blank" rel="noopener">
+            <i class="fab fa-facebook" aria-hidden="true"></i>
+            facebook.com/thefinishingtouch.tx
+          </a>
+        </li>
+        <li>
+          <!-- Messenger deep link: replace with your page username -->
+          <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">
+            <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
+            Message us on Facebook
+          </a>
+        </li>
+      </ul>
+
+      <!-- Optional: show your FB timeline right here -->
+      <div class="social-embed">
+        <h4>Latest Updates</h4>
+        <div class="fb-page"
+             data-href="https://www.facebook.com/thefinishingtouch.tx"
+             data-tabs="timeline"
+             data-width="380"
+             data-height=""
+             data-hide-cover="false"
+             data-show-facepile="false">
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- Footer -->
   <footer class="site-footer">
@@ -143,6 +212,7 @@
   <script src="script.js?v=6" defer></script>
 </body>
 </html>
+
 
 
 
