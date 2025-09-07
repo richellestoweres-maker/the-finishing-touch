@@ -7,45 +7,100 @@
   --accent:#d2bda9;
   --shadow:0 10px 30px rgba(0,0,0,.08);
 }
+
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:var(--paper);color:var(--taupe-800);font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6}
-h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--taupe-900);margin:0 0 .5rem}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--taupe-800);
+  font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  line-height:1.6;
+}
+h1,h2,h3{
+  font-family:"Playfair Display",Georgia,serif;
+  color:var(--taupe-900);
+  margin:0 0 .5rem;
+}
 .container{width:min(1120px,92%);margin:0 auto}
 
 /* Header */
-.site-header{background:linear-gradient(#efe6db,#e9dfd3);border-bottom:1px solid #eadfd4}
-.header-inner{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.site-header{
+  background:linear-gradient(#efe6db,#e9dfd3);
+  border-bottom:1px solid #eadfd4
+}
+.header-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 0
+}
 .brand{display:flex;align-items:center;gap:.7rem}
 
 /* ✅ Vase logo uses your uploaded PNG (logo-vase.png) */
-.vase-logo {
-  width: 34px;         /* slightly larger than before */
-  height: 44px;
-  display: inline-block;
-  background-image: url('logo-vase.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  vertical-align: middle;
-  margin-right: 8px;   /* more breathing room between vase + text */
+.vase-logo{
+  width:34px;         /* slightly larger than before */
+  height:44px;
+  display:inline-block;
+  background-image:url('logo-vase.png');
+  background-repeat:no-repeat;
+  background-size:contain;
+  background-position:center;
+  vertical-align:middle;
+  margin-right:8px;   /* breathing room between vase + text */
+}
+@media (min-width:900px){
+  .vase-logo{ width:40px; height:52px; }
 }
 
-@media (min-width: 900px) {
-  .vase-logo {
-    width: 40px;       /* upscale further for desktop */
-    height: 52px;
-  }
+.brand-name{
+  font-family:"Playfair Display",serif;
+  font-weight:600;
+  letter-spacing:.2px;
+  color:var(--taupe-900)
 }
-
-.brand-name{font-family:"Playfair Display",serif;font-weight:600;letter-spacing:.2px;color:var(--taupe-900)}
 .main-nav{display:flex;align-items:center;gap:22px}
-.main-nav a{color:var(--taupe-900);text-decoration:none;font-weight:600;opacity:.95}
-.btn{display:inline-block;padding:.7rem 1rem;border-radius:999px;font-weight:700;cursor:pointer;text-decoration:none}
-.btn-outline{border:1.5px solid var(--taupe-900);color:var(--taupe-900);background:transparent}
-.btn-solid{background:var(--accent);color:#2a2624;border:0}
+.main-nav a{
+  color:var(--taupe-900);
+  text-decoration:none;
+  font-weight:600;
+  opacity:.95
+}
 
-/* Quote dropdown */
+/* Buttons (base) */
+.btn{
+  display:inline-block;
+  padding:.7rem 1rem;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none
+}
+.btn-outline{
+  border:1.5px solid var(--taupe-900);
+  color:var(--taupe-900);
+  background:transparent
+}
+.btn-solid{
+  background:var(--accent);
+  color:#2a2624;
+  border:0
+}
+
+/* NEW: Top-right auth button */
+.btn-auth{
+  padding:.55rem .9rem;
+  border:1.5px solid var(--taupe-900);
+  color:var(--taupe-900);
+  background:#fff;
+  border-radius:999px;
+  font-weight:800;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.btn-auth:hover{ background:#f6f2ed; }
+
+/* Quote dropdown (generic / header) */
 .quote-dropdown{position:relative}
 .quote-dropdown .quote-menu{
   position:absolute; right:0; top:110%;
@@ -55,7 +110,8 @@ h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--taupe-900);mar
 }
 .quote-dropdown.open .quote-menu{display:block}
 .quote-dropdown .quote-menu a{
-  display:block; padding:10px 12px; text-decoration:none; color:var(--taupe-900); border-radius:10px; font-weight:600;
+  display:block; padding:10px 12px; text-decoration:none;
+  color:var(--taupe-900); border-radius:10px; font-weight:600;
 }
 .quote-dropdown .quote-menu a:hover{background:#f6f2ed}
 
@@ -63,56 +119,117 @@ h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--taupe-900);mar
 .hero{position:relative;isolation:isolate}
 .hero-media{position:relative;height:56vh;min-height:420px;overflow:hidden}
 .hero-media img{width:100%;height:100%;object-fit:cover;object-position:center}
-.hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.45))}
-.hero-content{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff}
+.hero-scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.45))
+}
+.hero-content{
+  position:absolute;inset:0;display:grid;place-items:center;
+  text-align:center;color:#fff
+}
 .script-kicker{font-family:"Allura",cursive;font-size:2rem}
 .hero-title{font-size:3rem;margin:.5rem 0}
 .hero-sub{margin:0 0 1.1rem}
+
+/* NEW: Bold hero “Get Your Quote” button & dropdown */
+.btn-quote{
+  display:inline-block;
+  padding:.9rem 1.25rem;
+  border-radius:999px;
+  font-weight:800;
+  letter-spacing:.2px;
+  border:2px solid #fff;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  backdrop-filter: blur(6px);
+}
+.btn-quote:hover{ background:rgba(255,255,255,.16); }
+
+/* Hero dropdown container/menu */
+.hero .quote-dropdown{ position:relative; display:inline-block; margin-top:.2rem; }
+.hero .quote-menu{
+  position:absolute; left:0; top:calc(100% + 8px);
+  background:#fff; border:1px solid #e3d9ce; border-radius:12px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+  display:none; min-width:240px; padding:8px; z-index:1000;
+}
+.hero .quote-dropdown.open .quote-menu{ display:block; }
+.hero .quote-menu a{
+  display:block; padding:10px 12px; text-decoration:none;
+  color:var(--taupe-900); border-radius:10px; font-weight:700;
+}
+.hero .quote-menu a:hover{ background:#f6f2ed; }
 
 /* Sections */
 .section{padding:56px 0}
 
 /* Services */
 .services{background:#f3ece4}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
-.card{background:var(--card);border-radius:14px;padding:22px;text-align:center;box-shadow:var(--shadow)}
-.card h3{margin:.4rem 0}
-.service-icon {
-  width: 42px;
-  height: 42px;
-  margin-bottom: 12px;
-  display: inline-block;
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px
 }
-.service-icon {
-  width: 48px; 
-  height: auto;
-  margin-bottom: 12px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:22px;
+  text-align:center;
+  box-shadow:var(--shadow);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 34px rgba(0,0,0,.10);
+}
+.card h3{margin:.4rem 0}
+
+/* Single, clean service-icon rule */
+.service-icon{
+  width:48px;
+  height:auto;
+  margin:0 auto 12px auto;
+  display:block;
 }
 
 /* About */
-.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+.about-grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:30px;align-items:center
+}
 .about-photo img{width:100%;border-radius:16px;box-shadow:var(--shadow)}
 
 /* Contact */
 .contact-strip{background:linear-gradient(#f5efe8,#efe6db)}
-.contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:28px}
-.contact-form,.contact-details{background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.contact-grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:28px
+}
+.contact-form,.contact-details{
+  background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow)
+}
 label{display:grid;gap:6px;font-weight:600}
-input,textarea,select{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:var(--taupe-900)}
+input,textarea,select{
+  border:1px solid #e3d9ce;border-radius:12px;
+  padding:.75rem;background:#fffdfb;color:var(--taupe-900)
+}
 .status{opacity:.9}
 
 /* Footer */
 .site-footer{background:#efe6db;border-top:1px solid #e2d6c9}
-.site-footer p{margin:0;padding:16px 0;text-align:center;color:var(--taupe-900);font-weight:600}
+.site-footer p{
+  margin:0;padding:16px 0;text-align:center;
+  color:var(--taupe-900);font-weight:600
+}
 
 /* Responsive */
 @media (max-width:1000px){
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
