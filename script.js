@@ -99,13 +99,11 @@ function calcCleaning(data){
   return Math.round(est);
 }
 
-/* =================================================
-   CLEANING — TIME ESTIMATE (2-person team, HIDDEN)
-   ================================================= */
 const SQUARE_CLEAN_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
 const SQUARE_CLEAN_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
-const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV"; // ✅ fixed (removed hyphen)
+const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV"; // ✅ fixed
 const SQUARE_CLEAN_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK";
+
 
 
 const addonHoursCleaning = {
@@ -329,38 +327,36 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
   }
 
-  /* CLEANING form */
-  try {
-    const formCleaning = document.getElementById('intakeFormCleaning');
-    if (formCleaning){
-      formCleaning.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(formCleaning).entries());
+ /* CLEANING form */
+try {
+  const formCleaning = document.getElementById('intakeFormCleaning');
+  if (formCleaning){
+    formCleaning.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(formCleaning).entries());
 
-        const price = calcCleaning(data);
-        const estEl = document.getElementById('estimateCleaning');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+      // Optional: still show estimate once before redirect
+      const price = calcCleaning(data);
+      const estEl = document.getElementById('estimateCleaning');
+      if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
 
-        const { teamHours } = estimateHoursCleaning(data);
-        const squareUrl = squareUrlForCleaning(teamHours);
-        ensureScheduleButton('estimateCleaning', squareUrl, 'scheduleOnSquareCleaning');
+      const { teamHours } = estimateHoursCleaning(data);
+      const squareUrl = squareUrlForCleaning(teamHours);
 
-        sendEstimateEmail(
-          "YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_CLEANING",
-          {
-            to_email: data.email, to_name: data.name || "there",
-            estimate:`$${price}`, service:data.service, sqft:data.sqft,
-            beds:data.beds, baths:data.baths, other_rooms:data.other_rooms||"0",
-            stories:data.stories, frequency:data.frequency,
-            addons:data.addons||"None", notes:data.notes||"",
-            phone:data.phone||"", address:data.address||"",
-            action_link:"https://YOUR-USERNAME.github.io/the-finishing-touch/intake-cleaning.html"
-          },
-          document.getElementById('emailStatusCleaning')
-        );
-      });
-    }
-  } catch (err){ console.error("Cleaning handler error:", err); }
+      // 🔒 Safety: ensure it’s a direct /services/ link so Square shows only calendar
+      if (!/\/services\//.test(squareUrl)) {
+        console.warn("Square URL is not a direct service link. Calendar-only may fail:", squareUrl);
+      }
+
+      // Optional: keep a fallback button visible
+      ensureScheduleButton('estimateCleaning', squareUrl, 'scheduleOnSquareCleaning');
+
+      // 🚀 AUTO-REDIRECT straight to calendar (your requested flow)
+      window.location.href = squareUrl;
+    });
+  }
+} catch (err){ console.error("Cleaning handler error:", err); }
+
 
   /* ORGANIZING form */
   try {
@@ -450,6 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
 
 
