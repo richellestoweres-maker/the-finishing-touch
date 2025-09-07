@@ -185,16 +185,13 @@ h1,h2,h3{
 }
 .card h3{margin:.4rem 0}
 
-/* ✅ Replace your old .service-icon rules with this */
 .service-icon {
-  width: 48px;
-  height: 48px;
-  display: inline-block;
+  font-size: 42px;
+  color: var(--taupe-900);
   margin-bottom: 12px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+  display: block;
 }
+
 
 /* Cleaning – spray bottle */
 .icon-clean {
@@ -254,6 +251,7 @@ input,textarea,select{
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
