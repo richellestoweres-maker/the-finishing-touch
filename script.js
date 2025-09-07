@@ -104,8 +104,9 @@ function calcCleaning(data){
    ================================================= */
 const SQUARE_CLEAN_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
 const SQUARE_CLEAN_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
-const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7P-WWWNHSAV";
+const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV"; // ✅ fixed (removed hyphen)
 const SQUARE_CLEAN_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK";
+
 
 const addonHoursCleaning = {
   "oven":0.25, "fridge":0.25, "refrigerator":0.25,
@@ -449,6 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
 
 
