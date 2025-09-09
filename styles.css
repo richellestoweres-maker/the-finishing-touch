@@ -108,3 +108,139 @@ h1,h2,h3{
   padding:.55rem .9rem; border:1.5px solid var(--taupe-900);
   color:var(--taupe-900); background:#fff; border-radius:999px;
   font-weight:800; text-decoration:none; white-space:nowrap;
+
+  /* ================================
+   Intake Forms — Polished Look
+   (no markup changes required)
+   ================================ */
+
+/* Target any form whose id starts with "intakeForm" */
+form[id^="intakeForm"]{
+  background:#fff;
+  border:1px solid #e9dfd3;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  padding:22px;
+}
+
+/* Headings inside forms (if you use <h2>/<h3>) */
+form[id^="intakeForm"] h2,
+form[id^="intakeForm"] h3{
+  margin-top:.25rem;
+  margin-bottom:.75rem;
+}
+
+/* Labels & fields */
+form[id^="intakeForm"] > label,
+form[id^="intakeForm"] .field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+form[id^="intakeForm"] label{
+  font-weight:700;
+  color:var(--taupe-900);
+}
+
+/* Inputs, selects, textareas */
+form[id^="intakeForm"] input[type="text"],
+form[id^="intakeForm"] input[type="email"],
+form[id^="intakeForm"] input[type="tel"],
+form[id^="intakeForm"] input[type="number"],
+form[id^="intakeForm"] select,
+form[id^="intakeForm"] textarea{
+  appearance:none;
+  border:1.5px solid #e3d9ce;
+  border-radius:12px;
+  background:#fffdfb;
+  padding:.85rem 1rem;
+  font-size:16px;
+  color:var(--taupe-900);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+form[id^="intakeForm"] textarea{ min-height:110px; resize:vertical; }
+
+/* Focus ring */
+form[id^="intakeForm"] input:focus,
+form[id^="intakeForm"] select:focus,
+form[id^="intakeForm"] textarea:focus{
+  outline:none;
+  border-color:#d2bda9;
+  box-shadow:0 0 0 3px rgba(210,189,169,.25);
+}
+
+/* Inline help/microcopy if you use <small> or .help */
+form[id^="intakeForm"] small,
+form[id^="intakeForm"] .help{
+  color:#6b625e;
+  opacity:.9;
+}
+
+/* Actions row */
+form[id^="intakeForm"] .actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:10px;
+}
+
+/* Submit / primary buttons inside forms */
+form[id^="intakeForm"] .btn,
+form[id^="intakeForm"] button[type="submit"]{
+  padding:.85rem 1.1rem;
+  border-radius:999px;
+  font-weight:800;
+}
+
+/* Estimate callout boxes on any intake page */
+#estimateCleaning, #estimateOrganizing, #estimateDecor{
+  margin-top:10px;
+  padding:12px 14px;
+  background:#fffdfb;
+  border:1px solid #e3d9ce;
+  border-radius:12px;
+  font-weight:700;
+  color:var(--taupe-900);
+}
+#estimateCleaning strong,
+#estimateOrganizing strong,
+#estimateDecor strong{
+  font-size:18px;
+}
+
+/* Optional: pretty option “pills” if you wrap radios like <label class="choice"><input type="radio"> Text</label> */
+form[id^="intakeForm"] .choices{ display:flex; flex-wrap:wrap; gap:8px; }
+form[id^="intakeForm"] .choice{
+  display:inline-flex; align-items:center; gap:8px;
+  border:1.5px solid #e3d9ce; border-radius:999px;
+  padding:.55rem .9rem; cursor:pointer; background:#fff;
+  font-weight:600; color:var(--taupe-900);
+}
+form[id^="intakeForm"] .choice input{ accent-color:#524a46; }
+form[id^="intakeForm"] .choice:has(input:checked){
+  border-color:#d2bda9;
+  box-shadow:0 0 0 3px rgba(210,189,169,.22);
+}
+
+/* Two-column layout on larger screens (auto with your existing labels) */
+@media (min-width: 900px){
+  form[id^="intakeForm"]{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px 18px;
+  }
+  /* Make each label/field behave like a grid item */
+  form[id^="intakeForm"] > label,
+  form[id^="intakeForm"] .field{ margin-bottom:0; }
+  /* Full-width helpers (notes, estimate, actions, textareas) */
+  #estimateCleaning, #estimateOrganizing, #estimateDecor,
+  form[id^="intakeForm"] .actions,
+  form[id^="intakeForm"] textarea,
+  form[id^="intakeForm"] .full,
+  form[id^="intakeForm"] .choices{
+    grid-column: 1 / -1;
+  }
+}
+
