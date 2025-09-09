@@ -547,72 +547,82 @@ function squareUrlForDecor(teamHours){
 /* ======================================
    HOLIDAY DECORATING — INDOOR ONLY
    ====================================== */
-const HOLI_HOURLY = 85;          // stylist hourly
-const HOLI_MIN_HOURS = 3;        // minimum billable (solo)
+const HOLI_HOURLY = 85;          // job priced by total labor-hours (crew size doesn't change total)
+const HOLI_MIN_HOURS = 3;        // minimum billable (solo-hours)
 
 function hoursForTrees(count, tallest, style, ribbon){
   const t = Number(count)||0; if(!t) return 0;
   const map = {
-    "≤6 ft": {base:1.5, addl:1.2},
-    "7–8 ft": {base:2.5, addl:1.8},
+    "≤6 ft":   {base:1.5, addl:1.2},
+    "7–8 ft":  {base:2.5, addl:1.8},
     "9–10 ft": {base:3.5, addl:2.5},
     "11–12+ ft": {base:4.5, addl:3.0}
   };
   const m = map[tallest] || map["7–8 ft"];
   let h = m.base + Math.max(0,t-1)*m.addl;
   const styleFactor = style==="Full design + sourcing" ? 1.6
-                      : style==="Needs ribbon/theme refresh" ? 1.25 : 1.0;
+                    : style==="Needs ribbon/theme refresh" ? 1.25 : 1.0;
   h *= styleFactor;
-  if ((ribbon||"").toLowerCase()==="yes") h += 0.4 * t;
+  if ((ribbon||"").toLowerCase()==="yes") h += 0.4 * t; // ribbon/mesh time bump
   return h;
 }
 
 function estimateHoursHoliday(data){
   // INDOOR ONLY
-  let indoor = 0;
+  let hrs = 0;
 
-  indoor += hoursForTrees(
+  // Trees
+  hrs += hoursForTrees(
     Number(data.trees||0),
     data.tallest || "7–8 ft",
     data.tree_style || "Ready: ornaments & lights on hand",
     data.tree_ribbon || "No"
   );
 
-  indoor += (Number(data.wreaths||0) * 0.4);
-  indoor += (Number(data.garland_sections||0) * 0.6);
-  indoor += (Number(data.stair_sections||0) * 0.7);
-  if ((data.mantle||"No")==="Yes") indoor += 0.8;
-  indoor += (Number(data.tablescapes||0) * 0.4);
+  // Interior decor elements
+  hrs += (Number(data.wreaths||0) * 0.4);
+  hrs += (Number(data.garland_sections||0) * 0.6);
+  hrs += (Number(data.stair_sections||0) * 0.7);
+  if ((data.mantle||"No")==="Yes") hrs += 0.8;
+  hrs += (Number(data.tablescapes||0) * 0.4);
 
   // Logistics
   const storage = data.storage || "Garage/closet (easy)";
-  if (storage === "Attic (ladder)") indoor += 0.5;
-  if (storage === "Offsite pickup") indoor += 1.0;
+  if (storage === "Attic (ladder)") hrs += 0.5;
+  if (storage === "Offsite pickup") hrs += 1.0;
 
   // Shopping trips
   const trips = (data.shopping_trips||"0")==="3+" ? 3 : Number(data.shopping_trips||0);
-  indoor += trips * 1.0;
+  hrs += trips * 1.0;
 
-  // Baseline overhead
-  let solo = indoor + 0.5;
-  solo = Math.max(HOLI_MIN_HOURS, roundHalf(solo));
+  // Baseline overhead & minimum
+  hrs = Math.max(HOLI_MIN_HOURS, roundHalf(hrs + 0.5));
 
-  const teamCount = Math.max(1, Number(data.team||2));
-  const teamHours = roundHalf(solo / teamCount);
+  // Suggest schedule time if 2-person crew (for your internal planning)
+  const teamHours = roundHalf(hrs / 2);
 
   // Teardown ~60% of install hours
-  const teardownHours = (data.teardown||"Yes")==="Yes" ? roundHalf(solo * 0.6) : 0;
+  const teardownHours = (data.teardown||"Yes")==="Yes" ? roundHalf(hrs * 0.6) : 0;
 
-  return { soloHours: solo, teamHours, teardownHours };
+  return { soloHours: hrs, teamHours, teardownHours };
 }
 
 function calcHoliday(data){
   const { soloHours, teamHours, teardownHours } = estimateHoursHoliday(data);
-  const teamCount = Math.max(1, Number(data.team||2));
-  const labor = Math.round(HOLI_HOURLY * soloHours * teamCount);
-  const teardown = teardownHours ? Math.round(HOLI_HOURLY * teardownHours * teamCount) : 0;
-  return { price: labor, soloHours, teamHours, teardownHours, teardownPrice: teardown };
+
+  // Pricing is based on total solo-hours; crew size does not change total labor-hours.
+  const priceInstall = Math.round(HOLI_HOURLY * soloHours);
+  const priceTeardown = teardownHours ? Math.round(HOLI_HOURLY * teardownHours) : 0;
+
+  return {
+    price: priceInstall,
+    soloHours,
+    teamHours,
+    teardownHours,
+    teardownPrice: priceTeardown
+  };
 }
+
 
 /* ==========================================================
    WIRE EVERYTHING AFTER DOM PARSE
@@ -932,4 +942,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
