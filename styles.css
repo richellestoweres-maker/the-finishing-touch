@@ -8,6 +8,10 @@
   --shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
+/* Smooth page scrolling and anchor offset so header never hides content */
+html { scroll-behavior: smooth; }
+#book { scroll-margin-top: 80px; }
+
 /* Base */
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -316,6 +320,7 @@ input,textarea,select{
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
