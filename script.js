@@ -1,10 +1,12 @@
 /* =========================================
    The Finishing Touch — script.js (DROP-IN)
+   Intake → Quote → Book (embedded calendar)
    ========================================= */
 "use strict";
 
 const BOOKING_SECTION_HASH = "#book";
-
+const INTAKE_UNLOCK_KEY = "ftt_intake_ok";
+const INTAKE_HINT_KEY   = "ftt_booking_hint";
 
 /* ---------- Small helpers ---------- */
 const roundHalf = n => Math.round(n * 2) / 2;
@@ -25,27 +27,11 @@ function parseAddonsHours(txt, hoursMap){
   }
   return total;
 }
-function ensureScheduleButton(estElId, url, buttonId){
-  const estEl = document.getElementById(estElId);
-  if (!estEl) return;
-  let btn = document.getElementById(buttonId);
-  if (!btn){
-    btn = document.createElement("a");
-    btn.id = buttonId;
-    btn.className = "btn btn-solid";
-    btn.style.marginTop = "10px";
-    btn.textContent = "Schedule on Square";
-    estEl.parentNode.insertBefore(btn, estEl.nextSibling);
-  }
-  btn.href = url;
-  btn.target = "_blank";
-  btn.rel = "noopener";
-}
 
-/* =================================================
+/* =========================================
    CLEANING — COMPETITIVE PRICING
-   ================================================= */
-const initialBySqft = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
+   ========================================= */
+const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
 const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
 
 const serviceMult = {
@@ -54,12 +40,16 @@ const serviceMult = {
   "Move-In / Move-Out Clean": 1.35,
   "Airbnb Turnover": 0.55
 };
-const freqDisc = {"weekly":0.85,"biweekly":0.90,"monthly":0.95,"one-time":1};
+const freqDisc = { "weekly":0.85, "biweekly":0.90, "monthly":0.95, "one-time":1 };
 const perExtraBathroom = 20, perExtraBedroom=12, perOtherRoom=10, twoStoryFee=20, petFee=12;
 
 const addonPricesCleaning = {
   "oven":35,"fridge":30,"refrigerator":30,
   "windows":80,"window":80,"baseboards":60,"laundry":18
+};
+const addonHoursCleaning = {
+  "oven":0.25, "fridge":0.25, "refrigerator":0.25,
+  "windows":1.5, "window":1.5, "baseboards":1.0, "laundry":0.5
 };
 
 function airbnbByBedrooms(beds){
@@ -70,6 +60,7 @@ function airbnbByBedrooms(beds){
   if (b === 4) return 180;
   return 200;
 }
+
 function calcCleaning(data){
   const sqft = data.sqft || "1000–2000";
   const service = data.service || "Initial Clean";
@@ -93,7 +84,7 @@ function calcCleaning(data){
   const extraBaths = Math.max(0, baths-2) * perExtraBathroom;
   const extraBeds  = Math.max(0, beds-3) * perExtraBedroom;
   const extraRooms = Math.max(0, otherRooms) * perOtherRoom;
-  const storyFee   = stories === "2" ? twoStoryFee : 0;
+  const storyFee   = (stories === "2") ? twoStoryFee : 0;
   const petsFee    = pets.trim() ? petFee : 0;
   const addonsFee  = parseAddonsList(data.addons, addonPricesCleaning);
 
@@ -101,18 +92,6 @@ function calcCleaning(data){
   if (service === "Standard Clean"){ est *= (freqDisc[frequency] || 1); }
   return Math.round(est);
 }
-
-const SQUARE_CLEAN_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
-const SQUARE_CLEAN_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
-const SQUARE_CLEAN_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV"; // ✅ fixed
-const SQUARE_CLEAN_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK";
-
-
-
-const addonHoursCleaning = {
-  "oven":0.25, "fridge":0.25, "refrigerator":0.25,
-  "windows":1.5, "window":1.5, "baseboards":1.0, "laundry":0.5
-};
 
 function estimateHoursCleaning(data){
   const sqft = data.sqft || "1000–2000";
@@ -151,39 +130,53 @@ function estimateHoursCleaning(data){
   const team = roundHalf(solo / 2);
   return { soloHours: solo, teamHours: team };
 }
-function squareUrlForCleaning(teamHours){
-  if (teamHours <= 2.5) return SQUARE_CLEAN_SMALL;
-  if (teamHours <= 3.5) return SQUARE_CLEAN_MEDIUM;
-  if (teamHours <= 5)   return SQUARE_CLEAN_LARGE;
-  return SQUARE_CLEAN_XL;
+
+/* Human-friendly hint text for booking */
+function cleaningHint(data, teamHours){
+  const service = data.service || "Initial Clean";
+  const sqft = data.sqft || "1000–2000";
+
+  const sqftLabel = {
+    "<1000":"Small (≤1,000 sq ft)",
+    "1000–2000":"Medium (1,000–2,000 sq ft)",
+    "2000–3000":"Large (2,000–3,000 sq ft)",
+    "3000–4000":"XL (3,000–4,000 sq ft)",
+    "4000+":"Estate (4,000+ sq ft)"
+  }[sqft] || "Sized by intake";
+
+  if (service === "Standard Clean"){
+    return `Standard Clean — ${sqftLabel}`;
+  }
+  if (service === "Airbnb Turnover"){
+    if (teamHours <= 2.5) return "Airbnb Turnover — Quick (≈2 hr)";
+    if (teamHours <= 3.5) return "Airbnb Turnover — Standard (≈3 hr)";
+    if (teamHours <= 5)   return "Airbnb Turnover — Extended (≈4 hr)";
+    return "Airbnb Turnover — Extended XL (4.5+ hr)";
+  }
+  // Initial / Deep / Move-Out mapped by hours
+  if (teamHours <= 2.5) return `${service} — Small (≈2–2.5 hr)`;
+  if (teamHours <= 3.5) return `${service} — Medium (≈3–3.5 hr)`;
+  if (teamHours <= 5)   return `${service} — Large (≈4–5 hr)`;
+  return `${service} — XL (5.5+ hr)`;
 }
 
-/* ======================================
-   ORGANIZING — COMPETITIVE PRICING
-   ====================================== */
+/* =========================================
+   ORGANIZING — PRICING & TIME
+   ========================================= */
 const ORG_HOURLY=65, ORG_MIN_HOURS=3;
 const hoursPerSpace = {"Light":1,"Moderate":2,"Heavy":3};
 const addonPricesOrganizing = {"bins":25,"labels":20,"bins/labels":40};
-
 
 function calcOrganizing(data){
   const spaces = Math.max(1, Number(data.spaces||1));
   const complexity = data.complexity || "Moderate";
   const team = Math.max(1, Number(data.team||1));
   const hoursEach = hoursPerSpace[complexity] || 2;
-  let estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
+  const estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
   const labor = estHours * ORG_HOURLY * team;
   const addons = parseAddonsList(data.addons, addonPricesOrganizing);
   return Math.round(labor + addons);
 }
-
-/* ======================================
-   ORGANIZING — TIME & SQUARE ROUTING
-   ====================================== */
-const SQUARE_ORG_SMALL  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN";
-const SQUARE_ORG_MEDIUM = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E";
-const SQUARE_ORG_LARGE  = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC";
-const SQUARE_ORG_XL     = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS";
 
 function estimateHoursOrganizing(data){
   const area = data.org_area || "Closet";
@@ -229,16 +222,19 @@ function estimateHoursOrganizing(data){
   const teamHours = roundHalf(solo / teamCount);
   return { soloHours: solo, teamHours };
 }
-function squareUrlForOrganizing(teamHours){
-  if (teamHours <= 2.5) return SQUARE_ORG_SMALL;
-  if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;
-  if (teamHours <= 6)   return SQUARE_ORG_LARGE;
-  return SQUARE_ORG_XL;
+
+function organizingHint(data, teamHours){
+  const area = data.org_area || "Space";
+  const size = data.org_size || "Medium";
+  if (teamHours <= 2.5) return `${area} Organizing — Small (${size}, ≈2–2.5 hr)`;
+  if (teamHours <= 4)   return `${area} Organizing — Medium (${size}, ≈3–4 hr)`;
+  if (teamHours <= 6)   return `${area} Organizing — Large (${size}, ≈5–6 hr)`;
+  return `${area} Organizing — XL (${size}, 6.5+ hr)`;
 }
 
-/* ======================================
-   DECOR/STAGING — COMPETITIVE PRICING
-   ====================================== */
+/* =========================================
+   DECOR/STAGING — PRICING & TIME
+   ========================================= */
 const decorBase = {"Living Room":500,"Bedroom":400,"Dining Room":450,"Home Office":450};
 const addonPricesDecor = {"moodboard":75,"sourcing":150,"shopping":150,"install":250,"install day":250,"window treatments":200,"art hanging":100};
 
@@ -249,14 +245,6 @@ function calcDecor(data){
   const addons = parseAddonsList(data.addons, addonPricesDecor);
   return Math.round(base + addons);
 }
-
-/* ======================================
-   DECOR/STAGING — TIME & SQUARE ROUTING
-   ====================================== */
-const SQUARE_DECOR_SMALL  = "https://book.squareup.com/appointments/...";
-const SQUARE_DECOR_MEDIUM = "https://book.squareup.com/appointments/...";
-const SQUARE_DECOR_LARGE  = "https://book.squareup.com/appointments/...";
-const SQUARE_DECOR_XL     = "https://book.squareup.com/appointments/...";
 
 function estimateHoursDecor(data){
   const type = data.decor_type || "Interior Decorating (refresh)";
@@ -295,48 +283,74 @@ function estimateHoursDecor(data){
   const teamHours = roundHalf(solo / 2);
   return { soloHours: solo, teamHours };
 }
-function squareUrlForDecor(teamHours){
-  if (teamHours <= 2.5) return SQUARE_DECOR_SMALL;
-  if (teamHours <= 4)   return SQUARE_DECOR_MEDIUM;
-  if (teamHours <= 6)   return SQUARE_DECOR_LARGE;
-  return SQUARE_DECOR_XL;
+
+function decorHint(data, teamHours){
+  const room = data.decor_room || data.room || "Room";
+  const scope = data.decor_scope || "Refresh";
+  if (teamHours <= 2.5) return `${room} — ${scope} (Small, ≈2–2.5 hr)`;
+  if (teamHours <= 4)   return `${room} — ${scope} (Medium, ≈3–4 hr)`;
+  if (teamHours <= 6)   return `${room} — ${scope} (Large, ≈5–6 hr)`;
+  return `${room} — ${scope} (XL, 6.5+ hr)`;
 }
 
-/* ======================================
-   Optional: EmailJS helper
-   ====================================== */
-function sendEstimateEmail(serviceId, templateId, vars, statusEl){
-  if (!window.emailjs) return;
-  emailjs.send(serviceId, templateId, vars)
-    .then(()=> { if (statusEl) statusEl.textContent = "Your estimate has been emailed. Check your inbox!"; })
-    .catch(err => { console.error(err); if (statusEl) statusEl.textContent = "Estimate shown above. Email failed."; });
+/* =========================================
+   Booking lock helpers
+   ========================================= */
+function saveBookingUnlock(hintText){
+  try{
+    localStorage.setItem(INTAKE_UNLOCK_KEY, "1");
+    if (hintText) localStorage.setItem(INTAKE_HINT_KEY, hintText);
+  }catch(e){}
+}
+function readBookingHint(){
+  try{ return localStorage.getItem(INTAKE_HINT_KEY) || ""; }catch(e){ return ""; }
+}
+function isUnlocked(){
+  try{ return localStorage.getItem(INTAKE_UNLOCK_KEY) === "1"; }catch(e){ return false; }
+}
+function showBookingHelper(hint){
+  const sec = document.querySelector('#book .container');
+  if (!sec) return;
+  const id = "booking-helper-note";
+  if (document.getElementById(id)) return;
+
+  const note = document.createElement("div");
+  note.id = id;
+  note.style.margin = "0 0 10px";
+  note.style.padding = "10px 12px";
+  note.style.border = "1px solid #e3d9ce";
+  note.style.borderRadius = "10px";
+  note.style.background = "#fffdfb";
+  note.style.color = "#524a46";
+  note.style.fontWeight = "700";
+  note.textContent = hint || "You're all set to book. Pick the recommended option in the services list.";
+  sec.insertBefore(note, sec.firstChild);
 }
 
-/* ==========================================================
+/* =========================================
    WIRE EVERYTHING AFTER DOM PARSE
-   ========================================================== */
+   ========================================= */
 document.addEventListener('DOMContentLoaded', () => {
-  /* Hero dropdown */
-     /* --- Safety net: force any “Book Now” links to use the embedded calendar --- */
+  /* --- Safety net: force any external Square "Book" links to use the embedded calendar --- */
   try {
     document.querySelectorAll('a[href*="book.squareup.com/appointments"]').forEach(a => {
-      a.setAttribute('href', BOOKING_SECTION_HASH); // "#book"
-      a.removeAttribute('target'); // keep them on your page
+      a.setAttribute('href', BOOKING_SECTION_HASH);
+      a.removeAttribute('target');
       a.removeAttribute('rel');
     });
   } catch (e) { console.warn(e); }
 
-  /* --- Reliable scroll to #book (works when navigating from other pages) --- */
+  /* --- Reliable scroll to #book (works from cross-page nav) --- */
   const scrollToBook = () => {
     const el = document.getElementById('book');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   if (location.hash === BOOKING_SECTION_HASH) {
-    // Scroll once on load, and again shortly after to account for the Square iframe inject
     scrollToBook();
-    setTimeout(scrollToBook, 400);
+    setTimeout(scrollToBook, 400); // after Square injects iframe
   }
 
+  /* --- Hero dropdown (intake-first CTA) --- */
   const dd  = document.getElementById('quoteDropdownHero');
   const btn = document.getElementById('quoteBtnHero');
   const menu= document.getElementById('quoteMenuHero');
@@ -351,98 +365,83 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
   }
 
- /* CLEANING form */
-try {
-  const formCleaning = document.getElementById('intakeFormCleaning');
-  if (formCleaning){
-    formCleaning.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(formCleaning).entries());
-
-      // Optional: still show estimate once before redirect
-      const price = calcCleaning(data);
-      const estEl = document.getElementById('estimateCleaning');
-      if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-
-      const { teamHours } = estimateHoursCleaning(data);
-      const squareUrl = squareUrlForCleaning(teamHours);
-
-      // 🔒 Safety: ensure it’s a direct /services/ link so Square shows only calendar
-      if (!/\/services\//.test(squareUrl)) {
-        console.warn("Square URL is not a direct service link. Calendar-only may fail:", squareUrl);
-      }
-
-      // Optional: keep a fallback button visible
-      ensureScheduleButton('estimateCleaning', squareUrl, 'scheduleOnSquareCleaning');
-
-      // 🚀 AUTO-REDIRECT straight to calendar (your requested flow)
-      window.location.href = squareUrl;
-    });
+  /* --- Unlock on homepage if intake was completed earlier --- */
+  const bookingSec = document.querySelector('.booking-embed[data-locked]');
+  if (bookingSec && isUnlocked()){
+    bookingSec.removeAttribute('data-locked');
+    const hint = readBookingHint();
+    if (hint) showBookingHelper(`Recommended: ${hint}`);
   }
-} catch (err){ console.error("Cleaning handler error:", err); }
 
+  /* ===== INTAKE FORMS (no Square redirects — unlock & return to calendar) ===== */
 
- /* ORGANIZING form */
-try {
-  const formOrg = document.getElementById('intakeFormOrganizing');
-  if (formOrg){
-    formOrg.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(formOrg).entries());
+  /* CLEANING intake */
+  try {
+    const formCleaning = document.getElementById('intakeFormCleaning');
+    if (formCleaning){
+      formCleaning.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(formCleaning).entries());
 
-      // Optional: show estimate once before redirect
-      const estPrice = calcOrganizing(data);
-      const estEl = document.getElementById('estimateOrganizing');
-      if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong>`;
+        const price = calcCleaning(data);
+        const estEl = document.getElementById('estimateCleaning');
+        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
 
-      const { teamHours } = estimateHoursOrganizing(data);
-      const url = squareUrlForOrganizing(teamHours);
+        const { teamHours } = estimateHoursCleaning(data);
+        const hint = cleaningHint(data, teamHours);
 
-      // Safety: ensure it's a direct service link (calendar-only UX)
-      if (!/\/services\//.test(url)) {
-        console.warn("Square URL is not a direct service link. Calendar-only may fail:", url);
-      }
+        // ✅ Unlock calendar for this device + show recommended option
+        saveBookingUnlock(hint);
 
-      // Optional fallback button (keep if you like)
-      ensureScheduleButton('estimateOrganizing', url, 'scheduleOnSquareOrganizing');
+        // Route back to home calendar
+        window.location.href = `index.html${BOOKING_SECTION_HASH}`;
+      });
+    }
+  } catch (err){ console.error("Cleaning handler error:", err); }
 
-      // 🚀 Auto-redirect straight to the calendar
-      window.location.href = url;
-    });
-  }
-} catch (err){ console.error("Organizing handler error:", err); }
+  /* ORGANIZING intake */
+  try {
+    const formOrg = document.getElementById('intakeFormOrganizing');
+    if (formOrg){
+      formOrg.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(formOrg).entries());
 
- /* DECOR form */
-try {
-  const formDecor = document.getElementById('intakeFormDecor');
-  if (formDecor){
-    formDecor.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(formDecor).entries());
+        const estPrice = calcOrganizing(data);
+        const estEl = document.getElementById('estimateOrganizing');
+        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong>`;
 
-      // Optional: show estimate once before redirect
-      const price = calcDecor(data);
-      const estEl = document.getElementById('estimateDecor');
-      if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+        const { teamHours } = estimateHoursOrganizing(data);
+        const hint = organizingHint(data, teamHours);
 
-      const { teamHours } = estimateHoursDecor(data);
-      const url = squareUrlForDecor(teamHours);
+        saveBookingUnlock(hint);
+        window.location.href = `index.html${BOOKING_SECTION_HASH}`;
+      });
+    }
+  } catch (err){ console.error("Organizing handler error:", err); }
 
-      // Safety: ensure it's a direct service link (calendar-only UX)
-      if (!/\/services\//.test(url)) {
-        console.warn("Square URL is not a direct service link. Calendar-only may fail:", url);
-      }
+  /* DECOR/STAGING intake */
+  try {
+    const formDecor = document.getElementById('intakeFormDecor');
+    if (formDecor){
+      formDecor.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(formDecor).entries());
 
-      // Optional fallback button (keep if you like)
-      ensureScheduleButton('estimateDecor', url, 'scheduleOnSquareDecor');
+        const price = calcDecor(data);
+        const estEl = document.getElementById('estimateDecor');
+        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
 
-      // 🚀 Auto-redirect straight to the calendar
-      window.location.href = url;
-    });
-  }
-} catch (err){ console.error("Decor handler error:", err); }
+        const { teamHours } = estimateHoursDecor(data);
+        const hint = decorHint(data, teamHours);
 
-  /* CONTACT form (homepage) */
+        saveBookingUnlock(hint);
+        window.location.href = `index.html${BOOKING_SECTION_HASH}`;
+      });
+    }
+  } catch (err){ console.error("Decor handler error:", err); }
+
+  /* CONTACT form (homepage/contact page) — optional EmailJS passthrough */
   try {
     const contactForm = document.getElementById('contactForm');
     if (contactForm){
@@ -467,18 +466,3 @@ try {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
