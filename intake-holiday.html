@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Holiday Decorating Intake – The Finishing Touch</title>
 
+  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
+  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -18,7 +20,10 @@
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
+    .hint{font-size:.9rem;opacity:.85}
     .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
+
+    /* Minimal dropdown styles (works even if global CSS changes) */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-menu{
       position:absolute; right:0; top:calc(100% + 6px);
@@ -32,6 +37,7 @@
   </style>
 </head>
 <body>
+  <!-- Header with home link + quote menu -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -44,6 +50,8 @@
         <a href="index.html#services">Services</a>
         <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
+
+        <!-- Quote Dropdown -->
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
             Get Your Quote ▾
@@ -62,17 +70,176 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Holiday Decorating Intake</div>
-    <p class="intake-note">Tell us about your holiday vision. We’ll show a quick ballpark and then send you to the booking calendar to claim a slot.</p>
+    <p class="intake-note">
+      Tell us about your holiday setup. You’ll get an instant ballpark estimate and we’ll unlock booking.
+      <br><span class="hint">Final quote depends on scope, access, and materials.</span>
+    </p>
 
     <form id="intakeFormHoliday" class="grid-1" novalidate>
+      <!-- Contact -->
       <div class="grid-2">
-        <label>Full Name<input name="name" required></label>
-        <label>Email<input name="email" type="email" required></label>
-        <label>Service Address<input name="address"></label>
-        <label>Phone<input name="phone" type="tel"></label>
+        <label>Full Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Service Address<input name="address" autocomplete="street-address"></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
+      <!-- Scope -->
       <div class="fieldset grid-2">
         <label>Scope
           <select name="scope">
-            <option>Tree + Mantle</opt
+            <option>Indoor</option>
+            <option>Outdoor</option>
+            <option selected>Both</option>
+          </select>
+        </label>
+        <label>Preferred Install Window
+          <input name="window" placeholder="e.g., week of Nov 18–22, mornings OK">
+        </label>
+      </div>
+
+      <!-- Trees -->
+      <div class="fieldset grid-2">
+        <label>Number of Trees
+          <input name="trees" type="number" min="0" value="1">
+        </label>
+        <label>Tallest Tree Height
+          <select name="tallest">
+            <option>≤6 ft</option><option selected>7–8 ft</option>
+            <option>9–10 ft</option><option>11–12+ ft</option>
+          </select>
+        </label>
+        <label>Tree Readiness
+          <select name="tree_style">
+            <option>Ready: ornaments & lights on hand</option>
+            <option>Needs ribbon/theme refresh</option>
+            <option>Full design + sourcing</option>
+          </select>
+        </label>
+        <label>Ribbon/mesh design on trees?
+          <select name="tree_ribbon"><option>No</option><option>Yes</option></select>
+        </label>
+      </div>
+
+      <!-- Indoor decor -->
+      <div class="fieldset grid-2">
+        <label>Wreaths (qty)
+          <input name="wreaths" type="number" min="0" value="0">
+        </label>
+        <label>Garland (9' sections)
+          <input name="garland_sections" type="number" min="0" value="0">
+        </label>
+        <label>Staircase (10' runs)
+          <input name="stair_sections" type="number" min="0" value="0">
+        </label>
+        <label>Mantle styling
+          <select name="mantle"><option>No</option><option>Yes</option></select>
+        </label>
+      </div>
+
+      <!-- Outdoor decor -->
+      <div class="fieldset grid-2">
+        <label>Perimeter Lights (per ~50 ft)
+          <input name="perimeter_units" type="number" min="0" value="0">
+        </label>
+        <label>Yard Décor (qty of pieces)
+          <input name="yard_decor" type="number" min="0" value="0">
+        </label>
+        <label>Outdoor Power Available?
+          <select name="power"><option>Yes</option><option>No</option><option>Not sure</option></select>
+        </label>
+        <label>Ladder Needed?
+          <select name="ladder"><option>No</option><option>Yes</option><option>Not sure</option></select>
+        </label>
+      </div>
+
+      <!-- Logistics & shopping -->
+      <div class="fieldset grid-2">
+        <label>Storage Location
+          <select name="storage">
+            <option>Garage/closet (easy)</option>
+            <option>Attic (ladder)</option>
+            <option>Offsite pickup</option>
+          </select>
+        </label>
+        <label>Shopping Trips Needed
+          <select name="shopping_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
+        </label>
+        <label>Team Size Preferred
+          <select name="team"><option>1</option><option selected>2</option><option>3</option></select>
+        </label>
+        <label>Budget for Materials (optional)
+          <input name="budget" placeholder="$ e.g., 300–500">
+        </label>
+      </div>
+
+      <!-- Teardown -->
+      <div class="fieldset grid-2">
+        <label>Do you want teardown in January?
+          <select name="teardown"><option selected>Yes</option><option>No</option></select>
+        </label>
+        <label>Preferred Teardown Window
+          <input name="teardown_window" placeholder="e.g., first week of January">
+        </label>
+      </div>
+
+      <!-- Consents (client-facing) -->
+      <div class="fieldset grid-1">
+        <label><input type="checkbox" name="consent_bg" required>
+          I consent to a background check for any contractor(s) entering my home.</label>
+        <label><input type="checkbox" name="consent_photos_internal" required>
+          I allow before/after photos for job verification (required; internal only).</label>
+        <label><input type="checkbox" name="consent_photos_marketing">
+          I also consent to select photos being used in marketing/socials.</label>
+        <div class="grid-2">
+          <label>Type your name as signature<input name="client_signature" required></label>
+          <label>Date<input name="client_sig_date" type="date"></label>
+        </div>
+      </div>
+
+      <!-- Notes & payment -->
+      <div class="fieldset grid-2">
+        <label>Notes / Special Requests
+          <input name="notes" placeholder="colors, themes, HOA timing, etc.">
+        </label>
+        <label>Payment Preference
+          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-row">
+        <button class="btn btn-solid" type="submit">Get Holiday Estimate</button>
+        <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <p id="emailStatusHoliday" style="opacity:.9"></p>
+        <p class="hint">After you submit, booking on the home page will be unlocked.</p>
+      </div>
+    </form>
+  </main>
+
+  <!-- EmailJS (optional, only if you're using email) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
+
+  <!-- Tiny dropdown behavior (self-contained here) -->
+  <script>
+    (function(){
+      const dd  = document.getElementById('quoteDropdown');
+      const btn = document.getElementById('quoteBtn');
+      const menu= document.getElementById('quoteMenu');
+      if (!dd || !btn || !menu) return;
+      function toggle(open){
+        dd.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        menu.setAttribute('aria-hidden', String(!open));
+      }
+      btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
+      document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
+    })();
+  </script>
+
+  <!-- Site JS (pricing/estimate wiring) -->
+  <script src="script.js?v=6" defer></script>
+</body>
+</html>
