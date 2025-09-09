@@ -163,7 +163,8 @@ function squareUrlForCleaning(teamHours){
    ====================================== */
 const ORG_HOURLY=65, ORG_MIN_HOURS=3;
 const hoursPerSpace = {"Light":1,"Moderate":2,"Heavy":3};
-const addonPricesOrganizing = {"bins":25,"labels":20,"bins/labels":40,"haul-away":35,"donation":30,"donation drop-off":30};
+const addonPricesOrganizing = {"bins":25,"labels":20,"bins/labels":40};
+
 
 function calcOrganizing(data){
   const spaces = Math.max(1, Number(data.spaces||1));
@@ -466,6 +467,7 @@ try {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
 
 
