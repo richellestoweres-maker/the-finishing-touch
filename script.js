@@ -316,6 +316,26 @@ function sendEstimateEmail(serviceId, templateId, vars, statusEl){
    ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   /* Hero dropdown */
+     /* --- Safety net: force any “Book Now” links to use the embedded calendar --- */
+  try {
+    document.querySelectorAll('a[href*="book.squareup.com/appointments"]').forEach(a => {
+      a.setAttribute('href', BOOKING_SECTION_HASH); // "#book"
+      a.removeAttribute('target'); // keep them on your page
+      a.removeAttribute('rel');
+    });
+  } catch (e) { console.warn(e); }
+
+  /* --- Reliable scroll to #book (works when navigating from other pages) --- */
+  const scrollToBook = () => {
+    const el = document.getElementById('book');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  if (location.hash === BOOKING_SECTION_HASH) {
+    // Scroll once on load, and again shortly after to account for the Square iframe inject
+    scrollToBook();
+    setTimeout(scrollToBook, 400);
+  }
+
   const dd  = document.getElementById('quoteDropdownHero');
   const btn = document.getElementById('quoteBtnHero');
   const menu= document.getElementById('quoteMenuHero');
@@ -446,6 +466,7 @@ try {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
 
 
