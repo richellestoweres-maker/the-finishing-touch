@@ -3,6 +3,9 @@
    ========================================= */
 "use strict";
 
+const BOOKING_SECTION_HASH = "#book";
+
+
 /* ---------- Small helpers ---------- */
 const roundHalf = n => Math.round(n * 2) / 2;
 
@@ -443,6 +446,7 @@ try {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
 
 
 
