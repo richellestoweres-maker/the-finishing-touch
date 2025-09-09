@@ -145,9 +145,10 @@
       </p>
     </form>
 
-    <a class="btn btn-outline" href="#book">
+   <a class="btn btn-outline" href="#book" aria-label="Book now">
   <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
 </a>
+
 
 
     <!-- Right: Direct actions + social -->
@@ -268,12 +269,11 @@
 /* ====== CONFIG (edit these) ====== */
 const FTT = {
   timezone: "America/Chicago",
-  intakeAnchor: "#intake",
-  bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+  intakeAnchor: "intake-cleaning.html",  // was "#intake" (which doesn't exist)
+  bookUrl: "#book",                       // scrolls to embedded calendar
   email: "contact.thefinishingtouch.tx@gmail.com",
   facebookPage: "thefinishingtouch.tx",
-  messengerDeepLink: "https://m.me/thefinishingtouch.tx", // handoff path
-  // Business hours (local): Mon–Fri 9–5
+  messengerDeepLink: "https://m.me/thefinishingtouch.tx",
   hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
 };
 
@@ -289,13 +289,16 @@ function detectIntent(text) {
   if (/(book|booking|schedule now)/.test(t)) return "book";
   if (/(cancel|resched|policy)/.test(t)) return "policies";
   if (/(move[-\s]?out|moveout|make ready)/.test(t)) return "moveout";
+
+  // (optional) "help me choose" intent
+  if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
+
   return "fallback";
 }
 
 function isWithinBusinessHours() {
   try {
     const now = new Date();
-    // Convert to Central time without external libs (approx by locale)
     const locale = "en-US";
     const options = { timeZone: FTT.timezone, hour12: false, weekday: "short", hour: "2-digit", minute: "2-digit" };
     const parts = new Intl.DateTimeFormat(locale, options).formatToParts(now);
@@ -320,7 +323,10 @@ function answer(intent, userText) {
     : "We’re offline at the moment, but I can still help or route your message to a person.";
 
   const intakeLink = `<a href="${FTT.intakeAnchor}">Start Intake</a>`;
-  const bookLink = `<a href="${FTT.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
+  // smart book link: if it's a hash, don't open a new tab
+  const bookLink = FTT.bookUrl.startsWith('#')
+    ? `<a href="${FTT.bookUrl}">Book now</a>`
+    : `<a href="${FTT.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
 
   switch (intent) {
     case "pricing":
@@ -363,6 +369,16 @@ function answer(intent, userText) {
           ? `Tap <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
           : `We’re offline. You can still <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT.email}">${FTT.email}</a> and we’ll reply ASAP.`
       ].join("<br>");
+    case "recommend": // optional helper to guide selection
+      return [
+        "<strong>Happy to help you choose!</strong>",
+        "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
+        "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
+        "<em>Airbnb:</em> 2 hr = studio/1BR (~≤900 sq ft) · 3 hr = 2–3BR (~900–1,800) · 4 hr = larger/heavier turns.",
+        "<em>Move-Out:</em> 5 hr ≈ up to ~1,500 sq ft · 7 hr ≈ ~1,500–3,000+ sq ft.",
+        "<em>Deep:</em> 4 hr ≈ up to ~2,000 sq ft · 6 hr ≈ ~2,000–3,500+ sq ft.",
+        `Ready to book? ${bookLink} (calendar is embedded below). Or <a href="${FTT.intakeAnchor}">start Intake</a> for a tailored estimate first.`
+      ].join("<br>");
     default:
       return [
         "I can help with pricing, availability, services, service area, and move-outs.",
@@ -372,7 +388,7 @@ function answer(intent, userText) {
   }
 }
 
-/* ====== UI wiring ====== */
+/* ====== UI wiring (unchanged) ====== */
 const el = {
   launcher: document.getElementById("ftt-chat-launcher"),
   panel: document.getElementById("ftt-chat"),
@@ -410,9 +426,7 @@ function initChat() {
     el.input.focus();
   });
 
-  el.close.addEventListener("click", () => {
-    el.panel.hidden = true;
-  });
+  el.close.addEventListener("click", () => { el.panel.hidden = true; });
 
   el.form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -423,14 +437,13 @@ function initChat() {
     setTimeout(() => {
       const intent = detectIntent(text);
       addMsg(answer(intent, text), "bot");
-      // Optional: send transcript to your inbox via Formspree or a serverless function.
     }, 200);
   });
 
   el.quick.addEventListener("click", (e) => {
     if (e.target.matches("button[data-q]")) {
       const q = e.target.getAttribute("data-q");
-      const canned = {pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human"}[q];
+      const canned = {pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",recommend:"recommend"}[q];
       addMsg(e.target.textContent, "me");
       setTimeout(()=> addMsg(answer(canned, e.target.textContent), "bot"), 200);
     }
@@ -440,6 +453,7 @@ function initChat() {
 document.addEventListener("DOMContentLoaded", initChat);
 </script>
 
+
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous"
   src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0">
@@ -448,6 +462,7 @@ document.addEventListener("DOMContentLoaded", initChat);
 
 </body>
 </html>
+
 
 
 
