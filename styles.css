@@ -21,6 +21,13 @@ html { scroll-behavior: smooth; }
   color: #524a46; font-weight: 800; text-align: center;
   border-radius: 12px;
 }
+const INTAKE_FLAG = "ftt_intake_ok";
+function isBookingUnlocked(){ return localStorage.getItem(INTAKE_FLAG) === "1"; }
+function unlockBooking(){
+  localStorage.setItem(INTAKE_FLAG, "1");
+  const book = document.querySelector('#book[data-locked]');
+  if (book) book.removeAttribute('data-locked');
+}
 
 /* Smooth page scrolling and anchor offset so header never hides content */
 html { scroll-behavior: smooth; }
@@ -334,6 +341,7 @@ input,textarea,select{
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
