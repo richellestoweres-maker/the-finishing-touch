@@ -1,209 +1,37 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Holiday Decorating Intake – The Finishing Touch</title>
+/* HOLIDAY (INDOOR) intake — estimate + unlock + “Go to Booking” */
+try {
+  const formHol = document.getElementById('intakeFormHoliday');
+  if (formHol){
+    formHol.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(formHol).entries());
+      const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
 
-  <!-- Fonts + Site CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- Page-only helpers -->
-  <style>
-    body{background:#fbf8f4}
-    .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-    .intake-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
-    .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
-    .intake-note{max-width:760px;margin:0 auto 18px;text-align:center;opacity:.9}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .grid-1{display:grid;gap:14px}
-    .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
-    .submit-row{text-align:center;margin-top:16px}
-    .hint{font-size:.9rem;opacity:.85}
-    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
-
-    /* Minimal dropdown styles (works even if global CSS changes) */
-    .quote-dropdown{position:relative;display:inline-block}
-    .quote-menu{
-      position:absolute; right:0; top:calc(100% + 6px);
-      background:#fff; border:1px solid #e8ddd1; border-radius:10px;
-      box-shadow:0 10px 30px rgba(0,0,0,.06);
-      padding:8px; min-width:220px; display:none; z-index:50;
-    }
-    .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
-    .quote-menu a:hover{background:#f3ece6}
-    .quote-dropdown.open .quote-menu{display:block}
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand">
-        <a href="index.html" class="brand-link">
-          <span class="vase-logo" aria-hidden="true"></span>
-          <span class="brand-name">The Finishing Touch</span>
-        </a>
-      </div>
-      <nav class="main-nav">
-        <a href="index.html#services">Services</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
-
-        <!-- Quote Dropdown -->
-        <div class="quote-dropdown" id="quoteDropdown">
-          <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
-            Get Your Quote ▾
-          </button>
-          <div class="quote-menu" id="quoteMenu" role="menu" aria-hidden="true">
-            <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
-            <a role="menuitem" href="intake-organizing.html">Organizing</a>
-            <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-            <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a>
-          </div>
-        </div>
-      </nav>
-    </div>
-  </header>
-
-  <main class="intake-wrap">
-    <h1 class="intake-title">The Finishing Touch</h1>
-    <div class="intake-script">Holiday Decorating Intake (Indoor Only)</div>
-    <p class="intake-note">
-      We’re currently offering <strong>interior holiday styling only</strong>. Tell us a bit about your setup for an instant ballpark estimate.
-      <br><span class="hint">Final quote depends on scope, access, and materials.</span>
-    </p>
-
-    <!-- NOTE: button is type="button" (no form submission = no page reload) -->
-    <form id="intakeFormHoliday" class="grid-1" novalidate>
-      <!-- Contact -->
-      <div class="grid-2">
-        <label>Full Name<input name="name" autocomplete="name" required></label>
-        <label>Email<input name="email" type="email" autocomplete="email" required></label>
-        <label>Service Address<input name="address" autocomplete="street-address"></label>
-        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
-      </div>
-
-      <!-- Trees -->
-      <div class="fieldset grid-2">
-        <label>Number of Trees
-          <input name="trees" type="number" min="0" value="1">
-        </label>
-        <label>Tallest Tree Height
-          <select name="tallest">
-            <option>≤6 ft</option><option selected>7–8 ft</option>
-            <option>9–10 ft</option><option>11–12+ ft</option>
-          </select>
-        </label>
-        <label>Tree Readiness
-          <select name="tree_style">
-            <option>Ready: ornaments & lights on hand</option>
-            <option>Needs ribbon/theme refresh</option>
-            <option>Full design + sourcing</option>
-          </select>
-        </label>
-        <label>Ribbon/mesh design on trees?
-          <select name="tree_ribbon"><option>No</option><option>Yes</option></select>
-        </label>
-      </div>
-
-      <!-- Indoor decor -->
-      <div class="fieldset grid-2">
-        <label>Wreaths (qty)
-          <input name="wreaths" type="number" min="0" value="0">
-        </label>
-        <label>Garland (9' sections)
-          <input name="garland_sections" type="number" min="0" value="0">
-        </label>
-        <label>Staircase (10' runs)
-          <input name="stair_sections" type="number" min="0" value="0">
-        </label>
-        <label>Mantle styling
-          <select name="mantle"><option>No</option><option>Yes</option></select>
-        </label>
-        <label>Tablescapes / vignettes (qty)
-          <input name="tablescapes" type="number" min="0" value="0">
-        </label>
-        <label>Style / Theme / Colors
-          <input name="style" placeholder="e.g., classic red, neutral luxe, coastal">
-        </label>
-      </div>
-
-      <!-- Logistics & shopping -->
-      <div class="fieldset grid-2">
-        <label>Storage Location
-          <select name="storage">
-            <option>Garage/closet (easy)</option>
-            <option>Attic (ladder)</option>
-            <option>Offsite pickup</option>
-          </select>
-        </label>
-        <label>Shopping Trips Needed
-          <select name="shopping_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
-        </label>
-        <label>Budget for Materials (optional)
-          <input name="budget" placeholder="$ e.g., 300–500">
-        </label>
-      </div>
-
-      <!-- Teardown -->
-      <div class="fieldset grid-2">
-        <label>Do you want teardown in January?
-          <select name="teardown"><option selected>Yes</option><option>No</option></select>
-        </label>
-        <label>Preferred Teardown Window
-          <input name="teardown_window" placeholder="e.g., first week of January">
-        </label>
-      </div>
-
-      <!-- Consents -->
-      <div class="fieldset grid-1">
-        <label><input type="checkbox" name="consent_bg" required>
-          I consent to a background check for any contractor(s) entering my home.</label>
-        <label><input type="checkbox" name="consent_photos_internal" required>
-          I allow before/after photos for job verification (required; internal only).</label>
-        <label><input type="checkbox" name="consent_photos_marketing">
-          I also consent to select photos being used in marketing/socials.</label>
-        <div class="grid-2">
-          <label>Type your name as signature<input name="client_signature" required></label>
-          <label>Date<input name="client_sig_date" type="date"></label>
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <div class="submit-row">
-        <button class="btn btn-solid" id="btnHolidayEstimate" type="button">Get Holiday Estimate</button>
-        <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
-        <p id="emailStatusHoliday" style="opacity:.9"></p>
-        <p class="hint">After you get your estimate, you can book a date on the home page.</p>
-      </div>
-    </form>
-  </main>
-
-  <!-- EmailJS (optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
-
-  <!-- Dropdown behavior (local to this page) -->
-  <script>
-    (function(){
-      const dd  = document.getElementById('quoteDropdown');
-      const btn = document.getElementById('quoteBtn');
-      const menu= document.getElementById('quoteMenu');
-      if (!dd || !btn || !menu) return;
-      function toggle(open){
-        dd.classList.toggle('open', open);
-        btn.setAttribute('aria-expanded', String(open));
-        menu.setAttribute('aria-hidden', String(!open));
+      const estEl = document.getElementById('estimateHoliday');
+      const parts = [
+        `Install (ballpark): <strong>$${price}</strong>`,
+        `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with 2 stylists)`
+      ];
+      if (teardownHours){
+        parts.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
       }
-      btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
-      document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
-      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
-    })();
-  </script>
+      parts.push(`<span class="hint">Materials (ribbon/ornaments/garland) are separate and billed to your budget.</span>`);
+      if (estEl) estEl.innerHTML = parts.join("<br>");
 
-  <!-- Site JS (pricing/estimate wiring) -->
-  <script src="script.js?v=8" defer></script>
-</body>
-</html>
+      // Build a clearer booking hint for the calendar
+      let hint;
+      if (teamHours <= 2.5) hint = "Holiday Decorating — Small (≈2–2.5 hr)";
+      else if (teamHours <= 4) hint = "Holiday Decorating — Medium (≈3–4 hr)";
+      else if (teamHours <= 6) hint = "Holiday Decorating — Large (≈5–6 hr)";
+      else hint = "Holiday Decorating — XL (6.5+ hr)";
+
+      // Unlock + show button to your embedded calendar
+      saveBookingUnlock(hint);
+      ensureScheduleButton('estimateHoliday', (function(){
+        const p = (location.pathname || "").toLowerCase();
+        const onHome = /\/$|index\.html$/.test(p);
+        return onHome ? "#book" : "index.html#book";
+      })(), 'goBookHoliday');
+    });
+  }
+} catch (err){ console.error("Holiday handler error:", err); }
