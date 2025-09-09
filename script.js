@@ -4,6 +4,7 @@
    ========================================= */
 "use strict";
 
+/* ---------- Constants ---------- */
 const BOOKING_SECTION_HASH = "#book";
 const INTAKE_UNLOCK_KEY = "ftt_intake_ok";
 const INTAKE_HINT_KEY   = "ftt_booking_hint";
@@ -27,9 +28,64 @@ function parseAddonsHours(txt, hoursMap){
   }
   return total;
 }
+function ensureScheduleButton(estElId, url, buttonId){
+  const estEl = document.getElementById(estElId);
+  if (!estEl) return;
+  let btn = document.getElementById(buttonId);
+  if (!btn){
+    btn = document.createElement("a");
+    btn.id = buttonId;
+    btn.className = "btn btn-solid";
+    btn.style.marginTop = "10px";
+    btn.textContent = "Go to Booking";
+    estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+  }
+  btn.href = url;
+  btn.removeAttribute("target");
+  btn.removeAttribute("rel");
+}
+/* Build a link that always points to your embedded calendar */
+function bookingHref(){
+  // If already on the home page with / or index.html, keep hash-only
+  const p = (location.pathname || "").toLowerCase();
+  const onHome = /\/$|index\.html$/.test(p);
+  return onHome ? BOOKING_SECTION_HASH : `index.html${BOOKING_SECTION_HASH}`;
+}
+
+/* ---------- Booking lock helpers (home page overlay) ---------- */
+function saveBookingUnlock(hintText){
+  try{
+    localStorage.setItem(INTAKE_UNLOCK_KEY, "1");
+    if (hintText) localStorage.setItem(INTAKE_HINT_KEY, hintText);
+  }catch(e){}
+}
+function isUnlocked(){
+  try{ return localStorage.getItem(INTAKE_UNLOCK_KEY) === "1"; }catch(e){ return false; }
+}
+function readBookingHint(){
+  try{ return localStorage.getItem(INTAKE_HINT_KEY) || ""; }catch(e){ return ""; }
+}
+function showBookingHelper(hint){
+  const sec = document.querySelector('#book .container');
+  if (!sec) return;
+  const id = "booking-helper-note";
+  if (document.getElementById(id)) return;
+
+  const note = document.createElement("div");
+  note.id = id;
+  note.style.margin = "0 0 10px";
+  note.style.padding = "10px 12px";
+  note.style.border = "1px solid #e3d9ce";
+  note.style.borderRadius = "10px";
+  note.style.background = "#fffdfb";
+  note.style.color = "#524a46";
+  note.style.fontWeight = "700";
+  note.textContent = hint || "You're all set to book. Pick the recommended option in the services list.";
+  sec.insertBefore(note, sec.firstChild);
+}
 
 /* =========================================
-   CLEANING — COMPETITIVE PRICING
+   CLEANING — PRICING & TIME
    ========================================= */
 const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
 const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
@@ -60,7 +116,6 @@ function airbnbByBedrooms(beds){
   if (b === 4) return 180;
   return 200;
 }
-
 function calcCleaning(data){
   const sqft = data.sqft || "1000–2000";
   const service = data.service || "Initial Clean";
@@ -92,7 +147,6 @@ function calcCleaning(data){
   if (service === "Standard Clean"){ est *= (freqDisc[frequency] || 1); }
   return Math.round(est);
 }
-
 function estimateHoursCleaning(data){
   const sqft = data.sqft || "1000–2000";
   const service = data.service || "Initial Clean";
@@ -130,8 +184,6 @@ function estimateHoursCleaning(data){
   const team = roundHalf(solo / 2);
   return { soloHours: solo, teamHours: team };
 }
-
-/* Human-friendly hint text for booking */
 function cleaningHint(data, teamHours){
   const service = data.service || "Initial Clean";
   const sqft = data.sqft || "1000–2000";
@@ -177,7 +229,6 @@ function calcOrganizing(data){
   const addons = parseAddonsList(data.addons, addonPricesOrganizing);
   return Math.round(labor + addons);
 }
-
 function estimateHoursOrganizing(data){
   const area = data.org_area || "Closet";
   const size = data.org_size || "Medium";
@@ -222,7 +273,6 @@ function estimateHoursOrganizing(data){
   const teamHours = roundHalf(solo / teamCount);
   return { soloHours: solo, teamHours };
 }
-
 function organizingHint(data, teamHours){
   const area = data.org_area || "Space";
   const size = data.org_size || "Medium";
@@ -245,7 +295,6 @@ function calcDecor(data){
   const addons = parseAddonsList(data.addons, addonPricesDecor);
   return Math.round(base + addons);
 }
-
 function estimateHoursDecor(data){
   const type = data.decor_type || "Interior Decorating (refresh)";
   const scope = data.decor_scope || "Light refresh (styling)";
@@ -283,7 +332,6 @@ function estimateHoursDecor(data){
   const teamHours = roundHalf(solo / 2);
   return { soloHours: solo, teamHours };
 }
-
 function decorHint(data, teamHours){
   const room = data.decor_room || data.room || "Room";
   const scope = data.decor_scope || "Refresh";
@@ -294,259 +342,8 @@ function decorHint(data, teamHours){
 }
 
 /* =========================================
-   The Finishing Touch — script.js (DROP-IN)
-   ========================================= */
-"use strict";
-
-const BOOKING_SECTION_HASH = "#book";
-
-/* ---- Intake → unlock booking flag ---- */
-const INTAKE_FLAG = "ftt_intake_ok";
-function isBookingUnlocked(){ return localStorage.getItem(INTAKE_FLAG) === "1"; }
-function unlockBooking(){
-  localStorage.setItem(INTAKE_FLAG, "1");
-  const book = document.querySelector('#book[data-locked]');
-  if (book) book.removeAttribute('data-locked');
-}
-
-/* ---------- Small helpers ---------- */
-const roundHalf = n => Math.round(n * 2) / 2;
-function parseAddonsList(txt, priceMap){ txt=(txt||"").toLowerCase(); let t=0; for(const k of Object.keys(priceMap)){ if(txt.includes(k)) t+=priceMap[k]; } return t; }
-function parseAddonsHours(txt, hoursMap){ txt=(txt||"").toLowerCase(); let t=0; for(const k of Object.keys(hoursMap)){ if(txt.includes(k)) t+=hoursMap[k]; } return t; }
-function ensureScheduleButton(estElId, url, buttonId){
-  const estEl = document.getElementById(estElId); if (!estEl) return;
-  let btn = document.getElementById(buttonId);
-  if (!btn){
-    btn = document.createElement("a");
-    btn.id = buttonId;
-    btn.className = "btn btn-solid";
-    btn.style.marginTop = "10px";
-    btn.textContent = "Go to Booking";
-    estEl.parentNode.insertBefore(btn, estEl.nextSibling);
-  }
-  btn.href = url || BOOKING_SECTION_HASH;
-  btn.removeAttribute("target"); btn.removeAttribute("rel");
-}
-
-/* =================================================
-   CLEANING — (unchanged)
-   ================================================= */
-const initialBySqft = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
-const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
-const serviceMult = {"Initial Clean":1.00,"Deep Clean":1.20,"Move-In / Move-Out Clean":1.35,"Airbnb Turnover":0.55};
-const freqDisc = {"weekly":0.85,"biweekly":0.90,"monthly":0.95,"one-time":1};
-const perExtraBathroom=20, perExtraBedroom=12, perOtherRoom=10, twoStoryFee=20, petFee=12;
-const addonPricesCleaning = {"oven":35,"fridge":30,"refrigerator":30,"windows":80,"window":80,"baseboards":60,"laundry":18};
-
-function airbnbByBedrooms(beds){ const b=Number(beds)||0; if(b<=1)return 120; if(b===2)return 140; if(b===3)return 160; if(b===4)return 180; return 200; }
-function calcCleaning(data){
-  const sqft = data.sqft || "1000–2000";
-  const service = data.service || "Initial Clean";
-  const frequency = data.frequency || "one-time";
-  const beds = Number(data.beds||0);
-  const baths = Number(data.baths||0);
-  const otherRooms = Number(data.other_rooms||0);
-  const stories = String(data.stories||"1");
-  const pets = String(data.pets||"");
-
-  let base = 0;
-  if (service === "Standard Clean"){ base = standardBySqft[sqft] ?? 200; }
-  else if (service === "Airbnb Turnover"){ base = airbnbByBedrooms(beds); }
-  else { const initial = initialBySqft[sqft] ?? 300; base = initial * (serviceMult[service] ?? 1); }
-
-  const extraBaths = Math.max(0, baths-2) * perExtraBathroom;
-  const extraBeds  = Math.max(0, beds-3) * perExtraBedroom;
-  const extraRooms = Math.max(0, otherRooms) * perOtherRoom;
-  const storyFee   = stories === "2" ? twoStoryFee : 0;
-  const petsFee    = pets.trim() ? petFee : 0;
-  const addonsFee  = parseAddonsList(data.addons, addonPricesCleaning);
-
-  let est = base + extraBaths + extraBeds + extraRooms + storyFee + petsFee + addonsFee;
-  if (service === "Standard Clean"){ est *= (freqDisc[frequency] || 1); }
-  return Math.round(est);
-}
-
-const SQUARE_CLEAN_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
-const SQUARE_CLEAN_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
-const SQUARE_CLEAN_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV";
-const SQUARE_CLEAN_XL     ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK";
-
-const addonHoursCleaning = {"oven":0.25,"fridge":0.25,"refrigerator":0.25,"windows":1.5,"window":1.5,"baseboards":1.0,"laundry":0.5};
-
-function estimateHoursCleaning(data){
-  const sqft = data.sqft || "1000–2000";
-  const service = data.service || "Initial Clean";
-  const beds = Number(data.beds||0);
-  const baths = Number(data.baths||0);
-  const otherRooms = Number(data.other_rooms||0);
-  const stories = String(data.stories||"1");
-
-  let solo = 2;
-  if (sqft === "<1000") solo = 2; else if (sqft === "1000–2000") solo = 3;
-  else if (sqft === "2000–3000") solo = 4; else if (sqft === "3000–4000") solo = 5; else solo = 6;
-
-  if (service === "Airbnb Turnover"){
-    if (beds<=1) solo=2; else if (beds===2) solo=2.5; else if (beds===3) solo=3; else if (beds===4) solo=3.5; else solo=4;
-  }
-
-  solo += Math.max(0, beds-3)*0.5;
-  solo += Math.max(0, baths-2)*0.75;
-  solo += Math.max(0, otherRooms)*0.25;
-  if (stories === "2") solo += 0.25;
-  solo += parseAddonsHours(data.addons, addonHoursCleaning);
-
-  if (service === "Deep Clean") solo *= 1.5;
-  if (service === "Move-In / Move-Out Clean") solo *= 2;
-  if (service === "Initial Clean") solo *= 1.2;
-
-  solo = roundHalf(solo);
-  const team = roundHalf(solo / 2);
-  return { soloHours: solo, teamHours: team };
-}
-function squareUrlForCleaning(teamHours){
-  if (teamHours <= 2.5) return SQUARE_CLEAN_SMALL;
-  if (teamHours <= 3.5) return SQUARE_CLEAN_MEDIUM;
-  if (teamHours <= 5)   return SQUARE_CLEAN_LARGE;
-  return SQUARE_CLEAN_XL;
-}
-
-/* ======================================
-   ORGANIZING — (unchanged)
-   ====================================== */
-const ORG_HOURLY=65, ORG_MIN_HOURS=3;
-const hoursPerSpace = {"Light":1,"Moderate":2,"Heavy":3};
-const addonPricesOrganizing = {"bins":25,"labels":20,"bins/labels":40};
-
-function calcOrganizing(data){
-  const spaces = Math.max(1, Number(data.spaces||1));
-  const complexity = data.complexity || "Moderate";
-  const team = Math.max(1, Number(data.team||1));
-  const hoursEach = hoursPerSpace[complexity] || 2;
-  let estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
-  const labor = estHours * ORG_HOURLY * team;
-  const addons = parseAddonsList(data.addons, addonPricesOrganizing);
-  return Math.round(labor + addons);
-}
-
-const SQUARE_ORG_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN";
-const SQUARE_ORG_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E";
-const SQUARE_ORG_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC";
-const SQUARE_ORG_XL     ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS";
-
-function estimateHoursOrganizing(data){
-  const area = data.org_area || "Closet";
-  const size = data.org_size || "Medium";
-  const baseMap = {
-    "Closet":{Small:2,Medium:3,Large:4}, "Pantry":{Small:2,Medium:3,Large:4},
-    "Kitchen":{Small:3,Medium:4.5,Large:6}, "Bedroom":{Small:2.5,Medium:3.5,Large:5},
-    "Bathroom":{Small:1.5,Medium:2.5,Large:3.5}, "Garage":{Small:3,Medium:5,Large:7},
-    "Laundry Room":{Small:2,Medium:3,Large:4}, "Office":{Small:2.5,Medium:4,Large:5.5},
-    "Playroom":{Small:2.5,Medium:4,Large:5.5}, "Whole Home (multi-area)":{Small:6,Medium:8,Large:12}
-  };
-  let solo = (baseMap[area]?.[size] ?? 3.5);
-
-  const clutter = data.org_clutter || "Moderate";
-  if (clutter === "Light") solo *= 0.9;
-  if (clutter === "Moderate") solo *= 1.0;
-  if (clutter === "Heavy") solo *= 1.35;
-
-  const decision = data.org_decision_speed || "Average";
-  if (decision === "Fast") solo *= 0.9;
-  if (decision === "Average") solo *= 1.0;
-  if (decision === "Slow") solo *= 1.25;
-
-  const volume = data.org_volume || "Medium";
-  if (volume === "Medium") solo += 0.5;
-  if (volume === "High") solo += 1.0;
-
-  const containers = data.org_containers || "None";
-  if (containers === "Some (up to 10)") solo += 0.5;
-  if (containers === "Many (10+)") solo += 1.0;
-
-  const access = data.org_access || "Easy (ground floor)";
-  if (access === "Stairs") solo += 0.5;
-  if (access === "Tight spaces / HOA constraints") solo += 0.75;
-
-  const haul = data.org_haul || "None";
-  if (haul === "1–3 bags/boxes") solo += 0.5;
-  if (haul === "4–8 bags/boxes") solo += 1.0;
-  if (haul === "Carload+") solo += 1.5;
-
-  const teamCount = Math.max(1, Number(data.team || 2));
-  solo = roundHalf(solo);
-  const teamHours = roundHalf(solo / teamCount);
-  return { soloHours: solo, teamHours };
-}
-function squareUrlForOrganizing(teamHours){
-  if (teamHours <= 2.5) return SQUARE_ORG_SMALL;
-  if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;
-  if (teamHours <= 6)   return SQUARE_ORG_LARGE;
-  return SQUARE_ORG_XL;
-}
-
-/* ======================================
-   DECOR (room refresh) — placeholders unchanged
-   ====================================== */
-const decorBase = {"Living Room":500,"Bedroom":400,"Dining Room":450,"Home Office":450};
-const addonPricesDecor = {"moodboard":75,"sourcing":150,"shopping":150,"install":250,"install day":250,"window treatments":200,"art hanging":100};
-
-function calcDecor(data){
-  const room = data.room || "Living Room";
-  const count = Math.max(1, Number(data.count||1));
-  const base = (decorBase[room] ?? 450) * count;
-  const addons = parseAddonsList(data.addons, addonPricesDecor);
-  return Math.round(base + addons);
-}
-
-const SQUARE_DECOR_SMALL  = "https://book.squareup.com/appointments/...";
-const SQUARE_DECOR_MEDIUM = "https://book.squareup.com/appointments/...";
-const SQUARE_DECOR_LARGE  = "https://book.squareup.com/appointments/...";
-const SQUARE_DECOR_XL     = "https://book.squareup.com/appointments/...";
-
-function estimateHoursDecor(data){
-  const type = data.decor_type || "Interior Decorating (refresh)";
-  const scope = data.decor_scope || "Light refresh (styling)";
-  const room = data.decor_room || "Living Room";
-  const count = Math.max(1, Number(data.count||1));
-
-  const basePerRoom = {"Living Room":3,"Bedroom":2.5,"Dining Room":2.5,"Home Office":2.5,"Kitchen / Nook":2.5,"Entryway":1.5,"Multiple Rooms":3};
-  let solo = (basePerRoom[room] ?? 2.5) * count;
-
-  if (scope === "Refresh + small sourcing") solo *= 1.3;
-  if (scope === "Full design (sourcing + install)") solo *= 1.8;
-
-  if (type.includes("Staging — Occupied")) solo *= 1.2;
-  if (type.includes("Staging — Vacant"))   solo *= 1.6;
-
-  const furn = data.decor_furniture || "No";
-  if (furn === "Yes — a few pieces") solo += 1.0;
-  if (furn === "Yes — multiple pieces") solo += 2.0;
-
-  const install = data.decor_install || "Light (art, textiles)";
-  if (install === "Moderate (art + small furniture)") solo += 1.0;
-  if (install === "Heavy (multiple furniture + window treatments)") solo += 2.0;
-
-  const trips = Number(data.decor_shopping || 0);
-  if (trips > 0) solo += trips * 1.0;
-
-  const access = data.decor_access || "Easy";
-  if (access === "Stairs / elevator") solo += 0.5;
-  if (access === "HOA / tight timing") solo += 0.75;
-
-  solo = roundHalf(solo);
-  const teamHours = roundHalf(solo / 2);
-  return { soloHours: solo, teamHours };
-}
-function squareUrlForDecor(teamHours){
-  if (teamHours <= 2.5) return SQUARE_DECOR_SMALL;
-  if (teamHours <= 4)   return SQUARE_DECOR_MEDIUM;
-  if (teamHours <= 6)   return SQUARE_DECOR_LARGE;
-  return SQUARE_DECOR_XL;
-}
-
-/* ======================================
    HOLIDAY DECORATING — INDOOR ONLY
-   ====================================== */
+   ========================================= */
 const HOLI_HOURLY = 85;          // job priced by total labor-hours (crew size doesn't change total)
 const HOLI_MIN_HOURS = 3;        // minimum billable (solo-hours)
 
@@ -566,7 +363,6 @@ function hoursForTrees(count, tallest, style, ribbon){
   if ((ribbon||"").toLowerCase()==="yes") h += 0.4 * t; // ribbon/mesh time bump
   return h;
 }
-
 function estimateHoursHoliday(data){
   // INDOOR ONLY
   let hrs = 0;
@@ -606,7 +402,6 @@ function estimateHoursHoliday(data){
 
   return { soloHours: hrs, teamHours, teardownHours };
 }
-
 function calcHoliday(data){
   const { soloHours, teamHours, teardownHours } = estimateHoursHoliday(data);
 
@@ -623,7 +418,6 @@ function calcHoliday(data){
   };
 }
 
-
 /* ==========================================================
    WIRE EVERYTHING AFTER DOM PARSE
    ========================================================== */
@@ -635,9 +429,6 @@ document.addEventListener('DOMContentLoaded', () => {
       a.removeAttribute('target'); a.removeAttribute('rel');
     });
   } catch (e) { console.warn(e); }
-
-  /* Unlock on return visit if already completed an intake */
-  if (isBookingUnlocked()) unlockBooking();
 
   /* Smooth scroll to #book if hash present */
   const scrollToBook = () => {
@@ -661,187 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
   }
 
-  /* CLEANING intake */
-  try {
-    const form = document.getElementById('intakeFormCleaning');
-    if (form){
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(form).entries());
-        const price = calcCleaning(data);
-        const estEl = document.getElementById('estimateCleaning');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-        const { teamHours } = estimateHoursCleaning(data);
-        const squareUrl = squareUrlForCleaning(teamHours);
-        ensureScheduleButton('estimateCleaning', squareUrl, 'scheduleOnSquareCleaning');
-        unlockBooking();
-      });
-    }
-  } catch (err){ console.error("Cleaning handler error:", err); }
-
-  /* ORGANIZING intake */
-  try {
-    const form = document.getElementById('intakeFormOrganizing');
-    if (form){
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(form).entries());
-        const estPrice = calcOrganizing(data);
-        const estEl = document.getElementById('estimateOrganizing');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong>`;
-        const { teamHours } = estimateHoursOrganizing(data);
-        const url = squareUrlForOrganizing(teamHours);
-        ensureScheduleButton('estimateOrganizing', url, 'scheduleOnSquareOrganizing');
-        unlockBooking();
-      });
-    }
-  } catch (err){ console.error("Organizing handler error:", err); }
-
-  /* DECOR intake */
-  try {
-    const form = document.getElementById('intakeFormDecor');
-    if (form){
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(form).entries());
-        const price = calcDecor(data);
-        const estEl = document.getElementById('estimateDecor');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-        const { teamHours } = estimateHoursDecor(data);
-        const url = squareUrlForDecor(teamHours);
-        ensureScheduleButton('estimateDecor', url, 'scheduleOnSquareDecor');
-        unlockBooking();
-      });
-    }
-  } catch (err){ console.error("Decor handler error:", err); }
-
-  /* HOLIDAY (INDOOR) intake */
-  try {
-    const form = document.getElementById('intakeFormHoliday');
-    if (form){
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(form).entries());
-        const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
-        const estEl = document.getElementById('estimateHoliday');
-        const lines = [
-          `Install (ballpark): <strong>$${price}</strong>`,
-          `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with your team)`,
-        ];
-        if (teardownHours){
-          lines.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
-        }
-        lines.push(`<span class="hint">Materials (ribbon/ornaments/garland) billed separately to your budget.</span>`);
-        if (estEl) estEl.innerHTML = lines.join("<br>");
-
-        // Booking button (embedded calendar on index)
-        ensureScheduleButton('estimateHoliday', null, 'goBookHoliday');
-
-        // Mark booking unlocked on the site
-        unlockBooking();
-      });
-    }
-  } catch (err){ console.error("Holiday handler error:", err); }
-
-  /* CONTACT form (homepage) */
-  try {
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm){
-      contactForm.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const payload = Object.fromEntries(new FormData(contactForm).entries());
-        const status = document.getElementById('contactStatus');
-        if (!window.emailjs){
-          if (status) status.textContent = "Thanks! We’ll be in touch shortly.";
-          contactForm.reset(); return;
-        }
-        try{
-          await emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_CONTACT",payload);
-          if (status) status.textContent = "Thanks! We’ll be in touch shortly.";
-          contactForm.reset();
-        }catch(err){
-          if (status) status.textContent = "Message not sent. Please try again.";
-          console.error(err);
-        }
-      });
-    }
-  } catch (err){ console.error("Contact handler error:", err); }
-});
-
-
-/* =========================================
-   Booking lock helpers
-   ========================================= */
-function saveBookingUnlock(hintText){
-  try{
-    localStorage.setItem(INTAKE_UNLOCK_KEY, "1");
-    if (hintText) localStorage.setItem(INTAKE_HINT_KEY, hintText);
-  }catch(e){}
-}
-function readBookingHint(){
-  try{ return localStorage.getItem(INTAKE_HINT_KEY) || ""; }catch(e){ return ""; }
-}
-function isUnlocked(){
-  try{ return localStorage.getItem(INTAKE_UNLOCK_KEY) === "1"; }catch(e){ return false; }
-}
-function showBookingHelper(hint){
-  const sec = document.querySelector('#book .container');
-  if (!sec) return;
-  const id = "booking-helper-note";
-  if (document.getElementById(id)) return;
-
-  const note = document.createElement("div");
-  note.id = id;
-  note.style.margin = "0 0 10px";
-  note.style.padding = "10px 12px";
-  note.style.border = "1px solid #e3d9ce";
-  note.style.borderRadius = "10px";
-  note.style.background = "#fffdfb";
-  note.style.color = "#524a46";
-  note.style.fontWeight = "700";
-  note.textContent = hint || "You're all set to book. Pick the recommended option in the services list.";
-  sec.insertBefore(note, sec.firstChild);
-}
-
-/* =========================================
-   WIRE EVERYTHING AFTER DOM PARSE
-   ========================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  /* --- Safety net: force any external Square "Book" links to use the embedded calendar --- */
-  try {
-    document.querySelectorAll('a[href*="book.squareup.com/appointments"]').forEach(a => {
-      a.setAttribute('href', BOOKING_SECTION_HASH);
-      a.removeAttribute('target');
-      a.removeAttribute('rel');
-    });
-  } catch (e) { console.warn(e); }
-
-  /* --- Reliable scroll to #book (works from cross-page nav) --- */
-  const scrollToBook = () => {
-    const el = document.getElementById('book');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-  if (location.hash === BOOKING_SECTION_HASH) {
-    scrollToBook();
-    setTimeout(scrollToBook, 400); // after Square injects iframe
-  }
-
-  /* --- Hero dropdown (intake-first CTA) --- */
-  const dd  = document.getElementById('quoteDropdownHero');
-  const btn = document.getElementById('quoteBtnHero');
-  const menu= document.getElementById('quoteMenuHero');
-  if (dd && btn && menu){
-    const toggle = (open) => {
-      dd.classList.toggle('open', open);
-      btn.setAttribute('aria-expanded', String(open));
-      menu.setAttribute('aria-hidden', String(!open));
-    };
-    btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
-    document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
-    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
-  }
-
-  /* --- Unlock on homepage if intake was completed earlier --- */
+  /* --- Unlock home booking on load if a prior intake was completed --- */
   const bookingSec = document.querySelector('.booking-embed[data-locked]');
   if (bookingSec && isUnlocked()){
     bookingSec.removeAttribute('data-locked');
@@ -849,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hint) showBookingHelper(`Recommended: ${hint}`);
   }
 
-  /* ===== INTAKE FORMS (no Square redirects — unlock & return to calendar) ===== */
+  /* ===== INTAKE FORMS (show estimate here → unlock → add “Go to Booking”) ===== */
 
   /* CLEANING intake */
   try {
@@ -865,12 +476,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const { teamHours } = estimateHoursCleaning(data);
         const hint = cleaningHint(data, teamHours);
-
-        // ✅ Unlock calendar for this device + show recommended option
         saveBookingUnlock(hint);
 
-        // Route back to home calendar
-        window.location.href = `index.html${BOOKING_SECTION_HASH}`;
+        // Add button to go to calendar (embedded on home)
+        ensureScheduleButton('estimateCleaning', bookingHref(), 'goBookCleaning');
       });
     }
   } catch (err){ console.error("Cleaning handler error:", err); }
@@ -889,9 +498,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const { teamHours } = estimateHoursOrganizing(data);
         const hint = organizingHint(data, teamHours);
-
         saveBookingUnlock(hint);
-        window.location.href = `index.html${BOOKING_SECTION_HASH}`;
+
+        ensureScheduleButton('estimateOrganizing', bookingHref(), 'goBookOrganizing');
       });
     }
   } catch (err){ console.error("Organizing handler error:", err); }
@@ -910,12 +519,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const { teamHours } = estimateHoursDecor(data);
         const hint = decorHint(data, teamHours);
-
         saveBookingUnlock(hint);
-        window.location.href = `index.html${BOOKING_SECTION_HASH}`;
+
+        ensureScheduleButton('estimateDecor', bookingHref(), 'goBookDecor');
       });
     }
   } catch (err){ console.error("Decor handler error:", err); }
+
+  /* HOLIDAY (INDOOR) intake — supports either button click or form submit */
+  try {
+    const formHol = document.getElementById('intakeFormHoliday');
+    const btnHol  = document.getElementById('btnHolidayEstimate');
+
+    function runHolidayEstimate(e){
+      if (e) e.preventDefault();
+      if (!formHol) return;
+      const data = Object.fromEntries(new FormData(formHol).entries());
+      const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
+
+      const estEl = document.getElementById('estimateHoliday');
+      const lines = [
+        `Install (ballpark): <strong>$${price}</strong>`,
+        `Estimated time: ${soloHours} solo hrs (we’ll assign the right crew; ~${teamHours} hrs with 2 stylists)`
+      ];
+      if (teardownHours){
+        lines.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
+      }
+      lines.push(`<span class="hint">Materials (ribbon/ornaments/garland) are separate and billed to your budget.</span>`);
+      if (estEl) estEl.innerHTML = lines.join("<br>");
+
+      // Unlock and show “Go to Booking”
+      saveBookingUnlock("Holiday Decorating — Indoor");
+      ensureScheduleButton('estimateHoliday', bookingHref(), 'goBookHoliday');
+    }
+
+    if (btnHol) btnHol.addEventListener('click', runHolidayEstimate);
+    if (formHol) formHol.addEventListener('submit', runHolidayEstimate);
+  } catch (err){ console.error("Holiday handler error:", err); }
 
   /* CONTACT form (homepage/contact page) — optional EmailJS passthrough */
   try {
@@ -942,5 +582,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
-
-
