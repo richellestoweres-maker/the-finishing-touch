@@ -9,18 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers -->
+  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
     .intake-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
     .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
+    .intake-note{max-width:760px;margin:0 auto 18px;text-align:center;opacity:.9}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
 
-    /* Dropdown (in case global CSS doesn’t apply here) */
+    /* Minimal dropdown styles in case your global CSS doesn't include them */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -59,6 +60,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+            <!-- Optional: <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a> -->
           </div>
         </div>
       </nav>
@@ -68,6 +70,7 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Interior Decorating Intake</div>
+    <p class="intake-note">Complete this brief form for an instant ballpark estimate (shown below), then we’ll send you to the booking calendar.</p>
 
     <form id="intakeFormDecor" class="grid-1" novalidate>
       <!-- 1. Contact Info -->
@@ -78,124 +81,108 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-     <div class="fieldset grid-2">
-  <!-- Project goals -->
-  <label>Primary Goal
-    <select name="goal">
-      <option>Personal refresh</option>
-      <option>Selling / Staging</option>
-      <option>Airbnb / Short-term rental</option>
-    </select>
-  </label>
-  <label>Spaces to Focus On
-    <select name="decor_room">
-      <option>Living Room</option>
-      <option>Bedroom</option>
-      <option>Dining Room</option>
-      <option>Home Office</option>
-      <option>Kitchen / Nook</option>
-      <option>Entryway</option>
-      <option>Multiple Rooms</option>
-      <option>Whole Home</option>
-      <option>Outdoor Space</option>
-    </select>
-  </label>
+      <!-- 2. Project + Scope -->
+      <div class="fieldset grid-2">
+        <label>Primary Goal
+          <select name="goal">
+            <option>Personal refresh</option>
+            <option>Selling / Staging</option>
+            <option>Airbnb / Short-term rental</option>
+          </select>
+        </label>
 
-  <!-- Style & vision -->
-  <label>Style / Feel Desired
-    <input name="style" placeholder="e.g., modern, cozy, coastal, luxury">
-  </label>
-  <label>Inspiration Links
-    <input name="inspo" placeholder="Pinterest/Instagram links, colors, textures">
-  </label>
-  <label>What do you love now?
-    <input name="love_now" placeholder="features to keep or highlight">
-  </label>
-  <label>What would you change?
-    <input name="change_most" placeholder="pain points or must-fix items">
-  </label>
+        <label>Spaces to Focus On
+          <select name="decor_room">
+            <option>Living Room</option>
+            <option>Bedroom</option>
+            <option>Dining Room</option>
+            <option>Home Office</option>
+            <option>Kitchen / Nook</option>
+            <option>Entryway</option>
+            <option>Multiple Rooms</option>
+            <option>Whole Home</option>
+            <option>Outdoor Space</option>
+          </select>
+        </label>
 
-  <!-- Function & lifestyle -->
-  <label>Who uses the space?
-    <select name="users">
-      <option>Adults</option><option>Kids</option><option>Pets</option><option>Guests</option>
-    </select>
-  </label>
-  <label>Top Priority
-    <select name="priority">
-      <option>Comfort & livability</option>
-      <option>Style & aesthetics</option>
-      <option>Durability & easy maintenance</option>
-    </select>
-  </label>
-  <label>Must-Keep Items
-    <input name="must_keep" placeholder="furniture, art, heirlooms">
-  </label>
+        <label>Rooms Count
+          <input name="count" type="number" min="1" value="1">
+        </label>
 
-  <!-- Scope / service level -->
-  <label>Service Level
-    <select name="decor_scope">
-      <option>Light refresh (styling only)</option>
-      <option>Refresh + small sourcing</option>
-      <option>Full room redesign</option>
-    </select>
-  </label>
-  <label>Furniture Sourcing Needed?
-    <select name="decor_furniture">
-      <option>No</option>
-      <option>Yes — a few pieces</option>
-      <option>Yes — multiple pieces</option>
-    </select>
-  </label>
+        <label>Service Level
+          <select name="decor_scope">
+            <option>Light refresh (styling only)</option>
+            <option>Refresh + small sourcing</option>
+            <option>Full room redesign</option>
+          </select>
+        </label>
 
-  <!-- For Sellers / Airbnb -->
-  <label>Home Status (if selling)
-    <select name="staging_status">
-      <option>N/A</option>
-      <option>Occupied</option>
-      <option>Vacant</option>
-    </select>
-  </label>
-  <label>Airbnb Theme (if applicable)
-    <input name="airbnb_theme" placeholder="e.g., coastal retreat, modern loft">
-  </label>
+        <label>Furniture Sourcing Needed?
+          <select name="decor_furniture">
+            <option>No</option>
+            <option>Yes — a few pieces</option>
+            <option>Yes — multiple pieces</option>
+          </select>
+        </label>
 
-  <!-- Budget & timeline -->
-  <label>Budget Range
-    <select name="budget">
-      <option>$500–$1,000</option><option>$1,000–$2,500</option>
-      <option>$2,500–$5,000</option><option>$5,000+</option>
-    </select>
-  </label>
-  <label>Timeline
-    <select name="timeline">
-      <option>ASAP</option><option>1–2 months</option>
-      <option>3–6 months</option><option>Flexible</option>
-    </select>
-  </label>
+        <label>Install Level
+          <select name="decor_install">
+            <option>Light (art, textiles)</option>
+            <option>Moderate (art + small furniture)</option>
+            <option>Heavy (multiple furniture + window treatments)</option>
+          </select>
+        </label>
 
-  <!-- Logistics -->
-  <label>Rooms Count
-    <input name="count" type="number" min="1" value="1">
-  </label>
-  <label>Access / Parking
-    <select name="decor_access">
-      <option>Easy</option>
-      <option>Stairs / elevator</option>
-      <option>HOA / tight timing</option>
-    </select>
-  </label>
+        <label>Access / Parking
+          <select name="decor_access">
+            <option>Easy</option>
+            <option>Stairs / elevator</option>
+            <option>HOA / tight timing</option>
+          </select>
+        </label>
 
-  <!-- Notes & payment -->
-  <label>Notes / Special Requests
-    <input name="notes" placeholder="anything else we should know">
-  </label>
-  <label>Payment Preference
-    <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
-  </label>
-</div>
+        <label>Timeline
+          <select name="timeline">
+            <option>ASAP</option><option>1–2 months</option>
+            <option>3–6 months</option><option>Flexible</option>
+          </select>
+        </label>
 
+        <label>Budget Range
+          <select name="budget">
+            <option>$500–$1,000</option><option>$1,000–$2,500</option>
+            <option>$2,500–$5,000</option><option>$5,000+</option>
+          </select>
+        </label>
+      </div>
 
+      <!-- 3. Style & Notes -->
+      <div class="fieldset grid-2">
+        <label>Style / Feel Desired
+          <input name="style" placeholder="e.g., modern, cozy, coastal, luxury">
+        </label>
+        <label>Inspiration Links
+          <input name="inspo" placeholder="Pinterest/Instagram links, colors, textures">
+        </label>
+        <label>Must-Keep Items
+          <input name="must_keep" placeholder="furniture, art, heirlooms">
+        </label>
+        <label>Notes / Special Requests
+          <input name="notes" placeholder="anything else we should know">
+        </label>
+      </div>
+
+      <!-- 4. Add-ons (optional) -->
+      <div class="fieldset grid-2">
+        <label>Add-ons
+          <input name="addons" placeholder="moodboard, sourcing, shopping, install, window treatments, art hanging">
+        </label>
+        <label>Payment Preference
+          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
+        </label>
+      </div>
+
+      <!-- Submit -->
       <div class="submit-row">
         <button class="btn btn-solid" type="submit">Get Decorating Estimate</button>
         <p id="estimateDecor" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
@@ -208,26 +195,52 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
-  <!-- Dropdown behavior (local to this page) -->
+  <!-- Local dropdown behavior -->
   <script>
     (function(){
-      const dd  = document.getElementById('quoteDropdown');
-      const btn = document.getElementById('quoteBtn');
-      const menu= document.getElementById('quoteMenu');
+      const dd = document.getElementById('quoteDropdown');
+      const btn= document.getElementById('quoteBtn');
+      const menu=document.getElementById('quoteMenu');
       if (!dd || !btn || !menu) return;
-      function toggle(open){
-        dd.classList.toggle('open', open);
-        btn.setAttribute('aria-expanded', String(open));
-        menu.setAttribute('aria-hidden', String(!open));
-      }
+      const toggle = (open)=>{ dd.classList.toggle('open', open); btn.setAttribute('aria-expanded', String(open)); menu.setAttribute('aria-hidden', String(!open)); };
       btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
       document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
       document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
     })();
   </script>
 
-  <!-- Your site JS (pricing + Square routing) -->
-  <script src="script.js?v=5" defer></script>
+  <!-- Your site JS (pricing, etc.) -->
+  <script src="script.js?v=6" defer></script>
+
+  <!-- OVERRIDE: after intake, show estimate, unlock, and route to index#book (NOT Square) -->
+  <script>
+    (function(){
+      const INTAKE_FLAG = 'ftt_intake_ok';
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('intakeFormDecor');
+        if (!form) return;
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          e.stopImmediatePropagation(); // prevent script.js from redirecting to Square
+
+          const data = Object.fromEntries(new FormData(form).entries());
+
+          // Show estimate using your global calcDecor if present
+          try {
+            if (typeof calcDecor === 'function') {
+              const price = calcDecor(data);
+              const estEl = document.getElementById('estimateDecor');
+              if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong><br><span style="font-size:.9em;opacity:.9">Receive a tailored estimate by completing our quick intake form before confirming your booking.</span>`;
+            }
+          } catch(err){ console.warn(err); }
+
+          // Unlock booking on Home, then route to embedded calendar
+          try { localStorage.setItem(INTAKE_FLAG, '1'); } catch(_) {}
+          window.location.href = 'index.html#book';
+        }, true); // capture = true so we win
+      });
+    })();
+  </script>
 </body>
 </html>
-
