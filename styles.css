@@ -7,33 +7,44 @@
   --accent:#d2bda9;
   --shadow:0 10px 30px rgba(0,0,0,.08);
 }
-html { scroll-behavior: smooth; }
-#book { scroll-margin-top: 80px; }
-
-/* Lock state for booking */
-.booking-embed[data-locked] .container { position: relative; }
-.booking-embed[data-locked] .container::after {
-  content: "Please complete the Intake to unlock booking.";
-  position: absolute; inset: 0;
-  display: grid; place-items: center;
-  background: rgba(255,255,255,.85);
-  backdrop-filter: blur(3px);
-  color: #524a46; font-weight: 800; text-align: center;
-  border-radius: 12px;
-}
-const INTAKE_FLAG = "ftt_intake_ok";
-function isBookingUnlocked(){ return localStorage.getItem(INTAKE_FLAG) === "1"; }
-function unlockBooking(){
-  localStorage.setItem(INTAKE_FLAG, "1");
-  const book = document.querySelector('#book[data-locked]');
-  if (book) book.removeAttribute('data-locked');
-}
 
 /* Smooth page scrolling and anchor offset so header never hides content */
 html { scroll-behavior: smooth; }
 #book { scroll-margin-top: 80px; }
 
-/* Base */
+/* ---------- Booking lock state ---------- */
+.booking-embed[data-locked] .container{ position:relative; }
+
+/* Disable clicks behind overlay while locked (don’t blur so text stays crisp) */
+.booking-embed[data-locked] .container > *{
+  pointer-events:none;
+}
+
+/* Overlay message */
+.booking-embed[data-locked] .container::after{
+  content:"Please complete the Intake to unlock booking.";
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(3px);
+  color:#524a46; font-weight:800; text-align:center;
+  border-radius:12px;
+  z-index:2;
+  padding:16px;
+}
+
+/* Helper banner shown after intake (script injects #booking-helper-note) */
+#booking-helper-note{
+  margin:0 0 12px;
+  padding:10px 12px;
+  border:1px solid #e3d9ce;
+  border-radius:10px;
+  background:#fffdfb;
+  color:#524a46;
+  font-weight:700;
+}
+
+/* ---------- Base ---------- */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -50,7 +61,7 @@ h1,h2,h3{
 }
 .container{width:min(1120px,92%);margin:0 auto}
 
-/* Header */
+/* ---------- Header ---------- */
 .site-header{
   background:linear-gradient(#efe6db,#e9dfd3);
   border-bottom:1px solid #eadfd4;
@@ -65,291 +76,35 @@ h1,h2,h3{
 
 /* Vase logo PNG */
 .vase-logo{
-  width:34px;
-  height:44px;
-  display:inline-block;
+  width:34px;height:44px;display:inline-block;
   background-image:url('logo-vase.png');
-  background-repeat:no-repeat;
-  background-size:contain;
-  background-position:center;
-  vertical-align:middle;
-  margin-right:8px;
+  background-repeat:no-repeat;background-size:contain;background-position:center;
+  vertical-align:middle;margin-right:8px;
 }
 @media (min-width:900px){
   .vase-logo{ width:40px; height:52px; }
 }
-
 .brand-name{
   font-family:"Playfair Display",serif;
-  font-weight:600;
-  letter-spacing:.2px;
-  color:var(--taupe-900);
+  font-weight:600; letter-spacing:.2px; color:var(--taupe-900);
 }
 .main-nav{display:flex;align-items:center;gap:22px}
 .main-nav a{
-  color:var(--taupe-900);
-  text-decoration:none;
-  font-weight:600;
-  opacity:.95;
+  color:var(--taupe-900); text-decoration:none; font-weight:600; opacity:.95;
 }
 
-/* Buttons */
+/* ---------- Buttons ---------- */
 .btn{
-  display:inline-block;
-  padding:.7rem 1rem;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
-  text-decoration:none;
+  display:inline-block; padding:.7rem 1rem; border-radius:999px;
+  font-weight:700; cursor:pointer; text-decoration:none;
 }
 .btn-outline{
-  border:1.5px solid var(--taupe-900);
-  color:var(--taupe-900);
-  background:transparent;
+  border:1.5px solid var(--taupe-900); color:var(--taupe-900); background:transparent;
 }
 .btn-solid{
-  background:var(--accent);
-  color:#2a2624;
-  border:0;
+  background:var(--accent); color:#2a2624; border:0;
 }
-
-/* Top-right auth button */
 .btn-auth{
-  padding:.55rem .9rem;
-  border:1.5px solid var(--taupe-900);
-  color:var(--taupe-900);
-  background:#fff;
-  border-radius:999px;
-  font-weight:800;
-  text-decoration:none;
-  white-space:nowrap;
-}
-.btn-auth:hover{ background:#f6f2ed; }
-
-/* Quote dropdown – generic style (also used in hero) */
-.quote-dropdown{position:relative}
-.quote-dropdown .quote-menu{
-  position:absolute; right:0; top:110%;
-  background:#fff; border:1px solid #e3d9ce; border-radius:12px;
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
-  display:none; min-width:220px; padding:8px; z-index:1000;
-}
-.quote-dropdown.open .quote-menu{display:block}
-.quote-dropdown .quote-menu a{
-  display:block; padding:10px 12px; text-decoration:none;
-  color:var(--taupe-900); border-radius:10px; font-weight:600;
-}
-.quote-dropdown .quote-menu a:hover{background:#f6f2ed}
-
-/* Hero */
-.hero{position:relative;isolation:isolate}
-.hero-media{position:relative;height:56vh;min-height:420px;overflow:hidden}
-.hero-media img{width:100%;height:100%;object-fit:cover;object-position:center}
-.hero-scrim{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.45));
-}
-.hero-content{
-  position:absolute;inset:0;display:grid;place-items:center;
-  text-align:center;color:#fff;
-}
-.script-kicker{font-family:"Allura",cursive;font-size:2rem}
-.hero-title{font-size:3rem;margin:.5rem 0}
-.hero-sub{margin:0 0 1.1rem}
-
-/* Bold hero “Get Your Quote” */
-.btn-quote{
-  display:inline-block;
-  padding:.9rem 1.25rem;
-  border-radius:999px;
-  font-weight:800;
-  letter-spacing:.2px;
-  border:2px solid #fff;
-  background:rgba(255,255,255,.08);
-  color:#fff;
-  backdrop-filter: blur(6px);
-}
-.btn-quote:hover{ background:rgba(255,255,255,.16); }
-
-/* Hero dropdown position */
-.hero .quote-dropdown{ position:relative; display:inline-block; margin-top:.2rem; }
-.hero .quote-menu{
-  position:absolute; left:0; top:calc(100% + 8px);
-  background:#fff; border:1px solid #e3d9ce; border-radius:12px;
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
-  display:none; min-width:240px; padding:8px; z-index:1000;
-}
-.hero .quote-dropdown.open .quote-menu{ display:block; }
-.hero .quote-menu a{
-  display:block; padding:10px 12px; text-decoration:none;
-  color:var(--taupe-900); border-radius:10px; font-weight:700;
-}
-.hero .quote-menu a:hover{ background:#f6f2ed; }
-
-/* Sections */
-.section{padding:56px 0}
-
-/* Services */
-.services{background:#f3ece4}
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:22px
-}
-.card{
-  background:var(--card);
-  border-radius:14px;
-  padding:22px;
-  text-align:center;
-  box-shadow:var(--shadow);
-  transition:transform .15s ease, box-shadow .15s ease;
-}
-.card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 14px 34px rgba(0,0,0,.10);
-}
-.card h3{margin:.4rem 0}
-
-.service-icon {
-  font-size: 42px;
-  color: var(--taupe-900);
-  margin-bottom: 12px;
-  display: block;
-}
-
-
-/* Cleaning – spray bottle */
-.icon-clean {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 2h6v2H9V2zm7 3V4h2v2l-2 6h-2l2-7zM5 9h6l2 7h2v6H3v-6h2l-2-7zm2 2-1 5h6l-1-5H7z'/></svg>");
-}
-
-/* Staging – vase with pampas */
-.icon-staging {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2a2 2 0 0 1 2 2v3h-4V4a2 2 0 0 1 2-2zm-2 7h4l2 10a4 4 0 0 1-4 4 4 4 0 0 1-4-4l2-10z'/></svg>");
-}
-
-/* Organizing – stacked boxes */
-.icon-organizing {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 3h8v6H3V3zm10 0h8v6h-8V3zM3 11h8v10H3V11zm10 0h8v10h-8V11z'/></svg>");
-}
-
-/* Holiday – ornament */
-.icon-holiday {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23524a46' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2a2 2 0 0 0-2 2v2a8 8 0 1 0 4 0V4a2 2 0 0 0-2-2zm0 8a6 6 0 1 1 0 12 6 6 0 0 1 0-12z'/></svg>");
-}
-
-
-/* About */
-.about-grid{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:30px;align-items:center;
-}
-.about-photo img{width:100%;border-radius:16px;box-shadow:var(--shadow)}
-
-/* Contact */
-.contact-strip{background:linear-gradient(#f5efe8,#efe6db)}
-.contact-grid{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:28px;
-}
-.contact-form,.contact-details{
-  background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow);
-}
-label{display:grid;gap:6px;font-weight:600}
-input,textarea,select{
-  border:1px solid #e3d9ce;border-radius:12px;
-  padding:.75rem;background:#fffdfb;color:var(--taupe-900);
-}
-.status{opacity:.9}
-
-/* Embedded booking iframe styling */
-.booking-embed { background:#fffdfb; }
-.booking-embed .microcopy { margin: 0 0 12px; }
-
-.booking-embed iframe {
-  width: 100%;
-  min-height: 980px; /* adjust as needed */
-  border: 0;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  background:#fff;
-}
-
-/* Keep chat above the iframe */
-#ftt-chat-launcher, #ftt-chat { z-index: 9999; }
-
-
-/* === Finishing Touch Chat styles === */
-#ftt-chat-launcher{
-  position: fixed; right: 20px; bottom: 20px;
-  width: 56px; height: 56px; border-radius: 50%;
-  display:flex; align-items:center; justify-content:center;
-  background:#0f172a; color:#fff; font-size:22px;
-  box-shadow:0 10px 25px rgba(0,0,0,.25); cursor:pointer; z-index: 9999;
-}
-#ftt-chat{
-  position: fixed; right: 20px; bottom: 90px; width: 360px; max-width: 90vw;
-  background:#fff; border:1px solid #eee; border-radius: 16px; overflow: hidden;
-  box-shadow:0 20px 50px rgba(0,0,0,.25); z-index: 9999; font-family: system-ui, sans-serif;
-}
-.ftt-chat-header{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding:12px 14px; background:#0f172a; color:#fff;
-}
-.ftt-title{ font-weight:700; }
-.ftt-subtitle{ font-size:12px; opacity:.8; }
-.ftt-close{ background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; }
-.ftt-thread{
-  max-height: 50vh; overflow:auto; padding:12px; background:#f8fafc;
-  display:flex; flex-direction:column; gap:10px;
-}
-.ftt-bubble{
-  max-width: 85%; padding:10px 12px; border-radius:12px; line-height:1.35;
-  font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.06);
-}
-.ftt-bubble.bot{ background:#fff; border:1px solid #eef2f7; align-self:flex-start; }
-.ftt-bubble.me{ background:#0ea5e9; color:#fff; align-self:flex-end; }
-.ftt-inputbar{
-  display:flex; gap:8px; padding:10px; border-top:1px solid #eef2f7; background:#fff;
-}
-#ftt-input{
-  flex:1; border:1px solid #e5e7eb; border-radius:10px; padding:10px; font-size:14px;
-}
-.ftt-send{
-  background:#0f172a; color:#fff; border:none; border-radius:10px; padding:0 14px; cursor:pointer;
-}
-.ftt-quick{ display:flex; gap:6px; padding:8px 10px; flex-wrap:wrap; background:#fff; border-top:1px solid #eef2f7; }
-.ftt-quick button{
-  font-size:12px; border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer;
-}
-@media (max-width: 480px){
-  #ftt-chat{ right:10px; bottom:80px; width:92vw; }
-}
-
-
-/* Footer */
-.site-footer{background:#efe6db;border-top:1px solid #e2d6c9}
-.site-footer p{
-  margin:0;padding:16px 0;text-align:center;
-  color:var(--taupe-900);font-weight:600;
-}
-
-/* Responsive */
-@media (max-width:1000px){
-  .about-grid,.contact-grid{grid-template-columns:1fr}
-  .hero-title{font-size:2.4rem}
-}
-
-
-
-
-
-
-
-
-
-
-
-
+  padding:.55rem .9rem; border:1.5px solid var(--taupe-900);
+  color:var(--taupe-900); background:#fff; border-radius:999px;
+  font-weight:800; text-decoration:none; white-space:nowrap;
