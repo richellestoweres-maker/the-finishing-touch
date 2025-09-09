@@ -123,6 +123,31 @@
           <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
         </label>
       </div>
+      <!-- CONSENTS -->
+<fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
+  <legend id="consentLegend" style="font-weight:700;">Consents</legend>
+
+  <label style="display:flex;gap:.6rem;align-items:flex-start;">
+    <input type="checkbox" name="consent_work_photos" required>
+    <span>I allow The Finishing Touch to take before/after photos for job verification and quality control. These will not be used for marketing unless I also consent below.</span>
+  </label>
+
+  <label style="display:flex;gap:.6rem;align-items:flex-start;">
+    <input type="checkbox" name="consent_marketing_photos">
+    <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. I can revoke this in writing.</span>
+  </label>
+
+  <label style="display:flex;gap:.6rem;align-items:flex-start;">
+    <input type="checkbox" name="consent_terms" required>
+    <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html" target="_blank" rel="noopener">Read terms</a>.</span>
+  </label>
+
+  <label style="display:flex;gap:.6rem;align-items:flex-start;">
+    <input type="checkbox" name="consent_updates">
+    <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
+  </label>
+</fieldset>
+
 
       <div class="submit-row">
         <button class="btn btn-solid" type="submit">Get Instant Estimate</button>
@@ -190,6 +215,7 @@
   </script>
 </body>
 </html>
+
 
 
 
