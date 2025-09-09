@@ -70,7 +70,7 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Cleaning Intake Form</div>
-    <p class="intake-note">Complete this brief form for an instant ballpark estimate (also emailed to you).</p>
+    <p class="intake-note">Complete this brief form for an instant ballpark estimate.</p>
 
     <form id="intakeFormCleaning" class="grid-1">
       <div class="grid-2">
@@ -132,7 +132,7 @@
     </form>
   </main>
 
-  <!-- EmailJS (optional, only if you're using email) -->
+  <!-- EmailJS (optional) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
@@ -156,7 +156,40 @@
 
   <!-- Your site JS (pricing + Square routing) -->
   <script src="script.js?v=5" defer></script>
+
+  <!-- OVERRIDE: after intake, unlock embedded calendar and route to index#book (not Square) -->
+  <script>
+    (function(){
+      const INTAKE_FLAG = 'ftt_intake_ok';
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('intakeFormCleaning');
+        if (!form) return;
+
+        // Capture-phase listener cancels the script.js redirect-to-Square
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          // Show the estimate once (uses your calcCleaning from script.js if present)
+          try {
+            const data = Object.fromEntries(new FormData(form).entries());
+            if (typeof calcCleaning === 'function') {
+              const price = calcCleaning(data);
+              const estEl = document.getElementById('estimateCleaning');
+              if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+            }
+          } catch(_) {}
+
+          // Unlock booking on Home and send them to the embedded calendar
+          try { localStorage.setItem(INTAKE_FLAG,'1'); } catch(_) {}
+          window.location.href = 'index.html#book';
+        }, true); // <-- capture = true so we override the other handler
+      });
+    })();
+  </script>
 </body>
 </html>
+
 
 
