@@ -5,35 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Finishing Touch – Luxury Interior Services</title>
 
-  <!-- Fonts -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Site CSS -->
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=7" />
+
+  <!-- Minimal inline styles so the booking lock works even before CSS is updated -->
+  <style>
+    html { scroll-behavior: smooth; }
+    #book { scroll-margin-top: 80px; }
+    .booking-embed[data-locked] .container { position: relative; }
+    .booking-embed[data-locked] .container::after{
+      content:"Please complete the Intake to unlock booking.";
+      position:absolute; inset:0; display:grid; place-items:center;
+      background:rgba(255,255,255,.88); backdrop-filter:blur(3px);
+      color:#524a46; font-weight:800; text-align:center;
+      border-radius:12px; padding:24px;
+    }
+    /* keep chat above the iframe just in case */
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
 </head>
 <body class="page-home">
 
- <!-- Header -->
-<header class="site-header">
-  <div class="container header-inner">
-    <div class="brand">
-      <span class="vase-logo" aria-hidden="true"></span>
-      <span class="brand-name">The Finishing Touch</span>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
     </div>
+  </header>
 
-    <nav class="main-nav">
-      <a href="index.html">Home</a>
-      <a href="#services">Services</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-       <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
-     </nav>
-  </div>
-</header>
-
-
-      
   <!-- Hero -->
   <section class="hero">
     <div class="hero-media">
@@ -61,38 +75,34 @@
     </div>
   </section>
 
-<!-- Services -->
-<section id="services" class="section services">
-  <div class="container cards">
+  <!-- Services -->
+  <section id="services" class="section services">
+    <div class="container cards">
+      <article class="card">
+        <i class="fa-solid fa-broom service-icon" aria-hidden="true"></i>
+        <h3>Cleaning</h3>
+        <p>Meticulous care for a refreshed home</p>
+      </article>
 
-    <article class="card">
-      <i class="fa-solid fa-broom service-icon"></i>
-      <h3>Cleaning</h3>
-      <p>Meticulous care for a refreshed home</p>
-    </article>
+      <article class="card">
+        <i class="fa-solid fa-couch service-icon" aria-hidden="true"></i>
+        <h3>Staging &amp; Styling</h3>
+        <p>Elevate spaces for living or showings</p>
+      </article>
 
-    <article class="card">
-      <i class="fa-solid fa-couch service-icon"></i>
-      <h3>Staging &amp; Styling</h3>
-      <p>Elevate spaces for living or showings</p>
-    </article>
+      <article class="card">
+        <i class="fa-solid fa-border-all service-icon" aria-hidden="true"></i>
+        <h3>Organizing</h3>
+        <p>Declutter and create calm</p>
+      </article>
 
-    <article class="card">
-      <i class="fa-solid fa-border-all service-icon"></i>
-      <h3>Organizing</h3>
-      <p>Declutter and create calm</p>
-    </article>
-
-    <article class="card">
-      <i class="fa-solid fa-snowman service-icon"></i>
-      <h3>Holiday Decorating</h3>
-      <p>Festive styling for gatherings & celebrations</p>
-    </article>
-
-  </div>
-</section>
-
-
+      <article class="card">
+        <i class="fa-solid fa-snowman service-icon" aria-hidden="true"></i>
+        <h3>Holiday Decorating</h3>
+        <p>Festive styling for gatherings & celebrations</p>
+      </article>
+    </div>
+  </section>
 
   <!-- About -->
   <section id="about" class="section about">
@@ -110,135 +120,109 @@
     </div>
   </section>
 
- <!-- Contact -->
-<section id="contact" class="section contact-strip">
-  <div class="container contact-grid">
-    <!-- Left: Smart contact form (optional) -->
-    <form id="contactForm" class="contact-form" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
-      <h3>Contact</h3>
+  <!-- Contact -->
+  <section id="contact" class="section contact-strip">
+    <div class="container contact-grid">
+      <!-- Left: Smart contact form -->
+      <form id="contactForm" class="contact-form" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+        <h3>Contact</h3>
 
-      <label>
-        Name
-        <input name="name" required>
-      </label>
+        <label>
+          Name
+          <input name="name" required>
+        </label>
 
-      <label>
-        Email
-        <input name="email" type="email" required>
-      </label>
+        <label>
+          Email
+          <input name="email" type="email" required>
+        </label>
 
-      <label>
-        Message
-        <textarea name="message" rows="3" required></textarea>
-      </label>
+        <label>
+          Message
+          <textarea name="message" rows="3" required></textarea>
+        </label>
 
-      <!-- Hidden meta so you know which page the message came from -->
-      <input type="hidden" name="source" value="The Finishing Touch – Contact section">
+        <input type="hidden" name="source" value="The Finishing Touch – Contact section">
 
-      <button class="btn btn-solid" type="submit">Send</button>
-      <p id="contactStatus" class="status" aria-live="polite"></p>
+        <button class="btn btn-solid" type="submit">Send</button>
+        <p id="contactStatus" class="status" aria-live="polite"></p>
 
-      <p class="microcopy">
-        Prefer faster booking?
-        <a href="intake-cleaning.html">Start the Client Intake</a>
-        and we’ll route you straight to scheduling.
-      </p>
-    </form>
+        <p class="microcopy">
+          Prefer faster booking?
+          <a href="intake-cleaning.html">Start the Client Intake</a>
+          and we’ll route you straight to scheduling.
+        </p>
+      </form>
 
-   <a class="btn btn-outline" href="#book" aria-label="Book now">
-  <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
-</a>
+      <!-- Right: Direct actions + social -->
+      <div class="contact-details">
+        <h3>Connect</h3>
 
-
-
-    <!-- Right: Direct actions + social -->
-    <div class="contact-details">
-      <h3>Connect</h3>
-
-      <!-- Primary funnel -->
-      <div class="cta-stack">
-        <a class="btn btn-primary" href="intake-cleaning.html" aria-label="Start Client Intake">
-          <i class="fas fa-clipboard-list" aria-hidden="true"></i> Start Intake
-        </a>
-        <a class="btn btn-outline" href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9" target="_blank" rel="noopener" aria-label="Book now">
-          <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
-        </a>
-      </div>
-
-      <!-- Direct contact (no phone) -->
-      <ul class="link-list">
-        <li>
-          <a href="mailto:contact.thefinishingtouch.tx@gmail.com">
-            <i class="fas fa-envelope" aria-hidden="true"></i>
-            contact.thefinishingtouch.tx@gmail.com
+        <div class="cta-stack">
+          <a class="btn btn-primary" href="intake-cleaning.html" aria-label="Start Client Intake">
+            <i class="fas fa-clipboard-list" aria-hidden="true"></i> Start Intake
           </a>
-        </li>
-        <li>
-          <a href="https://facebook.com/thefinishingtouch.tx" target="_blank" rel="noopener">
-            <i class="fab fa-facebook" aria-hidden="true"></i>
-            facebook.com/thefinishingtouch.tx
+          <!-- All booking actions go to the on-page calendar (locked until intake) -->
+          <a class="btn btn-outline" href="#book" aria-label="Book now">
+            <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
           </a>
-        </li>
-        <li>
-          <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">
-            <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
-            Message us on Facebook
-          </a>
-        </li>
-      </ul>
+        </div>
 
-      <!-- Facebook timeline embed -->
-      <div class="social-embed">
-        <h4>Latest Updates</h4>
-        <div class="fb-page"
-             data-href="https://www.facebook.com/thefinishingtouch.tx"
-             data-tabs="timeline"
-             data-width="380"
-             data-height=""
-             data-hide-cover="false"
-             data-show-facepile="false">
+        <ul class="link-list">
+          <li>
+            <a href="mailto:contact.thefinishingtouch.tx@gmail.com">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              contact.thefinishingtouch.tx@gmail.com
+            </a>
+          </li>
+          <li>
+            <a href="https://facebook.com/thefinishingtouch.tx" target="_blank" rel="noopener">
+              <i class="fab fa-facebook" aria-hidden="true"></i>
+              facebook.com/thefinishingtouch.tx
+            </a>
+          </li>
+          <li>
+            <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">
+              <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
+              Message us on Facebook
+            </a>
+          </li>
+        </ul>
+
+        <!-- Facebook timeline embed -->
+        <div class="social-embed">
+          <h4>Latest Updates</h4>
+          <div class="fb-page"
+               data-href="https://www.facebook.com/thefinishingtouch.tx"
+               data-tabs="timeline"
+               data-width="380"
+               data-height=""
+               data-hide-cover="false"
+               data-show-facepile="false">
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== Booking (embedded Square) ===== -->
-<section id="book" class="section booking-embed">
-  <div class="container">
-    <h2>Book an Appointment</h2>
-    <p class="microcopy">Choose a service to see available dates and times.</p>
+  <!-- ===== Booking (embedded Square) — locked until intake ===== -->
+  <section id="book" class="section booking-embed" data-locked>
+    <div class="container">
+      <h2>Book an Appointment</h2>
+      <p class="microcopy">Choose a service to see available dates and times.</p>
 
-    <!-- Start Square Appointments Embed Code -->
-    <script src="https://square.site/appointments/buyer/widget/kbcbv6uu1d7qd7/L2P303Y0SXTD9.js"></script>
-    <!-- End Square Appointments Embed Code -->
+      <!-- Start Square Appointments Embed Code -->
+      <script src="https://square.site/appointments/buyer/widget/kbcbv6uu1d7qd7/L2P303Y0SXTD9.js"></script>
+      <!-- End Square Appointments Embed Code -->
 
-    <noscript>
-      Booking requires JavaScript. You can still
-      <a href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9" target="_blank" rel="noopener">
-        open our booking site
-      </a>.
-    </noscript>
-  </div>
-</section>
-
-<section id="book" class="section booking-embed" data-locked>
-  <div class="container">
-    <h2>Book an Appointment</h2>
-    <p class="microcopy">Choose a service to see available dates and times.</p>
-
-    <!-- Start Square Appointments Embed Code -->
-    <script src="https://square.site/appointments/buyer/widget/kbcbv6uu1d7qd7/L2P303Y0SXTD9.js"></script>
-    <!-- End Square Appointments Embed Code -->
-
-    <noscript>
-      Booking requires JavaScript. You can still
-      <a href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9" target="_blank" rel="noopener">
-        open our booking site
-      </a>.
-    </noscript>
-  </div>
-</section>
+      <noscript>
+        Booking requires JavaScript. You can still
+        <a href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9" target="_blank" rel="noopener">
+          open our booking site
+        </a>.
+      </noscript>
+    </div>
+  </section>
 
   <!-- Footer -->
   <footer class="site-footer">
@@ -251,239 +235,136 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
-  <!-- Site JS (defer = no reload flicker) -->
-  <script src="script.js?v=6" defer></script>
+  <!-- Site JS -->
+  <script src="script.js?v=7" defer></script>
 
   <!-- === Finishing Touch — AI Concierge Chat === -->
-<div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
 
-<div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
-  <div class="ftt-chat-header">
-    <div>
-      <div class="ftt-title">The Finishing Touch</div>
-      <div class="ftt-subtitle">AI Concierge • human on request</div>
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
     </div>
-    <button class="ftt-close" aria-label="Close chat">×</button>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="recommend">Help me choose</button>
+    </div>
   </div>
 
-  <div id="ftt-thread" class="ftt-thread"></div>
+  <!-- Inline chat + booking lock helpers (kept minimal; main logic in script.js) -->
+  <script>
+    /* ====== CONFIG (kept in-page for clarity) ====== */
+    const FTT = {
+      timezone: "America/Chicago",
+      intakeAnchor: "intake-cleaning.html",   // intake-first flow
+      bookUrl: "#book",                       // on-page calendar
+      email: "contact.thefinishingtouch.tx@gmail.com",
+      facebookPage: "thefinishingtouch.tx",
+      messengerDeepLink: "https://m.me/thefinishingtouch.tx",
+      hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
+    };
 
-  <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
-    <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
-    <button class="ftt-send" type="submit">Send</button>
-  </form>
-
-  <div class="ftt-quick">
-    <button data-q="pricing">Pricing</button>
-    <button data-q="availability">Availability</button>
-    <button data-q="services">Services</button>
-    <button data-q="book">Book now</button>
-    <button data-q="human">Talk to a person</button>
-    <button data-q="help">Help me choose</button>
-  </div>
-</div>
-
-<script>
-/* ====== CONFIG (edit these) ====== */
-const FTT = {
-  timezone: "America/Chicago",
-  intakeAnchor: "intake-cleaning.html",  // was "#intake" (which doesn't exist)
-  bookUrl: "#book",                       // scrolls to embedded calendar
-  email: "contact.thefinishingtouch.tx@gmail.com",
-  facebookPage: "thefinishingtouch.tx",
-  messengerDeepLink: "https://m.me/thefinishingtouch.tx",
-  hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
-};
-
-/* ====== Tiny AI-lite brain (intent rules) ====== */
-function detectIntent(text) {
-  const t = text.toLowerCase();
-
-  if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
-  if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
-  if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-  if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
-  if (/(area|serve|location|where|zip|city)/.test(t)) return "service_area";
-  if (/(book|booking|schedule now)/.test(t)) return "book";
-  if (/(cancel|resched|policy)/.test(t)) return "policies";
-  if (/(move[-\s]?out|moveout|make ready)/.test(t)) return "moveout";
-
-  // (optional) "help me choose" intent
-  if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
-
-  return "fallback";
-}
-
-function isWithinBusinessHours() {
-  try {
-    const now = new Date();
-    const locale = "en-US";
-    const options = { timeZone: FTT.timezone, hour12: false, weekday: "short", hour: "2-digit", minute: "2-digit" };
-    const parts = new Intl.DateTimeFormat(locale, options).formatToParts(now);
-    const hh = +(parts.find(p=>p.type==="hour")?.value || "0");
-    const mm = +(parts.find(p=>p.type==="minute")?.value || "0");
-    const dayShort = parts.find(p=>p.type==="weekday")?.value || "";
-    const dayMap = {Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6};
-    const wd = dayMap[dayShort] ?? now.getDay();
-
-    const [oH,oM] = FTT.hours.open.split(":").map(Number);
-    const [cH,cM] = FTT.hours.close.split(":").map(Number);
-    const afterOpen = (hh>oH) || (hh===oH && mm>=oM);
-    const beforeClose = (hh<cH) || (hh===cH && mm<=cM);
-    return FTT.hours.days.includes(wd) && afterOpen && beforeClose;
-  } catch { return false; }
-}
-
-/* ====== Responses ====== */
-function answer(intent, userText) {
-  const hoursNote = isWithinBusinessHours()
-    ? "We’re online now—ask me anything or say “human” to chat with a person."
-    : "We’re offline at the moment, but I can still help or route your message to a person.";
-
-  const intakeLink = `<a href="${FTT.intakeAnchor}">Start Intake</a>`;
-  // smart book link: if it's a hash, don't open a new tab
-  const bookLink = FTT.bookUrl.startsWith('#')
-    ? `<a href="${FTT.bookUrl}">Book now</a>`
-    : `<a href="${FTT.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
-
-  switch (intent) {
-    case "pricing":
-      return [
-        "Here’s a quick pricing overview (final quote depends on size/condition):",
-        "• Initial/Deep Clean: typically $350–$400 for average homes.",
-        "• Standard Maintenance: commonly $275–$300.",
-        "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + ".",
-        hoursNote
-      ].join("<br>");
-    case "availability":
-      return [
-        "We update availability live in Square.",
-        bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.",
-        hoursNote
-      ].join("<br>");
-    case "services":
-      return [
-        "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
-        "• Deep/Initial: top-to-bottom detail.",
-        "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
-        "• Move-Out/Make-Ready: includes inside cabinets, fridge, oven (by request).",
-        "Want the full checklist? " + intakeLink + " and I’ll tailor it to your home."
-      ].join("<br>");
-    case "service_area":
-      return "We serve League City, Friendswood, Pearland, Kemah, Galveston, and nearby areas. Not sure if you’re in range? Drop your ZIP and I’ll confirm.";
-    case "moveout":
-      return [
-        "Move-Out / Make-Ready includes high-detail surfaces, baseboards, appliances (add-on), cabinets (inside), and fixtures.",
-        "Share square footage + number of beds/baths via " + intakeLink + " and I’ll estimate time and price."
-      ].join("<br>");
-    case "policies":
-      return "Cancellation policy: clients provide 24-hour notice (fee may apply), contractors 48-hour notice. We’ll confirm details in your intake.";
-    case "book":
-      return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
-    case "human":
-      return [
-        "Absolutely. I’ll hand you to a person.",
-        isWithinBusinessHours()
-          ? `Tap <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
-          : `We’re offline. You can still <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT.email}">${FTT.email}</a> and we’ll reply ASAP.`
-      ].join("<br>");
-    case "recommend": // optional helper to guide selection
-      return [
-        "<strong>Happy to help you choose!</strong>",
-        "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
-        "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
-        "<em>Airbnb:</em> 2 hr = studio/1BR (~≤900 sq ft) · 3 hr = 2–3BR (~900–1,800) · 4 hr = larger/heavier turns.",
-        "<em>Move-Out:</em> 5 hr ≈ up to ~1,500 sq ft · 7 hr ≈ ~1,500–3,000+ sq ft.",
-        "<em>Deep:</em> 4 hr ≈ up to ~2,000 sq ft · 6 hr ≈ ~2,000–3,500+ sq ft.",
-        `Ready to book? ${bookLink} (calendar is embedded below). Or <a href="${FTT.intakeAnchor}">start Intake</a> for a tailored estimate first.`
-      ].join("<br>");
-    default:
-      return [
-        "I can help with pricing, availability, services, service area, and move-outs.",
-        "Try asking “what’s your pricing?” or “do you have Friday slots?”",
-        "Say “human” any time to talk to a person."
-      ].join("<br>");
-  }
-}
-
-/* ====== UI wiring (unchanged) ====== */
-const el = {
-  launcher: document.getElementById("ftt-chat-launcher"),
-  panel: document.getElementById("ftt-chat"),
-  thread: document.getElementById("ftt-thread"),
-  close: null,
-  input: null,
-  form: null,
-  quick: null,
-};
-
-function addMsg(html, who="bot") {
-  const b = document.createElement("div");
-  b.className = `ftt-bubble ${who}`;
-  b.innerHTML = html;
-  el.thread.appendChild(b);
-  el.thread.scrollTop = el.thread.scrollHeight;
-}
-
-function greet() {
-  addMsg("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.", "bot");
-}
-
-function initChat() {
-  el.close = el.panel.querySelector(".ftt-close");
-  el.input = document.getElementById("ftt-input");
-  el.form = document.getElementById("ftt-inputbar");
-  el.quick = document.querySelector(".ftt-quick");
-
-  el.launcher.addEventListener("click", () => {
-    el.panel.hidden = false;
-    if (!el.thread.dataset.greeted) {
-      greet();
-      el.thread.dataset.greeted = "1";
+    /* ====== Tiny AI-lite brain (intent rules) ====== */
+    function detectIntent(text) {
+      const t = text.toLowerCase();
+      if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
+      if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+      if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+      if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
+      if (/(area|serve|location|where|zip|city)/.test(t)) return "service_area";
+      if (/(book|booking|schedule now)/.test(t)) return "book";
+      if (/(cancel|resched|policy)/.test(t)) return "policies";
+      if (/(move[-\s]?out|moveout|make ready)/.test(t)) return "moveout";
+      if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
+      return "fallback";
     }
-    el.input.focus();
-  });
-
-  el.close.addEventListener("click", () => { el.panel.hidden = true; });
-
-  el.form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const text = el.input.value.trim();
-    if (!text) return;
-    addMsg(text, "me");
-    el.input.value = "";
-    setTimeout(() => {
-      const intent = detectIntent(text);
-      addMsg(answer(intent, text), "bot");
-    }, 200);
-  });
-
-  el.quick.addEventListener("click", (e) => {
-    if (e.target.matches("button[data-q]")) {
-      const q = e.target.getAttribute("data-q");
-      const canned = {pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",recommend:"recommend"}[q];
-      addMsg(e.target.textContent, "me");
-      setTimeout(()=> addMsg(answer(canned, e.target.textContent), "bot"), 200);
+    function isWithinBusinessHours() {
+      try {
+        const now = new Date();
+        const parts = new Intl.DateTimeFormat("en-US", { timeZone: FTT.timezone, hour12: false, weekday: "short", hour: "2-digit", minute: "2-digit" }).formatToParts(now);
+        const hh = +(parts.find(p=>p.type==="hour")?.value || "0");
+        const mm = +(parts.find(p=>p.type==="minute")?.value || "0");
+        const dayShort = parts.find(p=>p.type==="weekday")?.value || "";
+        const dayMap = {Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6};
+        const wd = dayMap[dayShort] ?? now.getDay();
+        const [oH,oM] = FTT.hours.open.split(":").map(Number);
+        const [cH,cM] = FTT.hours.close.split(":").map(Number);
+        const afterOpen = (hh>oH) || (hh===oH && mm>=oM);
+        const beforeClose = (hh<cH) || (hh===cH && mm<=cM);
+        return FTT.hours.days.includes(wd) && afterOpen && beforeClose;
+      } catch { return false; }
     }
-  });
-}
+    function answer(intent) {
+      const hoursNote = isWithinBusinessHours()
+        ? "We’re online now—ask me anything or say “human” to chat with a person."
+        : "We’re offline at the moment, but I can still help or route your message to a person.";
 
-document.addEventListener("DOMContentLoaded", initChat);
-</script>
+      const intakeLink = `<a href="${FTT.intakeAnchor}">Start Intake</a>`;
+      const bookLink = `<a href="${FTT.bookUrl}">Book now</a>`;
 
-
-<div id="fb-root"></div>
-<script async defer crossorigin="anonymous"
-  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0">
-</script>
-
-
-</body>
-</html>
-
-
-
-
+      switch (intent) {
+        case "pricing":
+          return [
+            "Here’s a quick pricing overview (final quote depends on size/condition):",
+            "• Initial/Deep Clean: typically $350–$400 for average homes.",
+            "• Standard Maintenance: commonly $275–$300.",
+            "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + ".",
+            hoursNote
+          ].join("<br>");
+        case "availability":
+          return [
+            "We update availability live in Square.",
+            bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.",
+            hoursNote
+          ].join("<br>");
+        case "services":
+          return [
+            "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
+            "• Deep/Initial: top-to-bottom detail.",
+            "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
+            "• Move-Out/Make-Ready: includes inside cabinets, fridge, oven (by request).",
+            "Want the full checklist? " + intakeLink + " and I’ll tailor it to your home."
+          ].join("<br>");
+        case "service_area":
+          return "We serve League City, Friendswood, Pearland, Kemah, Galveston, and nearby areas. Not sure if you’re in range? Drop your ZIP and I’ll confirm.";
+        case "moveout":
+          return [
+            "Move-Out / Make-Ready includes high-detail surfaces, baseboards, appliances (add-on), cabinets (inside), and fixtures.",
+            "Share square footage + number of beds/baths via " + intakeLink + " and I’ll estimate time and price."
+          ].join("<br>");
+        case "policies":
+          return "Cancellation policy: clients provide 24-hour notice (fee may apply), contractors 48-hour notice. We’ll confirm details in your intake.";
+        case "book":
+          return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
+        case "human":
+          return [
+            "Absolutely. I’ll hand you to a person.",
+            isWithinBusinessHours()
+              ? `Tap <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
+              : `We’re offline. You can still <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT.email}">${FTT.email}</a> and we’ll reply ASAP.`
+          ].join("<br>");
+        case "recommend":
+          return [
+            "<strong>Happy to help you choose!</strong>",
+            "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
+            "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
+            "<em>Airbnb:</em> 2 hr = studio/1BR (~≤900 sq ft) ·
 
 
 
