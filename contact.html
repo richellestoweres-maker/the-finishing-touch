@@ -4,18 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact – The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Styles -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand"><span class="vase-logo"></span><span class="brand-name">The Finishing Touch</span></div>
+      <div class="brand"><span class="vase-logo" aria-hidden="true"></span><span class="brand-name">The Finishing Touch</span></div>
       <nav class="main-nav">
         <a href="index.html#services">Services</a>
         <a href="index.html#about">About</a>
         <a class="active" href="contact.html">Contact</a>
-        <a class="btn btn-outline" href="intake.html">Request a quote</a>
+        <a class="btn btn-outline" href="intake-cleaning.html">Request a quote</a>
       </nav>
     </div>
   </header>
@@ -24,34 +29,59 @@
 
   <section class="section contact-strip">
     <div class="container contact-grid">
+      <!-- Contact form -->
       <form id="contactForm" class="contact-form">
         <h3>Send a message</h3>
         <label>Name<input name="name" required></label>
         <label>Email<input name="email" type="email" required></label>
-        <label>Phone<input name="phone"></label>
         <label>Message<textarea name="message" rows="5" required></textarea></label>
         <button class="btn btn-solid" type="submit">Send</button>
         <p id="contactStatus" class="status"></p>
+        <p class="microcopy" style="margin-top:.75rem">
+          Prefer to book now? <a href="index.html#book">Open the calendar</a>.
+        </p>
       </form>
+
+      <!-- Details -->
       <div class="contact-details">
-        <p><span class="icon">📞</span> (832) 596-5042</p>
-        <p><span class="icon">✉️</span> contact.thefinishingtouch.tx@gmail.com</p>
-        <p><span class="icon"></span> facebook.com/thefinishingtouch.tx</p>
+        <h3>Connect</h3>
+        <ul class="link-list">
+          <li>
+            <a href="mailto:contact.thefinishingtouch.tx@gmail.com">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              contact.thefinishingtouch.tx@gmail.com
+            </a>
+          </li>
+          <li>
+            <a href="https://facebook.com/thefinishingtouch.tx" target="_blank" rel="noopener">
+              <i class="fab fa-facebook" aria-hidden="true"></i>
+              facebook.com/thefinishingtouch.tx
+            </a>
+          </li>
+          <li>
+            <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">
+              <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
+              Message us on Facebook
+            </a>
+          </li>
+        </ul>
+
+        <div class="cta-stack" style="margin-top:10px">
+          <a class="btn btn-outline" href="index.html#book">
+            <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
+          </a>
+        </div>
       </div>
     </div>
   </section>
-
-  <a class="btn btn-outline" href="#book">
-  <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
-</a>
-
 
   <footer class="site-footer">
     <div class="container">
       <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
     </div>
   </footer>
+
+  <!-- Your site JS (optional here) -->
   <script src="script.js"></script>
 </body>
 </html>
-
