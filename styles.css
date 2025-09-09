@@ -239,6 +239,23 @@ input,textarea,select{
 }
 .status{opacity:.9}
 
+/* Embedded booking iframe styling */
+.booking-embed { background:#fffdfb; }
+.booking-embed .microcopy { margin: 0 0 12px; }
+
+.booking-embed iframe {
+  width: 100%;
+  min-height: 980px; /* adjust as needed */
+  border: 0;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  background:#fff;
+}
+
+/* Keep chat above the iframe */
+#ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+
+
 /* === Finishing Touch Chat styles === */
 #ftt-chat-launcher{
   position: fixed; right: 20px; bottom: 20px;
@@ -299,6 +316,7 @@ input,textarea,select{
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
