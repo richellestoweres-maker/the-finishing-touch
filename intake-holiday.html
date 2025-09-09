@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
+  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -37,7 +37,7 @@
   </style>
 </head>
 <body>
-  <!-- Header with home link + quote menu -->
+  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -71,10 +71,11 @@
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Holiday Decorating Intake (Indoor Only)</div>
     <p class="intake-note">
-      We’re currently offering **interior holiday styling only**. Tell us a bit about your setup for an instant ballpark estimate.
+      We’re currently offering <strong>interior holiday styling only</strong>. Tell us a bit about your setup for an instant ballpark estimate.
       <br><span class="hint">Final quote depends on scope, access, and materials.</span>
     </p>
 
+    <!-- NOTE: button is type="button" (no form submission = no page reload) -->
     <form id="intakeFormHoliday" class="grid-1" novalidate>
       <!-- Contact -->
       <div class="grid-2">
@@ -82,16 +83,6 @@
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
         <label>Service Address<input name="address" autocomplete="street-address"></label>
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
-      </div>
-
-      <!-- Install timing -->
-      <div class="fieldset grid-2">
-        <label>Preferred Install Window
-          <input name="window" placeholder="e.g., week of Nov 18–22, mornings OK">
-        </label>
-        <label>Team Size Preferred
-          <select name="team"><option>1</option><option selected>2</option><option>3</option></select>
-        </label>
       </div>
 
       <!-- Trees -->
@@ -166,7 +157,7 @@
         </label>
       </div>
 
-      <!-- Consents (client-facing) -->
+      <!-- Consents -->
       <div class="fieldset grid-1">
         <label><input type="checkbox" name="consent_bg" required>
           I consent to a background check for any contractor(s) entering my home.</label>
@@ -180,31 +171,21 @@
         </div>
       </div>
 
-      <!-- Notes & payment -->
-      <div class="fieldset grid-2">
-        <label>Notes / Special Requests
-          <input name="notes" placeholder="colors, themes, timing constraints, etc.">
-        </label>
-        <label>Payment Preference
-          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
-        </label>
-      </div>
-
       <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Get Holiday Estimate</button>
+        <button class="btn btn-solid" id="btnHolidayEstimate" type="button">Get Holiday Estimate</button>
         <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
         <p id="emailStatusHoliday" style="opacity:.9"></p>
-        <p class="hint">After you submit, booking on the home page will be unlocked.</p>
+        <p class="hint">After you get your estimate, you can book a date on the home page.</p>
       </div>
     </form>
   </main>
 
-  <!-- EmailJS (optional, only if you're using email) -->
+  <!-- EmailJS (optional) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
-  <!-- Tiny dropdown behavior (self-contained here) -->
+  <!-- Dropdown behavior (local to this page) -->
   <script>
     (function(){
       const dd  = document.getElementById('quoteDropdown');
@@ -223,6 +204,6 @@
   </script>
 
   <!-- Site JS (pricing/estimate wiring) -->
-  <script src="script.js?v=7" defer></script>
+  <script src="script.js?v=8" defer></script>
 </body>
 </html>
