@@ -7,6 +7,20 @@
   --accent:#d2bda9;
   --shadow:0 10px 30px rgba(0,0,0,.08);
 }
+html { scroll-behavior: smooth; }
+#book { scroll-margin-top: 80px; }
+
+/* Lock state for booking */
+.booking-embed[data-locked] .container { position: relative; }
+.booking-embed[data-locked] .container::after {
+  content: "Please complete the Intake to unlock booking.";
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(3px);
+  color: #524a46; font-weight: 800; text-align: center;
+  border-radius: 12px;
+}
 
 /* Smooth page scrolling and anchor offset so header never hides content */
 html { scroll-behavior: smooth; }
@@ -320,6 +334,7 @@ input,textarea,select{
   .about-grid,.contact-grid{grid-template-columns:1fr}
   .hero-title{font-size:2.4rem}
 }
+
 
 
 
