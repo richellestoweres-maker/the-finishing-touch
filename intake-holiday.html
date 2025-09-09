@@ -69,9 +69,9 @@
 
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
-    <div class="intake-script">Holiday Decorating Intake</div>
+    <div class="intake-script">Holiday Decorating Intake (Indoor Only)</div>
     <p class="intake-note">
-      Tell us about your holiday setup. You’ll get an instant ballpark estimate and we’ll unlock booking.
+      We’re currently offering **interior holiday styling only**. Tell us a bit about your setup for an instant ballpark estimate.
       <br><span class="hint">Final quote depends on scope, access, and materials.</span>
     </p>
 
@@ -84,17 +84,13 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Scope -->
+      <!-- Install timing -->
       <div class="fieldset grid-2">
-        <label>Scope
-          <select name="scope">
-            <option>Indoor</option>
-            <option>Outdoor</option>
-            <option selected>Both</option>
-          </select>
-        </label>
         <label>Preferred Install Window
           <input name="window" placeholder="e.g., week of Nov 18–22, mornings OK">
+        </label>
+        <label>Team Size Preferred
+          <select name="team"><option>1</option><option selected>2</option><option>3</option></select>
         </label>
       </div>
 
@@ -135,21 +131,11 @@
         <label>Mantle styling
           <select name="mantle"><option>No</option><option>Yes</option></select>
         </label>
-      </div>
-
-      <!-- Outdoor decor -->
-      <div class="fieldset grid-2">
-        <label>Perimeter Lights (per ~50 ft)
-          <input name="perimeter_units" type="number" min="0" value="0">
+        <label>Tablescapes / vignettes (qty)
+          <input name="tablescapes" type="number" min="0" value="0">
         </label>
-        <label>Yard Décor (qty of pieces)
-          <input name="yard_decor" type="number" min="0" value="0">
-        </label>
-        <label>Outdoor Power Available?
-          <select name="power"><option>Yes</option><option>No</option><option>Not sure</option></select>
-        </label>
-        <label>Ladder Needed?
-          <select name="ladder"><option>No</option><option>Yes</option><option>Not sure</option></select>
+        <label>Style / Theme / Colors
+          <input name="style" placeholder="e.g., classic red, neutral luxe, coastal">
         </label>
       </div>
 
@@ -164,9 +150,6 @@
         </label>
         <label>Shopping Trips Needed
           <select name="shopping_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
-        </label>
-        <label>Team Size Preferred
-          <select name="team"><option>1</option><option selected>2</option><option>3</option></select>
         </label>
         <label>Budget for Materials (optional)
           <input name="budget" placeholder="$ e.g., 300–500">
@@ -200,7 +183,7 @@
       <!-- Notes & payment -->
       <div class="fieldset grid-2">
         <label>Notes / Special Requests
-          <input name="notes" placeholder="colors, themes, HOA timing, etc.">
+          <input name="notes" placeholder="colors, themes, timing constraints, etc.">
         </label>
         <label>Payment Preference
           <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
@@ -240,6 +223,6 @@
   </script>
 
   <!-- Site JS (pricing/estimate wiring) -->
-  <script src="script.js?v=6" defer></script>
+  <script src="script.js?v=7" defer></script>
 </body>
 </html>
