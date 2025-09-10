@@ -134,7 +134,7 @@
         </label>
       </div>
 
-      <!-- CONSENTS (unchanged) -->
+      <!-- CONSENTS -->
       <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
 
@@ -163,16 +163,12 @@
         <button class="btn btn-solid" type="submit">Get Instant Estimate</button>
         <p id="estimateCleaning" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
         <!-- Book button is injected here after estimate -->
-        <p id="emailStatusCleaning" style="opacity:.9"></p>
+        <p id="formspreeStatusCleaning" style="opacity:.9"></p>
       </div>
     </form>
   </main>
 
-  <!-- EmailJS (optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
-
-  <!-- Tiny dropdown behavior (self-contained so it works here without edits elsewhere) -->
+  <!-- Dropdown behavior (self-contained so it works here without edits elsewhere) -->
   <script>
     (function(){
       const dd  = document.getElementById('quoteDropdown');
@@ -191,9 +187,9 @@
   </script>
 
   <!-- Your site JS (kept) -->
-  <script src="script.js?v=5" defer></script>
+  <script src="script.js?v=6" defer></script>
 
-  <!-- OVERRIDE: Estimate + Book button (NO redirect to home) -->
+  <!-- OVERRIDE: Estimate on-page + “Book Now” + Formspree (NO redirect to home) -->
   <script>
     (function(){
       // Square service links (calendar page, not embedded)
@@ -273,17 +269,17 @@
         if (!form) return;
 
         // Capture phase so we cancel any site-wide handler that redirects
-        form.addEventListener('submit', function(e){
+        form.addEventListener('submit', async function(e){
           e.preventDefault();
           e.stopImmediatePropagation();
 
           const data = Object.fromEntries(new FormData(form).entries());
 
           // Show price estimate
+          let estEl = document.getElementById('estimateCleaning');
           try {
             let price = null;
             if (typeof calcCleaning === 'function') price = calcCleaning(data);
-            const estEl = document.getElementById('estimateCleaning');
             if (estEl){
               if (price != null) {
                 estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
@@ -291,46 +287,70 @@
                 estEl.textContent = "Ballpark estimate ready.";
               }
             }
+          } catch (err){ console.warn(err); }
 
-            // Choose Square service page (new tab)
-            const { teamHours } = estimateHoursCleaningLocal(data);
-            const url = (typeof squareUrlForCleaning === 'function')
-              ? squareUrlForCleaning(teamHours)
-              : squareUrlForCleaningLocal(teamHours);
+          // Choose Square service page (new tab)
+          const { teamHours } = estimateHoursCleaningLocal(data);
+          const url = (typeof squareUrlForCleaning === 'function')
+            ? squareUrlForCleaning(teamHours)
+            : squareUrlForCleaningLocal(teamHours);
 
-            // Add/refresh the “Book Now” button under the estimate
-            let btn = document.getElementById('scheduleOnSquareCleaning');
-            if (!btn){
-              btn = document.createElement('a');
-              btn.id = 'scheduleOnSquareCleaning';
-              btn.className = 'btn btn-solid';
-              btn.style.marginTop = '10px';
-              btn.textContent = 'Book Now';
-              estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          // Add/refresh the “Book Now” button under the estimate
+          let btn = document.getElementById('scheduleOnSquareCleaning');
+          if (!btn){
+            btn = document.createElement('a');
+            btn.id = 'scheduleOnSquareCleaning';
+            btn.className = 'btn btn-solid';
+            btn.style.marginTop = '10px';
+            btn.textContent = 'Book Now';
+            estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          }
+          btn.href = url;
+          btn.target = '_blank';
+          btn.rel = 'noopener';
+
+          // Optional guidance line (recommended option)
+          const hint = cleaningHintLocal(data, teamHours);
+          let hintEl = document.getElementById('cleaningHint');
+          if (!hintEl){
+            hintEl = document.createElement('p');
+            hintEl.id = 'cleaningHint';
+            hintEl.className = 'hint';
+            btn.parentNode.insertBefore(hintEl, btn.nextSibling);
+          }
+          hintEl.textContent = `Recommended service: ${hint}. This opens our Square calendar in a new tab.`;
+
+          // --- Send to Formspree in the background ---
+          const statusEl = document.getElementById('formspreeStatusCleaning');
+          try {
+            const estText = estEl?.textContent?.trim() || '';
+            const fsData = new FormData(form);
+            fsData.append('_subject', 'Cleaning Intake');
+            fsData.append('form_name', 'Cleaning Intake');
+            fsData.append('page', location.href);
+            if (estText) fsData.append('estimate', estText);
+
+            const resp = await fetch('https://formspree.io/f/mzzaogbv', {
+              method: 'POST',
+              body: fsData,
+              headers: { 'Accept': 'application/json' }
+            });
+
+            if (resp.ok) {
+              if (statusEl) statusEl.textContent = 'Thanks! Your intake was sent.';
+            } else {
+              if (statusEl) statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
             }
-            btn.href = url;
-            btn.target = '_blank';
-            btn.rel = 'noopener';
-
-            // Optional guidance line (recommended option)
-            const hint = cleaningHintLocal(data, teamHours);
-            let hintEl = document.getElementById('cleaningHint');
-            if (!hintEl){
-              hintEl = document.createElement('p');
-              hintEl.id = 'cleaningHint';
-              hintEl.className = 'hint';
-              btn.parentNode.insertBefore(hintEl, btn.nextSibling);
-            }
-            hintEl.textContent = `Recommended service: ${hint}. This opens our Square calendar in a new tab.`;
-          } catch (err){
-            console.error(err);
+          } catch (err) {
+            if (statusEl) statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
+            console.warn(err);
           }
         }, true);
       });
     })();
   </script>
 
-  <!-- === Finishing Touch — AI Concierge Chat (added to appear on this page) === -->
+  <!-- === Finishing Touch — AI Concierge Chat (added so it shows on this page) === -->
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
 
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
@@ -423,11 +443,10 @@
               "Here’s a quick pricing overview (final quote depends on size/condition):",
               "• Initial/Deep Clean: typically $350–$400 for average homes.",
               "• Standard Maintenance: commonly $275–$300.",
-              "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + ".",
-              hoursNote
+              "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + "."
             ].join("<br>");
           case "availability":
-            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.", hoursNote].join("<br>");
+            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
           case "services":
             return [
               "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
@@ -439,8 +458,8 @@
           case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
           case "human":
             return isWithinBusinessHours()
-              ? `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
-              : `We’re offline. You can still <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
+              ? `Absolutely. Tap <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
+              : `We’re offline. You can still <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:contact.thefinishingtouch.tx@gmail.com">contact.thefinishingtouch.tx@gmail.com</a> and we’ll reply ASAP.`;
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
@@ -454,42 +473,21 @@
         }
       }
       function init(){
-        el.close = document.querySelector(".ftt-close");
-        el.input = document.getElementById("ftt-input");
-        el.form  = document.getElementById("ftt-inputbar");
-        el.quick = document.querySelector(".ftt-quick");
-        el.launcher.addEventListener("click", () => {
-          el.panel.hidden = false;
-          if (!el.thread.dataset.greeted) { greet(); el.thread.dataset.greeted = "1"; }
-          el.input.focus();
-        });
-        el.close.addEventListener("click", () => { el.panel.hidden = true; });
-        el.form.addEventListener("submit", (e)=>{
-          e.preventDefault();
-          const text = el.input.value.trim(); if (!text) return;
-          const bubble = document.createElement("div"); bubble.className="ftt-bubble me"; bubble.textContent=text; el.thread.appendChild(bubble);
-          el.input.value=""; el.thread.scrollTop=el.thread.scrollHeight;
-          setTimeout(()=> {
-            const intent = detectIntent(text);
-            addMsg(answer(intent), "bot");
-          }, 200);
-        });
-        el.quick.addEventListener("click", (e)=>{
-          if (e.target.matches("button[data-q]")){
-            const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
-            const intent = map[e.target.getAttribute("data-q")] || "fallback";
-            addMsg(e.target.textContent,"me"); setTimeout(()=> addMsg(answer(intent),"bot"),200);
-          }
-        });
+        const launcher = document.getElementById("ftt-chat-launcher");
+        const panel = document.getElementById("ftt-chat");
+        const thread = document.getElementById("ftt-thread");
+        const closeBtn = document.querySelector(".ftt-close");
+        const form = document.getElementById("ftt-inputbar");
+        const input = document.getElementById("ftt-input");
+        const quick = document.querySelector(".ftt-quick");
+        function add(html, who="bot"){ const b=document.createElement("div"); b.className=`ftt-bubble ${who}`; b.innerHTML=html; thread.appendChild(b); thread.scrollTop=thread.scrollHeight; }
+        launcher.addEventListener("click", ()=>{ panel.hidden=false; if (!thread.dataset.greeted){ add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); thread.dataset.greeted="1"; } input.focus(); });
+        closeBtn.addEventListener("click", ()=>{ panel.hidden=true; });
+        form.addEventListener("submit",(e)=>{ e.preventDefault(); const text=input.value.trim(); if(!text) return; add(text,"me"); input.value=""; setTimeout(()=> add(answer(detectIntent(text))),200); });
+        quick.addEventListener("click",(e)=>{ if(e.target.matches("button[data-q]")){ const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; add(e.target.textContent,"me"); setTimeout(()=> add(answer(intent)),200); } });
       }
       document.addEventListener("DOMContentLoaded", init);
     })();
   </script>
 </body>
 </html>
-
-
-
-
-
-
