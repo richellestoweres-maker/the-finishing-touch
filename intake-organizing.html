@@ -81,11 +81,14 @@
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Organizing Intake Form</div>
     <p class="intake-note">
-      Complete this brief form for an instant ballpark estimate (shown below). You’ll then jump to the booking calendar with a recommended time block.
+      Complete this brief form for an instant ballpark estimate (shown below). You’ll then get a <em>Book Now</em> button with the recommended time block.
     </p>
 
-    <!-- Keep the action attribute as a JS-off fallback to Formspree -->
+    <!-- JS-off fallback goes straight to Formspree -->
     <form id="intakeFormOrganizing" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" novalidate>
+      <input type="hidden" name="_subject" value="New Organizing Intake · The Finishing Touch" />
+      <input type="hidden" name="page" value="intake-organizing.html" />
+
       <!-- ========== Contact ========== -->
       <div class="grid-2">
         <label>Full Name<input name="name" autocomplete="name" required></label>
@@ -161,27 +164,11 @@
           </select>
         </label>
 
-        <label>Access / Constraints
-          <select name="org_access">
-            <option selected>Easy (ground floor)</option>
-            <option>Stairs</option>
-            <option>Tight spaces / HOA constraints</option>
-          </select>
-        </label>
-        <label>Haul-Away / Donation Volume
-          <select name="org_haul">
-            <option selected>None</option>
-            <option>1–3 bags/boxes</option>
-            <option>4–8 bags/boxes</option>
-            <option>Carload+</option>
-          </select>
-        </label>
-
-        <label>Add-ons (type keywords: bins, labels, bins/labels)
-          <input name="addons" placeholder="e.g., bins/labels">
-        </label>
         <label>Notes / Focus Areas
           <input name="notes" placeholder="e.g., zones for kids, seasonal storage">
+        </label>
+        <label>Add-ons (type keywords: bins, labels, bins/labels)
+          <input name="addons" placeholder="e.g., bins/labels">
         </label>
       </div>
 
@@ -198,20 +185,220 @@
       </div>
 
       <!-- ========== Client Consent ========== -->
-      <div class="fieldset grid-1">
-        <h3 style="margin:0 0 6px">Consent & Communication</h3>
-        <label>
+      <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
+        <legend id="consentLegend" style="font-weight:700;">Consents</legend>
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_sms_email" value="Yes" required>
-          I consent to receive scheduling/updates via SMS or email.
+          <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
         </label>
-        <label>
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_photos_doc" value="Yes" required>
-          I consent to before/after photos for job documentation (internal only).
+          <span>I consent to before/after photos for job documentation (internal only).</span>
         </label>
-        <label>
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_photos_marketing" value="Yes">
-          I also consent to selected photos being used for marketing (website/social).
+          <span>I also consent to selected photos being used for marketing (website/social).</span>
         </label>
-        <div class="grid-2">
-          <label>Type full name as signature (documentation consent)
-            <input name="signature_d_
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_terms" value="Yes" required>
+          <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+        </label>
+      </fieldset>
+
+      <!-- Submit + estimate -->
+      <div class="submit-row">
+        <button class="btn btn-solid" type="submit">Get Organizing Estimate</button>
+        <p id="estimateOrganizing" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <p id="emailStatusOrganizing" class="hint"></p>
+      </div>
+    </form>
+  </main>
+
+  <!-- Local dropdown behavior -->
+  <script>
+    (function(){
+      const dd  = document.getElementById('quoteDropdown');
+      const btn = document.getElementById('quoteBtn');
+      const menu= document.getElementById('quoteMenu');
+      if (!dd || !btn || !menu) return;
+      function toggle(open){
+        dd.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        menu.setAttribute('aria-hidden', String(!open));
+      }
+      btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
+      document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
+    })();
+  </script>
+
+  <!-- Your site JS (pricing, etc.) -->
+  <script src="script.js?v=6" defer></script>
+
+  <!-- OVERRIDE: show estimate + Formspree submit + Book Now (no redirect) -->
+  <script>
+    (function(){
+      // Square service links for ORGANIZING (calendar page)
+      const SQUARE_ORG_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN";
+      const SQUARE_ORG_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E";
+      const SQUARE_ORG_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC";
+      const SQUARE_ORG_XL     ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS";
+
+      function roundHalf(n){ return Math.round(n*2)/2; }
+
+      // Fallback calculators if global ones aren’t available yet
+      function calcOrganizingLocal(data){
+        try{ if (typeof calcOrganizing === 'function') return calcOrganizing(data); }catch(_){}
+        const ORG_HOURLY=65, ORG_MIN_HOURS=3;
+        const hoursPerSpace = {"Light":1,"Moderate":2,"Heavy":3};
+        const spaces = Math.max(1, Number(data.spaces||1));
+        const complexity = data.complexity || "Moderate";
+        const team = Math.max(1, Number(data.team||2)); // assume 2 if not provided
+        const hoursEach = hoursPerSpace[complexity] || 2;
+        const estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
+        return Math.round(estHours * ORG_HOURLY * team);
+      }
+      function estimateHoursOrganizingLocal(data){
+        try{ if (typeof estimateHoursOrganizing === 'function') return estimateHoursOrganizing(data); }catch(_){}
+        const area = data.org_area || "Closet";
+        const size = data.org_size || "Medium";
+        const baseMap = {
+          "Closet":{Small:2,Medium:3,Large:4}, "Pantry":{Small:2,Medium:3,Large:4},
+          "Kitchen":{Small:3,Medium:4.5,Large:6}, "Bedroom":{Small:2.5,Medium:3.5,Large:5},
+          "Bathroom":{Small:1.5,Medium:2.5,Large:3.5}, "Garage":{Small:3,Medium:5,Large:7},
+          "Laundry Room":{Small:2,Medium:3,Large:4}, "Office":{Small:2.5,Medium:4,Large:5.5},
+          "Playroom":{Small:2.5,Medium:4,Large:5.5}, "Whole Home (multi-area)":{Small:6,Medium:8,Large:12}
+        };
+        let solo = (baseMap[area]?.[size] ?? 3.5);
+        const clutter = data.org_clutter || "Moderate";
+        if (clutter === "Light") solo *= 0.9;
+        if (clutter === "Moderate") solo *= 1.0;
+        if (clutter === "Heavy") solo *= 1.35;
+
+        const decision = data.org_decision_speed || "Average";
+        if (decision === "Fast") solo *= 0.9;
+        if (decision === "Average") solo *= 1.0;
+        if (decision === "Slow") solo *= 1.25;
+
+        const volume = data.org_volume || "Medium";
+        if (volume === "Medium") solo += 0.5;
+        if (volume === "High") solo += 1.0;
+
+        const containers = data.org_containers || "None";
+        if (containers === "Some (up to 10)") solo += 0.5;
+        if (containers === "Many (10+)") solo += 1.0;
+
+        const access = data.org_access || "Easy (ground floor)";
+        if (access === "Stairs") solo += 0.5;
+        if (access === "Tight spaces / HOA constraints") solo += 0.75;
+
+        solo = roundHalf(solo);
+        const teamCount = Math.max(1, Number(data.team || 2));
+        const teamHours = roundHalf(solo / teamCount);
+        return { soloHours: solo, teamHours };
+      }
+      function squareUrlForOrganizingLocal(teamHours){
+        if (teamHours <= 2.5) return SQUARE_ORG_SMALL;
+        if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;
+        if (teamHours <= 6)   return SQUARE_ORG_LARGE;
+        return SQUARE_ORG_XL;
+      }
+      function organizingHintLocal(data, teamHours){
+        const area = data.org_area || "Space";
+        const size = data.org_size || "Medium";
+        if (teamHours <= 2.5) return `${area} Organizing — Small (${size}, ≈2–2.5 hr)`;
+        if (teamHours <= 4)   return `${area} Organizing — Medium (${size}, ≈3–4 hr)`;
+        if (teamHours <= 6)   return `${area} Organizing — Large (${size}, ≈5–6 hr)`;
+        return `${area} Organizing — XL (${size}, 6.5+ hr)`;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('intakeFormOrganizing');
+        if (!form) return;
+
+        form.addEventListener('submit', async function(e){
+          // Capture-phase handler elsewhere might redirect — block it
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          const data = Object.fromEntries(new FormData(form).entries());
+
+          // 1) Estimate (price)
+          let price = null;
+          try{
+            price = (typeof calcOrganizing === 'function') ? calcOrganizing(data) : calcOrganizingLocal(data);
+          }catch(_){}
+          const estEl = document.getElementById('estimateOrganizing');
+          if (estEl){
+            if (price != null) {
+              estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+            } else {
+              estEl.textContent = "Ballpark estimate ready.";
+            }
+          }
+
+          // 2) Hours → pick Square service URL
+          const hours = (typeof estimateHoursOrganizing === 'function')
+            ? estimateHoursOrganizing(data)
+            : estimateHoursOrganizingLocal(data);
+          const url = (typeof squareUrlForOrganizing === 'function')
+            ? squareUrlForOrganizing(hours.teamHours)
+            : squareUrlForOrganizingLocal(hours.teamHours);
+
+          // 3) Inject/refresh Book button
+          let btn = document.getElementById('scheduleOnSquareOrganizing');
+          if (!btn){
+            btn = document.createElement('a');
+            btn.id = 'scheduleOnSquareOrganizing';
+            btn.className = 'btn btn-solid';
+            btn.style.marginTop = '10px';
+            btn.textContent = 'Book Now';
+            estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          }
+          btn.href = url;
+          btn.target = '_blank';
+          btn.rel = 'noopener';
+
+          // 4) Show recommended option hint
+          const hintText = organizingHintLocal(data, hours.teamHours);
+          let hintEl = document.getElementById('organizingHint');
+          if (!hintEl){
+            hintEl = document.createElement('p');
+            hintEl.id = 'organizingHint';
+            hintEl.className = 'hint';
+            btn.parentNode.insertBefore(hintEl, btn.nextSibling);
+          }
+          hintEl.textContent = `Recommended service: ${hintText}. This opens our Square calendar in a new tab.`;
+
+          // 5) Send data to Formspree (AJAX) so you keep the intake
+          try{
+            const statusEl = document.getElementById('emailStatusOrganizing');
+            const resp = await fetch(form.action, {
+              method: 'POST',
+              headers: { 'Accept': 'application/json' },
+              body: new FormData(form)
+            });
+            if (resp.ok){
+              if (statusEl) statusEl.textContent = "Thanks! We’ve received your intake. You can book now below.";
+              // Optional: form.reset(); // keep their entries visible if you prefer
+            } else {
+              if (statusEl) statusEl.textContent = "Saved locally. We couldn’t reach the inbox just now—please book below and we’ll follow up.";
+            }
+          }catch(err){
+            const statusEl = document.getElementById('emailStatusOrganizing');
+            if (statusEl) statusEl.textContent = "Saved locally. If your internet is unstable, you can still book below.";
+            console.warn(err);
+          }
+        }, true); // capture=true ensures we override site-wide listeners
+      });
+    })();
+  </script>
+
+  <!-- Site-wide chat (page-aware) -->
+  <script src="ftt-chat.js" defer></script>
+</body>
+</html>
