@@ -4,10 +4,11 @@
    ========================================= */
 "use strict";
 
-/* ---------- Constants ---------- */
+/* ---------- Config ---------- */
 const BOOKING_SECTION_HASH = "#book";
-const INTAKE_UNLOCK_KEY = "ftt_intake_ok";
-const INTAKE_HINT_KEY   = "ftt_booking_hint";
+const FORMSPREE_ENDPOINT   = "https://formspree.io/f/mzzaogbv"; // ← your Formspree form ID
+const INTAKE_UNLOCK_KEY    = "ftt_intake_ok";
+const INTAKE_HINT_KEY      = "ftt_booking_hint";
 
 /* ---------- Small helpers ---------- */
 const roundHalf = n => Math.round(n * 2) / 2;
@@ -28,7 +29,7 @@ function parseAddonsHours(txt, hoursMap){
   }
   return total;
 }
-function ensureScheduleButton(estElId, url, buttonId){
+function ensureScheduleButton(estElId, url, buttonId, label="Book Now"){
   const estEl = document.getElementById(estElId);
   if (!estEl) return;
   let btn = document.getElementById(buttonId);
@@ -37,22 +38,15 @@ function ensureScheduleButton(estElId, url, buttonId){
     btn.id = buttonId;
     btn.className = "btn btn-solid";
     btn.style.marginTop = "10px";
-    btn.textContent = "Go to Booking";
+    btn.textContent = label;
     estEl.parentNode.insertBefore(btn, estEl.nextSibling);
   }
-  btn.href = url;
+  btn.href = url || BOOKING_SECTION_HASH;
   btn.removeAttribute("target");
   btn.removeAttribute("rel");
 }
-/* Build a link that always points to your embedded calendar */
-function bookingHref(){
-  // If already on the home page with / or index.html, keep hash-only
-  const p = (location.pathname || "").toLowerCase();
-  const onHome = /\/$|index\.html$/.test(p);
-  return onHome ? BOOKING_SECTION_HASH : `index.html${BOOKING_SECTION_HASH}`;
-}
 
-/* ---------- Booking lock helpers (home page overlay) ---------- */
+/* ---------- Booking lock + hint helpers ---------- */
 function saveBookingUnlock(hintText){
   try{
     localStorage.setItem(INTAKE_UNLOCK_KEY, "1");
@@ -82,6 +76,35 @@ function showBookingHelper(hint){
   note.style.fontWeight = "700";
   note.textContent = hint || "You're all set to book. Pick the recommended option in the services list.";
   sec.insertBefore(note, sec.firstChild);
+}
+
+/* ---------- Post to Formspree (AJAX) ---------- */
+async function postToFormspree(formEl, extraFields = {}, statusElId){
+  try{
+    const fd = new FormData(formEl);
+    // add a little metadata
+    fd.append("_subject", "New Intake — The Finishing Touch");
+    fd.append("_page", location.pathname);
+    Object.entries(extraFields).forEach(([k,v]) => fd.append(k, v));
+
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      body: fd,
+      headers: { "Accept": "application/json" }
+    });
+
+    const ok = res.ok;
+    const statusEl = statusElId ? document.getElementById(statusElId) : null;
+    if (statusEl){
+      statusEl.textContent = ok ? "Saved. Check your email for confirmation." : "We couldn’t save your form just now, but your quote is above — please try submitting again later.";
+    }
+    return ok;
+  }catch(err){
+    console.error("Formspree error:", err);
+    const statusEl = statusElId ? document.getElementById(statusElId) : null;
+    if (statusEl) statusEl.textContent = "We couldn’t save your form just now. Your quote is above — please try again.";
+    return false;
+  }
 }
 
 /* =========================================
@@ -116,6 +139,7 @@ function airbnbByBedrooms(beds){
   if (b === 4) return 180;
   return 200;
 }
+
 function calcCleaning(data){
   const sqft = data.sqft || "1000–2000";
   const service = data.service || "Initial Clean";
@@ -147,6 +171,7 @@ function calcCleaning(data){
   if (service === "Standard Clean"){ est *= (freqDisc[frequency] || 1); }
   return Math.round(est);
 }
+
 function estimateHoursCleaning(data){
   const sqft = data.sqft || "1000–2000";
   const service = data.service || "Initial Clean";
@@ -184,6 +209,7 @@ function estimateHoursCleaning(data){
   const team = roundHalf(solo / 2);
   return { soloHours: solo, teamHours: team };
 }
+
 function cleaningHint(data, teamHours){
   const service = data.service || "Initial Clean";
   const sqft = data.sqft || "1000–2000";
@@ -205,7 +231,6 @@ function cleaningHint(data, teamHours){
     if (teamHours <= 5)   return "Airbnb Turnover — Extended (≈4 hr)";
     return "Airbnb Turnover — Extended XL (4.5+ hr)";
   }
-  // Initial / Deep / Move-Out mapped by hours
   if (teamHours <= 2.5) return `${service} — Small (≈2–2.5 hr)`;
   if (teamHours <= 3.5) return `${service} — Medium (≈3–3.5 hr)`;
   if (teamHours <= 5)   return `${service} — Large (≈4–5 hr)`;
@@ -229,6 +254,7 @@ function calcOrganizing(data){
   const addons = parseAddonsList(data.addons, addonPricesOrganizing);
   return Math.round(labor + addons);
 }
+
 function estimateHoursOrganizing(data){
   const area = data.org_area || "Closet";
   const size = data.org_size || "Medium";
@@ -295,6 +321,7 @@ function calcDecor(data){
   const addons = parseAddonsList(data.addons, addonPricesDecor);
   return Math.round(base + addons);
 }
+
 function estimateHoursDecor(data){
   const type = data.decor_type || "Interior Decorating (refresh)";
   const scope = data.decor_scope || "Light refresh (styling)";
@@ -339,13 +366,13 @@ function decorHint(data, teamHours){
   if (teamHours <= 4)   return `${room} — ${scope} (Medium, ≈3–4 hr)`;
   if (teamHours <= 6)   return `${room} — ${scope} (Large, ≈5–6 hr)`;
   return `${room} — ${scope} (XL, 6.5+ hr)`;
-}
 
 /* =========================================
    HOLIDAY DECORATING — INDOOR ONLY
    ========================================= */
-const HOLI_HOURLY = 85;          // job priced by total labor-hours (crew size doesn't change total)
-const HOLI_MIN_HOURS = 3;        // minimum billable (solo-hours)
+}
+const HOLI_HOURLY = 85;
+const HOLI_MIN_HOURS = 3;
 
 function hoursForTrees(count, tallest, style, ribbon){
   const t = Number(count)||0; if(!t) return 0;
@@ -360,11 +387,12 @@ function hoursForTrees(count, tallest, style, ribbon){
   const styleFactor = style==="Full design + sourcing" ? 1.6
                     : style==="Needs ribbon/theme refresh" ? 1.25 : 1.0;
   h *= styleFactor;
-  if ((ribbon||"").toLowerCase()==="yes") h += 0.4 * t; // ribbon/mesh time bump
+  if ((ribbon||"").toLowerCase()==="yes") h += 0.4 * t;
   return h;
 }
+
 function estimateHoursHoliday(data){
-  // INDOOR ONLY
+  // Indoor only
   let hrs = 0;
 
   // Trees
@@ -394,7 +422,7 @@ function estimateHoursHoliday(data){
   // Baseline overhead & minimum
   hrs = Math.max(HOLI_MIN_HOURS, roundHalf(hrs + 0.5));
 
-  // Suggest schedule time if 2-person crew (for your internal planning)
+  // Suggest schedule time if 2-person crew (for internal plan)
   const teamHours = roundHalf(hrs / 2);
 
   // Teardown ~60% of install hours
@@ -402,27 +430,27 @@ function estimateHoursHoliday(data){
 
   return { soloHours: hrs, teamHours, teardownHours };
 }
+
 function calcHoliday(data){
   const { soloHours, teamHours, teardownHours } = estimateHoursHoliday(data);
-
-  // Pricing is based on total solo-hours; crew size does not change total labor-hours.
   const priceInstall = Math.round(HOLI_HOURLY * soloHours);
   const priceTeardown = teardownHours ? Math.round(HOLI_HOURLY * teardownHours) : 0;
+  return { price: priceInstall, soloHours, teamHours, teardownHours, teardownPrice: priceTeardown };
+}
 
-  return {
-    price: priceInstall,
-    soloHours,
-    teamHours,
-    teardownHours,
-    teardownPrice: priceTeardown
-  };
+function holidayHint(data, teamHours){
+  // simple guidance line
+  if (teamHours <= 2.5) return `Holiday (indoor) — Small (≈2–2.5 hr)`;
+  if (teamHours <= 4)   return `Holiday (indoor) — Medium (≈3–4 hr)`;
+  if (teamHours <= 6)   return `Holiday (indoor) — Large (≈5–6 hr)`;
+  return `Holiday (indoor) — XL (6.5+ hr)`;
 }
 
 /* ==========================================================
    WIRE EVERYTHING AFTER DOM PARSE
    ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-  /* Force any external Square links to use embedded calendar */
+  /* Force any external Square links to keep you on-page */
   try {
     document.querySelectorAll('a[href*="book.squareup.com/appointments"]').forEach(a => {
       a.setAttribute('href', BOOKING_SECTION_HASH);
@@ -430,7 +458,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   } catch (e) { console.warn(e); }
 
-  /* Smooth scroll to #book if hash present */
+  /* Unlock message on homepage if already completed an intake */
+  const bookingSec = document.querySelector('.booking-embed[data-locked]');
+  if (bookingSec && isUnlocked()){
+    bookingSec.removeAttribute('data-locked');
+    const hint = readBookingHint();
+    if (hint) showBookingHelper(`Recommended: ${hint}`);
+  }
+
+  /* Smooth scroll to #book if hash present (also re-run after Square loads) */
   const scrollToBook = () => {
     const el = document.getElementById('book');
     if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -452,132 +488,133 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
   }
 
-  /* --- Unlock home booking on load if a prior intake was completed --- */
-  const bookingSec = document.querySelector('.booking-embed[data-locked]');
-  if (bookingSec && isUnlocked()){
-    bookingSec.removeAttribute('data-locked');
-    const hint = readBookingHint();
-    if (hint) showBookingHelper(`Recommended: ${hint}`);
-  }
-
-  /* ===== INTAKE FORMS (show estimate here → unlock → add “Go to Booking”) ===== */
+  /* ===== INTAKE FORMS — show estimate, save to Formspree, unlock booking, show Book button ===== */
 
   /* CLEANING intake */
   try {
-    const formCleaning = document.getElementById('intakeFormCleaning');
-    if (formCleaning){
-      formCleaning.addEventListener('submit', (e)=>{
+    const form = document.getElementById('intakeFormCleaning');
+    if (form){
+      form.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(formCleaning).entries());
-
+        const data = Object.fromEntries(new FormData(form).entries());
         const price = calcCleaning(data);
-        const estEl = document.getElementById('estimateCleaning');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-
         const { teamHours } = estimateHoursCleaning(data);
         const hint = cleaningHint(data, teamHours);
+
+        // Show estimate + booking button
+        const estEl = document.getElementById('estimateCleaning');
+        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+        ensureScheduleButton('estimateCleaning', BOOKING_SECTION_HASH, 'goBookCleaning');
+
+        // Unlock booking + remember hint
         saveBookingUnlock(hint);
 
-        // Add button to go to calendar (embedded on home)
-        ensureScheduleButton('estimateCleaning', bookingHref(), 'goBookCleaning');
+        // Post to Formspree (background)
+        await postToFormspree(form, {
+          service_type: "Cleaning",
+          estimate_price: `$${price}`,
+          estimate_hint: hint
+        }, "emailStatusCleaning");
       });
     }
   } catch (err){ console.error("Cleaning handler error:", err); }
 
   /* ORGANIZING intake */
   try {
-    const formOrg = document.getElementById('intakeFormOrganizing');
-    if (formOrg){
-      formOrg.addEventListener('submit', (e)=>{
+    const form = document.getElementById('intakeFormOrganizing');
+    if (form){
+      form.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(formOrg).entries());
-
+        const data = Object.fromEntries(new FormData(form).entries());
         const estPrice = calcOrganizing(data);
-        const estEl = document.getElementById('estimateOrganizing');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong>`;
-
         const { teamHours } = estimateHoursOrganizing(data);
         const hint = organizingHint(data, teamHours);
+
+        const estEl = document.getElementById('estimateOrganizing');
+        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${estPrice}</strong><br><span class="hint">${hint}</span>`;
+        ensureScheduleButton('estimateOrganizing', BOOKING_SECTION_HASH, 'goBookOrganizing');
+
         saveBookingUnlock(hint);
 
-        ensureScheduleButton('estimateOrganizing', bookingHref(), 'goBookOrganizing');
+        await postToFormspree(form, {
+          service_type: "Organizing",
+          estimate_price: `$${estPrice}`,
+          estimate_hint: hint
+        }, "emailStatusOrganizing");
       });
     }
   } catch (err){ console.error("Organizing handler error:", err); }
 
   /* DECOR/STAGING intake */
   try {
-    const formDecor = document.getElementById('intakeFormDecor');
-    if (formDecor){
-      formDecor.addEventListener('submit', (e)=>{
+    const form = document.getElementById('intakeFormDecor');
+    if (form){
+      form.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(formDecor).entries());
-
+        const data = Object.fromEntries(new FormData(form).entries());
         const price = calcDecor(data);
-        const estEl = document.getElementById('estimateDecor');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-
         const { teamHours } = estimateHoursDecor(data);
         const hint = decorHint(data, teamHours);
+
+        const estEl = document.getElementById('estimateDecor');
+        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+        ensureScheduleButton('estimateDecor', BOOKING_SECTION_HASH, 'goBookDecor');
+
         saveBookingUnlock(hint);
 
-        ensureScheduleButton('estimateDecor', bookingHref(), 'goBookDecor');
+        await postToFormspree(form, {
+          service_type: "Interior Decorating",
+          estimate_price: `$${price}`,
+          estimate_hint: hint
+        }, "emailStatusDecor");
       });
     }
   } catch (err){ console.error("Decor handler error:", err); }
 
-  /* HOLIDAY (INDOOR) intake — supports either button click or form submit */
+  /* HOLIDAY (INDOOR) intake */
   try {
-    const formHol = document.getElementById('intakeFormHoliday');
-    const btnHol  = document.getElementById('btnHolidayEstimate');
+    const form = document.getElementById('intakeFormHoliday');
+    if (form){
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form).entries());
+        const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
+        const hint = holidayHint(data, teamHours);
 
-    function runHolidayEstimate(e){
-      if (e) e.preventDefault();
-      if (!formHol) return;
-      const data = Object.fromEntries(new FormData(formHol).entries());
-      const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
+        const estEl = document.getElementById('estimateHoliday');
+        const lines = [
+          `Install (ballpark): <strong>$${price}</strong>`,
+          `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with 2 stylists)`,
+        ];
+        if (teardownHours){
+          lines.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
+        }
+        lines.push(`<span class="hint">${hint}</span>`);
+        if (estEl) estEl.innerHTML = lines.join("<br>");
 
-      const estEl = document.getElementById('estimateHoliday');
-      const lines = [
-        `Install (ballpark): <strong>$${price}</strong>`,
-        `Estimated time: ${soloHours} solo hrs (we’ll assign the right crew; ~${teamHours} hrs with 2 stylists)`
-      ];
-      if (teardownHours){
-        lines.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
-      }
-      lines.push(`<span class="hint">Materials (ribbon/ornaments/garland) are separate and billed to your budget.</span>`);
-      if (estEl) estEl.innerHTML = lines.join("<br>");
+        ensureScheduleButton('estimateHoliday', BOOKING_SECTION_HASH, 'goBookHoliday');
 
-      // Unlock and show “Go to Booking”
-      saveBookingUnlock("Holiday Decorating — Indoor");
-      ensureScheduleButton('estimateHoliday', bookingHref(), 'goBookHoliday');
+        saveBookingUnlock(hint);
+
+        await postToFormspree(form, {
+          service_type: "Holiday Decorating (indoor)",
+          estimate_price: `$${price}`,
+          estimate_hint: hint,
+          estimate_hours: `${soloHours} solo (~${teamHours} with team)`,
+          teardown_price: teardownHours ? `$${teardownPrice}` : "n/a",
+        }, "emailStatusHoliday");
+      });
     }
-
-    if (btnHol) btnHol.addEventListener('click', runHolidayEstimate);
-    if (formHol) formHol.addEventListener('submit', runHolidayEstimate);
   } catch (err){ console.error("Holiday handler error:", err); }
 
-  /* CONTACT form (homepage/contact page) — optional EmailJS passthrough */
+  /* CONTACT form (homepage/contact page) */
   try {
     const contactForm = document.getElementById('contactForm');
     if (contactForm){
       contactForm.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const payload = Object.fromEntries(new FormData(contactForm).entries());
-        const status = document.getElementById('contactStatus');
-        if (!window.emailjs){
-          if (status) status.textContent = "Thanks! We’ll be in touch shortly.";
-          contactForm.reset();
-          return;
-        }
-        try{
-          await emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID_CONTACT",payload);
-          if (status) status.textContent = "Thanks! We’ll be in touch shortly.";
-          contactForm.reset();
-        }catch(err){
-          if (status) status.textContent = "Message not sent. Please try again.";
-          console.error(err);
-        }
+        const ok = await postToFormspree(contactForm, { service_type: "Contact" }, "contactStatus");
+        if (ok) contactForm.reset();
       });
     }
   } catch (err){ console.error("Contact handler error:", err); }
