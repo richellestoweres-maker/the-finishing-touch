@@ -37,6 +37,9 @@
 
     /* Back to home helper */
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
+
+    /* Small hint style under estimate */
+    .hint{font-size:.95rem; opacity:.9}
   </style>
 </head>
 <body>
@@ -62,7 +65,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-            <!-- Optional: <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a> -->
+            <!-- Optional later: <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a> -->
           </div>
         </div>
       </nav>
@@ -77,9 +80,13 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Organizing Intake Form</div>
-    <p class="intake-note">Complete this brief form for an instant ballpark estimate (shown below), then we’ll send you to the booking calendar.</p>
+    <p class="intake-note">
+      Complete this brief form for an instant ballpark estimate (shown below). You’ll then jump to the booking calendar with a recommended time block.
+    </p>
 
-    <form id="intakeFormOrganizing" class="grid-1" novalidate>
+    <!-- Keep the action attribute as a JS-off fallback to Formspree -->
+    <form id="intakeFormOrganizing" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" novalidate>
+      <!-- ========== Contact ========== -->
       <div class="grid-2">
         <label>Full Name<input name="name" autocomplete="name" required></label>
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
@@ -87,8 +94,8 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
+      <!-- ========== Scope ========== -->
       <div class="fieldset grid-2">
-        <!-- Scope -->
         <label>Area Type
           <select name="org_area">
             <option>Closet</option>
@@ -107,5 +114,104 @@
           <select name="org_size">
             <option>Small</option>
             <option selected>Medium</option>
-            <option>Lar
+            <option>Large</option>
+          </select>
+        </label>
+        <label># of Spaces (rooms/areas)
+          <input name="spaces" type="number" min="1" value="1">
+        </label>
+        <label>Overall Complexity
+          <select name="complexity">
+            <option>Light</option>
+            <option selected>Moderate</option>
+            <option>Heavy</option>
+          </select>
+        </label>
+      </div>
 
+      <!-- ========== Complexity Drivers ========== -->
+      <div class="fieldset grid-2">
+        <label>Current Clutter Level
+          <select name="org_clutter">
+            <option>Light</option>
+            <option selected>Moderate</option>
+            <option>Heavy</option>
+          </select>
+        </label>
+        <label>Decision Speed (purge/sort)
+          <select name="org_decision_speed">
+            <option>Fast</option>
+            <option selected>Average</option>
+            <option>Slow</option>
+          </select>
+        </label>
+
+        <label>Estimated Items Volume
+          <select name="org_volume">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+          </select>
+        </label>
+        <label>Containers Needed (bins/labels)
+          <select name="org_containers">
+            <option selected>None</option>
+            <option>Some (up to 10)</option>
+            <option>Many (10+)</option>
+          </select>
+        </label>
+
+        <label>Access / Constraints
+          <select name="org_access">
+            <option selected>Easy (ground floor)</option>
+            <option>Stairs</option>
+            <option>Tight spaces / HOA constraints</option>
+          </select>
+        </label>
+        <label>Haul-Away / Donation Volume
+          <select name="org_haul">
+            <option selected>None</option>
+            <option>1–3 bags/boxes</option>
+            <option>4–8 bags/boxes</option>
+            <option>Carload+</option>
+          </select>
+        </label>
+
+        <label>Add-ons (type keywords: bins, labels, bins/labels)
+          <input name="addons" placeholder="e.g., bins/labels">
+        </label>
+        <label>Notes / Focus Areas
+          <input name="notes" placeholder="e.g., zones for kids, seasonal storage">
+        </label>
+      </div>
+
+      <!-- ========== Preferences ========== -->
+      <div class="fieldset grid-2">
+        <label>Preferred Days / Times
+          <input name="availability" placeholder="e.g., Tue/Thu mornings">
+        </label>
+        <label>Payment Preference
+          <select name="pay">
+            <option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- ========== Client Consent ========== -->
+      <div class="fieldset grid-1">
+        <h3 style="margin:0 0 6px">Consent & Communication</h3>
+        <label>
+          <input type="checkbox" name="consent_sms_email" value="Yes" required>
+          I consent to receive scheduling/updates via SMS or email.
+        </label>
+        <label>
+          <input type="checkbox" name="consent_photos_doc" value="Yes" required>
+          I consent to before/after photos for job documentation (internal only).
+        </label>
+        <label>
+          <input type="checkbox" name="consent_photos_marketing" value="Yes">
+          I also consent to selected photos being used for marketing (website/social).
+        </label>
+        <div class="grid-2">
+          <label>Type full name as signature (documentation consent)
+            <input name="signature_d_
