@@ -1,88 +1,84 @@
-/* ============================================================
-   The Finishing Touch — Site-wide Chat Widget (PAGE-AWARE)
-   How to use:
-   1) Include on every page: <script src="ftt-chat.js" defer></script>
-   2) Requires your styles in styles.css for #ftt-chat / launcher.
-   3) Auto-detects page and tailors answers (cleaning/organizing/decor/holiday).
-   ============================================================ */
+<script>
+// The Finishing Touch — Site-wide Chat (nav + FAQs + terms refs, intake-gated, persistent)
+// Include on every page: <script src="ftt-chat.js" defer></script>
 (function(){
-  "use strict";
+  if (window.__FTT_CHAT_READY__) return; window.__FTT_CHAT_READY__ = true;
 
-  // Don't double-inject
-  if (document.getElementById("ftt-chat") || document.getElementById("ftt-chat-launcher")) return;
+  // ---- FLAGS (unchanged) ----
+  const INTAKE_UNLOCK_KEY = "ftt_intake_ok";          // set after intake submit
+  const ESTABLISHED_KEY   = "ftt_client_established"; // set on successful login (profile portal)
 
-  // ---------- Context detection ----------
-  const PATH = (location.pathname || "").toLowerCase();
-  const CONTEXT =
-      PATH.includes("intake-cleaning")   ? "cleaning"   :
-      PATH.includes("intake-organizing") ? "organizing" :
-      (PATH.includes("intake-decor") || PATH.includes("intake-staging")) ? "decor" :
-      PATH.includes("intake-holiday")    ? "holiday"    :
-      "general";
-
-  // ---------- Core config (edit if needed) ----------
-  const BASE = {
+  // ---- CONFIG: update URLs/anchors to match your files ----
+  const CFG = {
     timezone: "America/Chicago",
     email: "contact.thefinishingtouch.tx@gmail.com",
-    messengerDeepLink: "https://m.me/thefinishingtouch.tx",
-    // Your Square location page (safe default for all contexts)
-    bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
-    hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }, // Mon–Fri, 9–5
+    messenger: "https://m.me/thefinishingtouch.tx",
+    profileUrl: "profile.html", // returning client portal
+    pages: {
+      home: "index.html",
+      services: "index.html#services",
+      about: "index.html#about",
+      contact: "index.html#contact",
+      terms: "terms.html#client-terms",
+      privacy: "terms.html#privacy",
+      policies: "terms.html#policies"
+    },
+    intakes: {
+      cleaning:   "intake-cleaning.html",
+      organizing: "intake-organizing.html",
+      decor:      "intake-decor.html",
+      holiday:    "intake-holiday.html"
+    }
   };
 
-  // Per-context intake link (defaults to Cleaning if unknown)
-  const INTAKE_MAP = {
-    cleaning:   "intake-cleaning.html",
-    organizing: "intake-organizing.html",
-    decor:      "intake-decor.html",
-    holiday:    "intake-holiday.html",
-    general:    "intake-cleaning.html",
-  };
-  // If you’re already on an intake page, link to *this* page
-  const DEFAULT_INTAKE =
-    (CONTEXT !== "general" && PATH.endsWith(INTAKE_MAP[CONTEXT])) ? INTAKE_MAP[CONTEXT] : INTAKE_MAP[CONTEXT];
+  // ---- Tiny styles (kept minimal) ----
+  const CSS = `
+  #ftt-chat-launcher{position:fixed;right:18px;bottom:18px;width:52px;height:52px;border-radius:50%;
+    background:#2a2624;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:9999;font-size:22px}
+  #ftt-chat{position:fixed;right:18px;bottom:84px;width:320px;max-width:90vw;background:#fff;border-radius:16px;
+    box-shadow:0 18px 48px rgba(0,0,0,.18);z-index:9999;display:flex;flex-direction:column;overflow:hidden}
+  .ftt-chat-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #eee;background:#fbf8f4}
+  .ftt-title{font-weight:700}.ftt-subtitle{font-size:.85rem;opacity:.8}
+  .ftt-close{background:none;border:none;font-size:20px;cursor:pointer;line-height:1}
+  .ftt-thread{height:360px;overflow:auto;padding:10px;background:#fff}
+  .ftt-bubble{max-width:82%;padding:8px 10px;border-radius:12px;margin:6px 0;line-height:1.35}
+  .ftt-bubble.bot{background:#f5efe8;color:#2a2624;border-top-left-radius:4px}
+  .ftt-bubble.me{background:#2a2624;color:#fff;margin-left:auto;border-top-right-radius:4px}
+  .ftt-inputbar{display:flex;gap:8px;padding:10px;border-top:1px solid #eee;background:#fff}
+  .ftt-inputbar input{flex:1;border:1px solid #e6ded6;border-radius:10px;padding:8px}
+  .ftt-inputbar button{border:0;background:#2a2624;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
+  .ftt-quick{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-top:1px solid #eee;background:#fff}
+  .ftt-quick button{border:1px solid #e6ded6;background:#fff;border-radius:999px;padding:6px 10px;font-size:.85rem;cursor:pointer}
+  .ftt-card{border:1px solid #e6ded6;border-radius:12px;padding:10px;margin:8px 0;background:#fff}
+  .ftt-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .ftt-actions button{border:0;background:#2a2624;color:#fff;border-radius:999px;padding:6px 10px;cursor:pointer}
+  .ftt-actions a{display:inline-block;text-decoration:none;border:1px solid #2a2624;color:#2a2624;border-radius:999px;padding:6px 10px}
+  `;
+  (function injectCSS(){ if (!document.getElementById("ftt-chat-css")){ const s=document.createElement("style"); s.id="ftt-chat-css"; s.textContent=CSS; document.head.appendChild(s); }})();
 
-  // ---------- Page-aware copy helpers ----------
-  function hoursNowNote(){
-    try{
-      const opt = { timeZone: BASE.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
-      const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(new Date());
-      const h = +(parts.find(p=>p.type==="hour")?.value||"0");
-      const m = +(parts.find(p=>p.type==="minute")?.value||"0");
-      const wdShort = parts.find(p=>p.type==="weekday")?.value||"";
-      const map = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-      const wd = map[wdShort] ?? new Date().getDay();
-      const [oH,oM] = BASE.hours.open.split(":").map(Number);
-      const [cH,cM] = BASE.hours.close.split(":").map(Number);
-      const open = BASE.hours.days.includes(wd) && ((h>oH)||(h===oH&&m>=oM)) && ((h<cH)||(h===cH&&m<=cM));
-      return open
-        ? "We’re online now—ask me anything or say “human” to chat with a person."
-        : "We’re offline right now, but I can still help or route your message to a person.";
-    }catch{ return ""; }
+  // ---- DOM inject ----
+  function ensureDOM(){
+    if (!document.getElementById("ftt-chat-launcher")){
+      const l=document.createElement("div"); l.id="ftt-chat-launcher"; l.setAttribute("role","button"); l.setAttribute("aria-label","Open chat"); l.textContent="💬"; document.body.appendChild(l);
+    }
+    if (!document.getElementById("ftt-chat")){
+      const p=document.createElement("div"); p.id="ftt-chat"; p.setAttribute("aria-live","polite"); p.hidden=true;
+      p.innerHTML=`
+        <div class="ftt-chat-header">
+          <div><div class="ftt-title">The Finishing Touch</div><div class="ftt-subtitle">AI Concierge • human on request</div></div>
+          <button class="ftt-close" aria-label="Close chat">×</button>
+        </div>
+        <div id="ftt-thread" class="ftt-thread"></div>
+        <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+          <input id="ftt-input" name="message" type="text" placeholder="Ask for help, pricing, or terms…" required />
+          <button class="ftt-send" type="submit">Send</button>
+        </form>
+        <div class="ftt-quick"></div>
+      `;
+      document.body.appendChild(p);
+    }
   }
 
-  // Per-context answers
-  function answerFor(intent){
-    const intakeLink = `<a href="${DEFAULT_INTAKE}">Start Intake</a>`;
-    const bookLink   = `<a href="${BASE.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
-    const hrsNote    = hoursNowNote();
-
-    // Context blocks
-    const COPY = {
-      cleaning: {
-        pricing: [
-          "Here’s a quick overview (final quote depends on size/condition):",
-          "• Initial/Deep: commonly $300–$450 for typical homes.",
-          "• Standard (recurring): often $170–$360 depending on sq ft and frequency.",
-          `${intakeLink} for a tailored estimate first, or ${bookLink} to see live availability.`,
-          hrsNote
-        ],
-        services: [
-          "Cleaning services:",
-          "• Initial / Deep • Standard (weekly/biweekly/monthly) • Move-In/Move-Out • Airbnb Turnovers",
-          "Add-ons by request: oven, fridge, windows, baseboards, laundry.",
-          `Want a personalized estimate? ${intakeLink}.`
-        ],
-        recommend: [
-          "<strong>Help choosing:</strong>",
-          "• Standard Clean size
+  // ---- Persistence ----
+  const LS_THREAD="ftt_chat_thread_v2", LS_OP_
