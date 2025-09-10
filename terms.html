@@ -4,98 +4,184 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Service Terms – The Finishing Touch</title>
+
+  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-only helpers (kept light) -->
   <style>
     body{background:#fbf8f4}
-    .terms-wrap{width:min(920px,92%);margin:28px auto 80px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-    h1{font-family:"Playfair Display",serif;margin:0 0 6px}
-    h2{margin:18px 0 8px}
-    p,li{line-height:1.6}
+    .terms-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .terms-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
+    .terms-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
+    .toc{margin:12px 0 20px;padding:14px;border:1px solid #e8ddd1;border-radius:12px;background:#fffdfb}
+    .toc a{color:#524a46;text-decoration:none;font-weight:600}
+    .toc a:hover{text-decoration:underline}
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
+    .terms-wrap h2{margin-top:18px}
+    .terms-wrap ul{margin:.4rem 0 .9rem 1.2rem}
+    .muted{opacity:.85}
   </style>
 </head>
 <body>
-<header class="site-header">
-  <div class="container header-inner">
-    <div class="brand">
-      <a href="index.html" class="brand-link">
-        <span class="vase-logo" aria-hidden="true"></span>
-        <span class="brand-name">The Finishing Touch</span>
-      </a>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="index.html" class="brand-link">
+          <span class="vase-logo" aria-hidden="true"></span>
+          <span class="brand-name">The Finishing Touch</span>
+        </a>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
     </div>
-    <nav class="main-nav">
-      <a href="index.html">Home</a>
-      <a href="index.html#services">Services</a>
-      <a href="index.html#about">About</a>
-      <a href="index.html#contact">Contact</a>
-    </nav>
+  </header>
+
+  <!-- Back to home -->
+  <div class="mini-bar">
+    <a class="btn btn-outline" href="index.html">← Back to Home</a>
   </div>
-</header>
 
-<div class="mini-bar">
-  <a class="btn btn-outline" href="index.html">← Back to Home</a>
-</div>
+  <main class="terms-wrap">
+    <h1 id="client-terms" class="terms-title">Client Service Terms</h1>
+    <div class="terms-script">The Finishing Touch</div>
+    <p class="muted" style="text-align:center;margin-top:-4px;">Last updated: <time datetime="2025-09-10">September 10, 2025</time></p>
 
-<main class="terms-wrap" id="client-terms">
-  <h1>Client Service Terms</h1>
-  <p style="opacity:.8">Updated: <time datetime="2025-09-10">Sep 10, 2025</time></p>
+    <div class="toc">
+      <strong>Jump to:</strong>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px">
+        <a href="#scheduling">Scheduling & Access</a> ·
+        <a href="#cancellation">Cancellation</a> ·
+        <a href="#safety">Safety & Working Conditions</a> ·
+        <a href="#supplies-scope">Supplies & Scope</a> ·
+        <a href="#photos">Photos</a> ·
+        <a href="#valuables">Valuables</a> ·
+        <a href="#damage">Damage & Breakage</a> ·
+        <a href="#limits">Limits & Exclusions</a> ·
+        <a href="#parking">Parking / HOA</a> ·
+        <a href="#pets">Pets</a> ·
+        <a href="#estimates">Estimates & Minimums</a> ·
+        <a href="#payment">Payment</a> ·
+        <a href="#weather">Weather & Emergencies</a> ·
+        <a href="#privacy">Privacy & Communications</a> ·
+        <a href="#organizing">Organizing Addendum</a> ·
+        <a href="#changes">Changes to Terms</a> ·
+        <a href="#law">Governing Law</a> ·
+        <a href="#satisfaction">Satisfaction</a>
+      </div>
+    </div>
 
-  <h2>Scheduling & Access</h2>
-  <ul>
-    <li>We’ll confirm your appointment window by email/SMS. Please ensure building/door codes and pets are noted in your intake.</li>
-    <li>If we cannot access your home within 15 minutes of arrival, the visit may be cancelled and a fee may apply.</li>
-  </ul>
+    <h2 id="scheduling">Scheduling & Access</h2>
+    <ul>
+      <li>We’ll confirm your appointment window by email/SMS. Please note building/door codes and pet details in your intake.</li>
+      <li>If we cannot access your home within 15 minutes of arrival (lockout / no entry permission), the visit may be cancelled and a fee up to the minimum service charge may apply.</li>
+    </ul>
 
-  <h2>Cancellation & Rescheduling</h2>
-  <ul>
-    <li>Please give at least 24 hours’ notice to cancel or reschedule. Same-day cancellations or lockouts may incur a fee up to the minimum service charge.</li>
-  </ul>
+    <h2 id="cancellation">Cancellation & Rescheduling</h2>
+    <ul>
+      <li>Please provide at least <strong>24 hours’ notice</strong> to cancel or reschedule.</li>
+      <li>Same-day cancellations, lockouts, or no-shows may incur a fee up to the minimum service charge.</li>
+    </ul>
 
-  <h2>Safety & Working Conditions</h2>
-  <ul>
-    <li>For everyone’s safety, we decline hazardous conditions (active infestations, biohazards, aggressive animals, etc.).</li>
-    <li>We cannot move heavy or fragile items without your direction; we are not responsible for pre-existing damage.</li>
-  </ul>
+    <h2 id="safety">Safety & Working Conditions</h2>
+    <ul>
+      <li>For everyone’s safety, we decline work in hazardous conditions (active infestations, biohazards, unsafe construction, aggressive animals, etc.).</li>
+      <li>We do not move heavy or fragile items without your direction; we are not responsible for pre-existing damage or unstable fixtures.</li>
+    </ul>
 
-  <h2>Photos (Quality Control & Marketing)</h2>
-  <ul>
-    <li>We may capture before/after photos strictly for job verification and quality control.</li>
-    <li>Marketing use is optional and only with your separate consent in the intake form.</li>
-  </ul>
+    <h2 id="supplies-scope">Supplies & Scope</h2>
+    <ul>
+      <li>We bring professional products and tools. Please tell us about product sensitivities or surfaces that need special care.</li>
+      <li>Scope is guided by your intake and the service booked (Initial, Standard, Deep, Move-In/Out, Organizing, Decorating, etc.).</li>
+    </ul>
 
-  <h2>Privacy & Communications</h2>
-  <ul>
-    <li>We use your contact information solely to provide services and updates about scheduling and your project.</li>
-    <li>By opting in, you agree we may contact you via email/SMS with updates and reminders.</li>
-    <li><strong>Staffing transparency:</strong> Our services are provided by carefully selected independent contractors who have completed background checks and meet our professional standards. They represent The Finishing Touch while on the job.</li>
-  </ul>
+    <h2 id="photos">Photos (Quality Control & Marketing)</h2>
+    <ul>
+      <li>We may capture before/after photos for job verification and quality control.</li>
+      <li>Marketing use is optional and only with your separate consent in the intake form.</li>
+    </ul>
 
-  <h2>Supplies & Scope</h2>
-  <ul>
-    <li>We bring professional products and tools. Let us know about any product sensitivities or surfaces requiring special care.</li>
-    <li>Scope is guided by your intake and the service type booked (Initial, Standard, Deep, Move-In/Out, etc.).</li>
-  </ul>
+    <h2 id="valuables">Valuables & Fragile Items</h2>
+    <ul>
+      <li>Please secure cash, jewelry, medications, heirlooms, and other valuables before service.</li>
+      <li>Let us know about fragile or unique items and any surfaces requiring special care.</li>
+    </ul>
 
-  <h2>Organizing Addendum (if applicable)</h2>
-  <ul>
-    <li>We sort, categorize, and set up systems in collaboration with you.</li>
-    <li><strong>Donations & discards:</strong> Clients are responsible for removing donations and discards. We’re happy to consolidate into bags/boxes and stage for your preferred pickup or drop-off.</li>
-  </ul>
+    <h2 id="damage">Damage & Breakage</h2>
+    <ul>
+      <li>We take great care in your home. If something is accidentally damaged, notify us within <strong>24 hours</strong> so we can review and make it right.</li>
+      <li>At our reasonable discretion, we may repair, replace, or reimburse considering age/condition and proof of value. Normal wear, pre-existing damage, and manufacturer defects are excluded.</li>
+    </ul>
 
-  <h2>Payment</h2>
-  <ul>
-    <li>Payment is due at completion unless otherwise agreed. We accept Zelle, Venmo, Cash App, and Cash.</li>
-    <li>If you elect to put a card on file (optional), it is stored securely by our payment provider and may be charged after service per your authorization.</li>
-  </ul>
+    <h2 id="limits">Reasonable Limits & Exclusions</h2>
+    <ul>
+      <li>No tasks requiring trade licenses (electrical, plumbing, appliance repair), no mold remediation, and no work at unsafe heights.</li>
+      <li>Outdoor/roof/ladder work is not included unless expressly agreed in writing.</li>
+    </ul>
 
-  <h2>Satisfaction</h2>
-  <ul>
-    <li>If anything was missed, please notify us within 24 hours so we can make it right.</li>
-  </ul>
+    <h2 id="parking">Parking, HOA & Access Fees</h2>
+    <ul>
+      <li>Please provide reasonable parking. Client covers any parking/garage/HOA fees required for access.</li>
+    </ul>
 
-  <p style="opacity:.9;margin-top:14px">Questions? <a href="mailto:contact.thefinishingtouch.tx@gmail.com">contact.thefinishingtouch.tx@gmail.com</a></p>
-</main>
+    <h2 id="pets">Pets</h2>
+    <ul>
+      <li>We love pets and work safely around them. Please secure animals that are anxious or may interfere with service. Aggressive behavior may require us to stop service and a fee may apply.</li>
+    </ul>
 
+    <h2 id="estimates">Estimates, Time Minimums & Scope Changes</h2>
+    <ul>
+      <li>Quotes from our intake forms are <strong>ballpark estimates</strong> based on the details you provide. The final invoice reflects actual time and scope on site.</li>
+      <li>A minimum service charge may apply to each visit. If the scope increases (e.g., extra rooms, heavy buildup, additional décor), we’ll confirm any change before proceeding.</li>
+    </ul>
+
+    <h2 id="payment">Payment</h2>
+    <ul>
+      <li>Payment is due at completion unless otherwise agreed. We accept Zelle, Venmo, Cash App, and Cash.</li>
+      <li><strong>Card on file (optional):</strong> If you choose to keep a card on file, it is stored securely by our payment provider and may be charged after service for the final balance and any approved add-ons. We may place a temporary pre-authorization hold to verify funds; your bank controls release timing.</li>
+    </ul>
+
+    <h2 id="weather">Weather & Emergencies</h2>
+    <ul>
+      <li>Weather, illness, or emergencies may require rescheduling. We’ll notify you promptly and offer the next available window.</li>
+    </ul>
+
+    <h2 id="privacy">Privacy & Communications</h2>
+    <ul>
+      <li>We use your intake details solely to deliver services and coordinate scheduling. Basic job notes may be retained for quality and continuity.</li>
+      <li>By opting in, you agree we may contact you via email/SMS with updates and reminders. You can opt out at any time.</li>
+    </ul>
+
+    <h2 id="organizing">Organizing Addendum (if applicable)</h2>
+    <ul>
+      <li>We sort, categorize, and set up systems in collaboration with you. Labeling/bins can be recommended or sourced upon request.</li>
+      <li><strong>Donations & discards:</strong> Clients are responsible for removing donations and discards. We’re happy to consolidate into bags/boxes and stage for your preferred pickup or drop-off.</li>
+    </ul>
+
+    <h2 id="satisfaction">Satisfaction</h2>
+    <ul>
+      <li>If anything was missed, please notify us within <strong>24 hours</strong> so we can make it right.</li>
+    </ul>
+
+    <h2 id="changes">Changes to These Terms</h2>
+    <ul>
+      <li>We may update these terms occasionally. The version posted at the time of booking applies to your appointment.</li>
+    </ul>
+
+    <h2 id="law">Governing Law</h2>
+    <ul>
+      <li>These terms are governed by the laws of the State of Texas.</li>
+    </ul>
+
+    <p class="muted" style="margin-top:22px">Questions? <a href="mailto:contact.thefinishingtouch.tx@gmail.com">contact.thefinishingtouch.tx@gmail.com</a></p>
+  </main>
+
+  <!-- (Optional) If you want your chat widget here too, paste the same chat block you used on intake pages -->
 </body>
 </html>
