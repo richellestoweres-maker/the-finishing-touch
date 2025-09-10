@@ -245,12 +245,321 @@
 
   <!-- Your site JS (pricing, etc.) -->
   <script src="script.js?v=6" defer></script>
-  
-   <script src="ftt-chat.js" defer></script>
 
   <!-- OVERRIDE: show estimate + Formspree submit + Book Now (no redirect) -->
   <script>
     (function(){
       // Square service links for ORGANIZING (calendar page)
-      const SQUARE_ORG_SMALL  ="https://book.squ
+      const SQUARE_ORG_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN";
+      const SQUARE_ORG_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E";
+      const SQUARE_ORG_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC";
+      const SQUARE_ORG_XL     ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS";
+
+      function roundHalf(n){ return Math.round(n*2)/2; }
+
+      // Fallback calculators if global ones aren’t available yet
+      function calcOrganizingLocal(data){
+        try{ if (typeof calcOrganizing === 'function') return calcOrganizing(data); }catch(_){}
+        const ORG_HOURLY=65, ORG_MIN_HOURS=3;
+        const hoursPerSpace = {"Light":1,"Moderate":2,"Heavy":3};
+        const spaces = Math.max(1, Number(data.spaces||1));
+        const complexity = data.complexity || "Moderate";
+        const team = Math.max(1, Number(data.team||2));
+        const hoursEach = hoursPerSpace[complexity] || 2;
+        const estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
+        return Math.round(estHours * ORG_HOURLY * team);
+      }
+      function estimateHoursOrganizingLocal(data){
+        try{ if (typeof estimateHoursOrganizing === 'function') return estimateHoursOrganizing(data); }catch(_){}
+        const area = data.org_area || "Closet";
+        const size = data.org_size || "Medium";
+        const baseMap = {
+          "Closet":{Small:2,Medium:3,Large:4}, "Pantry":{Small:2,Medium:3,Large:4},
+          "Kitchen":{Small:3,Medium:4.5,Large:6}, "Bedroom":{Small:2.5,Medium:3.5,Large:5},
+          "Bathroom":{Small:1.5,Medium:2.5,Large:3.5}, "Garage":{Small:3,Medium:5,Large:7},
+          "Laundry Room":{Small:2,Medium:3,Large:4}, "Office":{Small:2.5,Medium:4,Large:5.5},
+          "Playroom":{Small:2.5,Medium:4,Large:5.5}, "Whole Home (multi-area)":{Small:6,Medium:8,Large:12}
+        };
+        let solo = (baseMap[area]?.[size] ?? 3.5);
+        const clutter = data.org_clutter || "Moderate";
+        if (clutter === "Light") solo *= 0.9;
+        if (clutter === "Moderate") solo *= 1.0;
+        if (clutter === "Heavy") solo *= 1.35;
+
+        const decision = data.org_decision_speed || "Average";
+        if (decision === "Fast") solo *= 0.9;
+        if (decision === "Average") solo *= 1.0;
+        if (decision === "Slow") solo *= 1.25;
+
+        const volume = data.org_volume || "Medium";
+        if (volume === "Medium") solo += 0.5;
+        if (volume === "High") solo += 1.0;
+
+        const containers = data.org_containers || "None";
+        if (containers === "Some (up to 10)") solo += 0.5;
+        if (containers === "Many (10+)") solo += 1.0;
+
+        const access = data.org_access || "Easy (ground floor)";
+        if (access === "Stairs") solo += 0.5;
+        if (access === "Tight spaces / HOA constraints") solo += 0.75;
+
+        solo = roundHalf(solo);
+        const teamCount = Math.max(1, Number(data.team || 2));
+        const teamHours = roundHalf(solo / teamCount);
+        return { soloHours: solo, teamHours };
+      }
+      function squareUrlForOrganizingLocal(teamHours){
+        if (teamHours <= 2.5) return SQUARE_ORG_SMALL;
+        if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;
+        if (teamHours <= 6)   return SQUARE_ORG_LARGE;
+        return SQUARE_ORG_XL;
+      }
+      function organizingHintLocal(data, teamHours){
+        const area = data.org_area || "Space";
+        const size = data.org_size || "Medium";
+        if (teamHours <= 2.5) return `${area} Organizing — Small (${size}, ≈2–2.5 hr)`;
+        if (teamHours <= 4)   return `${area} Organizing — Medium (${size}, ≈3–4 hr)`;
+        if (teamHours <= 6)   return `${area} Organizing — Large (${size}, ≈5–6 hr)`;
+        return `${area} Organizing — XL (${size}, 6.5+ hr)`;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('intakeFormOrganizing');
+        if (!form) return;
+
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          const data = Object.fromEntries(new FormData(form).entries());
+
+          // 1) Estimate (price)
+          let price = null;
+          try{
+            price = (typeof calcOrganizing === 'function') ? calcOrganizing(data) : calcOrganizingLocal(data);
+          }catch(_){}
+          const estEl = document.getElementById('estimateOrganizing');
+          if (estEl){
+            if (price != null) {
+              estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+            } else {
+              estEl.textContent = "Ballpark estimate ready.";
+            }
+          }
+
+          // 2) Hours → pick Square service URL
+          const hours = (typeof estimateHoursOrganizing === 'function')
+            ? estimateHoursOrganizing(data)
+            : estimateHoursOrganizingLocal(data);
+          const url = (typeof squareUrlForOrganizing === 'function')
+            ? squareUrlForOrganizing(hours.teamHours)
+            : squareUrlForOrganizingLocal(hours.teamHours);
+
+          // 3) Inject/refresh Book button
+          let btn = document.getElementById('scheduleOnSquareOrganizing');
+          if (!btn){
+            btn = document.createElement('a');
+            btn.id = 'scheduleOnSquareOrganizing';
+            btn.className = 'btn btn-solid';
+            btn.style.marginTop = '10px';
+            btn.textContent = 'Book Now';
+            estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          }
+          btn.href = url;
+          btn.target = '_blank';
+          btn.rel = 'noopener';
+
+          // 4) Show recommended option hint
+          const hintText = organizingHintLocal(data, hours.teamHours);
+          let hintEl = document.getElementById('organizingHint');
+          if (!hintEl){
+            hintEl = document.createElement('p');
+            hintEl.id = 'organizingHint';
+            hintEl.className = 'hint';
+            btn.parentNode.insertBefore(hintEl, btn.nextSibling);
+          }
+          hintEl.textContent = `Recommended service: ${hintText}. This opens our Square calendar in a new tab.`;
+
+          // 5) Send data to Formspree (AJAX) so you keep the intake
+          try{
+            const statusEl = document.getElementById('emailStatusOrganizing');
+            const resp = await fetch(form.action, {
+              method: 'POST',
+              headers: { 'Accept': 'application/json' },
+              body: new FormData(form)
+            });
+            if (resp.ok){
+              if (statusEl) statusEl.textContent = "Thanks! We’ve received your intake. You can book now below.";
+              // Optional: form.reset();
+            } else {
+              if (statusEl) statusEl.textContent = "Saved locally. We couldn’t reach the inbox just now—please book below and we’ll follow up.";
+            }
+          }catch(err){
+            const statusEl = document.getElementById('emailStatusOrganizing');
+            if (statusEl) statusEl.textContent = "Saved locally. If your internet is unstable, you can still book below.";
+            console.warn(err);
+          }
+        }, true);
+      });
+    })();
+  </script>
+
+  <!-- Site-wide chat (page-aware): inline, guarded so it won’t double-init -->
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="help">Help me choose</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      if (window.__FTT_CHAT_READY__) return;
+      window.__FTT_CHAT_READY__ = true;
+
+      const FTT_CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-organizing.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messengerDeepLink: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
+      };
+      const el = {
+        launcher: document.getElementById("ftt-chat-launcher"),
+        panel: document.getElementById("ftt-chat"),
+        thread: document.getElementById("ftt-thread"),
+        input: null, form: null, quick: null, close: null,
+      };
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const locale = "en-US";
+          const opt = { timeZone: FTT_CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat(locale,opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=FTT_CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=FTT_CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return FTT_CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+      function addMsg(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
+      }
+      function greet(){
+        addMsg("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
+        return "fallback";
+      }
+      function answer(intent){
+        const hoursNote = isWithinBusinessHours()
+          ? "We’re online now—ask me anything or say “human” to chat with a person."
+          : "We’re offline at the moment, but I can still help or route your message to a person.";
+        const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
+        const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Organizing is billed by the project scope and time.",
+              "Small sessions are often 2–3 hrs, larger multi-area projects 4–6+ hrs.",
+              "Fill the intake for a tailored ballpark. " + intakeLink + " or " + bookLink + ".",
+              hoursNote
+            ].join("<br>");
+          case "availability":
+            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.", hoursNote].join("<br>");
+          case "services":
+            return [
+              "We declutter, sort, and set up practical systems (closets, kitchens, pantries, garages, kids’ spaces, offices).",
+              "We can label + source containers if desired.",
+              "Want the best pick? " + intakeLink + " and I’ll guide you."
+            ].join("<br>");
+          case "book": return "Perfect—" + bookLink + " (opens in a new tab), or " + intakeLink + " for a quick tailored estimate first.";
+          case "human":
+            return isWithinBusinessHours()
+              ? `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
+              : `We’re offline. You can still <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
+          case "recommend":
+            return [
+              "<strong>Happy to help you choose!</strong>",
+              "Small (≈2–2.5 hr): single closet/smaller zone",
+              "Medium (≈3–4 hr): pantry/bedroom/office",
+              "Large (≈5–6 hr): kitchen/garage or multi-area",
+              `Ready to book? ${bookLink} (Square opens in a new tab). Or ${intakeLink} for a tailored estimate first.`
+            ].join("<br>");
+          default:
+            return ["I can help with pricing, availability, and services.", "Try asking “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
+        }
+      }
+      function init(){
+        const closeBtn = document.querySelector(".ftt-close");
+        const input = document.getElementById("ftt-input");
+        const form  = document.getElementById("ftt-inputbar");
+        const quick = document.querySelector(".ftt-quick");
+
+        el.launcher.addEventListener("click", () => {
+          el.panel.hidden = false;
+          if (!el.thread.dataset.greeted) { greet(); el.thread.dataset.greeted = "1"; }
+          input.focus();
+        });
+        closeBtn.addEventListener("click", () => { el.panel.hidden = true; });
+        form.addEventListener("submit", (e)=>{
+          e.preventDefault();
+          const text = input.value.trim(); if (!text) return;
+          const bubble = document.createElement("div"); bubble.className="ftt-bubble me"; bubble.textContent=text; el.thread.appendChild(bubble);
+          input.value=""; el.thread.scrollTop=el.thread.scrollHeight;
+          setTimeout(()=> { addMsg(answer(detectIntent(text)),"bot"); }, 200);
+        });
+        quick.addEventListener("click", (e)=>{
+          if (e.target.matches("button[data-q]")){
+            const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+            const intent = map[e.target.getAttribute("data-q")] || "fallback";
+            addMsg(e.target.textContent,"me"); setTimeout(()=> addMsg(answer(intent),"bot"),200);
+          }
+        });
+      }
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+
+  <!-- (Optional: if you later add a shared chat file, this guard prevents double-init) -->
+  <script src="ftt-chat.js" defer></script>
+</body>
+</html>
+
 
