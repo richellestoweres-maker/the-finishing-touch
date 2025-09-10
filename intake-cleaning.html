@@ -20,6 +20,7 @@
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
+    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
 
     /* Minimal dropdown styles in case your global CSS doesn't include them */
     .quote-dropdown{position:relative;display:inline-block}
@@ -33,7 +34,10 @@
     .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
     .quote-menu a:hover{background:#f3ece6}
     .quote-dropdown.open .quote-menu{display:block}
-    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
+
+    /* Back to home helper */
+    .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
+    .hint{font-size:.92rem;opacity:.9}
   </style>
 </head>
 <body>
@@ -47,6 +51,7 @@
         </a>
       </div>
       <nav class="main-nav">
+        <a href="index.html">Home</a>
         <a href="index.html#services">Services</a>
         <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
@@ -65,6 +70,11 @@
       </nav>
     </div>
   </header>
+
+  <!-- simple back-to-home button (extra clear) -->
+  <div class="mini-bar">
+    <a class="btn btn-outline" href="index.html">← Back to Home</a>
+  </div>
 
   <!-- Main -->
   <main class="intake-wrap">
@@ -123,35 +133,36 @@
           <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
         </label>
       </div>
-      <!-- CONSENTS -->
-<fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
-  <legend id="consentLegend" style="font-weight:700;">Consents</legend>
 
-  <label style="display:flex;gap:.6rem;align-items:flex-start;">
-    <input type="checkbox" name="consent_work_photos" required>
-    <span>I allow The Finishing Touch to take before/after photos for job verification and quality control. These will not be used for marketing unless I also consent below.</span>
-  </label>
+      <!-- CONSENTS (unchanged) -->
+      <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
+        <legend id="consentLegend" style="font-weight:700;">Consents</legend>
 
-  <label style="display:flex;gap:.6rem;align-items:flex-start;">
-    <input type="checkbox" name="consent_marketing_photos">
-    <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. I can revoke this in writing.</span>
-  </label>
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_work_photos" required>
+          <span>I allow The Finishing Touch to take before/after photos for job verification and quality control. These will not be used for marketing unless I also consent below.</span>
+        </label>
 
-  <label style="display:flex;gap:.6rem;align-items:flex-start;">
-    <input type="checkbox" name="consent_terms" required>
-    <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html" target="_blank" rel="noopener">Read terms</a>.</span>
-  </label>
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_marketing_photos">
+          <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. I can revoke this in writing.</span>
+        </label>
 
-  <label style="display:flex;gap:.6rem;align-items:flex-start;">
-    <input type="checkbox" name="consent_updates">
-    <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
-  </label>
-</fieldset>
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_terms" required>
+          <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+        </label>
 
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_updates">
+          <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
+        </label>
+      </fieldset>
 
       <div class="submit-row">
         <button class="btn btn-solid" type="submit">Get Instant Estimate</button>
         <p id="estimateCleaning" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <!-- Book button is injected here after estimate -->
         <p id="emailStatusCleaning" style="opacity:.9"></p>
       </div>
     </form>
@@ -179,42 +190,305 @@
     })();
   </script>
 
-  <!-- Your site JS (pricing + Square routing) -->
+  <!-- Your site JS (kept) -->
   <script src="script.js?v=5" defer></script>
 
-  <!-- OVERRIDE: after intake, unlock embedded calendar and route to index#book (not Square) -->
+  <!-- OVERRIDE: Estimate + Book button (NO redirect to home) -->
   <script>
     (function(){
-      const INTAKE_FLAG = 'ftt_intake_ok';
+      // Square service links (calendar page, not embedded)
+      const SQUARE_CLEAN_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
+      const SQUARE_CLEAN_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
+      const SQUARE_CLEAN_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV";
+      const SQUARE_CLEAN_XL     ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK";
+
+      function roundHalf(n){ return Math.round(n*2)/2; }
+
+      // Fallback hours estimator if global one isn't loaded yet
+      function estimateHoursCleaningLocal(data){
+        try { if (typeof estimateHoursCleaning === 'function') return estimateHoursCleaning(data); } catch(_){}
+        const sqft = data.sqft || "1000–2000";
+        const service = data.service || "Initial Clean";
+        const beds = Number(data.beds||0);
+        const baths = Number(data.baths||0);
+        const otherRooms = Number(data.other_rooms||0);
+        const stories = String(data.stories||"1");
+
+        let solo = 2;
+        if (sqft === "<1000") solo = 2;
+        else if (sqft === "1000–2000") solo = 3;
+        else if (sqft === "2000–3000") solo = 4;
+        else if (sqft === "3000–4000") solo = 5;
+        else solo = 6;
+
+        if (service === "Airbnb Turnover"){
+          if (beds <= 1) solo = 2;
+          else if (beds === 2) solo = 2.5;
+          else if (beds === 3) solo = 3;
+          else if (beds === 4) solo = 3.5;
+          else solo = 4;
+        }
+        solo += Math.max(0, beds - 3) * 0.5;
+        solo += Math.max(0, baths - 2) * 0.75;
+        solo += Math.max(0, otherRooms) * 0.25;
+        if (stories === "2") solo += 0.25;
+
+        if (service === "Deep Clean") solo *= 1.5;
+        if (service === "Move-In / Move-Out Clean") solo *= 2;
+        if (service === "Initial Clean") solo *= 1.2;
+
+        solo = roundHalf(solo);
+        const team = roundHalf(solo / 2);
+        return { soloHours: solo, teamHours: team };
+      }
+
+      function squareUrlForCleaningLocal(teamHours){
+        if (teamHours <= 2.5) return SQUARE_CLEAN_SMALL;
+        if (teamHours <= 3.5) return SQUARE_CLEAN_MEDIUM;
+        if (teamHours <= 5)   return SQUARE_CLEAN_LARGE;
+        return SQUARE_CLEAN_XL;
+      }
+
+      function cleaningHintLocal(data, teamHours){
+        const service = data.service || "Initial Clean";
+        if (service === "Standard Clean"){
+          const sqft = data.sqft || "1000–2000";
+          const label = {"<1000":"Small (≤1,000 sq ft)","1000–2000":"Medium (1,000–2,000)","2000–3000":"Large (2,000–3,000)","3000–4000":"XL (3,000–4,000)","4000+":"Estate (4,000+)"}[sqft] || "Sized by intake";
+          return `Standard Clean — ${label}`;
+        }
+        if (service === "Airbnb Turnover"){
+          if (teamHours <= 2.5) return "Airbnb Turnover — Quick (~2 hr)";
+          if (teamHours <= 3.5) return "Airbnb Turnover — Standard (~3 hr)";
+          if (teamHours <= 5)   return "Airbnb Turnover — Extended (~4–5 hr)";
+          return "Airbnb Turnover — Extended XL (5.5+ hr)";
+        }
+        if (teamHours <= 2.5) return `${service} — Small (~2–2.5 hr)`;
+        if (teamHours <= 3.5) return `${service} — Medium (~3–3.5 hr)`;
+        if (teamHours <= 5)   return `${service} — Large (~4–5 hr)`;
+        return `${service} — XL (5.5+ hr)`;
+      }
 
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('intakeFormCleaning');
         if (!form) return;
 
-        // Capture-phase listener cancels the script.js redirect-to-Square
+        // Capture phase so we cancel any site-wide handler that redirects
         form.addEventListener('submit', function(e){
           e.preventDefault();
           e.stopImmediatePropagation();
 
-          // Show the estimate once (uses your calcCleaning from script.js if present)
-          try {
-            const data = Object.fromEntries(new FormData(form).entries());
-            if (typeof calcCleaning === 'function') {
-              const price = calcCleaning(data);
-              const estEl = document.getElementById('estimateCleaning');
-              if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-            }
-          } catch(_) {}
+          const data = Object.fromEntries(new FormData(form).entries());
 
-          // Unlock booking on Home and send them to the embedded calendar
-          try { localStorage.setItem(INTAKE_FLAG,'1'); } catch(_) {}
-          window.location.href = 'index.html#book';
-        }, true); // <-- capture = true so we override the other handler
+          // Show price estimate
+          try {
+            let price = null;
+            if (typeof calcCleaning === 'function') price = calcCleaning(data);
+            const estEl = document.getElementById('estimateCleaning');
+            if (estEl){
+              if (price != null) {
+                estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+              } else {
+                estEl.textContent = "Ballpark estimate ready.";
+              }
+            }
+
+            // Choose Square service page (new tab)
+            const { teamHours } = estimateHoursCleaningLocal(data);
+            const url = (typeof squareUrlForCleaning === 'function')
+              ? squareUrlForCleaning(teamHours)
+              : squareUrlForCleaningLocal(teamHours);
+
+            // Add/refresh the “Book Now” button under the estimate
+            let btn = document.getElementById('scheduleOnSquareCleaning');
+            if (!btn){
+              btn = document.createElement('a');
+              btn.id = 'scheduleOnSquareCleaning';
+              btn.className = 'btn btn-solid';
+              btn.style.marginTop = '10px';
+              btn.textContent = 'Book Now';
+              estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+            }
+            btn.href = url;
+            btn.target = '_blank';
+            btn.rel = 'noopener';
+
+            // Optional guidance line (recommended option)
+            const hint = cleaningHintLocal(data, teamHours);
+            let hintEl = document.getElementById('cleaningHint');
+            if (!hintEl){
+              hintEl = document.createElement('p');
+              hintEl.id = 'cleaningHint';
+              hintEl.className = 'hint';
+              btn.parentNode.insertBefore(hintEl, btn.nextSibling);
+            }
+            hintEl.textContent = `Recommended service: ${hint}. This opens our Square calendar in a new tab.`;
+          } catch (err){
+            console.error(err);
+          }
+        }, true);
       });
+    })();
+  </script>
+
+  <!-- === Finishing Touch — AI Concierge Chat (added to appear on this page) === -->
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="help">Help me choose</button>
+    </div>
+  </div>
+
+  <script>
+    // Self-contained chat (same UX as Home). Namespaced to avoid conflicts.
+    (function(){
+      const FTT_CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-cleaning.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messengerDeepLink: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
+      };
+      const el = {
+        launcher: document.getElementById("ftt-chat-launcher"),
+        panel: document.getElementById("ftt-chat"),
+        thread: document.getElementById("ftt-thread"),
+        input: null, form: null, quick: null, close: null,
+      };
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const locale = "en-US";
+          const opt = { timeZone: FTT_CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat(locale,opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=FTT_CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=FTT_CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return FTT_CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+      function addMsg(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
+      }
+      function greet(){
+        addMsg("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
+        return "fallback";
+      }
+      function answer(intent){
+        const hoursNote = isWithinBusinessHours()
+          ? "We’re online now—ask me anything or say “human” to chat with a person."
+          : "We’re offline at the moment, but I can still help or route your message to a person.";
+        const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
+        const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Here’s a quick pricing overview (final quote depends on size/condition):",
+              "• Initial/Deep Clean: typically $350–$400 for average homes.",
+              "• Standard Maintenance: commonly $275–$300.",
+              "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + ".",
+              hoursNote
+            ].join("<br>");
+          case "availability":
+            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.", hoursNote].join("<br>");
+          case "services":
+            return [
+              "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
+              "• Deep/Initial: top-to-bottom detail.",
+              "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
+              "• Move-Out/Make-Ready: includes inside cabinets, fridge, oven (by request).",
+              "Want the full checklist? " + intakeLink + " and I’ll tailor it to your home."
+            ].join("<br>");
+          case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
+          case "human":
+            return isWithinBusinessHours()
+              ? `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
+              : `We’re offline. You can still <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
+          case "recommend":
+            return [
+              "<strong>Happy to help you choose!</strong>",
+              "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
+              "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
+              "<em>Move-Out:</em> 5 hr ≈ up to ~1,500 sq ft · 7 hr ≈ ~1,500–3,000+ sq ft.",
+              `Ready to book? ${bookLink} (Square opens in a new tab). Or ${intakeLink} for a tailored estimate first.`
+            ].join("<br>");
+          default:
+            return ["I can help with pricing, availability, and services.", "Try asking “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
+        }
+      }
+      function init(){
+        el.close = document.querySelector(".ftt-close");
+        el.input = document.getElementById("ftt-input");
+        el.form  = document.getElementById("ftt-inputbar");
+        el.quick = document.querySelector(".ftt-quick");
+        el.launcher.addEventListener("click", () => {
+          el.panel.hidden = false;
+          if (!el.thread.dataset.greeted) { greet(); el.thread.dataset.greeted = "1"; }
+          el.input.focus();
+        });
+        el.close.addEventListener("click", () => { el.panel.hidden = true; });
+        el.form.addEventListener("submit", (e)=>{
+          e.preventDefault();
+          const text = el.input.value.trim(); if (!text) return;
+          const bubble = document.createElement("div"); bubble.className="ftt-bubble me"; bubble.textContent=text; el.thread.appendChild(bubble);
+          el.input.value=""; el.thread.scrollTop=el.thread.scrollHeight;
+          setTimeout(()=> {
+            const intent = detectIntent(text);
+            addMsg(answer(intent), "bot");
+          }, 200);
+        });
+        el.quick.addEventListener("click", (e)=>{
+          if (e.target.matches("button[data-q]")){
+            const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+            const intent = map[e.target.getAttribute("data-q")] || "fallback";
+            addMsg(e.target.textContent,"me"); setTimeout(()=> addMsg(answer(intent),"bot"),200);
+          }
+        });
+      }
+      document.addEventListener("DOMContentLoaded", init);
     })();
   </script>
 </body>
 </html>
+
+
 
 
 
