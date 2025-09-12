@@ -619,3 +619,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Contact handler error:", err); }
 });
+
+  /* AUTH FORMS: Login + Signup */
+  try {
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(loginForm).entries());
+        console.log("Login attempt:", data);
+        alert("Login form submitted! (Check console for values)");
+      });
+    }
+
+    const signupForm = document.getElementById("signupForm");
+    if (signupForm) {
+      signupForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(signupForm).entries());
+        console.log("Signup attempt:", data);
+        alert("Signup form submitted! (Check console for values)");
+      });
+    }
+  } catch (err) {
+    console.error("Auth handler error:", err);
+  }
+});
+
+
