@@ -5,35 +5,102 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign Up – The Finishing Touch</title>
 
+  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
+  <!-- Minimal luxe form styles (matches login) -->
   <style>
-    .auth-wrap { width: min(420px, 90%); margin: 60px auto; background: #fff; padding: 28px; border-radius: 16px; box-shadow: var(--shadow); }
-    .auth-wrap h1 { font-size: 1.8rem; margin-bottom: 1rem; text-align: center; }
-    .auth-wrap label { display: grid; gap: 6px; font-weight: 600; margin-top: 14px; }
-    .auth-wrap input { border: 1px solid #e3d9ce; border-radius: 12px; padding: .75rem; background: #fffdfb; color: var(--taupe-900); }
-    .auth-wrap .btn { width: 100%; margin-top: 18px; }
-    .auth-wrap p { text-align: center; margin-top: 16px; }
-    .auth-wrap a { color: var(--taupe-900); font-weight: 600; text-decoration: none; }
+    .auth-wrap { width: min(460px, 92%); margin: 64px auto; background: #fff; padding: 28px; border-radius: 16px; box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08)); }
+    .auth-wrap h1 { font-family: "Playfair Display", serif; font-size: 1.9rem; text-align: center; margin: 0 0 1rem; color: var(--taupe-900, #2e2a27); }
+    .auth-wrap form { display: grid; gap: 14px; }
+    .auth-wrap label { display: grid; gap: 6px; font-weight: 600; color: var(--taupe-900, #2e2a27); }
+    .auth-wrap input { border: 1px solid #e3d9ce; border-radius: 12px; padding: .8rem .9rem; background: #fffdfb; color: var(--taupe-900, #2e2a27); font-size: 16px; }
+    .auth-wrap .btn { width: 100%; margin-top: 6px; }
+    .auth-wrap p { text-align: center; margin-top: 14px; }
+    .auth-wrap a { color: var(--taupe-900, #2e2a27); font-weight: 600; text-decoration: none; }
+    .error { color: #b00020; font-weight: 600; margin-top: 6px; text-align: center; }
+    .muted { color: #7b746e; font-size: .95rem; }
   </style>
 </head>
 <body>
   <div class="auth-wrap">
     <h1>Create Account</h1>
-    <form id="signupForm">
+
+    <form id="signupForm" novalidate>
       <label>Full Name
-        <input type="text" name="name" required>
+        <input id="signupName" type="text" name="name" autocomplete="name" required />
       </label>
+
       <label>Email
-        <input type="email" name="email" required>
+        <input id="signupEmail" type="email" name="email" autocomplete="username" required />
       </label>
-      <label>Password
-        <input type="password" name="password" required>
+
+      <label>Password (6+ characters)
+        <input id="signupPass" type="password" name="password" autocomplete="new-password" minlength="6" required />
       </label>
-      <button type="submit" class="btn btn-solid">Sign Up</button>
+
+      <button id="signupBtn" type="submit" class="btn btn-solid">Sign Up</button>
+
+      <p class="muted">Already have an account? <a href="login.html">Sign in</a></p>
+      <p id="signupError" class="error" aria-live="polite" hidden></p>
     </form>
-    <p>Already have an account? <a href="login.html">Sign in</a></p>
   </div>
+
+  <!-- Firebase Auth wiring -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import {
+      createUserWithEmailAndPassword,
+      updateProfile,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const form = document.getElementById('signupForm');
+    const nameEl = document.getElementById('signupName');
+    const emailEl = document.getElementById('signupEmail');
+    const passEl  = document.getElementById('signupPass');
+    const btn     = document.getElementById('signupBtn');
+    const errEl   = document.getElementById('signupError');
+
+    // If already signed in, go home
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = "index.html";
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.hidden = true;
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = "Creating account…";
+
+      const name  = nameEl.value.trim();
+      const email = emailEl.value.trim();
+      const pass  = passEl.value.trim();
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        // Save display name on the new account
+        if (name) {
+          await updateProfile(cred.user, { displayName: name });
+        }
+        window.location.href = "index.html";
+      } catch (e) {
+        const map = {
+          "auth/email-already-in-use": "That email is already in use.",
+          "auth/invalid-email": "That email doesn’t look right.",
+          "auth/weak-password": "Password must be at least 6 characters.",
+          "auth/missing-password": "Please enter a password."
+        };
+        const code = e.code || "";
+        errEl.textContent = map[code] || (e.message?.replace("Firebase: ", "") || "Sign up failed.");
+        errEl.hidden = false;
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+  </script>
 </body>
 </html>
+
