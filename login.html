@@ -95,10 +95,23 @@
       const email = emailEl.value.trim();
       const pass  = passEl.value.trim();
 
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        window.location.href = "index.html";
-      } catch (e) {
+   try {
+  await signInWithEmailAndPassword(auth, email, pass);
+
+  // Redirect back to where they intended to go (e.g., an intake page)
+  const params = new URLSearchParams(location.search);
+  const next = params.get('next') || 'index.html';
+
+  // Safety: only allow internal relative paths
+  const isInternal = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
+  window.location.href = isInternal ? next : 'index.html';
+
+} catch (e) {
+  // (keep your existing error handling here)
+}
+
+
+        
         // Friendlier error messages
         const map = {
           "auth/invalid-email": "That email doesn’t look right.",
