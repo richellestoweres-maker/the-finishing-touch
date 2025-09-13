@@ -25,6 +25,11 @@
 </head>
 <body>
   <div class="auth-wrap">
+    <!-- Back home button (inside the card) -->
+    <div style="margin-bottom:10px;">
+      <a class="btn btn-outline" href="index.html">← Back home</a>
+    </div>
+
     <h1>Create Account</h1>
 
     <form id="signupForm" novalidate>
@@ -56,16 +61,24 @@
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-    const form = document.getElementById('signupForm');
+    const form   = document.getElementById('signupForm');
     const nameEl = document.getElementById('signupName');
-    const emailEl = document.getElementById('signupEmail');
-    const passEl  = document.getElementById('signupPass');
-    const btn     = document.getElementById('signupBtn');
-    const errEl   = document.getElementById('signupError');
+    const emailEl= document.getElementById('signupEmail');
+    const passEl = document.getElementById('signupPass');
+    const btn    = document.getElementById('signupBtn');
+    const errEl  = document.getElementById('signupError');
 
-    // If already signed in, go home
+    // Helper: where to go next (respects ?next=...)
+    function getNext() {
+      const params = new URLSearchParams(location.search);
+      const next = params.get('next') || 'index.html';
+      const isInternal = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
+      return isInternal ? next : 'index.html';
+    }
+
+    // If already signed in, bounce to the intended page
     onAuthStateChanged(auth, (user) => {
-      if (user) window.location.href = "index.html";
+      if (user) window.location.href = getNext();
     });
 
     form.addEventListener('submit', async (e) => {
@@ -81,11 +94,11 @@
 
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        // Save display name on the new account
         if (name) {
           await updateProfile(cred.user, { displayName: name });
         }
-        window.location.href = "index.html";
+        window.location.href = getNext();
+
       } catch (e) {
         const map = {
           "auth/email-already-in-use": "That email is already in use.",
@@ -103,4 +116,5 @@
   </script>
 </body>
 </html>
+
 
