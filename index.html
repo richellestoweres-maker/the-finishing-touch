@@ -441,8 +441,16 @@
       }
     });
   </script>
+
+  <!-- Base Firebase import (as requested) -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    // no-op import to ensure the module is loaded; leaves existing behavior unchanged.
+  </script>
 </body>
 </html>
+
+
 
 
 
