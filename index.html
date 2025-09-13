@@ -438,6 +438,27 @@
   })();
 </script>
 
+<!-- Gate all intake links: if not signed in, send to login with ?next=... -->
+<script type="module">
+  import { auth } from "./ft-firebase.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+  // Any link that goes to an intake page (your menu + buttons already use these)
+  const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
+
+  let isAuthed = false;
+  onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
+
+  function gateClick(e) {
+    if (isAuthed) return; // already signed in → let it go through
+    e.preventDefault();
+    const target = e.currentTarget.getAttribute('href'); // e.g., "intake-cleaning.html"
+    const next = encodeURIComponent(target);
+    window.location.href = `login.html?next=${next}`;
+  }
+
+  intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
+</script>
 
   <!-- Smart auth button (place at the very end of the page) -->
   <script type="module">
@@ -465,6 +486,7 @@
 
 </body>
 </html>
+
 
 
 
