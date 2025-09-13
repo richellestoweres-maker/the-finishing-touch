@@ -383,6 +383,56 @@
       }
     }
   </script>
+<!-- Quote dropdown: accessible toggle (no conflicts) -->
+<style>
+  /* Minimal safety styles in case CSS didn’t load these */
+  .quote-dropdown{ position:relative; }
+  .quote-menu{
+    position:absolute; top:calc(100% + 8px); right:0;
+    background:#fff; border-radius:12px; padding:8px; min-width:220px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12); z-index:1001;
+  }
+  .quote-menu[aria-hidden="true"]{ display:none; }
+  .quote-menu a{ display:block; padding:10px 12px; color:#2e2a27; text-decoration:none; border-radius:10px; }
+  .quote-menu a:hover{ background:#f6f3ef; }
+</style>
+
+<script>
+  (function(){
+    const btn  = document.getElementById('quoteBtnHero');
+    const menu = document.getElementById('quoteMenuHero');
+    if (!btn || !menu) return;
+
+    // Ensure default state
+    btn.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-hidden', 'true');
+
+    function openMenu(){
+      btn.setAttribute('aria-expanded','true');
+      menu.setAttribute('aria-hidden','false');
+      document.addEventListener('click', onDocClick, true);
+      document.addEventListener('keydown', onKey);
+    }
+    function closeMenu(){
+      btn.setAttribute('aria-expanded','false');
+      menu.setAttribute('aria-hidden','true');
+      document.removeEventListener('click', onDocClick, true);
+      document.removeEventListener('keydown', onKey);
+    }
+    function onDocClick(e){
+      if (!menu.contains(e.target) && e.target !== btn) closeMenu();
+    }
+    function onKey(e){
+      if (e.key === 'Escape') closeMenu();
+    }
+
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMenu() : openMenu();
+    });
+  })();
+</script>
 
   <!-- Smart auth button (place at the very end of the page) -->
   <script type="module">
@@ -410,6 +460,7 @@
 
 </body>
 </html>
+
 
 
 
