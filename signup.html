@@ -52,23 +52,26 @@
     </form>
   </div>
 
-  <!-- Firebase Auth wiring -->
+  <!-- Firebase Auth + Firestore wiring -->
   <script type="module">
-    import { auth } from "./ft-firebase.js";
+    import { auth, db } from "./ft-firebase.js";
     import {
       createUserWithEmailAndPassword,
       updateProfile,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      doc, setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const form   = document.getElementById('signupForm');
-    const nameEl = document.getElementById('signupName');
-    const emailEl= document.getElementById('signupEmail');
-    const passEl = document.getElementById('signupPass');
-    const btn    = document.getElementById('signupBtn');
-    const errEl  = document.getElementById('signupError');
+    const form    = document.getElementById('signupForm');
+    const nameEl  = document.getElementById('signupName');
+    const emailEl = document.getElementById('signupEmail');
+    const passEl  = document.getElementById('signupPass');
+    const btn     = document.getElementById('signupBtn');
+    const errEl   = document.getElementById('signupError');
 
-    // Helper: where to go next (respects ?next=...)
+    // Where to redirect after success (honors ?next=..., internal only)
     function getNext() {
       const params = new URLSearchParams(location.search);
       const next = params.get('next') || 'index.html';
@@ -76,10 +79,8 @@
       return isInternal ? next : 'index.html';
     }
 
-    // If already signed in, bounce to the intended page
-    onAuthStateChanged(auth, (user) => {
-      if (user) window.location.href = getNext();
-    });
+    // Already signed in? Send them along.
+    onAuthStateChanged(auth, (user) => { if (user) window.location.href = getNext(); });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -93,10 +94,38 @@
       const pass  = passEl.value.trim();
 
       try {
+        // 1) Create auth user
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        if (name) {
-          await updateProfile(cred.user, { displayName: name });
+
+        // 2) Optional display name
+        if (name) { await updateProfile(cred.user, { displayName: name }); }
+
+        // 3) Create user profile in Firestore with a role
+        // Default role: "client". Support private contractor invites via URL (?role=contractor&code=FTT-2025&types=cleaning,organizing)
+        const params = new URLSearchParams(location.search);
+        const inviteRole = params.get('role'); // "contractor" or null
+        const inviteCode = params.get('code');
+        const CONTRACTOR_CODE = "FTT-2025";     // <-- change this to your private code
+
+        let role = "client";
+        let serviceTypes = [];
+        if (inviteRole === "contractor" && inviteCode === CONTRACTOR_CODE) {
+          role = "contractor";
+          const types = params.get('types');
+          if (types) {
+            serviceTypes = types.split(',').map(s => s.trim()).filter(Boolean);
+          }
         }
+
+        await setDoc(doc(db, "users", cred.user.uid), {
+          displayName: name || cred.user.email,
+          email: cred.user.email,
+          role,
+          serviceTypes,                 // empty for clients
+          createdAt: serverTimestamp()
+        });
+
+        // 4) Redirect
         window.location.href = getNext();
 
       } catch (e) {
@@ -116,5 +145,3 @@
   </script>
 </body>
 </html>
-
-
