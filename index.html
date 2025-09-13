@@ -222,18 +222,18 @@
       .sp-container { max-width:1100px; margin:0 auto; padding:22px 18px 28px; display:grid; gap:22px; }
       @media (min-width: 980px) { .sp-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:24px; } }
 
-      .review-card { background:#24201d; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.22); padding:22px; min-height:220px; position:relative; }
+      .review-card { background:#24201d; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.22); padding:22px; min-height:220px; position:relative; text-align:center; }
       .review-pop { position:absolute; inset:22px; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
       .review-pop.show { opacity:1; transform:translateY(0); }
       .review-stars { color:#f8d477; letter-spacing:2px; margin-bottom:6px; }
       .review-text { font-size:1.08rem; line-height:1.6; margin:0 0 10px; }
       .review-meta { opacity:.85; font-weight:700; }
-      .dots { position:absolute; left:22px; bottom:18px; display:flex; gap:6px; }
+      .dots { position:absolute; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:6px; }
       .dots button { width:8px; height:8px; border-radius:50%; border:0; background:#fff; opacity:.35; cursor:pointer; }
       .dots button.active { opacity:1; }
 
       /* ---- Tiny Google badge row ---- */
-      .review-ctas { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+      .review-ctas { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:10px; }
       .review-ctas .btn { padding:.4rem .7rem; }
     </style>
 
@@ -267,21 +267,19 @@
     </div>
 
     <script>
-      <script>
-  /* ==== DATA: your real photos ==== */
-  const PHOTOS = [
-    { src: "1.jpg",  alt: "Finished home — photo 1" },
-    { src: "2.jpg",  alt: "Finished home — photo 2" },
-    { src: "3.jpg",  alt: "Finished home — photo 3" },
-    { src: "4.jpg",  alt: "Finished home — photo 4" },
-    { src: "5.jpg",  alt: "Finished home — photo 5" },
-    { src: "6.jpg",  alt: "Finished home — photo 6" },
-    { src: "7.jpg",  alt: "Finished home — photo 7" },
-    { src: "8.jpg",  alt: "Finished home — photo 8" },
-    { src: "9.jpg",  alt: "Finished home — photo 9" },
-    { src: "10.jpg", alt: "Finished home — photo 10" },
-  ];
-</script>
+      /* ==== DATA: your real photos (files in site root) ==== */
+      const PHOTOS = [
+        { src: "1.jpg",  alt: "Finished home — photo 1" },
+        { src: "2.jpg",  alt: "Finished home — photo 2" },
+        { src: "3.jpg",  alt: "Finished home — photo 3" },
+        { src: "4.jpg",  alt: "Finished home — photo 4" },
+        { src: "5.jpg",  alt: "Finished home — photo 5" },
+        { src: "6.jpg",  alt: "Finished home — photo 6" },
+        { src: "7.jpg",  alt: "Finished home — photo 7" },
+        { src: "8.jpg",  alt: "Finished home — photo 8" },
+        { src: "9.jpg",  alt: "Finished home — photo 9" },
+        { src: "10.jpg", alt: "Finished home — photo 10" }
+      ];
 
       const REVIEWS = [
         { text:"Spotless! They transformed our home in one afternoon. I could breathe again.", by:"— A. Martinez, League City", stars:5 },
@@ -329,6 +327,8 @@
       function start(){ stop(); rTimer = setInterval(next, 5200); }
       function stop(){ if (rTimer) clearInterval(rTimer); }
       function restart(){ start(); }
+
+      // First render
       ra.classList.add('show'); ra.innerHTML = reviewHTML(REVIEWS[0]);
       [...dotsWrap.children][0]?.classList.add('active');
       start();
@@ -613,6 +613,8 @@
 
 </body>
 </html>
+
+
 
 
 
