@@ -69,8 +69,7 @@
           <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
           <a role="menuitem" href="intake-organizing.html">Organizing</a>
           <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-         <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a>
-
+          <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a>
         </div>
       </div>
     </div>
@@ -295,6 +294,7 @@
       if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
       return "fallback";
     }
+
     function isWithinBusinessHours() {
       try {
         const now = new Date();
@@ -311,6 +311,7 @@
         return FTT.hours.days.includes(wd) && afterOpen && beforeClose;
       } catch { return false; }
     }
+
     function answer(intent) {
       const hoursNote = isWithinBusinessHours()
         ? "We’re online now—ask me anything or say “human” to chat with a person."
@@ -328,12 +329,14 @@
             "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + ".",
             hoursNote
           ].join("<br>");
+
         case "availability":
           return [
             "We update availability live in Square.",
             bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.",
             hoursNote
           ].join("<br>");
+
         case "services":
           return [
             "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
@@ -342,17 +345,22 @@
             "• Move-Out/Make-Ready: includes inside cabinets, fridge, oven (by request).",
             "Want the full checklist? " + intakeLink + " and I’ll tailor it to your home."
           ].join("<br>");
+
         case "service_area":
           return "We serve League City, Friendswood, Pearland, Kemah, Galveston, and nearby areas. Not sure if you’re in range? Drop your ZIP and I’ll confirm.";
+
         case "moveout":
           return [
             "Move-Out / Make-Ready includes high-detail surfaces, baseboards, appliances (add-on), cabinets (inside), and fixtures.",
             "Share square footage + number of beds/baths via " + intakeLink + " and I’ll estimate time and price."
           ].join("<br>");
+
         case "policies":
           return "Cancellation policy: clients provide 24-hour notice (fee may apply), contractors 48-hour notice. We’ll confirm details in your intake.";
+
         case "book":
           return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
+
         case "human":
           return [
             "Absolutely. I’ll hand you to a person.",
@@ -360,12 +368,50 @@
               ? `Tap <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
               : `We’re offline. You can still <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT.email}">${FTT.email}</a> and we’ll reply ASAP.`
           ].join("<br>");
+
         case "recommend":
           return [
             "<strong>Happy to help you choose!</strong>",
             "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
             "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
-            "<em>Airbnb:</em> 2 hr = studio/1BR (~≤900 sq ft) ·
+            "<em>Airbnb:</em> 2 hr = studio/1BR (~≤900 sq ft).",
+            hoursNote
+          ].join("<br>");
+
+        default:
+          return "I didn’t catch that — try “pricing”, “services”, or “book”.";
+      }
+    }
+  </script>
+
+  <!-- Smart auth button (place at the very end of the page) -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+
 
 
 
