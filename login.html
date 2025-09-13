@@ -45,6 +45,11 @@
 </head>
 <body>
   <div class="auth-wrap">
+    <!-- Back home button (inside the card) -->
+    <div style="margin-bottom:10px;">
+      <a class="btn btn-outline" href="index.html">← Back home</a>
+    </div>
+
     <h1>Welcome back</h1>
 
     <form id="loginForm" novalidate>
@@ -63,27 +68,32 @@
       <p class="muted"><a href="reset-password.html">Forgot your password?</a></p>
     </form>
   </div>
-  
-
 
   <!-- Firebase Auth wiring -->
   <script type="module">
-    // 1) Use your Firebase app/auth from the root file we created earlier
     import { auth } from "./ft-firebase.js";
     import {
       signInWithEmailAndPassword,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-    const form = document.getElementById('loginForm');
-    const emailEl = document.getElementById('loginEmail');
-    const passEl  = document.getElementById('loginPass');
-    const btn     = document.getElementById('loginBtn');
-    const errEl   = document.getElementById('loginError');
+    const form   = document.getElementById('loginForm');
+    const emailEl= document.getElementById('loginEmail');
+    const passEl = document.getElementById('loginPass');
+    const btn    = document.getElementById('loginBtn');
+    const errEl  = document.getElementById('loginError');
 
-    // Optional: if already signed in, send them home
+    // Helper: where to go next (respects ?next=...)
+    function getNext() {
+      const params = new URLSearchParams(location.search);
+      const next = params.get('next') || 'index.html';
+      const isInternal = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
+      return isInternal ? next : 'index.html';
+    }
+
+    // If already signed in, go to next/internal target
     onAuthStateChanged(auth, (user) => {
-      if (user) window.location.href = "index.html";
+      if (user) window.location.href = getNext();
     });
 
     form.addEventListener('submit', async (e) => {
@@ -96,23 +106,10 @@
       const email = emailEl.value.trim();
       const pass  = passEl.value.trim();
 
-   try {
-  await signInWithEmailAndPassword(auth, email, pass);
-
-  // Redirect back to where they intended to go (e.g., an intake page)
-  const params = new URLSearchParams(location.search);
-  const next = params.get('next') || 'index.html';
-
-  // Safety: only allow internal relative paths
-  const isInternal = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
-  window.location.href = isInternal ? next : 'index.html';
-
-} catch (e) {
-  // (keep your existing error handling here)
-}
-
-
-        
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        window.location.href = getNext();
+      } catch (e) {
         // Friendlier error messages
         const map = {
           "auth/invalid-email": "That email doesn’t look right.",
@@ -124,11 +121,6 @@
         const code = e.code || "";
         errEl.textContent = map[code] || (e.message?.replace("Firebase: ", "") || "Sign in failed.");
         errEl.hidden = false;
-        btn.disabled = false;
-        btn.textContent = originalText;
-      }
-    });
-  </script>
-</body>
-</html>
+        btn.disabled = fal
+
 
