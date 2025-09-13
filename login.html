@@ -3,66 +3,116 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login – The Finishing Touch</title>
+  <title>Sign in – The Finishing Touch</title>
 
+  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
+  <!-- Minimal luxe form styles (works with your variables) -->
   <style>
     .auth-wrap {
-      width: min(420px, 90%);
-      margin: 60px auto;
+      width: min(460px, 92%);
+      margin: 64px auto;
       background: #fff;
       padding: 28px;
       border-radius: 16px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08));
     }
     .auth-wrap h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
+      font-family: "Playfair Display", serif;
+      font-size: 1.9rem;
       text-align: center;
+      margin: 0 0 1rem;
+      color: var(--taupe-900, #2e2a27);
     }
-    .auth-wrap label {
-      display: grid;
-      gap: 6px;
-      font-weight: 600;
-      margin-top: 14px;
-    }
+    .auth-wrap form { display: grid; gap: 14px; }
+    .auth-wrap label { display: grid; gap: 6px; font-weight: 600; color: var(--taupe-900, #2e2a27); }
     .auth-wrap input {
       border: 1px solid #e3d9ce;
       border-radius: 12px;
-      padding: .75rem;
+      padding: .8rem .9rem;
       background: #fffdfb;
-      color: var(--taupe-900);
+      color: var(--taupe-900, #2e2a27);
+      font-size: 16px;
     }
-    .auth-wrap .btn {
-      width: 100%;
-      margin-top: 18px;
-    }
-    .auth-wrap p {
-      text-align: center;
-      margin-top: 16px;
-    }
-    .auth-wrap a {
-      color: var(--taupe-900);
-      font-weight: 600;
-      text-decoration: none;
-    }
+    .auth-wrap .btn { width: 100%; margin-top: 6px; }
+    .auth-wrap p { text-align: center; margin-top: 14px; }
+    .auth-wrap a { color: var(--taupe-900, #2e2a27); font-weight: 600; text-decoration: none; }
+    .error { color: #b00020; font-weight: 600; margin-top: 6px; text-align: center; }
+    .muted { color: #7b746e; font-size: .95rem; }
   </style>
 </head>
 <body>
   <div class="auth-wrap">
-    <h1>Login</h1>
-    <form id="loginForm">
+    <h1>Welcome back</h1>
+
+    <form id="loginForm" novalidate>
       <label>Email
-        <input type="email" name="email" required>
+        <input id="loginEmail" type="email" name="email" autocomplete="username" required />
       </label>
+
       <label>Password
-        <input type="password" name="password" required>
+        <input id="loginPass" type="password" name="password" autocomplete="current-password" required />
       </label>
-      <button type="submit" class="btn btn-solid">Sign In</button>
+
+      <button id="loginBtn" type="submit" class="btn btn-solid">Sign In</button>
+
+      <p class="muted">Don’t have an account? <a href="signup.html">Create one</a></p>
+      <p id="loginError" class="error" aria-live="polite" hidden></p>
     </form>
-    <p>Don’t have an account? <a href="signup.html">Create one</a></p>
   </div>
+
+  <!-- Firebase Auth wiring -->
+  <script type="module">
+    // 1) Use your Firebase app/auth from the root file we created earlier
+    import { auth } from "./ft-firebase.js";
+    import {
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const form = document.getElementById('loginForm');
+    const emailEl = document.getElementById('loginEmail');
+    const passEl  = document.getElementById('loginPass');
+    const btn     = document.getElementById('loginBtn');
+    const errEl   = document.getElementById('loginError');
+
+    // Optional: if already signed in, send them home
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = "index.html";
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.hidden = true;
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = "Signing in…";
+
+      const email = emailEl.value.trim();
+      const pass  = passEl.value.trim();
+
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        window.location.href = "index.html";
+      } catch (e) {
+        // Friendlier error messages
+        const map = {
+          "auth/invalid-email": "That email doesn’t look right.",
+          "auth/missing-password": "Please enter your password.",
+          "auth/user-not-found": "No account found with that email.",
+          "auth/wrong-password": "Incorrect password. Try again.",
+          "auth/too-many-requests": "Too many attempts. Please wait a moment and try again."
+        };
+        const code = e.code || "";
+        errEl.textContent = map[code] || (e.message?.replace("Firebase: ", "") || "Sign in failed.");
+        errEl.hidden = false;
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+  </script>
 </body>
 </html>
+
