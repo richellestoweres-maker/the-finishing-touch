@@ -12,12 +12,10 @@
   <!-- Site CSS -->
   <link rel="stylesheet" href="styles.css?v=7" />
 
-  <!-- Minimal inline styles so prior booking lock doesn't affect layout -->
   <style>
     html { scroll-behavior: smooth; }
-    #book { scroll-margin-top: 80px; }
-    /* keep chat above the iframe just in case */
-    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+    #book { scroll-margin-top: 80px; } /* keeps anchor scroll nice */
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; } /* chat on top */
   </style>
 </head>
 <body class="page-home">
@@ -34,7 +32,7 @@
         <a href="index.html">Home</a>
         <a href="#services">Services</a>
         <a href="#about">About</a>
-        <a href="#contact">Contact</a>
+        <a href="contact.html">Contact</a>
         <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
       </nav>
     </div>
@@ -52,7 +50,7 @@
       <h1 class="hero-title">The Finishing Touch</h1>
       <p class="hero-sub">Curating clean, styled, and peaceful living spaces.</p>
 
-      <!-- Bold Hero Quote Dropdown (replaces Book button) -->
+      <!-- Quote dropdown -->
       <div class="quote-dropdown" id="quoteDropdownHero">
         <button class="btn btn-quote" id="quoteBtnHero" aria-expanded="false" aria-controls="quoteMenuHero">
           Get Your Quote ▾
@@ -112,99 +110,12 @@
     </div>
   </section>
 
-  <!-- Contact -->
-  <section id="contact" class="section contact-strip">
-    <div class="container contact-grid">
-      <!-- Left: Smart contact form -->
-      <form id="contactForm" class="contact-form" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
-        <h3>Contact</h3>
-
-        <label>
-          Name
-          <input name="name" required>
-        </label>
-
-        <label>
-          Email
-          <input name="email" type="email" required>
-        </label>
-
-        <label>
-          Message
-          <textarea name="message" rows="3" required></textarea>
-        </label>
-
-        <input type="hidden" name="source" value="The Finishing Touch – Contact section">
-
-        <button class="btn btn-solid" type="submit">Send</button>
-        <p id="contactStatus" class="status" aria-live="polite"></p>
-
-        <p class="microcopy">
-          Prefer faster booking?
-          <a href="intake-cleaning.html">Start the Client Intake</a>
-          and we’ll route you straight to scheduling.
-        </p>
-      </form>
-
-      <!-- Right: Direct actions + social -->
-      <div class="contact-details">
-        <h3>Connect</h3>
-
-        <div class="cta-stack">
-          <a class="btn btn-primary" href="intake-cleaning.html" aria-label="Start Client Intake">
-            <i class="fas fa-clipboard-list" aria-hidden="true"></i> Start Intake
-          </a>
-          <!-- Keep anchor; it now scrolls to the reviews/gallery belt instead of a booking widget -->
-          <a class="btn btn-outline" href="#book" aria-label="Book now">
-            <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
-          </a>
-        </div>
-
-        <ul class="link-list">
-          <li>
-            <a href="mailto:contact.thefinishingtouch.tx@gmail.com">
-              <i class="fas fa-envelope" aria-hidden="true"></i>
-              contact.thefinishingtouch.tx@gmail.com
-            </a>
-          </li>
-          <li>
-            <a href="https://facebook.com/thefinishingtouch.tx" target="_blank" rel="noopener">
-              <i class="fab fa-facebook" aria-hidden="true"></i>
-              facebook.com/thefinishingtouch.tx
-            </a>
-          </li>
-          <li>
-            <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">
-              <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
-              Message us on Facebook
-            </a>
-          </li>
-        </ul>
-
-        <!-- Facebook timeline embed -->
-        <div class="social-embed">
-          <h4>Latest Updates</h4>
-          <div class="fb-page"
-               data-href="https://www.facebook.com/thefinishingtouch.tx"
-               data-tabs="timeline"
-               data-width="380"
-               data-height=""
-               data-hide-cover="false"
-               data-show-facepile="false">
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== Social Proof Belt: full-bleed gallery + auto-rotating reviews (replaces booking widget) ===== -->
+  <!-- ===== Full-bleed Gallery Belt (kept as #book for existing links) ===== -->
   <section id="book" class="sp-belt">
     <style>
-      /* ---- Full-bleed wrapper ---- */
       .sp-belt { background:#2e2a27; color:#fff; padding:0; }
       .sp-fullbleed { position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
 
-      /* ---- Horizontal gallery belt ---- */
       .belt-viewport { overflow:hidden; }
       .belt-track { display:flex; gap:12px; padding:14px 18px; animation: beltScroll 55s linear infinite; }
       .belt-track:hover { animation-play-state: paused; }
@@ -217,52 +128,11 @@
         background:linear-gradient(to right, #2e2a27 0%, rgba(46,42,39,0) 100%);
       }
       .belt-grad::after { right:0; left:auto; transform:scaleX(-1); }
-
-      /* ---- Reviews section ---- */
-      .sp-container { max-width:1100px; margin:0 auto; padding:22px 18px 28px; display:grid; gap:22px; }
-      @media (min-width: 980px) { .sp-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:24px; } }
-
-      .review-card { background:#24201d; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.22); padding:22px; min-height:220px; position:relative; text-align:center; }
-      .review-pop { position:absolute; inset:22px; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
-      .review-pop.show { opacity:1; transform:translateY(0); }
-      .review-stars { color:#f8d477; letter-spacing:2px; margin-bottom:6px; }
-      .review-text { font-size:1.08rem; line-height:1.6; margin:0 0 10px; }
-      .review-meta { opacity:.85; font-weight:700; }
-      .dots { position:absolute; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:6px; }
-      .dots button { width:8px; height:8px; border-radius:50%; border:0; background:#fff; opacity:.35; cursor:pointer; }
-      .dots button.active { opacity:1; }
-
-      /* ---- Tiny Google badge row ---- */
-      .review-ctas { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:10px; }
-      .review-ctas .btn { padding:.4rem .7rem; }
     </style>
 
-    <!-- Full-bleed gallery belt -->
     <div class="sp-fullbleed belt-grad">
       <div class="belt-viewport">
         <div id="beltTrack" class="belt-track" aria-label="Project photos"></div>
-      </div>
-    </div>
-
-    <!-- Reviews (inside your normal max-width) -->
-    <div class="sp-container">
-      <div class="sp-grid">
-        <div class="review-card">
-          <h2 style="margin:0 0 8px;">Client Reviews</h2>
-          <div id="revA" class="review-pop"></div>
-          <div id="revB" class="review-pop"></div>
-          <div id="revDots" class="dots"></div>
-
-          <!-- Google links: profile (works now via search), and review link (activates after verification) -->
-          <div class="review-ctas">
-            <span class="microcopy" style="opacity:.8;">Reviews on</span>
-            <a id="googleBadge" class="btn btn-outline" target="_blank" rel="noopener">Google</a>
-            <a id="googleWriteReview" class="btn btn-outline" aria-disabled="true" style="pointer-events:none;opacity:.55;">Leave a Google review (soon)</a>
-          </div>
-        </div>
-
-        <!-- (Optional) space for a future small “Start Intake” card; leaving airy for now -->
-        <div></div>
       </div>
     </div>
 
@@ -280,7 +150,47 @@
         { src: "9.jpg",  alt: "Finished home — photo 9" },
         { src: "10.jpg", alt: "Finished home — photo 10" }
       ];
+      const belt = document.getElementById('beltTrack');
+      const slides = PHOTOS.map(p => `<img class="belt-img" loading="lazy" src="${p.src}" alt="${p.alt || 'Cleaned space'}">`).join('');
+      belt.innerHTML = slides + slides; /* duplicate for seamless loop */
+    </script>
+  </section>
 
+  <!-- ===== Reviews (now its own section UNDER the belt) ===== -->
+  <section id="reviews" class="section">
+    <style>
+      .reviews-wrap { max-width: 1000px; margin: 0 auto; padding: 24px 18px; }
+      .review-card { background:#24201d; color:#fff; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.22); padding:24px; min-height:220px; position:relative; text-align:center; }
+      .review-pop { position:absolute; inset:24px; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
+      .review-pop.show { opacity:1; transform:translateY(0); }
+      .review-stars { color:#f8d477; letter-spacing:2px; margin-bottom:8px; }
+      .review-text { font-size:1.12rem; line-height:1.6; margin:0 0 10px; }
+      .review-meta { opacity:.9; font-weight:700; }
+      .dots { position:absolute; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:6px; }
+      .dots button { width:8px; height:8px; border-radius:50%; border:0; background:#2e2a27; opacity:.35; cursor:pointer; }
+      .dots button.active { opacity:1; }
+      .review-ctas { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:12px; }
+      .review-ctas .btn { padding:.4rem .7rem; }
+      .reviews-title { text-align:center; margin:0 0 12px; font-size:1.6rem; }
+    </style>
+
+    <div class="reviews-wrap">
+      <h2 class="reviews-title">Client Reviews</h2>
+      <div class="review-card">
+        <div id="revA" class="review-pop"></div>
+        <div id="revB" class="review-pop"></div>
+        <div id="revDots" class="dots"></div>
+
+        <div class="review-ctas">
+          <span class="microcopy" style="opacity:.8;">Reviews on</span>
+          <a id="googleBadge" class="btn btn-outline" target="_blank" rel="noopener">Google</a>
+          <a id="googleWriteReview" class="btn btn-outline" aria-disabled="true" style="pointer-events:none;opacity:.55;">Leave a Google review (soon)</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* Reviews data + rotator */
       const REVIEWS = [
         { text:"Spotless! They transformed our home in one afternoon. I could breathe again.", by:"— A. Martinez, League City", stars:5 },
         { text:"Attention to detail is unreal. Baseboards, fixtures, even vents… all gleaming.", by:"— T. Reynolds, Pearland",   stars:5 },
@@ -288,12 +198,6 @@
         { text:"Holiday decorating looked like a magazine spread. Zero stress, only sparkle.", by:"— J. Carter, Kemah",          stars:5 }
       ];
 
-      /* ==== Build full-bleed gallery (two copies for seamless loop) ==== */
-      const belt = document.getElementById('beltTrack');
-      const slides = PHOTOS.map(p => `<img class="belt-img" loading="lazy" src="${p.src}" alt="${p.alt || 'Cleaned space'}">`).join('');
-      belt.innerHTML = slides + slides;
-
-      /* ==== Reviews: auto-rotate with dots ==== */
       const ra = document.getElementById('revA');
       const rb = document.getElementById('revB');
       const dotsWrap = document.getElementById('revDots');
@@ -328,17 +232,13 @@
       function stop(){ if (rTimer) clearInterval(rTimer); }
       function restart(){ start(); }
 
-      // First render
       ra.classList.add('show'); ra.innerHTML = reviewHTML(REVIEWS[0]);
       [...dotsWrap.children][0]?.classList.add('active');
       start();
 
-      /* ==== Google links: works before & after verification ==== */
-      // Fallback that works now (even before verification):
+      /* Google links: works now, upgrades after verification */
       const GBP_SEARCH_URL = "https://www.google.com/maps/search/?api=1&query=The+Finishing+Touch+Galveston+TX";
-
-      // Paste these after verification:
-      const GBP_PROFILE_URL = ""; // e.g. https://g.page/r/XXXX
+      const GBP_PROFILE_URL = ""; // e.g. https://g.page/r/XXXX  (add after verification)
       const GBP_REVIEW_URL  = ""; // e.g. https://g.page/r/XXXX/review
 
       const badge = document.getElementById("googleBadge");
@@ -363,7 +263,7 @@
     </div>
   </footer>
 
-  <!-- EmailJS (optional; safe to leave as-is) -->
+  <!-- EmailJS (optional) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
@@ -399,124 +299,7 @@
     </div>
   </div>
 
-  <!-- Inline chat + booking lock helpers (kept minimal; main logic in script.js) -->
-  <script>
-    /* ====== CONFIG (kept in-page for clarity) ====== */
-    const FTT = {
-      timezone: "America/Chicago",
-      intakeAnchor: "intake-cleaning.html",   // intake-first flow
-      bookUrl: "#book",                       // now scrolls to reviews/gallery belt
-      email: "contact.thefinishingtouch.tx@gmail.com",
-      facebookPage: "thefinishingtouch.tx",
-      messengerDeepLink: "https://m.me/thefinishingtouch.tx",
-      hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
-    };
-
-    /* ====== Tiny AI-lite brain (intent rules) ====== */
-    function detectIntent(text) {
-      const t = text.toLowerCase();
-      if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
-      if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
-      if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-      if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
-      if (/(area|serve|location|where|zip|city)/.test(t)) return "service_area";
-      if (/(book|booking|schedule now)/.test(t)) return "book";
-      if (/(cancel|resched|policy)/.test(t)) return "policies";
-      if (/(move[-\s]?out|moveout|make ready)/.test(t)) return "moveout";
-      if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
-      return "fallback";
-    }
-
-    function isWithinBusinessHours() {
-      try {
-        const now = new Date();
-        const parts = new Intl.DateTimeFormat("en-US", { timeZone: FTT.timezone, hour12: false, weekday: "short", hour: "2-digit", minute: "2-digit" }).formatToParts(now);
-        const hh = +(parts.find(p=>p.type==="hour")?.value || "0");
-        const mm = +(parts.find(p=>p.type==="minute")?.value || "0");
-        const dayShort = parts.find(p=>p.type==="weekday")?.value || "";
-        const dayMap = {Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6};
-        const wd = dayMap[dayShort] ?? now.getDay();
-        const [oH,oM] = FTT.hours.open.split(":").map(Number);
-        const [cH,cM] = FTT.hours.close.split(":").map(Number);
-        const afterOpen = (hh>oH) || (hh===oH && mm>=oM);
-        const beforeClose = (hh<cH) || (hh===cH && mm<=cM);
-        return FTT.hours.days.includes(wd) && afterOpen && beforeClose;
-      } catch { return false; }
-    }
-
-    function answer(intent) {
-      const hoursNote = isWithinBusinessHours()
-        ? "We’re online now—ask me anything or say “human” to chat with a person."
-        : "We’re offline at the moment, but I can still help or route your message to a person.";
-
-      const intakeLink = `<a href="${FTT.intakeAnchor}">Start Intake</a>`;
-      const bookLink = `<a href="${FTT.bookUrl}">Book now</a>`;
-
-      switch (intent) {
-        case "pricing":
-          return [
-            "Here’s a quick pricing overview (final quote depends on size/condition):",
-            "• Initial/Deep Clean: typically $350–$400 for average homes.",
-            "• Standard Maintenance: commonly $275–$300.",
-            "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + ".",
-            hoursNote
-          ].join("<br>");
-
-        case "availability":
-          return [
-            "We update availability live in Square.",
-            bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.",
-            hoursNote
-          ].join("<br>");
-
-        case "services":
-          return [
-            "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
-            "• Deep/Initial: top-to-bottom detail.",
-            "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
-            "• Move-Out/Make-Ready: includes inside cabinets, fridge, oven (by request).",
-            "Want the full checklist? " + intakeLink + " and I’ll tailor it to your home."
-          ].join("<br>");
-
-        case "service_area":
-          return "We serve League City, Friendswood, Pearland, Kemah, Galveston, and nearby areas. Not sure if you’re in range? Drop your ZIP and I’ll confirm.";
-
-        case "moveout":
-          return [
-            "Move-Out / Make-Ready includes high-detail surfaces, baseboards, appliances (add-on), cabinets (inside), and fixtures.",
-            "Share square footage + number of beds/baths via " + intakeLink + " and I’ll estimate time and price."
-          ].join("<br>");
-
-        case "policies":
-          return "Cancellation policy: clients provide 24-hour notice (fee may apply), contractors 48-hour notice. We’ll confirm details in your intake.";
-
-        case "book":
-          return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
-
-        case "human":
-          return [
-            "Absolutely. I’ll hand you to a person.",
-            isWithinBusinessHours()
-              ? `Tap <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
-              : `We’re offline. You can still <a href="${FTT.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT.email}">${FTT.email}</a> and we’ll reply ASAP.`
-          ].join("<br>");
-
-        case "recommend":
-          return [
-            "<strong>Happy to help you choose!</strong>",
-            "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
-            "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
-            "<em>Airbnb:</em> 2 hr = studio/1BR (~≤900 sq ft).",
-            hoursNote
-          ].join("<br>");
-
-        default:
-          return "I didn’t catch that — try “pricing”, “services”, or “book”.";
-      }
-    }
-  </script>
-
-  <!-- Quote dropdown: accessible toggle (restored) -->
+  <!-- Quote dropdown behavior -->
   <style>
     .quote-dropdown { position: relative; }
     .quote-menu {
@@ -529,7 +312,6 @@
     .quote-menu a { display: block; padding: 10px 12px; color: #2e2a27; text-decoration: none; border-radius: 10px; }
     .quote-menu a:hover { background: #f6f3ef; }
   </style>
-
   <script>
     (function(){
       const btn  = document.getElementById('quoteBtnHero');
@@ -557,7 +339,6 @@
       function onKey(e){
         if (e.key === 'Escape') closeMenu();
       }
-
       btn.addEventListener('click', (e)=>{
         e.preventDefault();
         const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -572,7 +353,6 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
     const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
-
     let isAuthed = false;
     onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
 
@@ -583,11 +363,10 @@
       const next = encodeURIComponent(target);
       window.location.href = `login.html?next=${next}`;
     }
-
     intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
   </script>
 
-  <!-- Smart auth button (place at the very end of the page) -->
+  <!-- Smart auth button -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
@@ -610,9 +389,10 @@
       }
     });
   </script>
-
 </body>
 </html>
+
+
 
 
 
