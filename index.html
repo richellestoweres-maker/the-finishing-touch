@@ -12,18 +12,10 @@
   <!-- Site CSS -->
   <link rel="stylesheet" href="styles.css?v=7" />
 
-  <!-- Minimal inline styles so the booking lock works even before CSS is updated -->
+  <!-- Minimal inline styles so prior booking lock doesn't affect layout -->
   <style>
     html { scroll-behavior: smooth; }
     #book { scroll-margin-top: 80px; }
-    .booking-embed[data-locked] .container { position: relative; }
-    .booking-embed[data-locked] .container::after{
-      content:"Please complete the Intake to unlock booking.";
-      position:absolute; inset:0; display:grid; place-items:center;
-      background:rgba(255,255,255,.88); backdrop-filter:blur(3px);
-      color:#524a46; font-weight:800; text-align:center;
-      border-radius:12px; padding:24px;
-    }
     /* keep chat above the iframe just in case */
     #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
   </style>
@@ -162,7 +154,7 @@
           <a class="btn btn-primary" href="intake-cleaning.html" aria-label="Start Client Intake">
             <i class="fas fa-clipboard-list" aria-hidden="true"></i> Start Intake
           </a>
-          <!-- All booking actions go to the on-page calendar (locked until intake) -->
+          <!-- Keep anchor; it now scrolls to the reviews/gallery belt instead of a booking widget -->
           <a class="btn btn-outline" href="#book" aria-label="Book now">
             <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
           </a>
@@ -205,23 +197,156 @@
     </div>
   </section>
 
-  <!-- ===== Booking (embedded Square) — locked until intake ===== -->
-  <section id="book" class="section booking-embed" data-locked>
-    <div class="container">
-      <h2>Book an Appointment</h2>
-      <p class="microcopy">Choose a service to see available dates and times.</p>
+  <!-- ===== Social Proof Belt: full-bleed gallery + auto-rotating reviews (replaces booking widget) ===== -->
+  <section id="book" class="sp-belt">
+    <style>
+      /* ---- Full-bleed wrapper ---- */
+      .sp-belt { background:#2e2a27; color:#fff; padding:0; }
+      .sp-fullbleed { position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
 
-      <!-- Start Square Appointments Embed Code -->
-      <script src="https://square.site/appointments/buyer/widget/kbcbv6uu1d7qd7/L2P303Y0SXTD9.js"></script>
-      <!-- End Square Appointments Embed Code -->
+      /* ---- Horizontal gallery belt ---- */
+      .belt-viewport { overflow:hidden; }
+      .belt-track { display:flex; gap:12px; padding:14px 18px; animation: beltScroll 55s linear infinite; }
+      .belt-track:hover { animation-play-state: paused; }
+      .belt-img { width:360px; height:220px; object-fit:cover; border-radius:14px; flex:0 0 auto; opacity:.95; box-shadow:0 10px 26px rgba(0,0,0,.18); }
+      @media (max-width: 640px) { .belt-img { width:72vw; height:42vw; } }
+      @keyframes beltScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+      .belt-grad { position:relative; }
+      .belt-grad::before, .belt-grad::after {
+        content:""; position:absolute; top:0; bottom:0; width:40px; pointer-events:none; z-index:2;
+        background:linear-gradient(to right, #2e2a27 0%, rgba(46,42,39,0) 100%);
+      }
+      .belt-grad::after { right:0; left:auto; transform:scaleX(-1); }
 
-      <noscript>
-        Booking requires JavaScript. You can still
-        <a href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9" target="_blank" rel="noopener">
-          open our booking site
-        </a>.
-      </noscript>
+      /* ---- Reviews section ---- */
+      .sp-container { max-width:1100px; margin:0 auto; padding:22px 18px 28px; display:grid; gap:22px; }
+      @media (min-width: 980px) { .sp-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:24px; } }
+
+      .review-card { background:#24201d; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.22); padding:22px; min-height:220px; position:relative; }
+      .review-pop { position:absolute; inset:22px; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
+      .review-pop.show { opacity:1; transform:translateY(0); }
+      .review-stars { color:#f8d477; letter-spacing:2px; margin-bottom:6px; }
+      .review-text { font-size:1.08rem; line-height:1.6; margin:0 0 10px; }
+      .review-meta { opacity:.85; font-weight:700; }
+      .dots { position:absolute; left:22px; bottom:18px; display:flex; gap:6px; }
+      .dots button { width:8px; height:8px; border-radius:50%; border:0; background:#fff; opacity:.35; cursor:pointer; }
+      .dots button.active { opacity:1; }
+
+      /* ---- Tiny Google badge row ---- */
+      .review-ctas { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+      .review-ctas .btn { padding:.4rem .7rem; }
+    </style>
+
+    <!-- Full-bleed gallery belt -->
+    <div class="sp-fullbleed belt-grad">
+      <div class="belt-viewport">
+        <div id="beltTrack" class="belt-track" aria-label="Project photos"></div>
+      </div>
     </div>
+
+    <!-- Reviews (inside your normal max-width) -->
+    <div class="sp-container">
+      <div class="sp-grid">
+        <div class="review-card">
+          <h2 style="margin:0 0 8px;">Client Reviews</h2>
+          <div id="revA" class="review-pop"></div>
+          <div id="revB" class="review-pop"></div>
+          <div id="revDots" class="dots"></div>
+
+          <!-- Google links: profile (works now via search), and review link (activates after verification) -->
+          <div class="review-ctas">
+            <span class="microcopy" style="opacity:.8;">Reviews on</span>
+            <a id="googleBadge" class="btn btn-outline" target="_blank" rel="noopener">Google</a>
+            <a id="googleWriteReview" class="btn btn-outline" aria-disabled="true" style="pointer-events:none;opacity:.55;">Leave a Google review (soon)</a>
+          </div>
+        </div>
+
+        <!-- (Optional) space for a future small “Start Intake” card; leaving airy for now -->
+        <div></div>
+      </div>
+    </div>
+
+    <script>
+      /* ==== DATA: swap in your real photos & quotes ==== */
+      const PHOTOS = [
+        { src:"bed-banner.png",   alt:"Serene styled bedroom after clean" },
+        { src:"fall-candles.jpg", alt:"Cozy styled vignette after refresh" },
+        // { src:"gallery/kitchen-after.jpg", alt:"Kitchen after deep clean" },
+        // { src:"gallery/living-after.jpg",  alt:"Living room after organizing" },
+        // { src:"gallery/bath-after.jpg",    alt:"Bathroom after deep clean" },
+      ];
+
+      const REVIEWS = [
+        { text:"Spotless! They transformed our home in one afternoon. I could breathe again.", by:"— A. Martinez, League City", stars:5 },
+        { text:"Attention to detail is unreal. Baseboards, fixtures, even vents… all gleaming.", by:"— T. Reynolds, Pearland",   stars:5 },
+        { text:"The organizing add-on changed my mornings. Everything finally has a home.",    by:"— K. Li, Friendswood",       stars:5 },
+        { text:"Holiday decorating looked like a magazine spread. Zero stress, only sparkle.", by:"— J. Carter, Kemah",          stars:5 }
+      ];
+
+      /* ==== Build full-bleed gallery (two copies for seamless loop) ==== */
+      const belt = document.getElementById('beltTrack');
+      const slides = PHOTOS.map(p => `<img class="belt-img" loading="lazy" src="${p.src}" alt="${p.alt || 'Cleaned space'}">`).join('');
+      belt.innerHTML = slides + slides;
+
+      /* ==== Reviews: auto-rotate with dots ==== */
+      const ra = document.getElementById('revA');
+      const rb = document.getElementById('revB');
+      const dotsWrap = document.getElementById('revDots');
+      let rIdx = 0, showingA = true, rTimer = null;
+
+      const star = "★";
+      function reviewHTML(r){
+        return `
+          <div class="review-stars" aria-hidden="true">${star.repeat(r.stars || 5)}</div>
+          <blockquote class="review-text">“${r.text}”</blockquote>
+          <div class="review-meta">${r.by}</div>
+        `;
+      }
+      function showReview(i){
+        const r = REVIEWS[i];
+        const inEl  = showingA ? ra : rb;
+        const outEl = showingA ? rb : ra;
+        inEl.innerHTML = reviewHTML(r);
+        inEl.classList.add('show');
+        outEl.classList.remove('show');
+        [...dotsWrap.children].forEach((d,idx)=> d.classList.toggle('active', idx===i));
+        showingA = !showingA;
+      }
+      REVIEWS.forEach((_,i)=> {
+        const b = document.createElement('button');
+        b.setAttribute('aria-label', `Show review ${i+1}`);
+        b.onclick = ()=>{ rIdx=i; showReview(rIdx); restart(); };
+        dotsWrap.appendChild(b);
+      });
+      function next(){ rIdx = (rIdx+1) % REVIEWS.length; showReview(rIdx); }
+      function start(){ stop(); rTimer = setInterval(next, 5200); }
+      function stop(){ if (rTimer) clearInterval(rTimer); }
+      function restart(){ start(); }
+      ra.classList.add('show'); ra.innerHTML = reviewHTML(REVIEWS[0]);
+      [...dotsWrap.children][0]?.classList.add('active');
+      start();
+
+      /* ==== Google links: works before & after verification ==== */
+      // Fallback that works now (even before verification):
+      const GBP_SEARCH_URL = "https://www.google.com/maps/search/?api=1&query=The+Finishing+Touch+Galveston+TX";
+
+      // Paste these after verification:
+      const GBP_PROFILE_URL = ""; // e.g. https://g.page/r/XXXX
+      const GBP_REVIEW_URL  = ""; // e.g. https://g.page/r/XXXX/review
+
+      const badge = document.getElementById("googleBadge");
+      const write = document.getElementById("googleWriteReview");
+
+      badge.href = GBP_PROFILE_URL || GBP_SEARCH_URL;
+      if (GBP_REVIEW_URL) {
+        write.href = GBP_REVIEW_URL;
+        write.removeAttribute("aria-disabled");
+        write.style.pointerEvents = "auto";
+        write.style.opacity = "1";
+        write.textContent = "Leave a Google review";
+        write.target = "_blank"; write.rel = "noopener";
+      }
+    </script>
   </section>
 
   <!-- Footer -->
@@ -273,7 +398,7 @@
     const FTT = {
       timezone: "America/Chicago",
       intakeAnchor: "intake-cleaning.html",   // intake-first flow
-      bookUrl: "#book",                       // on-page calendar
+      bookUrl: "#book",                       // now scrolls to reviews/gallery belt
       email: "contact.thefinishingtouch.tx@gmail.com",
       facebookPage: "thefinishingtouch.tx",
       messengerDeepLink: "https://m.me/thefinishingtouch.tx",
@@ -383,82 +508,77 @@
       }
     }
   </script>
-<!-- Quote dropdown: accessible toggle (restored) -->
-<style>
-  /* Safety styles only for the dropdown */
-  .quote-dropdown { position: relative; }
-  .quote-menu {
-    position: absolute; top: calc(100% + 8px); right: 0;
-    background: #fff; border-radius: 12px; padding: 8px; min-width: 220px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.12); z-index: 1001;
-  }
-  /* KEY FIX: explicitly show when aria-hidden="false" */
-  .quote-menu[aria-hidden="false"] { display: block; }
-  /* Hide when aria-hidden="true" */
-  .quote-menu[aria-hidden="true"] { display: none; }
 
-  .quote-menu a { display: block; padding: 10px 12px; color: #2e2a27; text-decoration: none; border-radius: 10px; }
-  .quote-menu a:hover { background: #f6f3ef; }
-</style>
-
-<script>
-  (function(){
-    const btn  = document.getElementById('quoteBtnHero');
-    const menu = document.getElementById('quoteMenuHero');
-    if (!btn || !menu) return;
-
-    // Ensure default state
-    btn.setAttribute('aria-expanded', 'false');
-    menu.setAttribute('aria-hidden', 'true');
-
-    function openMenu(){
-      btn.setAttribute('aria-expanded','true');
-      menu.setAttribute('aria-hidden','false');
-      document.addEventListener('click', onDocClick, true);
-      document.addEventListener('keydown', onKey);
+  <!-- Quote dropdown: accessible toggle (restored) -->
+  <style>
+    .quote-dropdown { position: relative; }
+    .quote-menu {
+      position: absolute; top: calc(100% + 8px); right: 0;
+      background: #fff; border-radius: 12px; padding: 8px; min-width: 220px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12); z-index: 1001;
     }
-    function closeMenu(){
-      btn.setAttribute('aria-expanded','false');
-      menu.setAttribute('aria-hidden','true');
-      document.removeEventListener('click', onDocClick, true);
-      document.removeEventListener('keydown', onKey);
-    }
-    function onDocClick(e){
-      if (!menu.contains(e.target) && e.target !== btn) closeMenu();
-    }
-    function onKey(e){
-      if (e.key === 'Escape') closeMenu();
-    }
+    .quote-menu[aria-hidden="false"] { display: block; }
+    .quote-menu[aria-hidden="true"]  { display: none; }
+    .quote-menu a { display: block; padding: 10px 12px; color: #2e2a27; text-decoration: none; border-radius: 10px; }
+    .quote-menu a:hover { background: #f6f3ef; }
+  </style>
 
-    btn.addEventListener('click', (e)=>{
+  <script>
+    (function(){
+      const btn  = document.getElementById('quoteBtnHero');
+      const menu = document.getElementById('quoteMenuHero');
+      if (!btn || !menu) return;
+
+      btn.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+
+      function openMenu(){
+        btn.setAttribute('aria-expanded','true');
+        menu.setAttribute('aria-hidden','false');
+        document.addEventListener('click', onDocClick, true);
+        document.addEventListener('keydown', onKey);
+      }
+      function closeMenu(){
+        btn.setAttribute('aria-expanded','false');
+        menu.setAttribute('aria-hidden','true');
+        document.removeEventListener('click', onDocClick, true);
+        document.removeEventListener('keydown', onKey);
+      }
+      function onDocClick(e){
+        if (!menu.contains(e.target) && e.target !== btn) closeMenu();
+      }
+      function onKey(e){
+        if (e.key === 'Escape') closeMenu();
+      }
+
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        expanded ? closeMenu() : openMenu();
+      });
+    })();
+  </script>
+
+  <!-- Gate all intake links: if not signed in, send to login with ?next=... -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
+
+    let isAuthed = false;
+    onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
+
+    function gateClick(e) {
+      if (isAuthed) return;
       e.preventDefault();
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      expanded ? closeMenu() : openMenu();
-    });
-  })();
-</script>
+      const target = e.currentTarget.getAttribute('href');
+      const next = encodeURIComponent(target);
+      window.location.href = `login.html?next=${next}`;
+    }
 
-<!-- Gate all intake links: if not signed in, send to login with ?next=... -->
-<script type="module">
-  import { auth } from "./ft-firebase.js";
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-
-  // Any link that goes to an intake page (your menu + buttons already use these)
-  const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
-
-  let isAuthed = false;
-  onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
-
-  function gateClick(e) {
-    if (isAuthed) return; // already signed in → let it go through
-    e.preventDefault();
-    const target = e.currentTarget.getAttribute('href'); // e.g., "intake-cleaning.html"
-    const next = encodeURIComponent(target);
-    window.location.href = `login.html?next=${next}`;
-  }
-
-  intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
-</script>
+    intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
+  </script>
 
   <!-- Smart auth button (place at the very end of the page) -->
   <script type="module">
@@ -486,6 +606,8 @@
 
 </body>
 </html>
+
+
 
 
 
