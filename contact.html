@@ -11,12 +11,48 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css?v=7" />
+
+  <style>
+    /* Page-specific light layout */
+    .page-hero { padding: 36px 18px 12px; text-align: center; }
+    .page-hero h1 { font-family: "Playfair Display", serif; margin: 0; }
+
+    .contact-page { padding: 24px 18px 48px; }
+    .contact-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
+    @media (min-width: 900px) { .contact-grid { grid-template-columns: 1.1fr .9fr; } }
+
+    .contact-card, .details-card {
+      background:#fff; border-radius:16px; box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08));
+      padding: 24px;
+    }
+    .contact-card h3, .details-card h3 { margin: 0 0 10px; }
+
+    .contact-form { display:grid; gap:14px; }
+    .contact-form label { display:grid; gap:6px; font-weight:600; }
+    .contact-form input, .contact-form textarea {
+      border:1px solid #e3d9ce; border-radius:12px; padding:.8rem .9rem; background:#fffdfb; font-size:16px;
+      color: var(--taupe-900, #2e2a27);
+    }
+    .status { text-align:center; font-weight:700; }
+    .status.ok { color:#0a7d33; } .status.err { color:#b00020; }
+
+    .link-list { list-style:none; padding:0; margin:0; }
+    .link-list li { margin: 10px 0; }
+    .link-list a { text-decoration:none; color:inherit; }
+
+    .cta-stack { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  </style>
 </head>
 <body>
+  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand"><span class="vase-logo" aria-hidden="true"></span><span class="brand-name">The Finishing Touch</span></div>
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
       <nav class="main-nav">
+        <a href="index.html">Home</a>
         <a href="index.html#services">Services</a>
         <a href="index.html#about">About</a>
         <a class="active" href="contact.html">Contact</a>
@@ -25,25 +61,41 @@
     </div>
   </header>
 
-  <section class="page-hero"><h1>Contact</h1></section>
+  <!-- Hero -->
+  <section class="page-hero">
+    <h1>Contact</h1>
+  </section>
 
-  <section class="section contact-strip">
+  <!-- Content -->
+  <main class="contact-page">
     <div class="container contact-grid">
       <!-- Contact form -->
-      <form id="contactForm" class="contact-form">
+      <section class="contact-card">
         <h3>Send a message</h3>
-        <label>Name<input name="name" required></label>
-        <label>Email<input name="email" type="email" required></label>
-        <label>Message<textarea name="message" rows="5" required></textarea></label>
-        <button class="btn btn-solid" type="submit">Send</button>
-        <p id="contactStatus" class="status"></p>
-        <p class="microcopy" style="margin-top:.75rem">
-          Prefer to book now? <a href="index.html#book">Open the calendar</a> (unlocks after intake).
-        </p>
-      </form>
+
+        <!-- Your real Formspree endpoint -->
+        <form id="contactForm" class="contact-form" action="https://formspree.io/f/mzzaogbv" method="POST" novalidate>
+          <label>Name
+            <input name="name" required>
+          </label>
+
+          <label>Email
+            <input name="email" type="email" required>
+          </label>
+
+          <label>Message
+            <textarea name="message" rows="5" required></textarea>
+          </label>
+
+          <input type="hidden" name="source" value="The Finishing Touch – Contact page">
+
+          <button class="btn btn-solid" type="submit">Send</button>
+          <p id="contactStatus" class="status" aria-live="polite"></p>
+        </form>
+      </section>
 
       <!-- Details -->
-      <div class="contact-details">
+      <aside class="details-card">
         <h3>Connect</h3>
         <ul class="link-list">
           <li>
@@ -66,21 +118,83 @@
           </li>
         </ul>
 
-        <div class="cta-stack" style="margin-top:10px">
-          <a class="btn btn-outline" href="index.html#book">
-            <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
+        <div class="cta-stack">
+          <a class="btn btn-primary" href="intake-cleaning.html">
+            <i class="fas fa-clipboard-list" aria-hidden="true"></i> Start Intake
           </a>
         </div>
-      </div>
+      </aside>
     </div>
-  </section>
+  </main>
 
+  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
       <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
     </div>
   </footer>
 
+  <!-- Lightweight contact form handler (stays on page, shows status) -->
+  <script>
+    (function(){
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('contactStatus');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        status.textContent = '';
+        status.className = 'status';
+
+        const btn = form.querySelector('button[type="submit"]');
+        const original = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Sending…';
+
+        try {
+          const data = new FormData(form);
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: data,
+            headers: { 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            status.textContent = 'Thanks! Your message has been sent.';
+            status.classList.add('ok');
+            form.reset();
+          } else {
+            status.textContent = 'Hmm, something went wrong. Please try again or email us directly.';
+            status.classList.add('err');
+          }
+        } catch {
+          status.textContent = 'Network error. Please try again in a moment.';
+          status.classList.add('err');
+        } finally {
+          btn.disabled = false; btn.textContent = original;
+        }
+      });
+    })();
+  </script>
+
+  <!-- Gate intake links: require login first (same behavior as homepage) -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
+    let isAuthed = false;
+    onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
+
+    function gateClick(e) {
+      if (isAuthed) return;
+      e.preventDefault();
+      const target = e.currentTarget.getAttribute('href');
+      const next = encodeURIComponent(target);
+      window.location.href = `login.html?next=${next}`;
+    }
+    intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
+  </script>
+
+  <!-- Site JS (keep for shared behaviors like chat, if any) -->
   <script src="script.js?v=7"></script>
 </body>
 </html>
