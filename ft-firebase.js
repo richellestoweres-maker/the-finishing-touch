@@ -1,6 +1,8 @@
-// ft-firebase.js  (keep this in the same folder as index.html)
+// /js/ft-firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-import { getAuth }        from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCfMOyKa2uT6BuMiST95Ry96Z7FUH_vYgQ",
@@ -12,5 +14,7 @@ const firebaseConfig = {
   measurementId: "G-2SR4MB8JHW"
 };
 
-export const app  = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
