@@ -82,7 +82,6 @@ function showBookingHelper(hint){
 async function postToFormspree(formEl, extraFields = {}, statusElId){
   try{
     const fd = new FormData(formEl);
-    // add a little metadata
     fd.append("_subject", "New Intake — The Finishing Touch");
     fd.append("_page", location.pathname);
     Object.entries(extraFields).forEach(([k,v]) => fd.append(k, v));
@@ -370,6 +369,7 @@ function decorHint(data, teamHours){
 /* =========================================
    HOLIDAY DECORATING — INDOOR ONLY
    ========================================= */
+}
 const HOLI_HOURLY = 85;
 const HOLI_MIN_HOURS = 3;
 
@@ -606,7 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Holiday handler error:", err); }
 
-   /* CONTACT form (homepage/contact page) */
+  /* CONTACT form (homepage/contact page) */
   try {
     const contactForm = document.getElementById('contactForm');
     if (contactForm){
@@ -619,32 +619,32 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch (err){ console.error("Contact handler error:", err); }
 }); // ← closes DOMContentLoaded only; nothing else after this
 
-
-  /* AUTH FORMS: Login + Signup */
-  try {
-    const loginForm = document.getElementById("loginForm");
-    if (loginForm) {
-      loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(loginForm).entries());
-        console.log("Login attempt:", data);
-        alert("Login form submitted! (Check console for values)");
-      });
-    }
-
-    const signupForm = document.getElementById("signupForm");
-    if (signupForm) {
-      signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(signupForm).entries());
-        console.log("Signup attempt:", data);
-        alert("Signup form submitted! (Check console for values)");
-      });
-    }
-  } catch (err) {
-    console.error("Auth handler error:", err);
+/* AUTH FORMS: Login + Signup */
+try {
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(loginForm).entries());
+      console.log("Login attempt:", data);
+      alert("Login form submitted! (Check console for values)");
+    });
   }
-});
+
+  const signupForm = document.getElementById("signupForm");
+  if (signupForm) {
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(signupForm).entries());
+      console.log("Signup attempt:", data);
+      alert("Signup form submitted! (Check console for values)");
+    });
+  }
+} catch (err) {
+  console.error("Auth handler error:", err);
+}
+
+
 
 
 
