@@ -370,7 +370,6 @@ function decorHint(data, teamHours){
 /* =========================================
    HOLIDAY DECORATING — INDOOR ONLY
    ========================================= */
-}
 const HOLI_HOURLY = 85;
 const HOLI_MIN_HOURS = 3;
 
@@ -646,6 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error("Auth handler error:", err);
   }
 });
+
 
 
 
