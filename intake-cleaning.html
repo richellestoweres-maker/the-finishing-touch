@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
+  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -21,8 +21,6 @@
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
     .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
-
-    /* Minimal dropdown styles in case your global CSS doesn't include them */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -34,14 +32,12 @@
     .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
     .quote-menu a:hover{background:#f3ece6}
     .quote-dropdown.open .quote-menu{display:block}
-
-    /* Back to home helper */
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
     .hint{font-size:.92rem;opacity:.9}
   </style>
 </head>
 <body>
-  <!-- Header with working dropdown -->
+  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -56,7 +52,6 @@
         <a href="index.html#about">About</a>
         <a href="index.html#contact">Contact</a>
 
-        <!-- Quote Dropdown (works on this page) -->
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
             Get Your Quote ▾
@@ -71,7 +66,6 @@
     </div>
   </header>
 
-  <!-- simple back-to-home button (extra clear) -->
   <div class="mini-bar">
     <a class="btn btn-outline" href="index.html">← Back to Home</a>
   </div>
@@ -168,7 +162,7 @@
     </form>
   </main>
 
-  <!-- Dropdown behavior (self-contained so it works here without edits elsewhere) -->
+  <!-- Dropdown behavior -->
   <script>
     (function(){
       const dd  = document.getElementById('quoteDropdown');
@@ -186,13 +180,12 @@
     })();
   </script>
 
-  <!-- Your site JS (kept) -->
-  <script src="script.js?v=6" defer></script>
+  <!-- Your site JS (bumped cache so the fixed file loads) -->
+  <script src="script.js?v=8" defer></script>
 
-  <!-- OVERRIDE: Estimate on-page + “Book Now” + Formspree (NO redirect to home) -->
+  <!-- OVERRIDE: Estimate on-page + “Book Now” + Formspree (NO redirect) -->
   <script>
     (function(){
-      // Square service links (calendar page, not embedded)
       const SQUARE_CLEAN_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
       const SQUARE_CLEAN_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
       const SQUARE_CLEAN_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV";
@@ -276,7 +269,7 @@
           const data = Object.fromEntries(new FormData(form).entries());
 
           // Show price estimate
-          let estEl = document.getElementById('estimateCleaning');
+          const estEl = document.getElementById('estimateCleaning');
           try {
             let price = null;
             if (typeof calcCleaning === 'function') price = calcCleaning(data);
@@ -350,9 +343,8 @@
     })();
   </script>
 
-  <!-- === Finishing Touch — AI Concierge Chat (added so it shows on this page) === -->
+  <!-- Chat (kept as you had it) -->
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
     <div class="ftt-chat-header">
       <div>
@@ -361,14 +353,11 @@
       </div>
       <button class="ftt-close" aria-label="Close chat">×</button>
     </div>
-
     <div id="ftt-thread" class="ftt-thread"></div>
-
     <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
       <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
       <button class="ftt-send" type="submit">Send</button>
     </form>
-
     <div class="ftt-quick">
       <button data-q="pricing">Pricing</button>
       <button data-q="availability">Availability</button>
@@ -380,7 +369,7 @@
   </div>
 
   <script>
-    // Self-contained chat (same UX as Home). Namespaced to avoid conflicts.
+    // Self-contained chat (same UX as Home).
     (function(){
       const FTT_CFG = {
         timezone: "America/Chicago",
@@ -418,9 +407,6 @@
         b.className=`ftt-bubble ${who}`; b.innerHTML=html;
         el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
       }
-      function greet(){
-        addMsg("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
-      }
       function detectIntent(text){
         const t=text.toLowerCase();
         if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
@@ -432,9 +418,6 @@
         return "fallback";
       }
       function answer(intent){
-        const hoursNote = isWithinBusinessHours()
-          ? "We’re online now—ask me anything or say “human” to chat with a person."
-          : "We’re offline at the moment, but I can still help or route your message to a person.";
         const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
         const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
         switch(intent){
@@ -457,9 +440,7 @@
             ].join("<br>");
           case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
           case "human":
-            return isWithinBusinessHours()
-              ? `Absolutely. Tap <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
-              : `We’re offline. You can still <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:contact.thefinishingtouch.tx@gmail.com">contact.thefinishingtouch.tx@gmail.com</a> and we’ll reply ASAP.`;
+            return `You can <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:contact.thefinishingtouch.tx@gmail.com">contact.thefinishingtouch.tx@gmail.com</a> and we’ll reply ASAP.`;
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
@@ -483,7 +464,7 @@
         function add(html, who="bot"){ const b=document.createElement("div"); b.className=`ftt-bubble ${who}`; b.innerHTML=html; thread.appendChild(b); thread.scrollTop=thread.scrollHeight; }
         launcher.addEventListener("click", ()=>{ panel.hidden=false; if (!thread.dataset.greeted){ add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); thread.dataset.greeted="1"; } input.focus(); });
         closeBtn.addEventListener("click", ()=>{ panel.hidden=true; });
-        form.addEventListener("submit",(e)=>{ e.preventDefault(); const text=input.value.trim(); if(!text) return; add(text,"me"); input.value=""; setTimeout(()=> add(answer(detectIntent(text))),200); });
+        form.addEventListener("submit",(e)=>{ e.preventDefault(); const text=input.value.trim(); if(!text) return; add(text,"me"); input.value=""; setTimeout(()=> add(answer((text||"").toLowerCase())),200); });
         quick.addEventListener("click",(e)=>{ if(e.target.matches("button[data-q]")){ const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; add(e.target.textContent,"me"); setTimeout(()=> add(answer(intent)),200); } });
       }
       document.addEventListener("DOMContentLoaded", init);
@@ -491,3 +472,5 @@
   </script>
 </body>
 </html>
+
+
