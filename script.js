@@ -607,7 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Holiday handler error:", err); }
 
-  /* CONTACT form (homepage/contact page) */
+   /* CONTACT form (homepage/contact page) */
   try {
     const contactForm = document.getElementById('contactForm');
     if (contactForm){
@@ -618,7 +618,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   } catch (err){ console.error("Contact handler error:", err); }
-});
+}); // ← closes DOMContentLoaded only; nothing else after this
+
 
   /* AUTH FORMS: Login + Signup */
   try {
@@ -645,5 +646,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error("Auth handler error:", err);
   }
 });
+
 
 
