@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contractor Portal – The Finishing Touch</title>
+
+  <!-- Fonts + your site styles (re-use your brand + buttons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <!-- Minimal page-specific styles (keeps vibe, no layout changes elsewhere) -->
+  <style>
+    body{background:#fbf8f4}
+    .portal-wrap{width:min(1100px,94%);margin:24px auto 48px}
+    .topbar{
+      background:#fff; border:1px solid #eadfd4; border-radius:16px;
+      padding:12px 14px; display:flex; align-items:center; justify-content:space-between;
+      box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));
+    }
+    .brand-mini{display:flex;align-items:center;gap:.6rem}
+    .brand-mini .vase{width:28px;height:36px;background:url('logo-vase.png') center/contain no-repeat}
+    .tabs{display:flex;gap:6px;align-items:center}
+    .tab{
+      border:1px solid #e3d9ce; background:#fff; color:#2e2a27; border-radius:999px; padding:.45rem .8rem;
+      font-weight:800; cursor:pointer; user-select:none;
+    }
+    .tab.active{ background:#2e2a27; color:#fff; border-color:#2e2a27 }
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+    .chip{
+      border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer;
+      font-weight:700; font-size:.92rem;
+    }
+    .chip.active{ background:#efe6db; }
+    .content{
+      margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px;
+    }
+    @media (min-width: 900px){ .content{ grid-template-columns: 1fr 1fr; } }
+    .card{
+      background:#fff; border:1px solid #eadfd4; border-radius:16px; padding:14px;
+      box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.06));
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .meta{display:flex; gap:10px; flex-wrap:wrap; font-weight:700; color:#524a46}
+    .meta .pill{border:1px solid #e3d9ce; border-radius:999px; padding:2px 8px; font-size:.85rem}
+    .row{display:flex; justify-content:space-between; gap:10px; align-items:center}
+    .empty{opacity:.8; text-align:center; padding:20px; border:1px dashed #e3d9ce; border-radius:12px; background:#fffdfb}
+    .right{display:flex; align-items:center; gap:8px}
+    .admin-badge{border:1px solid #0ea5e9; color:#0ea5e9; background:#e6f4fb; padding:2px 8px; border-radius:999px; font-weight:800; font-size:.78rem}
+  </style>
+</head>
+<body>
+
+  <div class="portal-wrap">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand-mini">
+        <span class="vase" aria-hidden="true"></span>
+        <div>
+          <div style="font-family:'Playfair Display',serif; font-weight:700; line-height:1;">The Finishing Touch</div>
+          <div style="font-size:.85rem; opacity:.8;">Contractor Portal</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button id="tabOpen" class="tab active" data-tab="open">Open Jobs</button>
+        <button id="tabMine" class="tab" data-tab="mine">My Jobs</button>
+      </div>
+
+      <div class="right">
+        <span id="adminBadge" class="admin-badge" hidden>ADMIN MODE</span>
+        <button id="signOutBtn" class="btn btn-outline">Sign out</button>
+      </div>
+    </div>
+
+    <!-- Filters (populated from user’s allowed serviceTypes) -->
+    <div>
+      <div style="font-weight:800; margin:10px 2px 6px;">Filters</div>
+      <div id="filterChips" class="filters"></div>
+    </div>
+
+    <!-- Lists -->
+    <div id="listOpen" class="content" aria-live="polite"></div>
+    <div id="listMine" class="content" aria-live="polite" hidden></div>
+  </div>
+
+  <!-- Firebase + logic -->
+  <script type="module">
+    import { auth, db } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      collection, doc, getDoc, onSnapshot, query, where, serverTimestamp,
+      runTransaction
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    /* ---------- State ---------- */
+    let ME = null;                 // auth user
+    let ROLE = "guest";            // 'contractor' | 'admin'
+    let ALLOWED = [];              // serviceTypes they can claim (e.g., ["cleaning","organizing"])
+    let ACTIVE_TAB = "open";       // 'open' or 'mine'
+    let ACTIVE_FILTER = "all";     // 'all' or one of ALLOWED
+    let unsubOpen = null, unsubMine = null;
+
+    /* ---------- Helpers ---------- */
+    const $ = (s,root=document)=>root.querySelector(s);
+    const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
+
+    function setTab(tab){
+      ACTIVE_TAB = tab;
+      $("#tabOpen").classList.toggle("active", tab==="open");
+      $("#tabMine").classList.toggle("active", tab==="mine");
+      $("#listOpen").hidden = tab!=="open";
+      $("#listMine").hidden = tab!=="mine";
+    }
+
+    function chip(label, key, active=false){
+      const b = document.createElement("button");
+      b.className = "chip" + (active ? " active" : "");
+      b.textContent = label;
+      b.dataset.key = key;
+      b.addEventListener("click", () => {
+        ACTIVE_FILTER = key;
+        // toggle active
+        $$("#filterChips .chip").forEach(c => c.classList.toggle("active", c.dataset.key===key));
+        // re-render both lists (filter is client-side)
+        // (we rely on the onSnapshot data already in DOM; here we just hide/show cards)
+        applyFilter();
+      });
+      return b;
+    }
+
+    function applyFilter(){
+      const key = ACTIVE_FILTER;
+      // For open list: hide cards that don't match
+      $$("#listOpen .card").forEach(card => {
+        const st = card.dataset.servicetype || "";
+        card.hidden = (key!=="all" && st !== key);
+      });
+      // For mine list we show all (contractor already owns them) — but keep same behavior in case you want it
+      $$("#listMine .card").forEach(card => {
+        const st = card.dataset.servicetype || "";
+        card.hidden = (key!=="all" && st !== key);
+      });
+      // If everything is hidden, show an “empty” message
+      ensureEmptyState("listOpen", "No matching open jobs.");
+      ensureEmptyState("listMine", "No matching jobs yet.");
+    }
+
+    function ensureEmptyState(listId, text){
+      const list = document.getElementById(listId);
+      const visible = $$(".card", list).filter(el => !el.hidden);
+      let empty = $(".empty", list);
+      if (!visible.length){
+        if (!empty){
+          empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = text;
+          list.appendChild(empty);
+        }
+      } else {
+        if (empty) empty.remove();
+      }
+    }
+
+    function fmtUSD(n){
+      if (typeof n !== "number") return "—";
+      try { return new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(n); }
+      catch { return "$" + Math.round(n); }
+    }
+
+    function cardForJob(job, mine=false){
+      const c = document.createElement("div");
+      c.className = "card";
+      c.dataset.id = job.id;
+      c.dataset.servicetype = (job.serviceType || "").toLowerCase();
+
+      const title = (job.serviceType || "Service");
+      const rate  = (job.flatRate != null) ? fmtUSD(job.flatRate) : "—";
+      const area  = job.area || "—";
+      const win   = job.window || "—";
+      const sum   = job.summary || "";
+
+      c.innerHTML = `
+        <div class="row">
+          <div style="font-weight:800;color:#2e2a27">${title}</div>
+          <div style="font-weight:800">${rate}</div>
+        </div>
+        <div class="meta">
+          <span class="pill">${area}</span>
+          <span class="pill">${win}</span>
+          ${mine ? `<span class="pill" title="Status">${job.status||"claimed"}</span>` : ``}
+        </div>
+        ${sum ? `<div style="opacity:.9">${sum}</div>` : ``}
+        <div class="row">
+          <div></div>
+          <div class="right">
+            ${mine
+              ? `<a class="btn btn-outline" href="#" data-action="details">Details</a>`
+              : `<a class="btn btn-solid" href="#" data-action="claim">Claim</a>`}
+          </div>
+        </div>
+      `;
+
+      // bind actions
+      c.addEventListener("click", async (e) => {
+        const a = e.target.closest("[data-action]");
+        if (!a) return;
+        e.preventDefault();
+        const id = c.dataset.id;
+
+        if (a.dataset.action === "claim"){
+          a.textContent = "Claiming…"; a.classList.add("disabled"); a.style.pointerEvents="none";
+          try {
+            await claimJob(id);
+          } catch (err){
+            alert((err && err.message) || "Could not claim job.");
+            console.warn(err);
+          } finally {
+            a.textContent = "Claim"; a.classList.remove("disabled"); a.style.pointerEvents="";
+          }
+        }
+        if (a.dataset.action === "details"){
+          // placeholder for future per-job page/drawer
+          alert("Coming soon: job details, photo upload, chat.");
+        }
+      });
+
+      return c;
+    }
+
+    async function claimJob(jobId){
+      const jobRef = doc(db, "jobs", jobId);
+      const user = ME;
+      if (!user) throw new Error("Not signed in.");
+
+      await runTransaction(db, async (tx) => {
+        const snap = await tx.get(jobRef);
+        if (!snap.exists()) throw new Error("Job not found.");
+        const data = snap.data();
+
+        if (data.status !== "open" || data.contractorId){
+          throw new Error("Sorry, this job has already been claimed.");
+        }
+
+        tx.update(jobRef, {
+          status: "claimed",
+          contractorId: user.uid,
+          contractorEmail: user.email || "",
+          contractorName: user.displayName || "",
+          claimedAt: serverTimestamp()
+        });
+      });
+      // UX: switch to "My Jobs" after a successful claim
+      setTab("mine");
+    }
+
+    function renderOpenJobs(docs){
+      const list = $("#listOpen"); list.innerHTML = "";
+      // show only jobs in ALLOWED (by serviceType)
+      const allowedSet = new Set(ALLOWED);
+      let count = 0;
+      docs.forEach(d => {
+        const j = { id:d.id, ...d.data() };
+        const st = (j.serviceType || "").toLowerCase();
+        if (!allowedSet.size || allowedSet.has(st)){
+          list.appendChild(cardForJob(j, false));
+          count++;
+        }
+      });
+      if (!count){
+        const d = document.createElement("div");
+        d.className = "empty";
+        d.textContent = "No open jobs right now.";
+        list.appendChild(d);
+      }
+      applyFilter();
+    }
+
+    function renderMyJobs(docs){
+      const list = $("#listMine"); list.innerHTML = "";
+      if (!docs.length){
+        const d = document.createElement("div");
+        d.className = "empty";
+        d.textContent = "You haven’t claimed any jobs yet.";
+        list.appendChild(d);
+        return;
+      }
+      docs.forEach(d => list.appendChild(cardForJob({ id:d.id, ...d.data() }, true)));
+      applyFilter();
+    }
+
+    function buildChips(){
+      const box = $("#filterChips"); box.innerHTML = "";
+      // Always include "All"
+      box.appendChild(chip("All", "all", true));
+      // Then allowed types
+      const nice = {
+        cleaning:"Cleaning",
+        organizing:"Organizing",
+        decor:"Decor",
+        holiday:"Holiday"
+      };
+      ALLOWED.forEach(k => box.appendChild(chip(nice[k] || k, k, false)));
+    }
+
+    async function loadRoleAndAllowed(uid){
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()){
+        ROLE = "contractor"; ALLOWED = [];
+        return;
+      }
+      const u = snap.data();
+      ROLE = (u.role || "contractor").toLowerCase();
+      const services = Array.isArray(u.serviceTypes) ? u.serviceTypes : [];
+      ALLOWED = services.map(s => String(s).toLowerCase());
+    }
+
+    function startStreams(){
+      // Open jobs (status == open)
+      const openQ = query(collection(db, "jobs"), where("status", "==", "open"));
+      unsubOpen = onSnapshot(openQ, (qs) => {
+        renderOpenJobs(qs.docs);
+      }, (err)=> console.warn("open-jobs error:", err));
+
+      // My jobs (contractorId == me)
+      const mineQ = query(collection(db, "jobs"), where("contractorId","==", ME.uid));
+      unsubMine = onSnapshot(mineQ, (qs) => {
+        renderMyJobs(qs.docs);
+      }, (err)=> console.warn("my-jobs error:", err));
+    }
+
+    /* ---------- Init ---------- */
+    $("#tabOpen").addEventListener("click", () => setTab("open"));
+    $("#tabMine").addEventListener("click", () => setTab("mine"));
+    $("#signOutBtn").addEventListener("click", async () => { await signOut(auth); window.location.href = "login.html?next=contractor.html"; });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user){
+        window.location.href = "login.html?next=contractor.html";
+        return;
+      }
+      ME = user;
+      await loadRoleAndAllowed(user.uid);
+
+      // Admins can view this page (admin+contractor), show badge
+      $("#adminBadge").hidden = (ROLE !== "admin");
+
+      // If a non-admin, non-contractor somehow gets here, kick to home
+      if (ROLE !== "admin" && ROLE !== "contractor"){
+        window.location.href = "index.html";
+        return;
+      }
+
+      buildChips();
+      startStreams();
+    });
+  </script>
+</body>
+</html>
