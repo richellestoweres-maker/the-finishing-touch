@@ -3,423 +3,338 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contractor Portal – The Finishing Touch</title>
+  <title>Contractor – The Finishing Touch</title>
 
-  <!-- Fonts + Site CSS (re-using your brand) -->
+  <!-- Fonts & Site CSS (reuses your brand styles) -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Minimal portal styles -->
   <style>
-    body { background:#fbf8f4; }
-    .portal { width:min(1100px, 96%); margin: 24px auto 60px; }
+    body { background: var(--paper, #fbf8f4); }
+    .portal { width:min(1100px, 94%); margin: 24px auto 60px; }
     .topbar {
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      background:#fff; padding:12px 16px; border-radius:14px; box-shadow:var(--shadow, 0 12px 30px rgba(0,0,0,.08));
+      display:flex; align-items:center; justify-content:space-between;
+      background:#fff; padding:12px 16px; border-radius:14px; box-shadow:var(--shadow, 0 10px 30px rgba(0,0,0,.08));
     }
-    .brand-min { display:flex; align-items:center; gap:.6rem; }
-    .brand-min .vase { width:32px; height:40px; background:url('logo-vase.png') center/contain no-repeat; }
-    .brand-min .name { font-family:"Playfair Display",serif; font-weight:700; color:var(--taupe-900,#2e2a27); }
-    .who { font-weight:700; color:var(--taupe-900,#2e2a27); }
-    .top-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .btn { display:inline-block; padding:.55rem .9rem; border-radius:999px; font-weight:800; text-decoration:none; cursor:pointer; }
-    .btn-outline { border:1.5px solid var(--taupe-900,#2e2a27); color:var(--taupe-900,#2e2a27); background:#fff; }
-    .btn-solid { background:var(--accent,#d2bda9); color:#2a2624; border:0; }
-    .btn-ghost { background:#fff; border:1px solid #e8ddd1; color:#2e2a27; }
-    .tabs { display:flex; gap:8px; margin-top:14px; }
-    .tab { border:1.5px solid #e8ddd1; background:#fff; color:#2e2a27; border-radius:999px; padding:.5rem .9rem; font-weight:800; cursor:pointer; }
-    .tab.active { border-color:#2e2a27; }
-    .wrap { margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px; }
-    .panel {
-      background:#fff; border-radius:14px; box-shadow:var(--shadow, 0 12px 30px rgba(0,0,0,.08)); padding:14px;
+    .brand-mini { display:flex; align-items:center; gap:.6rem; }
+    .brand-mini .vase-logo { width:28px; height:36px; background:url('logo-vase.png') center / contain no-repeat; display:inline-block; }
+    .tabs { display:flex; gap:10px; }
+    .tabbtn {
+      border:1px solid #e3d9ce; background:#fff; color:#2e2a27; border-radius:999px; padding:.5rem .85rem; font-weight:700; cursor:pointer;
     }
-    .filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-    .chip { border:1px solid #e8ddd1; background:#fff; color:#2e2a27; border-radius:999px; padding:.35rem .75rem; font-weight:700; cursor:pointer; }
-    .chip.active { border-color:#2e2a27; }
-    .list { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px; }
+    .tabbtn.active { background: var(--accent, #d2bda9); border-color: var(--accent, #d2bda9); color:#2a2624; }
+    .main {
+      margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px;
+    }
+    .filters { display:flex; gap:8px; flex-wrap:wrap; }
+    .chip {
+      border:1px solid #e3d9ce; background:#fffdfb; color:#2e2a27; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700; font-size:.9rem;
+    }
+    .chip.active { background:#2e2a27; color:#fff; border-color:#2e2a27; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
     .card {
-      border:1px solid #eee3d8; border-radius:14px; background:#fffdfb; padding:12px; display:flex; flex-direction:column; gap:8px;
+      background:#fff; border-radius:14px; box-shadow:var(--shadow, 0 10px 30px rgba(0,0,0,.08));
+      padding:14px; display:flex; flex-direction:column; gap:8px;
     }
-    .title { font-weight:900; color:#2e2a27; }
-    .meta { font-size:.95rem; color:#5b524e; }
-    .money { font-weight:900; }
+    .meta { display:flex; gap:8px; flex-wrap:wrap; font-size:.92rem; opacity:.9; }
     .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
-    .empty, .error, .note { text-align:center; padding:16px; color:#5b524e; }
-    .error { color:#b00020; font-weight:800; }
-    .pill { display:inline-block; border:1px solid #e8ddd1; border-radius:999px; padding:.15rem .55rem; font-size:.8rem; font-weight:800; }
-    .status { font-size:.85rem; font-weight:900; }
-    .right { margin-left:auto; }
+    .btn { display:inline-block; padding:.55rem .85rem; border-radius:999px; font-weight:800; text-decoration:none; cursor:pointer; }
+    .btn-outline { border:1.5px solid #2e2a27; background:#fff; color:#2e2a27; }
+    .btn-solid { background: var(--accent, #d2bda9); color:#2a2624; border:0; }
+    .empty { text-align:center; padding:24px; background:#fff; border-radius:14px; border:1px dashed #e3d9ce; }
+    .rolepill { font-size:.8rem; padding:.2rem .5rem; border-radius:999px; border:1px solid #e3d9ce; background:#fffdfb; }
+    .right { display:flex; align-items:center; gap:10px; }
+    .small { font-size:.9rem; opacity:.85; }
+    .danger { color:#b00020; font-weight:700; }
   </style>
 </head>
 <body>
   <div class="portal">
     <!-- Top bar -->
     <div class="topbar">
-      <div class="brand-min">
-        <span class="vase" aria-hidden="true"></span>
-        <span class="name">The Finishing Touch</span>
-        <span class="pill">Contractor Portal</span>
+      <div class="brand-mini">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <div>
+          <div style="font-family:'Playfair Display',serif; line-height:1; color:#2e2a27;">The Finishing Touch</div>
+          <div id="rolePill" class="rolepill">Checking role…</div>
+        </div>
       </div>
-      <div class="top-actions">
-        <span id="who" class="who"></span>
-        <button id="refreshBtn" class="btn btn-ghost" title="Refresh">Refresh</button>
-        <button id="signOutBtn" class="btn btn-outline">Sign out</button>
+      <div class="right">
+        <span id="whoami" class="small"></span>
+        <a id="homeLink" class="btn btn-outline" href="index.html">Home</a>
+        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
       </div>
     </div>
 
     <!-- Tabs -->
-    <div class="tabs">
-      <button id="tabOpen" class="tab active">Open Jobs</button>
-      <button id="tabMine" class="tab">My Jobs</button>
-      <span id="roleBadge" class="pill right"></span>
+    <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+      <div class="tabs">
+        <button id="tabOpen" class="tabbtn active" type="button">Open Jobs</button>
+        <button id="tabMine" class="tabbtn" type="button">My Jobs</button>
+      </div>
+      <div class="filters" id="filterChips" aria-label="Filters"></div>
     </div>
 
-    <div class="wrap">
-      <!-- OPEN JOBS -->
-      <section id="panelOpen" class="panel" aria-labelledby="tabOpen">
-        <div id="filters" class="filters"></div>
-        <div id="openList" class="list"></div>
-        <div id="openEmpty" class="empty" hidden>No open jobs match your services.</div>
-        <div id="openError" class="error" hidden></div>
-      </section>
+    <!-- Panels -->
+    <section id="panelOpen" class="main">
+      <div id="openJobs" class="grid" aria-live="polite"></div>
+    </section>
 
-      <!-- MY JOBS -->
-      <section id="panelMine" class="panel" aria-labelledby="tabMine" hidden>
-        <div id="mineList" class="list"></div>
-        <div id="mineEmpty" class="empty" hidden>No jobs yet. Claim one from “Open Jobs”.</div>
-        <div id="mineError" class="error" hidden></div>
-      </section>
-
-      <!-- ACCESS BLOCK -->
-      <section id="panelBlocked" class="panel" hidden>
-        <div class="error">Access denied.</div>
-        <p class="note">Your account isn’t set up as a contractor yet. Please contact the admin.</p>
-      </section>
-    </div>
+    <section id="panelMine" class="main" hidden>
+      <div id="myJobs" class="grid" aria-live="polite"></div>
+    </section>
   </div>
 
-  <!-- Firebase + App -->
+  <!-- Firebase / Firestore logic -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
     import {
       onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      collection, doc, getDoc, getDocs, query, where,
-      runTransaction, serverTimestamp
+      collection, query, where, orderBy, onSnapshot,
+      doc, getDoc, updateDoc, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // ----- State
-    let UID = null;
-    let USER = null;
-    let ROLE = "guest";          // 'admin' | 'contractor' | 'guest'
-    let ALLOWED = [];            // e.g. ['cleaning','organizing']
-    let OPEN_CACHE = [];
-    let MINE_CACHE = [];
-    let CURRENT_FILTER = "all";  // 'all' or one of ALLOWED
+    // ---- DOM refs
+    const rolePill = document.getElementById('rolePill');
+    const whoami   = document.getElementById('whoami');
+    const btnSignOut = document.getElementById('signOutBtn');
+    const chipsWrap  = document.getElementById('filterChips');
 
-    // ----- DOM
-    const whoEl = document.getElementById("who");
-    const roleBadge = document.getElementById("roleBadge");
-    const tabOpen = document.getElementById("tabOpen");
-    const tabMine = document.getElementById("tabMine");
-    const panelOpen = document.getElementById("panelOpen");
-    const panelMine = document.getElementById("panelMine");
-    const panelBlocked = document.getElementById("panelBlocked");
-    const filtersEl = document.getElementById("filters");
-    const openList = document.getElementById("openList");
-    const openEmpty = document.getElementById("openEmpty");
-    const openError = document.getElementById("openError");
-    const mineList = document.getElementById("mineList");
-    const mineEmpty = document.getElementById("mineEmpty");
-    const mineError = document.getElementById("mineError");
-    const refreshBtn = document.getElementById("refreshBtn");
-    const signOutBtn = document.getElementById("signOutBtn");
+    const tabOpen = document.getElementById('tabOpen');
+    const tabMine = document.getElementById('tabMine');
+    const panelOpen = document.getElementById('panelOpen');
+    const panelMine = document.getElementById('panelMine');
 
-    // ----- Auth gate
+    const openJobsEl = document.getElementById('openJobs');
+    const myJobsEl   = document.getElementById('myJobs');
+
+    // ---- State
+    let me = null;                // auth user
+    let meRole = 'contractor';    // default
+    let meServices = [];          // allowed service types
+    let activeFilter = 'all';     // chip filter
+
+    // ---- Tabs
+    function setTab(which){
+      const open = which === 'open';
+      tabOpen.classList.toggle('active', open);
+      tabMine.classList.toggle('active', !open);
+      panelOpen.hidden = !open;
+      panelMine.hidden = open;
+    }
+    tabOpen.addEventListener('click', () => setTab('open'));
+    tabMine.addEventListener('click', () => setTab('mine'));
+
+    // ---- Chips
+    const ALL_TYPES = ['cleaning','organizing','decor','holiday'];
+    function renderChips(){
+      const allowed = meRole === 'admin' ? ALL_TYPES : (meServices.length ? meServices : ALL_TYPES);
+      const types = ['all', ...allowed];
+      chipsWrap.innerHTML = '';
+      types.forEach(t => {
+        const b = document.createElement('button');
+        b.className = 'chip' + (t === activeFilter ? ' active' : '');
+        b.type = 'button';
+        b.textContent = t === 'all' ? 'All' : (t[0].toUpperCase() + t.slice(1));
+        b.addEventListener('click', () => {
+          activeFilter = t;
+          renderChips();
+          // Re-render lists with current filter
+          drawOpenJobs(lastOpenJobs);
+          drawMyJobs(lastMyJobs);
+        });
+        chipsWrap.appendChild(b);
+      });
+    }
+
+    // ---- Auth gate
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // Send to login, then back here
-        const next = encodeURIComponent("contractor.html");
-        window.location.href = `login.html?next=${next}`;
+        // send to login, return here after
+        const next = encodeURIComponent('contractor.html');
+        location.href = `login.html?next=${next}`;
         return;
       }
-      USER = user;
-      UID = user.uid;
-      whoEl.textContent = user.email || user.displayName || "(signed in)";
-      await loadRoleAndAllowed(UID);
-      roleBadge.textContent = ROLE === "admin" ? "Admin" : (ROLE === "contractor" ? "Contractor" : "Guest");
+      me = user;
+      whoami.textContent = user.email || user.uid;
 
-      if (ROLE !== "admin" && ROLE !== "contractor") {
-        // Not allowed
-        panelOpen.hidden = true;
-        panelMine.hidden = true;
-        panelBlocked.hidden = false;
-        return;
+      // Load role doc
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(userRef);
+        const data = snap.exists() ? snap.data() : {};
+        meRole = (data.role || 'contractor').toLowerCase();
+        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes : [];
+        rolePill.textContent = meRole === 'admin' ? 'Admin + Contractor' : 'Contractor';
+      } catch (e) {
+        console.warn(e);
+        rolePill.textContent = 'Contractor';
       }
-
-      // Allowed → render
-      buildFilters();
-      await refreshAll();
+      renderChips();
+      startListeners();
     });
 
-    signOutBtn.addEventListener("click", async () => {
+    // ---- Sign out
+    btnSignOut.addEventListener('click', async (e) => {
+      e.preventDefault();
       await signOut(auth);
-      window.location.href = "index.html";
+      location.href = 'index.html';
     });
 
-    // ----- Firestore: user role + allowed services
-    async function loadRoleAndAllowed(uid){
-      try {
-        const ref = doc(db, "users", uid);
-        const snap = await getDoc(ref);
-        if (!snap.exists()){
-          ROLE = "guest";     // IMPORTANT: default to guest (no access) if no doc
-          ALLOWED = [];
-          return;
+    // ---- Firestore listeners
+    let unsubOpen = null, unsubMine = null;
+    let lastOpenJobs = [], lastMyJobs = [];
+
+    function startListeners(){
+      // Open jobs
+      const qOpen = query(
+        collection(db, 'jobs'),
+        where('status', '==', 'open'),
+        orderBy('createdAt', 'desc')
+      );
+      unsubOpen = onSnapshot(qOpen, (snap) => {
+        lastOpenJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        drawOpenJobs(lastOpenJobs);
+      });
+
+      // My jobs
+      unsubMine = onSnapshot(
+        query(collection(db, 'jobs'), where('contractorId', '==', me.uid)),
+        (snap) => {
+          lastMyJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          drawMyJobs(lastMyJobs);
         }
-        const u = snap.data();
-        ROLE = (u.role || "guest").toLowerCase();
-        const services = Array.isArray(u.serviceTypes) ? u.serviceTypes : [];
-        ALLOWED = services.map(s => String(s).toLowerCase());
-      } catch (e) {
-        console.warn("loadRole error:", e);
-        ROLE = "guest";
-        ALLOWED = [];
-      }
+      );
     }
 
-    // ----- Filters
-    function buildFilters(){
-      filtersEl.innerHTML = "";
-      const all = document.createElement("button");
-      all.className = "chip" + (CURRENT_FILTER === "all" ? " active" : "");
-      all.textContent = "All";
-      all.onclick = () => { CURRENT_FILTER = "all"; renderOpen(); };
-      filtersEl.appendChild(all);
+    // ---- Renderers
+    function jobCardHTML(j){
+      const rate = (typeof j.flatRate === 'number') ? `$${j.flatRate}` : (j.rate || '');
+      const type = (j.serviceType || '').toLowerCase();
+      const capType = type ? (type[0].toUpperCase()+type.slice(1)) : 'Job';
+      const area = j.area || j.city || '';
+      const windowTxt = j.window || '';
+      const summary = j.summary || j.notes || '';
 
-      // Show chips only for allowed services (admin sees all)
-      const base = ROLE === "admin"
-        ? ["cleaning","organizing","decor","holiday"]
-        : ALLOWED;
+      return `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; gap:8px;">
+            <strong>${capType}</strong>
+            <strong>${rate}</strong>
+          </div>
+          <div class="meta">
+            ${area ? `<span>📍 ${area}</span>` : ''}
+            ${windowTxt ? `<span>🕒 ${windowTxt}</span>` : ''}
+            ${j.status ? `<span>• ${j.status}</span>` : ''}
+          </div>
+          ${summary ? `<div style="font-size:.98rem;">${summary}</div>` : ''}
+          <div class="actions" data-jobid="${j.id}">
+            <!-- buttons injected per list -->
+          </div>
+        </div>
+      `;
+    }
 
-      base.forEach(svc => {
-        const chip = document.createElement("button");
-        chip.className = "chip" + (CURRENT_FILTER === svc ? " active" : "");
-        chip.textContent = labelForService(svc);
-        chip.onclick = () => { CURRENT_FILTER = svc; renderOpen(); };
-        filtersEl.appendChild(chip);
+    function drawOpenJobs(list){
+      // filter by allowed type
+      const allowed = meRole === 'admin' ? ALL_TYPES : (meServices.length ? meServices : ALL_TYPES);
+      const filtered = list.filter(j => {
+        const type = (j.serviceType || '').toLowerCase();
+        const okType = allowed.includes(type);
+        const chipOk = (activeFilter === 'all') ? true : (type === activeFilter);
+        return okType && chipOk;
       });
-    }
 
-    function labelForService(svc){
-      const map = { cleaning:"Cleaning", organizing:"Organizing", decor:"Decor", holiday:"Holiday" };
-      return map[svc] || (svc?.[0]?.toUpperCase() + svc?.slice(1)) || "Service";
-    }
-
-    // ----- Data loads
-    async function refreshAll(){
-      await Promise.all([loadOpen(), loadMine()]);
-      renderOpen();
-      renderMine();
-    }
-
-    refreshBtn.addEventListener("click", refreshAll);
-
-    async function loadOpen(){
-      openError.hidden = true;
-      openEmpty.hidden = true;
-      openList.innerHTML = "";
-
-      try {
-        // Pull open jobs (filter by service client-side to avoid composite index pain)
-        const q = query(collection(db, "jobs"), where("status","==","open"));
-        const snap = await getDocs(q);
-        const rows = [];
-        snap.forEach(d => {
-          const j = d.data();
-          rows.push({ id: d.id, ...j });
-        });
-        // Sort newest first if createdAt exists
-        rows.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
-        OPEN_CACHE = rows;
-      } catch (e) {
-        openError.hidden = false;
-        openError.textContent = `Couldn’t load open jobs: ${e.message || e}`;
-        OPEN_CACHE = [];
-      }
-    }
-
-    async function loadMine(){
-      mineError.hidden = true;
-      mineEmpty.hidden = true;
-      mineList.innerHTML = "";
-
-      if (!UID) return;
-      try {
-        const q = query(collection(db, "jobs"), where("contractorId","==", UID));
-        const snap = await getDocs(q);
-        const rows = [];
-        snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-        rows.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
-        MINE_CACHE = rows;
-      } catch (e) {
-        mineError.hidden = false;
-        mineError.textContent = `Couldn’t load your jobs: ${e.message || e}`;
-        MINE_CACHE = [];
-      }
-    }
-
-    // ----- Render
-    function renderOpen(){
-      openList.innerHTML = "";
-
-      // When not admin, hide services the user can't claim
-      const allowedSet = new Set(ROLE === "admin" ? ["cleaning","organizing","decor","holiday"] : ALLOWED);
-
-      let rows = OPEN_CACHE.filter(j => allowedSet.has(String(j.serviceType || "").toLowerCase()));
-      if (CURRENT_FILTER !== "all") {
-        rows = rows.filter(j => String(j.serviceType || "").toLowerCase() === CURRENT_FILTER);
-      }
-
-      if (!rows.length){
-        openEmpty.hidden = false;
+      if (!filtered.length){
+        openJobsEl.innerHTML = `<div class="empty">No open jobs right now.</div>`;
         return;
       }
-      openEmpty.hidden = true;
+      openJobsEl.innerHTML = filtered.map(jobCardHTML).join('');
 
-      rows.forEach(job => {
-        openList.appendChild(jobCard(job, "open"));
+      // attach Claim buttons
+      filtered.forEach(j => {
+        const wrap = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
+        if (!wrap) return;
+        const claim = document.createElement('button');
+        claim.className = 'btn btn-solid';
+        claim.textContent = 'Claim this job';
+        claim.addEventListener('click', () => claimJob(j.id));
+        wrap.appendChild(claim);
+
+        const msg = document.createElement('a');
+        msg.className = 'btn btn-outline';
+        msg.textContent = 'Message Admin';
+        msg.href = '#'; // chat soon
+        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming next!'); });
+        wrap.appendChild(msg);
       });
     }
 
-    function renderMine(){
-      mineList.innerHTML = "";
-      if (!MINE_CACHE.length){
-        mineEmpty.hidden = false;
+    function drawMyJobs(list){
+      if (!list.length){
+        myJobsEl.innerHTML = `<div class="empty">You haven’t claimed any jobs yet.</div>`;
         return;
       }
-      mineEmpty.hidden = true;
+      // optional filter by chip here (rarely needed)
+      myJobsEl.innerHTML = list.map(jobCardHTML).join('');
 
-      MINE_CACHE.forEach(job => {
-        mineList.appendChild(jobCard(job, "mine"));
-      });
-    }
+      list.forEach(j => {
+        const wrap = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
+        if (!wrap) return;
 
-    function jobCard(job, mode){
-      const wrap = document.createElement("div");
-      wrap.className = "card";
+        // In-progress actions
+        const msg = document.createElement('a');
+        msg.className = 'btn btn-outline';
+        msg.textContent = 'Message Admin';
+        msg.href = '#';
+        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming next!'); });
+        wrap.appendChild(msg);
 
-      const svc = String(job.serviceType || "").toLowerCase();
-      const svcLabel = labelForService(svc);
-      const rate = job.flatRate != null ? Number(job.flatRate) : null;
-      const area = job.area || "";
-      const windowTxt = job.window || "";
-      const summary = job.summary || "";
-
-      const title = document.createElement("div");
-      title.className = "title";
-      title.textContent = svcLabel;
-      wrap.appendChild(title);
-
-      const meta = document.createElement("div");
-      meta.className = "meta";
-      meta.innerHTML = [
-        rate != null ? `<span class="money">$${rate}</span>` : "",
-        area ? `• ${area}` : "",
-        windowTxt ? `• ${windowTxt}` : ""
-      ].filter(Boolean).join(" ");
-      wrap.appendChild(meta);
-
-      if (summary){
-        const sum = document.createElement("div");
-        sum.className = "meta";
-        sum.textContent = summary;
-        wrap.appendChild(sum);
-      }
-
-      const actions = document.createElement("div");
-      actions.className = "actions";
-
-      if (mode === "open") {
-        const btn = document.createElement("button");
-        btn.className = "btn btn-solid";
-        btn.textContent = "Claim";
-        btn.onclick = () => claimJob(job.id, btn);
-        actions.appendChild(btn);
-
-        const msg = document.createElement("button");
-        msg.className = "btn btn-ghost";
-        msg.textContent = "Message Admin";
-        msg.disabled = true; // chat in Step 2
-        actions.appendChild(msg);
-      } else {
-        // My jobs: show status & placeholder actions
-        const status = document.createElement("span");
-        status.className = "status pill";
-        status.textContent = (job.status || "claimed").toUpperCase();
-        actions.appendChild(status);
-
-        const upload = document.createElement("button");
-        upload.className = "btn btn-ghost";
-        upload.textContent = "Upload photos";
-        upload.disabled = true; // coming later
-        actions.appendChild(upload);
-
-        const submit = document.createElement("button");
-        submit.className = "btn btn-solid";
-        submit.textContent = "Submit for approval";
-        submit.disabled = true; // coming later
-        actions.appendChild(submit);
-      }
-
-      wrap.appendChild(actions);
-      return wrap;
-    }
-
-    // ----- Claim flow (transaction ensures it's still open)
-    async function claimJob(jobId, btn){
-      if (!UID) return;
-      btn.disabled = true;
-      const original = btn.textContent;
-      btn.textContent = "Claiming…";
-      try {
-        const jobRef = doc(db, "jobs", jobId);
-        await runTransaction(db, async (tx) => {
-          const snap = await tx.get(jobRef);
-          if (!snap.exists()) throw new Error("Job not found.");
-          const j = snap.data();
-          if ((j.status || "open") !== "open") {
-            throw new Error("Sorry, this job has already been claimed.");
+        const mark = document.createElement('button');
+        mark.className = 'btn btn-solid';
+        mark.textContent = j.status === 'in_progress' ? 'Mark Submitted' : (j.status === 'claimed' ? 'Start Work' : 'Submitted');
+        mark.disabled = (j.status === 'submitted' || j.status === 'approved' || j.status === 'paid');
+        mark.addEventListener('click', async () => {
+          try {
+            const newStatus = j.status === 'claimed' ? 'in_progress' : 'submitted';
+            await updateDoc(doc(db, 'jobs', j.id), {
+              status: newStatus,
+              updatedAt: serverTimestamp()
+            });
+          } catch (e) {
+            alert('Could not update status.');
+            console.warn(e);
           }
-          tx.update(jobRef, {
-            status: "claimed",
-            contractorId: UID,
-            contractorEmail: USER?.email || "",
-            claimedAt: serverTimestamp()
-          });
         });
-
-        // Refresh both lists
-        await Promise.all([loadOpen(), loadMine()]);
-        renderOpen(); renderMine();
-      } catch (e) {
-        alert(e.message || "Could not claim this job.");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = original;
-      }
+        wrap.appendChild(mark);
+      });
     }
 
-    // ----- Tabs
-    tabOpen.addEventListener("click", () => {
-      tabOpen.classList.add("active"); tabMine.classList.remove("active");
-      panelOpen.hidden = false; panelMine.hidden = true;
-    });
-    tabMine.addEventListener("click", () => {
-      tabMine.classList.add("active"); tabOpen.classList.remove("active");
-      panelOpen.hidden = true; panelMine.hidden = false;
-    });
+    // ---- Claim flow (simple, race-safe enough for MVP)
+    async function claimJob(jobId){
+      if (!me) return;
+      try {
+        // quick check: don’t claim if already claimed in current view
+        const card = document.querySelector(`[data-jobid="${jobId}"]`);
+        if (card) {
+          const b = card.querySelector('.btn.btn-solid');
+          if (b) { b.disabled = true; b.textContent = 'Claiming…'; }
+        }
+        await updateDoc(doc(db, 'jobs', jobId), {
+          status: 'claimed',
+          contractorId: me.uid,
+          contractorEmail: me.email || '',
+          claimedAt: serverTimestamp()
+        });
+        setTab('mine'); // jump to My Jobs
+      } catch (e) {
+        alert('Could not claim. It may have just been taken.');
+        console.warn(e);
+      }
+    }
   </script>
 </body>
 </html>
+
