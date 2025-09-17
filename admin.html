@@ -3,64 +3,57 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin – Jobs | The Finishing Touch</title>
+  <title>Admin – Create Job (with Estimate)</title>
 
-  <!-- Brand fonts + your site styles -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    body { background: var(--paper,#fbf8f4); }
-    .wrap { width:min(1100px,94%); margin: 24px auto 60px; }
-    .topbar {
-      display:flex; align-items:center; justify-content:space-between;
-      background:#fff; padding:12px 16px; border-radius:14px; box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));
-    }
-    .brand-mini { display:flex; align-items:center; gap:.6rem; }
-    .brand-mini .vase-logo { width:28px; height:36px; background:url('logo-vase.png') center / contain no-repeat; display:inline-block; }
-    .right { display:flex; align-items:center; gap:10px; }
-    .small { font-size:.9rem; opacity:.85; }
+    body{background:#fbf8f4}
+    .wrap{width:min(1100px,94%);margin:24px auto 60px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:12px 16px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    .brand-mini{display:flex;align-items:center;gap:.6rem}
+    .brand-mini .vase-logo{width:28px;height:36px;background:url('logo-vase.png') center/contain no-repeat;display:inline-block}
+    .right{display:flex;align-items:center;gap:10px}
+    .small{font-size:.9rem;opacity:.85}
 
-    .grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; margin-top:14px; }
-    @media (max-width: 900px){ .grid { grid-template-columns: 1fr; } }
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:14px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
 
-    .card {
-      background:#fff; border-radius:14px; box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));
-      padding:16px;
-    }
-    .card h2 { margin:0 0 8px; font-family:"Playfair Display",serif; }
-    form.grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-    form.grid2 .full { grid-column: 1 / -1; }
-    label { display:grid; gap:6px; font-weight:700; color:var(--taupe-900, #2e2a27); }
-    input, select, textarea {
-      border:1px solid #e3d9ce; border-radius:12px; padding:.75rem; background:#fffdfb; color:#2e2a27;
-    }
-    textarea { min-height: 90px; }
-    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-    .btn { display:inline-block; padding:.55rem .85rem; border-radius:999px; font-weight:800; text-decoration:none; cursor:pointer; }
-    .btn-outline { border:1.5px solid #2e2a27; background:#fff; color:#2e2a27; }
-    .btn-solid { background: var(--accent,#d2bda9); color:#2a2624; border:0; }
-    .status { font-weight:700; }
-    .ok { color:#0a7d33; } .err { color:#b00020; }
-    .list { display:grid; gap:10px; }
-    .row {
-      border:1px solid #e8ddd1; border-radius:12px; padding:10px; background:#fffdfb;
-      display:grid; gap:6px;
-    }
-    .meta { display:flex; gap:12px; flex-wrap:wrap; font-size:.92rem; opacity:.9; }
-    .pill { padding:.15rem .5rem; border-radius:999px; border:1px solid #e3d9ce; background:#fff; font-size:.85rem; }
-    .muted { opacity:.85; }
+    .card{background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:16px}
+    .card h2{margin:0 0 8px;font-family:"Playfair Display",serif}
+    .muted{opacity:.85}
+
+    form.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    form.grid2 .full{grid-column:1/-1}
+    label{display:grid;gap:6px;font-weight:700;color:#2e2a27}
+    input,select,textarea{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:#2e2a27}
+    textarea{min-height:84px}
+    .row{display:grid;gap:10px}
+    .inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{padding:.15rem .5rem;border-radius:999px;border:1px solid #e3d9ce;background:#fff;font-size:.9rem}
+    .btn{display:inline-block;padding:.6rem .9rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn-outline{border:1.5px solid #2e2a27;background:#fff;color:#2e2a27}
+    .btn-solid{background:#d2bda9;color:#2a2624;border:0}
+    .status{font-weight:800}
+    .ok{color:#0a7d33}.err{color:#b00020}
+
+    .calc-box{border:1px solid #e8ddd1;border-radius:12px;padding:10px;background:#fffdfb}
+    .calc-values{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .calc-values div{display:flex;justify-content:space-between;font-weight:700}
+    .hint{font-size:.92rem;opacity:.9}
+    .list{display:grid;gap:10px}
+    .jobrow{border:1px solid #e8ddd1;border-radius:12px;padding:10px;background:#fffdfb;display:grid;gap:6px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- Top bar -->
     <div class="topbar">
       <div class="brand-mini">
         <span class="vase-logo" aria-hidden="true"></span>
         <div>
-          <div style="font-family:'Playfair Display',serif; line-height:1; color:#2e2a27;">The Finishing Touch</div>
-          <div class="small">Admin – Jobs</div>
+          <div style="font-family:'Playfair Display',serif;line-height:1;color:#2e2a27">The Finishing Touch</div>
+          <div class="small">Admin – Create Job</div>
         </div>
       </div>
       <div class="right">
@@ -70,67 +63,111 @@
       </div>
     </div>
 
-    <!-- Body -->
     <div class="grid">
-      <!-- New Job -->
+      <!-- LEFT: Create Job (Cleaning estimator) -->
       <section class="card">
-        <h2>New Job</h2>
-        <p class="muted" style="margin:4px 0 10px">Create an open job for contractors to claim.</p>
+        <h2>New Job (Cleaning)</h2>
+        <p class="muted" style="margin-top:0">Fill the same key fields you’d ask by phone. Price + payouts calculate automatically.</p>
 
-        <form id="newJobForm" class="grid2">
+        <form id="jobForm" class="grid2">
+          <!-- Client / logistics -->
+          <label class="full">Client Name
+            <input name="clientName" placeholder="Full name">
+          </label>
+          <label>Client Phone
+            <input name="clientPhone" placeholder="(###) ###-####">
+          </label>
+          <label>Client Email
+            <input name="clientEmail" type="email" placeholder="name@example.com">
+          </label>
+          <label class="full">Service Address
+            <input name="address" placeholder="123 Bay St, League City, TX">
+          </label>
+          <label>City / Area
+            <input name="area" placeholder="e.g., League City">
+          </label>
+          <label>Time Window
+            <input name="window" placeholder="e.g., This week · AM">
+          </label>
+
+          <!-- Cleaning specifics (matches your intake) -->
           <label>Service Type
-            <select name="serviceType" required>
-              <option value="cleaning">Cleaning</option>
-              <option value="organizing">Organizing</option>
-              <option value="decor">Decor</option>
-              <option value="holiday">Holiday</option>
+            <select name="service">
+              <option>Initial Clean</option>
+              <option>Standard Clean</option>
+              <option>Deep Clean</option>
+              <option>Move-In / Move-Out Clean</option>
+              <option>Airbnb Turnover</option>
+            </select>
+          </label>
+          <label>Frequency
+            <select name="frequency">
+              <option>one-time</option><option>weekly</option>
+              <option>biweekly</option><option>monthly</option>
             </select>
           </label>
 
-          <label>Flat Rate (USD)
-            <input name="flatRate" type="number" min="0" step="1" required placeholder="e.g., 275" />
+          <label>Bedrooms
+            <input name="beds" type="number" min="0" value="3">
+          </label>
+          <label>Bathrooms
+            <input name="baths" type="number" min="0" value="2">
+          </label>
+          <label>Other Rooms
+            <input name="other_rooms" type="number" min="0" value="0">
+          </label>
+          <label>Square Footage
+            <select name="sqft">
+              <option>&lt;1000</option><option>1000–2000</option>
+              <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
+            </select>
+          </label>
+          <label>Stories
+            <select name="stories"><option>1</option><option>2</option></select>
+          </label>
+          <label>Pets (type & number)
+            <input name="pets" placeholder="e.g., 1 dog">
+          </label>
+          <label class="full">Add-ons
+            <input name="addons" placeholder="oven, fridge, windows, baseboards, laundry">
           </label>
 
-          <label>Area / City
-            <input name="area" placeholder="e.g., League City" />
+          <!-- Owner % and contractor split -->
+          <label>Owner Share (%)
+            <input name="ownerPct" type="number" min="0" max="100" value="30">
           </label>
-
-          <label>Time Window
-            <input name="window" placeholder="e.g., This week · AM" />
-          </label>
-
-          <label class="full">Short Summary
-            <input name="summary" placeholder="e.g., 3 bed / 2 bath — initial deep clean." />
-          </label>
-
-          <label class="full">Address (optional)
-            <input name="address" placeholder="123 Bay St, League City, TX" />
-          </label>
-
-          <label>Client Name
-            <input name="clientName" placeholder="Full name" />
-          </label>
-
-          <label>Client Phone
-            <input name="clientPhone" placeholder="(###) ###-####" />
-          </label>
-
-          <label class="full">Client Email
-            <input name="clientEmail" type="email" placeholder="name@example.com" />
+          <label>Contractors on job
+            <select name="contractorsCount">
+              <option>1</option><option>2</option><option>3</option>
+            </select>
           </label>
 
           <label class="full">Internal Notes (optional)
-            <textarea name="notes" placeholder="Any special instructions, access notes, codes, etc. Visible only to admin unless copied to job summary."></textarea>
+            <textarea name="notes" placeholder="Special instructions, access codes, etc."></textarea>
           </label>
 
-          <div class="full actions">
-            <button id="createBtn" type="submit" class="btn btn-solid">Create Job</button>
-            <span id="createStatus" class="status"></span>
+          <!-- Live totals -->
+          <div class="full calc-box" id="calcBox" aria-live="polite">
+            <div class="inline">
+              <span class="pill">Cleaning</span>
+              <span id="calcHint" class="hint"></span>
+            </div>
+            <div class="calc-values" style="margin-top:6px">
+              <div><span>Client price</span><span id="clientPrice">$0</span></div>
+              <div><span>Owner keeps (<span id="ownerPctLabel">30%</span>)</span><span id="ownerFee">$0</span></div>
+              <div><span>Contractor pool</span><span id="pool">$0</span></div>
+              <div><span>Per contractor (<span id="cnt">1</span>)</span><span id="per">$0</span></div>
+            </div>
+          </div>
+
+          <div class="full inline" style="margin-top:6px">
+            <button id="createBtn" class="btn btn-solid" type="submit">Create Job</button>
+            <span id="status" class="status"></span>
           </div>
         </form>
       </section>
 
-      <!-- Recent Jobs -->
+      <!-- RIGHT: Recent Jobs -->
       <aside class="card">
         <h2>Recent Jobs</h2>
         <div id="jobsList" class="list" aria-live="polite"></div>
@@ -138,52 +175,124 @@
     </div>
   </div>
 
-  <!-- Firebase / Firestore -->
+  <!-- Firebase + Firestore -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
-    import {
-      onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
       addDoc, collection, serverTimestamp, doc, getDoc,
       query, orderBy, limit, onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // DOM
+    // ===== Pricing logic (same as your site; copied locally so this page is self-contained) =====
+    const roundHalf = n => Math.round(n * 2) / 2;
+    const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
+    const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
+    const serviceMult = { "Initial Clean":1.00, "Deep Clean":1.20, "Move-In / Move-Out Clean":1.35, "Airbnb Turnover":0.55 };
+    const freqDisc = { "weekly":0.85, "biweekly":0.90, "monthly":0.95, "one-time":1 };
+    const addonPricesCleaning = { "oven":35,"fridge":30,"refrigerator":30,"windows":80,"window":80,"baseboards":60,"laundry":18 };
+    const addonHoursCleaning  = { "oven":.25,"fridge":.25,"refrigerator":.25,"windows":1.5,"window":1.5,"baseboards":1.0,"laundry":.5 };
+    const perExtraBathroom = 20, perExtraBedroom = 12, perOtherRoom = 10, twoStoryFee = 20, petFee = 12;
+
+    function parseAddonsList(txt, priceMap){ txt=(txt||"").toLowerCase(); let t=0; for (const k of Object.keys(priceMap)){ if (txt.includes(k)) t+=priceMap[k]; } return t; }
+    function parseAddonsHours(txt, hrsMap){ txt=(txt||"").toLowerCase(); let t=0; for (const k of Object.keys(hrsMap)){ if (txt.includes(k)) t+=hrsMap[k]; } return t; }
+    function airbnbByBedrooms(b){ const n=Number(b)||0; if(n<=1) return 120; if(n===2) return 140; if(n===3) return 160; if(n===4) return 180; return 200; }
+
+    function calcCleaning(data){
+      const sqft=data.sqft||"1000–2000";
+      const service=data.service||"Initial Clean";
+      const frequency=data.frequency||"one-time";
+      const beds=Number(data.beds||0), baths=Number(data.baths||0), otherRooms=Number(data.other_rooms||0);
+      const stories=String(data.stories||"1"), pets=String(data.pets||"");
+
+      let base=0;
+      if (service==="Standard Clean"){ base = standardBySqft[sqft] ?? 200; }
+      else if (service==="Airbnb Turnover"){ base = airbnbByBedrooms(beds); }
+      else { const initial = initialBySqft[sqft] ?? 300; base = initial * (serviceMult[service] ?? 1); }
+
+      const extraBaths=Math.max(0,baths-2)*perExtraBathroom;
+      const extraBeds =Math.max(0,beds-3)*perExtraBedroom;
+      const extraRooms=Math.max(0,otherRooms)*perOtherRoom;
+      const storyFee =(stories==="2")?twoStoryFee:0;
+      const petsFee  =pets.trim()?petFee:0;
+      const addonsFee=parseAddonsList(data.addons, addonPricesCleaning);
+
+      let est = base+extraBaths+extraBeds+extraRooms+storyFee+petsFee+addonsFee;
+      if (service==="Standard Clean") est *= (freqDisc[frequency]||1);
+      return Math.round(est);
+    }
+
+    function estimateHoursCleaning(data){
+      const sqft=data.sqft||"1000–2000";
+      const service=data.service||"Initial Clean";
+      const beds=Number(data.beds||0), baths=Number(data.baths||0), otherRooms=Number(data.other_rooms||0);
+      const stories=String(data.stories||"1");
+      let solo=2;
+      if (sqft === "<1000") solo=2; else if (sqft==="1000–2000") solo=3; else if (sqft==="2000–3000") solo=4; else if (sqft==="3000–4000") solo=5; else solo=6;
+      if (service==="Airbnb Turnover"){
+        if (beds<=1) solo=2; else if (beds===2) solo=2.5; else if (beds===3) solo=3; else if (beds===4) solo=3.5; else solo=4;
+      }
+      solo += Math.max(0,beds-3)*.5;
+      solo += Math.max(0,baths-2)*.75;
+      solo += Math.max(0,otherRooms)*.25;
+      if (stories==="2") solo += .25;
+      solo += parseAddonsHours(data.addons, addonHoursCleaning);
+      if (service==="Deep Clean") solo*=1.5;
+      if (service==="Move-In / Move-Out Clean") solo*=2;
+      if (service==="Initial Clean") solo*=1.2;
+      solo = roundHalf(solo);
+      const team = roundHalf(solo/2);
+      return { soloHours: solo, teamHours: team };
+    }
+
+    function cleaningHint(data, teamHours){
+      const service=data.service||"Initial Clean";
+      const sqft=data.sqft||"1000–2000";
+      const map={"<1000":"Small (≤1,000 sq ft)","1000–2000":"Medium (1,000–2,000)","2000–3000":"Large (2,000–3,000)","3000–4000":"XL (3,000–4,000)","4000+":"Estate (4,000+)"};
+      if (service==="Standard Clean") return `Standard Clean — ${map[sqft]||"Sized by intake"}`;
+      if (service==="Airbnb Turnover"){
+        if (teamHours<=2.5) return "Airbnb Turnover — Quick (~2 hr)";
+        if (teamHours<=3.5) return "Airbnb Turnover — Standard (~3 hr)";
+        if (teamHours<=5)   return "Airbnb Turnover — Extended (~4–5 hr)";
+        return "Airbnb Turnover — Extended XL (5.5+ hr)";
+      }
+      if (teamHours<=2.5) return `${service} — Small (~2–2.5 hr)`;
+      if (teamHours<=3.5) return `${service} — Medium (~3–3.5 hr)`;
+      if (teamHours<=5)   return `${service} — Large (~4–5 hr)`;
+      return `${service} — XL (5.5+ hr)`;
+    }
+
+    // ===== UI wiring =====
     const whoami = document.getElementById('whoami');
     const signOutBtn = document.getElementById('signOutBtn');
-    const form = document.getElementById('newJobForm');
+    const form = document.getElementById('jobForm');
+    const statusEl = document.getElementById('status');
     const createBtn = document.getElementById('createBtn');
-    const statusEl = document.getElementById('createStatus');
-    const listEl = document.getElementById('jobsList');
+
+    const clientPriceEl = document.getElementById('clientPrice');
+    const ownerFeeEl = document.getElementById('ownerFee');
+    const poolEl = document.getElementById('pool');
+    const perEl = document.getElementById('per');
+    const ownerPctLabel = document.getElementById('ownerPctLabel');
+    const cntEl = document.getElementById('cnt');
+    const hintEl = document.getElementById('calcHint');
+
+    const jobsList = document.getElementById('jobsList');
 
     // Gate: must be logged in AND role: admin
-    let me = null;
-
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        location.href = "login.html?next=" + encodeURIComponent("admin.html");
-        return;
-      }
+      if (!user) { location.href = "login.html?next=" + encodeURIComponent("admin.html"); return; }
       whoami.textContent = user.email || user.uid;
 
-      // Check role
       try {
         const uref = doc(db, 'users', user.uid);
         const snap = await getDoc(uref);
         const role = (snap.exists() ? (snap.data().role || '') : '').toLowerCase();
-        if (role !== 'admin') {
-          // If you’re not admin, bounce to contractor portal
-          location.href = "contractor.html";
-          return;
-        }
-        me = user;
-        // Start recent jobs listener
+        if (role !== 'admin') { location.href = "contractor.html"; return; }
+        // Start recent jobs feed
         startJobsFeed();
       } catch (e) {
-        console.warn(e);
-        alert("Couldn’t verify admin role.");
-        location.href = "login.html";
+        console.warn(e); alert("Couldn’t verify admin role."); location.href = "login.html";
       }
     });
 
@@ -193,53 +302,104 @@
       location.href = "index.html";
     });
 
-    // Create Job
+    function formToData(){
+      const fd = new FormData(form);
+      const data = Object.fromEntries(fd.entries());
+      return data;
+    }
+
+    function recalc(){
+      const d = formToData();
+
+      // Calculate cleaning price + hint
+      const price = calcCleaning(d);
+      const { teamHours } = estimateHoursCleaning(d);
+      const hint = cleaningHint(d, teamHours);
+
+      const ownerPct = Math.max(0, Math.min(100, Number(d.ownerPct || 30)));
+      const contractorsCount = Math.max(1, Math.min(3, Number(d.contractorsCount || 1)));
+
+      const ownerFee = Math.round(price * ownerPct / 100);
+      const pool = Math.max(0, price - ownerFee);
+      const per = Math.round(pool / contractorsCount);
+
+      clientPriceEl.textContent = `$${price}`;
+      ownerFeeEl.textContent = `$${ownerFee}`;
+      poolEl.textContent = `$${pool}`;
+      perEl.textContent = `$${per}`;
+      ownerPctLabel.textContent = `${ownerPct}%`;
+      cntEl.textContent = String(contractorsCount);
+      hintEl.textContent = hint || '';
+      return { price, hint, teamHours, ownerPct, ownerFee, pool, per, contractorsCount };
+    }
+
+    form.addEventListener('input', recalc);
+    form.addEventListener('change', recalc);
+    document.addEventListener('DOMContentLoaded', recalc);
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      statusEl.textContent = "";
-      statusEl.className = "status";
+      statusEl.textContent = ""; statusEl.className = "status";
 
-      const fd = new FormData(form);
+      const d = formToData();
+      const calc = recalc(); // ensure fresh totals
+
+      const summary = d.summary?.trim()
+        || `${d.service || "Initial Clean"} — ${d.beds||0}bd/${d.baths||0}ba ${d.sqft||""}${d.addons? " • "+d.addons:""}`;
+
       const docData = {
-        serviceType: String(fd.get('serviceType') || '').toLowerCase(), // 'cleaning' | 'organizing' | 'decor' | 'holiday'
-        flatRate: Number(fd.get('flatRate') || 0),
-        area: String(fd.get('area') || ''),
-        window: String(fd.get('window') || ''),
-        summary: String(fd.get('summary') || ''),
-        address: String(fd.get('address') || ''),
-        clientName: String(fd.get('clientName') || ''),
-        clientPhone: String(fd.get('clientPhone') || ''),
-        clientEmail: String(fd.get('clientEmail') || ''),
-        notes: String(fd.get('notes') || ''),
+        serviceType: 'cleaning',
         status: 'open',
+        flatRate: calc.price,
+        area: String(d.area||''),
+        window: String(d.window||''),
+        summary,
+        address: String(d.address||''),
+        clientName: String(d.clientName||''),
+        clientPhone: String(d.clientPhone||''),
+        clientEmail: String(d.clientEmail||''),
+
+        // calculation snapshot
+        calc: {
+          service: String(d.service||'Initial Clean'),
+          frequency: String(d.frequency||'one-time'),
+          beds: Number(d.beds||0),
+          baths: Number(d.baths||0),
+          other_rooms: Number(d.other_rooms||0),
+          sqft: String(d.sqft||'1000–2000'),
+          stories: String(d.stories||'1'),
+          pets: String(d.pets||''),
+          addons: String(d.addons||''),
+          hint: calc.hint,
+          teamHours: calc.teamHours,
+          price: calc.price
+        },
+
+        // payout split
+        ownerPercent: calc.ownerPct,
+        ownerFee: calc.ownerFee,
+        contractorPool: calc.pool,
+        contractorsCount: calc.contractorsCount,
+        contractorShareEach: calc.per,
+
+        notes: String(d.notes||''),
         createdAt: serverTimestamp(),
-        // empty contractor fields until claimed
+
+        // unclaimed fields
         contractorId: '',
-        contractorEmail: '',
+        contractorEmail: ''
       };
-
-      if (!docData.flatRate || docData.flatRate < 0) {
-        statusEl.textContent = "Enter a valid flat rate."; statusEl.classList.add('err'); return;
-      }
-
-      // basic type safety
-      const allowed = ['cleaning','organizing','decor','holiday'];
-      if (!allowed.includes(docData.serviceType)) {
-        statusEl.textContent = "Pick a valid service type."; statusEl.classList.add('err'); return;
-      }
 
       try {
         createBtn.disabled = true; createBtn.textContent = "Creating…";
-        const ref = await addDoc(collection(db,'jobs'), docData);
-        statusEl.textContent = "Job created (open). ID: " + ref.id;
-        statusEl.classList.add('ok');
-
-        // Reset key fields for next entry, keep area/window if you like
+        await addDoc(collection(db,'jobs'), docData);
+        statusEl.textContent = "Job created (open)."; statusEl.classList.add('ok');
         form.reset();
+        recalc(); // refresh UI to zeros
       } catch (e) {
         console.warn(e);
         statusEl.textContent = (e?.code === 'permission-denied')
-          ? "Permission denied. We may need to tweak Firestore Rules."
+          ? "Permission denied by Firestore Rules."
           : "Couldn’t create job. Try again.";
         statusEl.classList.add('err');
       } finally {
@@ -249,54 +409,34 @@
 
     // Recent jobs feed
     function startJobsFeed(){
-      const q = query(
-        collection(db, 'jobs'),
-        orderBy('createdAt', 'desc'),
-        limit(10)
-      );
-      onSnapshot(q, (snap) => {
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderJobs(items);
+      const qy = query(collection(db,'jobs'), orderBy('createdAt','desc'), limit(10));
+      onSnapshot(qy, (snap) => {
+        const items = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        jobsList.innerHTML = items.map(j => {
+          const rate = typeof j.flatRate === 'number' ? `$${j.flatRate}` : '';
+          const type = (j.serviceType||'job'); const capType = type[0].toUpperCase()+type.slice(1);
+          const when = j.createdAt && j.createdAt.toDate ? j.createdAt.toDate().toLocaleString() : '';
+          return `
+            <div class="jobrow">
+              <div style="display:flex;justify-content:space-between;gap:10px">
+                <strong>${capType}</strong><strong>${rate}</strong>
+              </div>
+              <div class="inline">
+                ${j.area?`<span class="pill">📍 ${j.area}</span>`:''}
+                ${j.window?`<span class="pill">🕒 ${j.window}</span>`:''}
+                <span class="pill">${j.status||'open'}</span>
+                ${when?`<span class="muted">${when}</span>`:''}
+              </div>
+              ${j.summary?`<div>${j.summary}</div>`:''}
+              ${j.address?`<div class="muted">Address: ${j.address}</div>`:''}
+              ${(j.ownerPercent!=null)?`<div class="muted">Split: keep ${j.ownerPercent}% • contractor pool $${j.contractorPool} (${j.contractorsCount} × $${j.contractorShareEach})</div>`:''}
+              <div class="inline"><a class="btn btn-outline" href="contractor.html">View in Contractor Portal</a></div>
+            </div>
+          `;
+        }).join('') || `<div class="jobrow muted">No jobs yet.</div>`;
       });
-    }
-
-    function renderJobs(list){
-      if (!list.length){
-        listEl.innerHTML = `<div class="row muted">No jobs yet.</div>`;
-        return;
-      }
-      listEl.innerHTML = list.map(j => {
-        const rate = typeof j.flatRate === 'number' ? `$${j.flatRate}` : '';
-        const type = (j.serviceType || '').toLowerCase();
-        const capType = type ? type[0].toUpperCase() + type.slice(1) : 'Job';
-        const area = j.area || '';
-        const win  = j.window || '';
-        const stat = j.status || '';
-        const when = j.createdAt && j.createdAt.toDate ? j.createdAt.toDate().toLocaleString() : '';
-        return `
-          <div class="row">
-            <div style="display:flex;justify-content:space-between;gap:10px;">
-              <strong>${capType}</strong>
-              <strong>${rate}</strong>
-            </div>
-            <div class="meta">
-              ${area ? `<span>📍 ${area}</span>` : ''}
-              ${win  ? `<span>🕒 ${win}</span>` : ''}
-              ${stat ? `<span class="pill">${stat}</span>` : ''}
-              ${when ? `<span class="muted">${when}</span>` : ''}
-            </div>
-            ${j.summary ? `<div>${j.summary}</div>` : ''}
-            ${j.address ? `<div class="muted">Address: ${j.address}</div>` : ''}
-            ${(j.clientName||j.clientPhone||j.clientEmail) ? `
-              <div class="muted">Client: ${j.clientName||''} ${j.clientPhone? '• '+j.clientPhone:''} ${j.clientEmail? '• '+j.clientEmail:''}</div>` : ''
-            }
-            <div class="actions">
-              <a class="btn btn-outline" href="contractor.html">View in Contractor Portal</a>
-            </div>
-          </div>
-        `;
-      }).join('');
     }
   </script>
 </body>
 </html>
+
