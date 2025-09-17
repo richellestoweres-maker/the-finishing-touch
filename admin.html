@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin – Jobs | The Finishing Touch</title>
+
+  <!-- Brand fonts + your site styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body { background: var(--paper,#fbf8f4); }
+    .wrap { width:min(1100px,94%); margin: 24px auto 60px; }
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      background:#fff; padding:12px 16px; border-radius:14px; box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));
+    }
+    .brand-mini { display:flex; align-items:center; gap:.6rem; }
+    .brand-mini .vase-logo { width:28px; height:36px; background:url('logo-vase.png') center / contain no-repeat; display:inline-block; }
+    .right { display:flex; align-items:center; gap:10px; }
+    .small { font-size:.9rem; opacity:.85; }
+
+    .grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; margin-top:14px; }
+    @media (max-width: 900px){ .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background:#fff; border-radius:14px; box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));
+      padding:16px;
+    }
+    .card h2 { margin:0 0 8px; font-family:"Playfair Display",serif; }
+    form.grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    form.grid2 .full { grid-column: 1 / -1; }
+    label { display:grid; gap:6px; font-weight:700; color:var(--taupe-900, #2e2a27); }
+    input, select, textarea {
+      border:1px solid #e3d9ce; border-radius:12px; padding:.75rem; background:#fffdfb; color:#2e2a27;
+    }
+    textarea { min-height: 90px; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+    .btn { display:inline-block; padding:.55rem .85rem; border-radius:999px; font-weight:800; text-decoration:none; cursor:pointer; }
+    .btn-outline { border:1.5px solid #2e2a27; background:#fff; color:#2e2a27; }
+    .btn-solid { background: var(--accent,#d2bda9); color:#2a2624; border:0; }
+    .status { font-weight:700; }
+    .ok { color:#0a7d33; } .err { color:#b00020; }
+    .list { display:grid; gap:10px; }
+    .row {
+      border:1px solid #e8ddd1; border-radius:12px; padding:10px; background:#fffdfb;
+      display:grid; gap:6px;
+    }
+    .meta { display:flex; gap:12px; flex-wrap:wrap; font-size:.92rem; opacity:.9; }
+    .pill { padding:.15rem .5rem; border-radius:999px; border:1px solid #e3d9ce; background:#fff; font-size:.85rem; }
+    .muted { opacity:.85; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand-mini">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <div>
+          <div style="font-family:'Playfair Display',serif; line-height:1; color:#2e2a27;">The Finishing Touch</div>
+          <div class="small">Admin – Jobs</div>
+        </div>
+      </div>
+      <div class="right">
+        <span id="whoami" class="small"></span>
+        <a class="btn btn-outline" href="contractor.html">Contractor Portal</a>
+        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="grid">
+      <!-- New Job -->
+      <section class="card">
+        <h2>New Job</h2>
+        <p class="muted" style="margin:4px 0 10px">Create an open job for contractors to claim.</p>
+
+        <form id="newJobForm" class="grid2">
+          <label>Service Type
+            <select name="serviceType" required>
+              <option value="cleaning">Cleaning</option>
+              <option value="organizing">Organizing</option>
+              <option value="decor">Decor</option>
+              <option value="holiday">Holiday</option>
+            </select>
+          </label>
+
+          <label>Flat Rate (USD)
+            <input name="flatRate" type="number" min="0" step="1" required placeholder="e.g., 275" />
+          </label>
+
+          <label>Area / City
+            <input name="area" placeholder="e.g., League City" />
+          </label>
+
+          <label>Time Window
+            <input name="window" placeholder="e.g., This week · AM" />
+          </label>
+
+          <label class="full">Short Summary
+            <input name="summary" placeholder="e.g., 3 bed / 2 bath — initial deep clean." />
+          </label>
+
+          <label class="full">Address (optional)
+            <input name="address" placeholder="123 Bay St, League City, TX" />
+          </label>
+
+          <label>Client Name
+            <input name="clientName" placeholder="Full name" />
+          </label>
+
+          <label>Client Phone
+            <input name="clientPhone" placeholder="(###) ###-####" />
+          </label>
+
+          <label class="full">Client Email
+            <input name="clientEmail" type="email" placeholder="name@example.com" />
+          </label>
+
+          <label class="full">Internal Notes (optional)
+            <textarea name="notes" placeholder="Any special instructions, access notes, codes, etc. Visible only to admin unless copied to job summary."></textarea>
+          </label>
+
+          <div class="full actions">
+            <button id="createBtn" type="submit" class="btn btn-solid">Create Job</button>
+            <span id="createStatus" class="status"></span>
+          </div>
+        </form>
+      </section>
+
+      <!-- Recent Jobs -->
+      <aside class="card">
+        <h2>Recent Jobs</h2>
+        <div id="jobsList" class="list" aria-live="polite"></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Firebase / Firestore -->
+  <script type="module">
+    import { auth, db } from "./ft-firebase.js";
+    import {
+      onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      addDoc, collection, serverTimestamp, doc, getDoc,
+      query, orderBy, limit, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    // DOM
+    const whoami = document.getElementById('whoami');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const form = document.getElementById('newJobForm');
+    const createBtn = document.getElementById('createBtn');
+    const statusEl = document.getElementById('createStatus');
+    const listEl = document.getElementById('jobsList');
+
+    // Gate: must be logged in AND role: admin
+    let me = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        location.href = "login.html?next=" + encodeURIComponent("admin.html");
+        return;
+      }
+      whoami.textContent = user.email || user.uid;
+
+      // Check role
+      try {
+        const uref = doc(db, 'users', user.uid);
+        const snap = await getDoc(uref);
+        const role = (snap.exists() ? (snap.data().role || '') : '').toLowerCase();
+        if (role !== 'admin') {
+          // If you’re not admin, bounce to contractor portal
+          location.href = "contractor.html";
+          return;
+        }
+        me = user;
+        // Start recent jobs listener
+        startJobsFeed();
+      } catch (e) {
+        console.warn(e);
+        alert("Couldn’t verify admin role.");
+        location.href = "login.html";
+      }
+    });
+
+    signOutBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await signOut(auth);
+      location.href = "index.html";
+    });
+
+    // Create Job
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = "";
+      statusEl.className = "status";
+
+      const fd = new FormData(form);
+      const docData = {
+        serviceType: String(fd.get('serviceType') || '').toLowerCase(), // 'cleaning' | 'organizing' | 'decor' | 'holiday'
+        flatRate: Number(fd.get('flatRate') || 0),
+        area: String(fd.get('area') || ''),
+        window: String(fd.get('window') || ''),
+        summary: String(fd.get('summary') || ''),
+        address: String(fd.get('address') || ''),
+        clientName: String(fd.get('clientName') || ''),
+        clientPhone: String(fd.get('clientPhone') || ''),
+        clientEmail: String(fd.get('clientEmail') || ''),
+        notes: String(fd.get('notes') || ''),
+        status: 'open',
+        createdAt: serverTimestamp(),
+        // empty contractor fields until claimed
+        contractorId: '',
+        contractorEmail: '',
+      };
+
+      if (!docData.flatRate || docData.flatRate < 0) {
+        statusEl.textContent = "Enter a valid flat rate."; statusEl.classList.add('err'); return;
+      }
+
+      // basic type safety
+      const allowed = ['cleaning','organizing','decor','holiday'];
+      if (!allowed.includes(docData.serviceType)) {
+        statusEl.textContent = "Pick a valid service type."; statusEl.classList.add('err'); return;
+      }
+
+      try {
+        createBtn.disabled = true; createBtn.textContent = "Creating…";
+        const ref = await addDoc(collection(db,'jobs'), docData);
+        statusEl.textContent = "Job created (open). ID: " + ref.id;
+        statusEl.classList.add('ok');
+
+        // Reset key fields for next entry, keep area/window if you like
+        form.reset();
+      } catch (e) {
+        console.warn(e);
+        statusEl.textContent = (e?.code === 'permission-denied')
+          ? "Permission denied. We may need to tweak Firestore Rules."
+          : "Couldn’t create job. Try again.";
+        statusEl.classList.add('err');
+      } finally {
+        createBtn.disabled = false; createBtn.textContent = "Create Job";
+      }
+    });
+
+    // Recent jobs feed
+    function startJobsFeed(){
+      const q = query(
+        collection(db, 'jobs'),
+        orderBy('createdAt', 'desc'),
+        limit(10)
+      );
+      onSnapshot(q, (snap) => {
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderJobs(items);
+      });
+    }
+
+    function renderJobs(list){
+      if (!list.length){
+        listEl.innerHTML = `<div class="row muted">No jobs yet.</div>`;
+        return;
+      }
+      listEl.innerHTML = list.map(j => {
+        const rate = typeof j.flatRate === 'number' ? `$${j.flatRate}` : '';
+        const type = (j.serviceType || '').toLowerCase();
+        const capType = type ? type[0].toUpperCase() + type.slice(1) : 'Job';
+        const area = j.area || '';
+        const win  = j.window || '';
+        const stat = j.status || '';
+        const when = j.createdAt && j.createdAt.toDate ? j.createdAt.toDate().toLocaleString() : '';
+        return `
+          <div class="row">
+            <div style="display:flex;justify-content:space-between;gap:10px;">
+              <strong>${capType}</strong>
+              <strong>${rate}</strong>
+            </div>
+            <div class="meta">
+              ${area ? `<span>📍 ${area}</span>` : ''}
+              ${win  ? `<span>🕒 ${win}</span>` : ''}
+              ${stat ? `<span class="pill">${stat}</span>` : ''}
+              ${when ? `<span class="muted">${when}</span>` : ''}
+            </div>
+            ${j.summary ? `<div>${j.summary}</div>` : ''}
+            ${j.address ? `<div class="muted">Address: ${j.address}</div>` : ''}
+            ${(j.clientName||j.clientPhone||j.clientEmail) ? `
+              <div class="muted">Client: ${j.clientName||''} ${j.clientPhone? '• '+j.clientPhone:''} ${j.clientEmail? '• '+j.clientEmail:''}</div>` : ''
+            }
+            <div class="actions">
+              <a class="btn btn-outline" href="contractor.html">View in Contractor Portal</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
