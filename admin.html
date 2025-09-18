@@ -3,462 +3,402 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin – Create Job (with Estimate)</title>
+  <title>Contractor Portal – The Finishing Touch</title>
 
+  <!-- Fonts + Site CSS (same look/feel) -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <style>
     body{background:#fbf8f4}
-    .wrap{width:min(1100px,94%);margin:24px auto 60px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:12px 16px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-    .brand-mini{display:flex;align-items:center;gap:.6rem}
-    .brand-mini .vase-logo{width:28px;height:36px;background:url('logo-vase.png') center/contain no-repeat;display:inline-block}
-    .right{display:flex;align-items:center;gap:10px}
-    .small{font-size:.9rem;opacity:.85}
+    .app { width:min(1100px,94%); margin:22px auto 60px; }
 
-    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:14px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    /* Top bar */
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      background:#fff; border-radius:14px; padding:12px 16px; box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));
+      margin-bottom:16px;
+    }
+    .brand-mini{display:flex; align-items:center; gap:.6rem;}
+    .brand-mini .vase{ width:28px; height:36px; background:url('logo-vase.png') center/contain no-repeat; }
+    .brand-mini .name{ font-family:"Playfair Display",serif; font-weight:700; color:var(--taupe-900,#2e2a27); }
+    .role-chip{
+      font-weight:800; font-size:.78rem; padding:.28rem .6rem; border-radius:999px; border:1px solid #e3d9ce; color:#7b746e; background:#fffdfb;
+    }
+    .tabs { display:flex; gap:8px; }
+    .tab-btn{ border:1px solid #e3d9ce; background:#fff; color:#2e2a27; font-weight:800; padding:.55rem .9rem; border-radius:999px; cursor:pointer; }
+    .tab-btn.active{ background:#2e2a27; color:#fff; border-color:#2e2a27; }
 
-    .card{background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:16px}
-    .card h2{margin:0 0 8px;font-family:"Playfair Display",serif}
-    .muted{opacity:.85}
+    .signout-btn{
+      border:1.5px solid #2e2a27; color:#2e2a27; background:#fff; border-radius:999px; padding:.5rem .8rem; font-weight:800; cursor:pointer;
+    }
 
-    form.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    form.grid2 .full{grid-column:1/-1}
-    label{display:grid;gap:6px;font-weight:700;color:#2e2a27}
-    input,select,textarea{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:#2e2a27}
-    textarea{min-height:84px}
-    .row{display:grid;gap:10px}
-    .inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .pill{padding:.15rem .5rem;border-radius:999px;border:1px solid #e3d9ce;background:#fff;font-size:.9rem}
-    .btn{display:inline-block;padding:.6rem .9rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer}
-    .btn-outline{border:1.5px solid #2e2a27;background:#fff;color:#2e2a27}
-    .btn-solid{background:#d2bda9;color:#2a2624;border:0}
-    .status{font-weight:800}
-    .ok{color:#0a7d33}.err{color:#b00020}
+    /* Filters */
+    .filters{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px; }
+    .chip{ border:1px solid #e3d9ce; background:#fff; color:#2e2a27; border-radius:999px; padding:.4rem .7rem; cursor:pointer; font-weight:700; }
+    .chip.active{ background:#f6f2ed; }
 
-    .calc-box{border:1px solid #e8ddd1;border-radius:12px;padding:10px;background:#fffdfb}
-    .calc-values{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .calc-values div{display:flex;justify-content:space-between;font-weight:700}
-    .hint{font-size:.92rem;opacity:.9}
-    .list{display:grid;gap:10px}
-    .jobrow{border:1px solid #e8ddd1;border-radius:12px;padding:10px;background:#fffdfb;display:grid;gap:6px}
+    /* Lists */
+    .lists{ background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:18px; }
+    .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+    .card{
+      border:1px solid #e8ddd1; border-radius:14px; padding:12px; background:#fffdfb;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .card h4{ margin:0; font-family:"Playfair Display",serif; }
+    .mini{ font-size:.9rem; opacity:.9; }
+    .row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .btn{ display:inline-block; padding:.55rem .85rem; border-radius:10px; font-weight:800; cursor:pointer; text-decoration:none; }
+    .btn-claim{ background:#2e2a27; color:#fff; border:0; }
+    .btn-outline{ border:1px solid #2e2a27; color:#2e2a27; background:#fff; }
+    .muted{ color:#7b746e; }
+    .warn{ color:#b00020; font-weight:800; }
+    .ok{ color:#0a7d33; font-weight:800; }
+
+    .empty{ text-align:center; padding:30px 12px; color:#7b746e; }
+
+    /* Address reveal info */
+    .addr{ font-weight:700; }
+    .addr.locked{ filter: blur(3px); }
+
+    /* Footer note */
+    .foot-note{ text-align:center; margin-top:14px; font-size:.92rem; color:#7b746e; }
+
+    /* Hide on inactive tab */
+    [data-panel]{ display:none; }
+    [data-panel].show{ display:block; }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="app">
+    <!-- Top bar -->
     <div class="topbar">
       <div class="brand-mini">
-        <span class="vase-logo" aria-hidden="true"></span>
-        <div>
-          <div style="font-family:'Playfair Display',serif;line-height:1;color:#2e2a27">The Finishing Touch</div>
-          <div class="small">Admin – Create Job</div>
-        </div>
+        <span class="vase" aria-hidden="true"></span>
+        <span class="name">The Finishing Touch</span>
+        <span id="roleChip" class="role-chip" title="Your access level">…</span>
       </div>
-      <div class="right">
-        <span id="whoami" class="small"></span>
-        <a class="btn btn-outline" href="contractor.html">Contractor Portal</a>
-        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
+      <div class="tabs">
+        <button id="tabOpen" class="tab-btn active">Open Jobs</button>
+        <button id="tabMine" class="tab-btn">My Jobs</button>
+      </div>
+      <button id="signOutBtn" class="signout-btn">Sign out</button>
+    </div>
+
+    <!-- Filters (only affect Open Jobs) -->
+    <div id="filters" class="filters" aria-label="Filter by service type"></div>
+
+    <!-- Content panels -->
+    <div class="lists">
+      <div id="panelOpen" data-panel class="show">
+        <div id="openList" class="grid"></div>
+        <div id="openEmpty" class="empty" hidden>No open jobs match your filters.</div>
+      </div>
+      <div id="panelMine" data-panel>
+        <div id="myList" class="grid"></div>
+        <div id="myEmpty" class="empty" hidden>No jobs yet. Claim one from the Open Jobs tab.</div>
       </div>
     </div>
 
-    <div class="grid">
-      <!-- LEFT: Create Job (Cleaning estimator) -->
-      <section class="card">
-        <h2>New Job (Cleaning)</h2>
-        <p class="muted" style="margin-top:0">Fill the same key fields you’d ask by phone. Price + payouts calculate automatically.</p>
+    <p class="foot-note">
+      You’ll see <strong>city + ZIP</strong> on Open Jobs. After you claim a job, the full address appears here in <em>My Jobs</em>.
+    </p>
 
-        <form id="jobForm" class="grid2">
-          <!-- Client / logistics (PII goes to private subdoc + email only) -->
-          <label class="full">Client Name
-            <input name="clientName" placeholder="Full name">
-          </label>
-          <label>Client Phone
-            <input name="clientPhone" placeholder="(###) ###-####">
-          </label>
-          <label>Client Email
-            <input name="clientEmail" type="email" placeholder="name@example.com">
-          </label>
-          <label class="full">Service Address
-            <input name="address" placeholder="123 Bay St, League City, TX">
-          </label>
-          <label>City / Area
-            <input name="area" placeholder="e.g., League City">
-          </label>
-          <label>Time Window
-            <input name="window" placeholder="e.g., This week · AM">
-          </label>
-
-          <!-- Cleaning specifics (matches your intake) -->
-          <label>Service Type
-            <select name="service">
-              <option>Initial Clean</option>
-              <option>Standard Clean</option>
-              <option>Deep Clean</option>
-              <option>Move-In / Move-Out Clean</option>
-              <option>Airbnb Turnover</option>
-            </select>
-          </label>
-          <label>Frequency
-            <select name="frequency">
-              <option>one-time</option><option>weekly</option>
-              <option>biweekly</option><option>monthly</option>
-            </select>
-          </label>
-
-          <label>Bedrooms
-            <input name="beds" type="number" min="0" value="3">
-          </label>
-          <label>Bathrooms
-            <input name="baths" type="number" min="0" value="2">
-          </label>
-          <label>Other Rooms
-            <input name="other_rooms" type="number" min="0" value="0">
-          </label>
-          <label>Square Footage
-            <select name="sqft">
-              <option>&lt;1000</option><option>1000–2000</option>
-              <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
-            </select>
-          </label>
-          <label>Stories
-            <select name="stories"><option>1</option><option>2</option></select>
-          </label>
-          <label>Pets (type & number)
-            <input name="pets" placeholder="e.g., 1 dog">
-          </label>
-          <label class="full">Add-ons
-            <input name="addons" placeholder="oven, fridge, windows, baseboards, laundry">
-          </label>
-
-          <!-- Owner % and contractor split -->
-          <label>Owner Share (%)
-            <input name="ownerPct" type="number" min="0" max="100" value="30">
-          </label>
-          <label>Contractors on job
-            <select name="contractorsCount">
-              <option>1</option><option>2</option><option>3</option>
-            </select>
-          </label>
-
-          <label class="full">Internal Notes (optional)
-            <textarea name="notes" placeholder="Special instructions, access codes, etc. (kept private)"></textarea>
-          </label>
-
-          <!-- Live totals -->
-          <div class="full calc-box" id="calcBox" aria-live="polite">
-            <div class="inline">
-              <span class="pill">Cleaning</span>
-              <span id="calcHint" class="hint"></span>
-            </div>
-            <div class="calc-values" style="margin-top:6px">
-              <div><span>Client price</span><span id="clientPrice">$0</span></div>
-              <div><span>Owner keeps (<span id="ownerPctLabel">30%</span>)</span><span id="ownerFee">$0</span></div>
-              <div><span>Contractor pool</span><span id="pool">$0</span></div>
-              <div><span>Per contractor (<span id="cnt">1</span>)</span><span id="per">$0</span></div>
-            </div>
-          </div>
-
-          <div class="full inline" style="margin-top:6px">
-            <button id="createBtn" class="btn btn-solid" type="submit">Create Job</button>
-            <span id="status" class="status"></span>
-          </div>
-        </form>
-      </section>
-
-      <!-- RIGHT: Recent Jobs (public fields only) -->
-      <aside class="card">
-        <h2>Recent Jobs</h2>
-        <div id="jobsList" class="list" aria-live="polite"></div>
-      </aside>
-    </div>
+    <p id="errorMsg" class="foot-note warn" hidden></p>
   </div>
 
-  <!-- Firebase + Firestore -->
+  <!-- Firebase + App code -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      addDoc, setDoc, collection, serverTimestamp, doc, getDoc,
-      query, orderBy, limit, onSnapshot
+      onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      collection, doc, getDoc, getDocs, setDoc, updateDoc, serverTimestamp,
+      query, where, onSnapshot, runTransaction
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    /* ===== Pricing (same logic you use on the site) ===== */
-    const roundHalf = n => Math.round(n * 2) / 2;
-    const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
-    const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
-    const serviceMult = { "Initial Clean":1.00, "Deep Clean":1.20, "Move-In / Move-Out Clean":1.35, "Airbnb Turnover":0.55 };
-    const freqDisc = { "weekly":0.85, "biweekly":0.90, "monthly":0.95, "one-time":1 };
-    const addonPricesCleaning = { "oven":35,"fridge":30,"refrigerator":30,"windows":80,"window":80,"baseboards":60,"laundry":18 };
-    const addonHoursCleaning  = { "oven":.25,"fridge":.25,"refrigerator":.25,"windows":1.5,"window":1.5,"baseboards":1.0,"laundry":.5 };
-    const perExtraBathroom = 20, perExtraBedroom = 12, perOtherRoom = 10, twoStoryFee = 20, petFee = 12;
+    // --- UI refs
+    const roleChip = document.getElementById('roleChip');
+    const filtersWrap = document.getElementById('filters');
+    const openList = document.getElementById('openList');
+    const myList = document.getElementById('myList');
+    const openEmpty = document.getElementById('openEmpty');
+    const myEmpty = document.getElementById('myEmpty');
+    const errEl = document.getElementById('errorMsg');
 
-    function parseAddonsList(txt, priceMap){ txt=(txt||"").toLowerCase(); let t=0; for (const k of Object.keys(priceMap)){ if (txt.includes(k)) t+=priceMap[k]; } return t; }
-    function parseAddonsHours(txt, hrsMap){ txt=(txt||"").toLowerCase(); let t=0; for (const k of Object.keys(hrsMap)){ if (txt.includes(k)) t+=hrsMap[k]; } return t; }
-    function airbnbByBedrooms(b){ const n=Number(b)||0; if(n<=1) return 120; if(n===2) return 140; if(n===3) return 160; if(n===4) return 180; return 200; }
+    // Tabs
+    const tabOpen = document.getElementById('tabOpen');
+    const tabMine = document.getElementById('tabMine');
+    const panelOpen = document.getElementById('panelOpen');
+    const panelMine = document.getElementById('panelMine');
 
-    function calcCleaning(data){
-      const sqft=data.sqft||"1000–2000";
-      const service=data.service||"Initial Clean";
-      const frequency=data.frequency||"one-time";
-      const beds=Number(data.beds||0), baths=Number(data.baths||0), otherRooms=Number(data.other_rooms||0);
-      const stories=String(data.stories||"1"), pets=String(data.pets||"");
-
-      let base=0;
-      if (service==="Standard Clean"){ base = standardBySqft[sqft] ?? 200; }
-      else if (service==="Airbnb Turnover"){ base = airbnbByBedrooms(beds); }
-      else { const initial = initialBySqft[sqft] ?? 300; base = initial * (serviceMult[service] ?? 1); }
-
-      const extraBaths=Math.max(0,baths-2)*perExtraBathroom;
-      const extraBeds =Math.max(0,beds-3)*perExtraBedroom;
-      const extraRooms=Math.max(0,otherRooms)*perOtherRoom;
-      const storyFee =(stories==="2")?twoStoryFee:0;
-      const petsFee  =pets.trim()?petFee:0;
-      const addonsFee=parseAddonsList(data.addons, addonPricesCleaning);
-
-      let est = base+extraBaths+extraBeds+extraRooms+storyFee+petsFee+addonsFee;
-      if (service==="Standard Clean") est *= (freqDisc[frequency]||1);
-      return Math.round(est);
-    }
-
-    function estimateHoursCleaning(data){
-      const sqft=data.sqft||"1000–2000";
-      const service=data.service||"Initial Clean";
-      const beds=Number(data.beds||0), baths=Number(data.baths||0), otherRooms=Number(data.other_rooms||0);
-      const stories=String(data.stories||"1");
-      let solo=2;
-      if (sqft === "<1000") solo=2; else if (sqft==="1000–2000") solo=3; else if (sqft==="2000–3000") solo=4; else if (sqft==="3000–4000") solo=5; else solo=6;
-      if (service==="Airbnb Turnover"){
-        if (beds<=1) solo=2; else if (beds===2) solo=2.5; else if (beds===3) solo=3; else if (beds===4) solo=3.5; else solo=4;
-      }
-      solo += Math.max(0,beds-3)*.5;
-      solo += Math.max(0,baths-2)*.75;
-      solo += Math.max(0,otherRooms)*.25;
-      if (stories==="2") solo += .25;
-      solo += parseAddonsHours(data.addons, addonHoursCleaning);
-      if (service==="Deep Clean") solo*=1.5;
-      if (service==="Move-In / Move-Out Clean") solo*=2;
-      if (service==="Initial Clean") solo*=1.2;
-      solo = roundHalf(solo);
-      const team = roundHalf(solo/2);
-      return { soloHours: solo, teamHours: team };
-    }
-
-    function cleaningHint(data, teamHours){
-      const service=data.service||"Initial Clean";
-      const sqft=data.sqft||"1000–2000";
-      const map={"<1000":"Small (≤1,000 sq ft)","1000–2000":"Medium (1,000–2,000)","2000–3000":"Large (2,000–3,000)","3000–4000":"XL (3,000–4,000)","4000+":"Estate (4,000+)"};
-      if (service==="Standard Clean") return `Standard Clean — ${map[sqft]||"Sized by intake"}`;
-      if (service==="Airbnb Turnover"){
-        if (teamHours<=2.5) return "Airbnb Turnover — Quick (~2 hr)";
-        if (teamHours<=3.5) return "Airbnb Turnover — Standard (~3 hr)";
-        if (teamHours<=5)   return "Airbnb Turnover — Extended (~4–5 hr)";
-        return "Airbnb Turnover — Extended XL (5.5+ hr)";
-      }
-      if (teamHours<=2.5) return `${service} — Small (~2–2.5 hr)`;
-      if (teamHours<=3.5) return `${service} — Medium (~3–3.5 hr)`;
-      if (teamHours<=5)   return `${service} — Large (~4–5 hr)`;
-      return `${service} — XL (5.5+ hr)`;
-    }
-
-    /* ===== UI wiring ===== */
-    const whoami = document.getElementById('whoami');
-    const signOutBtn = document.getElementById('signOutBtn');
-    const form = document.getElementById('jobForm');
-    const statusEl = document.getElementById('status');
-    const createBtn = document.getElementById('createBtn');
-
-    const clientPriceEl = document.getElementById('clientPrice');
-    const ownerFeeEl = document.getElementById('ownerFee');
-    const poolEl = document.getElementById('pool');
-    const perEl = document.getElementById('per');
-    const ownerPctLabel = document.getElementById('ownerPctLabel');
-    const cntEl = document.getElementById('cnt');
-    const hintEl = document.getElementById('calcHint');
-
-    const jobsList = document.getElementById('jobsList');
-
-    // Must be admin
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { location.href = "login.html?next=" + encodeURIComponent("admin.html"); return; }
-      whoami.textContent = user.email || user.uid;
-
-      try {
-        const uref = doc(db, 'users', user.uid);
-        const snap = await getDoc(uref);
-        const role = (snap.exists() ? (snap.data().role || '') : '').toLowerCase();
-        if (role !== 'admin') { location.href = "contractor.html"; return; }
-        startJobsFeed();
-      } catch (e) {
-        console.warn(e); alert("Couldn’t verify admin role."); location.href = "login.html";
-      }
+    tabOpen.addEventListener('click', ()=>{
+      tabOpen.classList.add('active'); tabMine.classList.remove('active');
+      panelOpen.classList.add('show'); panelMine.classList.remove('show');
+    });
+    tabMine.addEventListener('click', ()=>{
+      tabMine.classList.add('active'); tabOpen.classList.remove('active');
+      panelMine.classList.add('show'); panelOpen.classList.remove('show');
     });
 
-    signOutBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await signOut(auth);
-      location.href = "index.html";
-    });
+    // App state
+    let me = null;            // auth user
+    let meProfile = null;     // Firestore user profile
+    let allowed = ['cleaning','organizing','decor','holiday']; // default if profile missing
+    let filterSet = new Set(); // active filters
 
-    function formToData(){ return Object.fromEntries(new FormData(form).entries()); }
-
-    function recalc(){
-      const d = formToData();
-      const price = calcCleaning(d);
-      const { teamHours } = estimateHoursCleaning(d);
-      const hint = cleaningHint(d, teamHours);
-
-      const ownerPct = Math.max(0, Math.min(100, Number(d.ownerPct || 30)));
-      const contractorsCount = Math.max(1, Math.min(3, Number(d.contractorsCount || 1)));
-
-      const ownerFee = Math.round(price * ownerPct / 100);
-      const pool = Math.max(0, price - ownerFee);
-      const per = Math.round(pool / contractorsCount);
-
-      clientPriceEl.textContent = `$${price}`;
-      ownerFeeEl.textContent = `$${ownerFee}`;
-      poolEl.textContent = `$${pool}`;
-      perEl.textContent = `$${per}`;
-      ownerPctLabel.textContent = `${ownerPct}%`;
-      cntEl.textContent = String(contractorsCount);
-      hintEl.textContent = hint || '';
-      return { price, hint, teamHours, ownerPct, ownerFee, pool, per, contractorsCount };
-    }
-
-    form.addEventListener('input', recalc);
-    form.addEventListener('change', recalc);
-    document.addEventListener('DOMContentLoaded', recalc);
-
-    const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzzaogbv";
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      statusEl.textContent = ""; statusEl.className = "status";
-
-      const d = formToData();
-      const calc = recalc(); // fresh totals
-
-      const summary = `${d.service || "Initial Clean"} — ${d.beds||0}bd/${d.baths||0}ba ${d.sqft||""}${d.addons? " • "+d.addons:""}`;
-
-      // 1) Create PUBLIC job (no PII, no full address)
-      const publicDoc = {
-        serviceType: 'cleaning',
-        status: 'open',
-        flatRate: calc.price,
-        area: String(d.area||''),
-        window: String(d.window||''),
-        summary,
-        // calculation snapshot (safe to show)
-        calc: {
-          service: String(d.service||'Initial Clean'),
-          frequency: String(d.frequency||'one-time'),
-          beds: Number(d.beds||0),
-          baths: Number(d.baths||0),
-          other_rooms: Number(d.other_rooms||0),
-          sqft: String(d.sqft||'1000–2000'),
-          stories: String(d.stories||'1'),
-          addons: String(d.addons||''),
-          hint: calc.hint,
-          teamHours: calc.teamHours,
-          price: calc.price
-        },
-        // payout split (safe)
-        ownerPercent: calc.ownerPct,
-        ownerFee: calc.ownerFee,
-        contractorPool: calc.pool,
-        contractorsCount: calc.contractorsCount,
-        contractorShareEach: calc.per,
-
-        createdAt: serverTimestamp(),
-        contractorId: '',
-        contractorEmail: ''
-      };
-
-      try {
-        createBtn.disabled = true; createBtn.textContent = "Creating…";
-        const ref = await addDoc(collection(db,'jobs'), publicDoc);
-
-        // 2) Write PRIVATE PII under subcollection (admins only; contractors never see this)
-        const privateDoc = {
-          clientName: String(d.clientName||''),
-          clientPhone: String(d.clientPhone||''),
-          clientEmail: String(d.clientEmail||''),
-          address: String(d.address||''),
-          internalNotes: String(d.notes||''),
-          createdAt: serverTimestamp()
-        };
-        await setDoc(doc(db,'jobs', ref.id, 'private', 'pii'), privateDoc);
-
-        // 3) Email you a copy via Formspree (non-blocking)
-        try {
-          const fd = new FormData();
-          fd.append("_subject", "Admin-created Job – Cleaning");
-          fd.append("source", "Admin manual intake");
-          fd.append("service_type", "Cleaning");
-          fd.append("summary", summary);
-          fd.append("estimate_price", `$${calc.price}`);
-          fd.append("estimate_hint", publicDoc.calc.hint);
-          fd.append("owner_percent", `${calc.ownerPct}%`);
-          fd.append("contractor_pool", `$${calc.pool} (${calc.contractorsCount} × $${calc.per})`);
-          // client/contact (only in email)
-          fd.append("client_name", d.clientName||"");
-          fd.append("client_phone", d.clientPhone||"");
-          fd.append("client_email", d.clientEmail||"");
-          fd.append("address", d.address||"");
-          fd.append("area", d.area||"");
-          fd.append("window", d.window||"");
-          fd.append("notes", d.notes||"");
-          fd.append("job_id", ref.id);
-          fd.append("_page", location.pathname);
-
-          await fetch(FORMSPREE_ENDPOINT, { method:"POST", body: fd, headers:{ "Accept":"application/json" }});
-        } catch (mailErr) {
-          console.warn("Formspree mail error:", mailErr);
-        }
-
-        statusEl.textContent = "Job created (open) and emailed."; statusEl.classList.add('ok');
-        form.reset(); recalc();
-      } catch (e) {
-        console.warn(e);
-        statusEl.textContent = (e?.code === 'permission-denied')
-          ? "Permission denied by Firestore Rules."
-          : "Couldn’t create job. Try again.";
-        statusEl.classList.add('err');
-      } finally {
-        createBtn.disabled = false; createBtn.textContent = "Create Job";
-      }
-    });
-
-    // Recent jobs feed (public fields only)
-    function startJobsFeed(){
-      const qy = query(collection(db,'jobs'), orderBy('createdAt','desc'), limit(10));
-      onSnapshot(qy, (snap) => {
-        const items = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-        jobsList.innerHTML = items.map(j => {
-          const rate = typeof j.flatRate === 'number' ? `$${j.flatRate}` : '';
-          const type = (j.serviceType||'job'); const capType = type[0].toUpperCase()+type.slice(1);
-          const when = j.createdAt && j.createdAt.toDate ? j.createdAt.toDate().toLocaleString() : '';
-          return `
-            <div class="jobrow">
-              <div style="display:flex;justify-content:space-between;gap:10px">
-                <strong>${capType}</strong><strong>${rate}</strong>
-              </div>
-              <div class="inline">
-                ${j.area?`<span class="pill">📍 ${j.area}</span>`:''}
-                ${j.window?`<span class="pill">🕒 ${j.window}</span>`:''}
-                <span class="pill">${j.status||'open'}</span>
-                ${when?`<span class="muted">${when}</span>`:''}
-              </div>
-              ${j.summary?`<div>${j.summary}</div>`:''}
-              <div class="inline"><a class="btn btn-outline" href="contractor.html">View in Contractor Portal</a></div>
-            </div>
-          `;
-        }).join('') || `<div class="jobrow muted">No jobs yet.</div>`;
+    // Build filter chips from allowed services
+    function buildFilters(){
+      filtersWrap.innerHTML = '';
+      const pretty = {cleaning:'Cleaning', organizing:'Organizing', decor:'Decor', holiday:'Holiday'};
+      allowed.forEach(key=>{
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = pretty[key] || key;
+        b.dataset.key = key;
+        b.addEventListener('click', ()=>{
+          if (filterSet.has(key)) filterSet.delete(key); else filterSet.add(key);
+          b.classList.toggle('active');
+          renderOpenJobs(); // re-filter client-side
+        });
+        filtersWrap.appendChild(b);
       });
     }
+
+    // Helpers
+    const fmtUSD = n => (typeof n === 'number') ? `$${n.toLocaleString()}` : '';
+    const contractorShare = (flat, pct=0.70) => Math.round((Number(flat)||0) * pct);
+
+    function cardOpen(job){
+      const $ = (k) => job?.[k];
+      const zip = $('zip') || '';
+      const area = $('area') || '';
+      const when = $('window') || '';
+      const service = $('serviceType') || '—';
+      const flat = Number($('flatRate')||0);
+      const share = contractorShare(flat);
+
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <h4>${service}</h4>
+        <div class="mini">${area ? area : ''}${zip ? (area? ' · ' : '') + zip : ''}${when ? ' · ' + when : ''}</div>
+        <div class="mini">${$('summary')||''}</div>
+        <div class="row">
+          <div>
+            <div><strong>${fmtUSD(flat)}</strong> flat</div>
+            <div class="mini muted">Your pay est: <strong>${fmtUSD(share)}</strong></div>
+          </div>
+          <button class="btn btn-claim">Claim</button>
+        </div>
+      `;
+      div.querySelector('.btn-claim').addEventListener('click', ()=> claimJob(job.id));
+      return div;
+    }
+
+    function cardMine(job){
+      const $ = (k) => job?.[k];
+      const service = $('serviceType') || '—';
+      const status = $('status') || 'claimed';
+      const flat = Number($('flatRate')||0);
+      const share = contractorShare(flat);
+      const area = $('area') || '';
+      const zip = $('zip') || '';
+      const when = $('window') || '';
+      const summary = $('summary') || '';
+
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <h4>${service}</h4>
+        <div class="mini">Status: <strong>${status}</strong></div>
+        <div class="mini">${area ? area : ''}${zip ? (area? ' · ' : '') + zip : ''}${when ? ' · ' + when : ''}</div>
+        <div class="mini">${summary}</div>
+
+        <div class="mini muted">Payout est: <strong>${fmtUSD(share)}</strong></div>
+
+        <div class="mini" id="addr-${job.id}">
+          <span class="muted">Address:</span> <span class="addr locked">Hidden</span>
+        </div>
+
+        <div class="row">
+          <button class="btn btn-outline" data-act="progress">Mark In Progress</button>
+          <button class="btn btn-claim" data-act="submit">Submit for Approval</button>
+        </div>
+      `;
+
+      div.querySelector('[data-act="progress"]').addEventListener('click', ()=> updateStatus(job.id,'in-progress'));
+      div.querySelector('[data-act="submit"]').addEventListener('click', ()=> updateStatus(job.id,'submitted'));
+
+      // Try to reveal the full address from private doc
+      revealAddress(job.id);
+
+      return div;
+    }
+
+    async function revealAddress(jobId){
+      // Reads jobs/{jobId}/private/pii (address/name/phone/email) – rules should only allow claimer (or admin).
+      try{
+        const piiRef = doc(db, `jobs/${jobId}/private/pii`);
+        const snap = await getDoc(piiRef);
+        const el = document.getElementById(`addr-${jobId}`);
+        if (!el) return;
+        if (snap.exists()){
+          const data = snap.data();
+          const addr = data?.address || '(no address set yet)';
+          el.innerHTML = `<span class="muted">Address:</span> <span class="addr">${addr}</span>`;
+        } else {
+          el.innerHTML = `<span class="muted">Address:</span> <span class="addr">Not available yet</span>`;
+        }
+      } catch (e){
+        // Permission denied or missing — keep hidden, show hint
+        const el = document.getElementById(`addr-${jobId}`);
+        if (el) el.innerHTML = `<span class="muted">Address:</span> <span class="addr locked">Hidden (will appear after claim)</span>`;
+      }
+    }
+
+    // Data caches
+    let openJobs = []; // {id, ...data}
+    let myJobs = [];
+
+    function renderOpenJobs(){
+      // Apply service filters
+      const filtered = openJobs.filter(j=>{
+        if (filterSet.size === 0) return true;
+        const key = String(j.serviceType||'').toLowerCase();
+        return filterSet.has(key);
+      });
+      openList.innerHTML = '';
+      filtered.forEach(j => openList.appendChild(cardOpen(j)));
+      openEmpty.hidden = filtered.length > 0;
+    }
+    function renderMyJobs(){
+      myList.innerHTML = '';
+      myJobs.forEach(j => myList.appendChild(cardMine(j)));
+      myEmpty.hidden = myJobs.length > 0;
+    }
+
+    async function claimJob(jobId){
+      if (!me) return;
+      try{
+        await runTransaction(db, async (tx)=>{
+          const ref = doc(db, 'jobs', jobId);
+          const snap = await tx.get(ref);
+          if (!snap.exists()) throw new Error('Job not found.');
+          const cur = snap.data();
+          if ((cur.status||'open') !== 'open') throw new Error('This job has already been claimed.');
+          tx.update(ref, {
+            status: 'claimed',
+            contractorId: me.uid,
+            contractorEmail: me.email || null,
+            claimedAt: serverTimestamp()
+          });
+        });
+        // Move user to My Jobs tab after claim
+        tabMine.click();
+      } catch(e){
+        console.warn(e);
+        toast(`Couldn’t claim: ${e.message || e.code || e}`);
+      }
+    }
+
+    async function updateStatus(jobId, status){
+      try{
+        const ref = doc(db,'jobs',jobId);
+        await updateDoc(ref,{ status });
+        toast(`Status updated to “${status}”.`);
+      } catch(e){
+        toast('Update failed.');
+      }
+    }
+
+    function toast(msg){
+      errEl.textContent = msg;
+      errEl.hidden = false;
+      setTimeout(()=> errEl.hidden = true, 2600);
+    }
+
+    // --- Auth gate & boot ---
+    onAuthStateChanged(auth, async (user)=>{
+      if (!user){
+        // send to login and bounce back here
+        const next = encodeURIComponent('contractor.html');
+        window.location.href = `login.html?next=${next}`;
+        return;
+      }
+      me = user;
+
+      // Load profile
+      const pRef = doc(db,'users', me.uid);
+      const pSnap = await getDoc(pRef);
+      meProfile = pSnap.exists() ? pSnap.data() : { role:'contractor', serviceTypes:['cleaning','organizing','decor','holiday'] };
+
+      const role = String(meProfile.role || '').toLowerCase();
+      roleChip.textContent = role ? role : 'unknown';
+      roleChip.title = role ? `Signed in as ${role}` : 'Signed in';
+
+      if (role !== 'contractor' && role !== 'admin'){
+        errEl.hidden = false;
+        errEl.textContent = 'Your account does not have contractor access. Please contact the admin.';
+        // Stop here (no queries)
+        return;
+      }
+
+      // Allowed service filters (default if missing)
+      const st = Array.isArray(meProfile.serviceTypes) ? meProfile.serviceTypes : ['cleaning','organizing','decor','holiday'];
+      allowed = st.map(s => String(s).toLowerCase());
+      buildFilters();
+
+      // Subscribe to Open Jobs
+      // Strategy:
+      //  - Read all open jobs, then filter client-side to allowed services (avoids composite index gotchas)
+      const openQ = query(collection(db,'jobs'), where('status','==','open'));
+      onSnapshot(openQ, (snap)=>{
+        const rows = [];
+        snap.forEach(d=>{
+          const x = d.data();
+          const key = String(x.serviceType||'').toLowerCase();
+          // Only keep ones in allowed service types
+          if (allowed.includes(key)) rows.push({ id: d.id, ...x });
+        });
+        // sort newest first by createdAt/claimedAt if present
+        rows.sort((a,b)=>{
+          const ta = (a.createdAt?.seconds||0);
+          const tb = (b.createdAt?.seconds||0);
+          return tb - ta;
+        });
+        openJobs = rows;
+        renderOpenJobs();
+      });
+
+      // Subscribe to My Jobs (claimed by me)
+      const mineQ = query(collection(db,'jobs'), where('contractorId','==', me.uid));
+      onSnapshot(mineQ, (snap)=>{
+        const rows = [];
+        snap.forEach(d => rows.push({ id:d.id, ...d.data() }));
+        // Show claimed first, then in-progress, submitted, etc. (simple sort by status + claimedAt desc)
+        const order = { 'claimed':1, 'in-progress':2, 'submitted':3, 'approved':4, 'paid':5 };
+        rows.sort((a,b)=>{
+          const sa = order[a.status] || 99, sb = order[b.status] || 99;
+          if (sa !== sb) return sa - sb;
+          const ta = (a.claimedAt?.seconds||0), tb = (b.claimedAt?.seconds||0);
+          return tb - ta;
+        });
+        myJobs = rows;
+        renderMyJobs();
+      });
+
+      // Sign out
+      document.getElementById('signOutBtn').addEventListener('click', async ()=>{
+        await signOut(auth);
+        location.href = 'index.html';
+      });
+    });
   </script>
 </body>
 </html>
+
 
 
