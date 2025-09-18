@@ -70,7 +70,7 @@
         <p class="muted" style="margin-top:0">Fill the same key fields you’d ask by phone. Price + payouts calculate automatically.</p>
 
         <form id="jobForm" class="grid2">
-          <!-- Client / logistics -->
+          <!-- Client / logistics (PII goes to private subdoc + email only) -->
           <label class="full">Client Name
             <input name="clientName" placeholder="Full name">
           </label>
@@ -143,7 +143,7 @@
           </label>
 
           <label class="full">Internal Notes (optional)
-            <textarea name="notes" placeholder="Special instructions, access codes, etc."></textarea>
+            <textarea name="notes" placeholder="Special instructions, access codes, etc. (kept private)"></textarea>
           </label>
 
           <!-- Live totals -->
@@ -167,7 +167,7 @@
         </form>
       </section>
 
-      <!-- RIGHT: Recent Jobs -->
+      <!-- RIGHT: Recent Jobs (public fields only) -->
       <aside class="card">
         <h2>Recent Jobs</h2>
         <div id="jobsList" class="list" aria-live="polite"></div>
@@ -180,11 +180,11 @@
     import { auth, db } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      addDoc, collection, serverTimestamp, doc, getDoc,
+      addDoc, setDoc, collection, serverTimestamp, doc, getDoc,
       query, orderBy, limit, onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // ===== Pricing logic (same as your site; copied locally so this page is self-contained) =====
+    /* ===== Pricing (same logic you use on the site) ===== */
     const roundHalf = n => Math.round(n * 2) / 2;
     const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
     const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
@@ -262,7 +262,7 @@
       return `${service} — XL (5.5+ hr)`;
     }
 
-    // ===== UI wiring =====
+    /* ===== UI wiring ===== */
     const whoami = document.getElementById('whoami');
     const signOutBtn = document.getElementById('signOutBtn');
     const form = document.getElementById('jobForm');
@@ -279,7 +279,7 @@
 
     const jobsList = document.getElementById('jobsList');
 
-    // Gate: must be logged in AND role: admin
+    // Must be admin
     onAuthStateChanged(auth, async (user) => {
       if (!user) { location.href = "login.html?next=" + encodeURIComponent("admin.html"); return; }
       whoami.textContent = user.email || user.uid;
@@ -289,7 +289,6 @@
         const snap = await getDoc(uref);
         const role = (snap.exists() ? (snap.data().role || '') : '').toLowerCase();
         if (role !== 'admin') { location.href = "contractor.html"; return; }
-        // Start recent jobs feed
         startJobsFeed();
       } catch (e) {
         console.warn(e); alert("Couldn’t verify admin role."); location.href = "login.html";
@@ -302,16 +301,10 @@
       location.href = "index.html";
     });
 
-    function formToData(){
-      const fd = new FormData(form);
-      const data = Object.fromEntries(fd.entries());
-      return data;
-    }
+    function formToData(){ return Object.fromEntries(new FormData(form).entries()); }
 
     function recalc(){
       const d = formToData();
-
-      // Calculate cleaning price + hint
       const price = calcCleaning(d);
       const { teamHours } = estimateHoursCleaning(d);
       const hint = cleaningHint(d, teamHours);
@@ -337,29 +330,26 @@
     form.addEventListener('change', recalc);
     document.addEventListener('DOMContentLoaded', recalc);
 
+    const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzzaogbv";
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       statusEl.textContent = ""; statusEl.className = "status";
 
       const d = formToData();
-      const calc = recalc(); // ensure fresh totals
+      const calc = recalc(); // fresh totals
 
-      const summary = d.summary?.trim()
-        || `${d.service || "Initial Clean"} — ${d.beds||0}bd/${d.baths||0}ba ${d.sqft||""}${d.addons? " • "+d.addons:""}`;
+      const summary = `${d.service || "Initial Clean"} — ${d.beds||0}bd/${d.baths||0}ba ${d.sqft||""}${d.addons? " • "+d.addons:""}`;
 
-      const docData = {
+      // 1) Create PUBLIC job (no PII, no full address)
+      const publicDoc = {
         serviceType: 'cleaning',
         status: 'open',
         flatRate: calc.price,
         area: String(d.area||''),
         window: String(d.window||''),
         summary,
-        address: String(d.address||''),
-        clientName: String(d.clientName||''),
-        clientPhone: String(d.clientPhone||''),
-        clientEmail: String(d.clientEmail||''),
-
-        // calculation snapshot
+        // calculation snapshot (safe to show)
         calc: {
           service: String(d.service||'Initial Clean'),
           frequency: String(d.frequency||'one-time'),
@@ -368,34 +358,67 @@
           other_rooms: Number(d.other_rooms||0),
           sqft: String(d.sqft||'1000–2000'),
           stories: String(d.stories||'1'),
-          pets: String(d.pets||''),
           addons: String(d.addons||''),
           hint: calc.hint,
           teamHours: calc.teamHours,
           price: calc.price
         },
-
-        // payout split
+        // payout split (safe)
         ownerPercent: calc.ownerPct,
         ownerFee: calc.ownerFee,
         contractorPool: calc.pool,
         contractorsCount: calc.contractorsCount,
         contractorShareEach: calc.per,
 
-        notes: String(d.notes||''),
         createdAt: serverTimestamp(),
-
-        // unclaimed fields
         contractorId: '',
         contractorEmail: ''
       };
 
       try {
         createBtn.disabled = true; createBtn.textContent = "Creating…";
-        await addDoc(collection(db,'jobs'), docData);
-        statusEl.textContent = "Job created (open)."; statusEl.classList.add('ok');
-        form.reset();
-        recalc(); // refresh UI to zeros
+        const ref = await addDoc(collection(db,'jobs'), publicDoc);
+
+        // 2) Write PRIVATE PII under subcollection (admins only; contractors never see this)
+        const privateDoc = {
+          clientName: String(d.clientName||''),
+          clientPhone: String(d.clientPhone||''),
+          clientEmail: String(d.clientEmail||''),
+          address: String(d.address||''),
+          internalNotes: String(d.notes||''),
+          createdAt: serverTimestamp()
+        };
+        await setDoc(doc(db,'jobs', ref.id, 'private', 'pii'), privateDoc);
+
+        // 3) Email you a copy via Formspree (non-blocking)
+        try {
+          const fd = new FormData();
+          fd.append("_subject", "Admin-created Job – Cleaning");
+          fd.append("source", "Admin manual intake");
+          fd.append("service_type", "Cleaning");
+          fd.append("summary", summary);
+          fd.append("estimate_price", `$${calc.price}`);
+          fd.append("estimate_hint", publicDoc.calc.hint);
+          fd.append("owner_percent", `${calc.ownerPct}%`);
+          fd.append("contractor_pool", `$${calc.pool} (${calc.contractorsCount} × $${calc.per})`);
+          // client/contact (only in email)
+          fd.append("client_name", d.clientName||"");
+          fd.append("client_phone", d.clientPhone||"");
+          fd.append("client_email", d.clientEmail||"");
+          fd.append("address", d.address||"");
+          fd.append("area", d.area||"");
+          fd.append("window", d.window||"");
+          fd.append("notes", d.notes||"");
+          fd.append("job_id", ref.id);
+          fd.append("_page", location.pathname);
+
+          await fetch(FORMSPREE_ENDPOINT, { method:"POST", body: fd, headers:{ "Accept":"application/json" }});
+        } catch (mailErr) {
+          console.warn("Formspree mail error:", mailErr);
+        }
+
+        statusEl.textContent = "Job created (open) and emailed."; statusEl.classList.add('ok');
+        form.reset(); recalc();
       } catch (e) {
         console.warn(e);
         statusEl.textContent = (e?.code === 'permission-denied')
@@ -407,7 +430,7 @@
       }
     });
 
-    // Recent jobs feed
+    // Recent jobs feed (public fields only)
     function startJobsFeed(){
       const qy = query(collection(db,'jobs'), orderBy('createdAt','desc'), limit(10));
       onSnapshot(qy, (snap) => {
@@ -428,8 +451,6 @@
                 ${when?`<span class="muted">${when}</span>`:''}
               </div>
               ${j.summary?`<div>${j.summary}</div>`:''}
-              ${j.address?`<div class="muted">Address: ${j.address}</div>`:''}
-              ${(j.ownerPercent!=null)?`<div class="muted">Split: keep ${j.ownerPercent}% • contractor pool $${j.contractorPool} (${j.contractorsCount} × $${j.contractorShareEach})</div>`:''}
               <div class="inline"><a class="btn btn-outline" href="contractor.html">View in Contractor Portal</a></div>
             </div>
           `;
@@ -439,4 +460,5 @@
   </script>
 </body>
 </html>
+
 
