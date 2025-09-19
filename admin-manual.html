@@ -3,482 +3,350 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin – Manual Intake & Job Create</title>
+  <title>Admin – Manual Intake (Create Job)</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <style>
     body{background:#fbf8f4}
-    .wrap{width:min(980px,92%);margin:24px auto 60px;background:#fff;padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.07)}
-    .title{font-family:"Playfair Display",serif;margin:4px 0 2px}
-    .sub{font-family:"Allura",cursive;color:#524a46;margin:0 0 14px;font-size:2rem}
+    .wrap{width:min(960px,92%);margin:28px auto 60px;background:#fff;padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    h1{font-family:"Playfair Display",serif;margin:0 0 .75rem;color:#2e2a27}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
     .grid-1{display:grid;gap:14px}
-    .card{border:1px solid #e8ddd1;border-radius:12px;padding:16px}
-    .muted{opacity:.9}
-    .pill{display:inline-block;background:#f6f2ed;border:1px solid #e8ddd1;border-radius:999px;padding:4px 10px;font-weight:700}
-    .ok{color:#0a7d33;font-weight:700}
-    .err{color:#b00020;font-weight:700}
-    .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-    .hide{display:none}
-    .inline{display:flex;gap:10px;align-items:center}
-    .money{font-weight:800}
+    label{display:grid;gap:6px;font-weight:700;color:#2e2a27}
+    input,select,textarea{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:#2e2a27}
+    .row{margin:14px 0;border-top:1px solid #e8ddd1;padding-top:14px}
+    .muted{opacity:.85}
+    .btn{display:inline-block;padding:.65rem 1rem;border-radius:999px;font-weight:800;cursor:pointer;text-decoration:none}
+    .btn-solid{background:#d2bda9;color:#2a2624;border:0}
+    .btn-outline{border:1.5px solid #2a2624;color:#2a2624;background:#fff}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+    .card{border:1px solid #e8ddd1;border-radius:12px;padding:12px;background:#fffdfb}
+    .ok{color:#0a7d33;font-weight:800}
+    .err{color:#b00020;font-weight:800}
+    .right{display:flex;gap:10px;align-items:center}
   </style>
 </head>
 <body>
-<header class="site-header">
-  <div class="container header-inner">
-    <div class="brand">
-      <a href="index.html" class="brand-link">
-        <span class="vase-logo" aria-hidden="true"></span>
-        <span class="brand-name">The Finishing Touch</span>
-      </a>
-    </div>
-    <nav class="main-nav">
-      <span class="pill" id="who"></span>
-      <a class="btn btn-outline" href="admin.html">Admin</a>
-      <a class="btn btn-outline" href="contractor.html">Contractor</a>
-      <a class="btn btn-auth" href="#" id="signOutBtn">Sign out</a>
-    </nav>
-  </div>
-</header>
-
-<main class="wrap">
-  <h1 class="title">Manual Intake & Create Job</h1>
-  <div class="sub">Admin only</div>
-
-  <div id="gate" class="card">
-    <p>Checking your access…</p>
-  </div>
-
-  <section id="tool" class="hide">
-    <div class="toolbar">
-      <div><strong>Create an open job</strong> (PII stored privately)</div>
-      <div class="inline">
-        <label>Admin share % <input id="adminSharePct" type="number" min="0" max="100" value="30" style="width:80px"></label>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="index.html" class="brand-link" style="display:flex;align-items:center;gap:.6rem;text-decoration:none;color:inherit">
+          <span class="vase-logo" aria-hidden="true"></span>
+          <span class="brand-name">The Finishing Touch</span>
+        </a>
       </div>
+      <nav class="main-nav">
+        <a href="admin.html">Admin</a>
+        <a class="active" href="admin-manual.html">Manual Intake</a>
+        <a href="contractor.html">Contractor</a>
+        <a class="btn btn-outline" id="authBtn" href="login.html">Sign in</a>
+      </nav>
     </div>
+  </header>
 
-    <form id="jobForm" class="grid-1">
-      <!-- Client + PII (goes to /private/pii) -->
-      <div class="card grid-2">
-        <div>
-          <label>Client Name <input name="name" required></label>
-          <label>Email <input name="email" type="email" required></label>
-          <label>Phone <input name="phone" required></label>
-        </div>
-        <div>
-          <label>Full Address (not visible to contractors until claimed)
-            <input name="address" placeholder="123 Bay St, League City, TX 77573" required>
-          </label>
-          <div class="grid-2">
-            <label>Area/City <input name="area" placeholder="League City" required></label>
-            <label>ZIP <input name="zip" pattern="\\d{5}" placeholder="77573" required></label>
-          </div>
-        </div>
-      </div>
+  <main class="wrap">
+    <h1>Manual Intake – Create Job</h1>
+    <p class="muted">Fill this when a client calls/texts. We’ll calculate the quote, split contractor pay, email Formspree, and post the job for contractors.</p>
 
-      <!-- Service details (Calculates price) -->
-      <div class="card grid-1">
+    <form id="manualForm" class="grid-1">
+      <!-- Client PII (kept out of job doc) -->
+      <div class="row grid-2">
+        <label>Client Name<input name="name" required></label>
+        <label>Email<input name="email" type="email" required></label>
+        <label>Phone<input name="phone" required></label>
+        <label>Street Address<input name="street" required placeholder="123 Bay St"></label>
+        <label>City<input name="city" required placeholder="League City"></label>
         <div class="grid-3">
-          <label>Service
-            <select name="serviceType" id="serviceType">
-              <option value="cleaning">Cleaning</option>
-              <option value="organizing">Organizing</option>
-              <option value="decor">Interior Decor</option>
-              <option value="holiday">Holiday (indoor)</option>
-            </select>
-          </label>
-
-          <!-- schedule -->
-          <label>Date <input type="date" id="date" required></label>
-          <div class="grid-2">
-            <label>Arrive (start) <input type="time" id="timeStart" required></label>
-            <label>Arrive (end) <input type="time" id="timeEnd" required></label>
-          </div>
+          <label>State<input name="state" required value="TX"></label>
+          <label>ZIP<input name="zip" required></label>
+          <label>Area (display label)<input name="area" placeholder="League City"></label>
         </div>
+      </div>
 
-        <!-- Cleaning block (default) -->
-        <div id="cleaningBlock" class="grid-2">
-          <label>Variant
-            <select name="service" id="clean_variant">
-              <option>Initial Clean</option>
-              <option>Standard Clean</option>
-              <option>Deep Clean</option>
-              <option>Move-In / Move-Out Clean</option>
-              <option>Airbnb Turnover</option>
-            </select>
-          </label>
-          <label>Frequency
-            <select name="frequency" id="clean_frequency">
-              <option>one-time</option><option>weekly</option>
-              <option>biweekly</option><option>monthly</option>
-            </select>
-          </label>
-          <label>Bedrooms <input id="clean_beds" type="number" min="0" value="3"></label>
-          <label>Bathrooms <input id="clean_baths" type="number" min="0" value="2"></label>
-          <label>Other Rooms <input id="clean_other" type="number" min="0" value="0"></label>
-          <label>Sq Ft
-            <select id="clean_sqft">
-              <option>&lt;1000</option><option>1000–2000</option>
-              <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
-            </select>
-          </label>
-          <label>Stories
-            <select id="clean_stories"><option>1</option><option>2</option></select>
-          </label>
-          <label>Pets <input id="clean_pets" placeholder="e.g., 1 dog"></label>
-          <label>Add-ons <input id="clean_addons" placeholder="oven, fridge, windows, baseboards, laundry"></label>
-          <label>Notes <input id="clean_notes" placeholder="Areas of focus (optional)"></label>
+      <!-- Scheduling (shown to contractors) -->
+      <div class="row grid-3">
+        <label>Date<input name="date" type="date" required></label>
+        <label>Start Time<input name="start" type="time" required></label>
+        <label>End Time<input name="end" type="time" required></label>
+      </div>
+
+      <!-- Service specifics (Cleaning) -->
+      <div class="row grid-2">
+        <label>Service Type
+          <select name="service">
+            <option>Initial Clean</option>
+            <option>Standard Clean</option>
+            <option>Deep Clean</option>
+            <option>Move-In / Move-Out Clean</option>
+            <option>Airbnb Turnover</option>
+          </select>
+        </label>
+        <label>Frequency
+          <select name="frequency">
+            <option>one-time</option><option>weekly</option>
+            <option>biweekly</option><option>monthly</option>
+          </select>
+        </label>
+        <label>Bedrooms<input name="beds" type="number" min="0" value="3" required></label>
+        <label>Bathrooms<input name="baths" type="number" min="0" value="2" required></label>
+        <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
+        <label>Square Footage
+          <select name="sqft">
+            <option>&lt;1000</option><option>1000–2000</option>
+            <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
+          </select>
+        </label>
+        <label>Stories
+          <select name="stories"><option>1</option><option>2</option></select>
+        </label>
+        <label>Pets (type & number)<input name="pets" /></label>
+        <label>Add-ons (comma list)<input name="addons" placeholder="oven, fridge, windows, baseboards, laundry"></label>
+        <label>Notes for summary<input name="notes" placeholder="e.g., initial deep clean"></label>
+      </div>
+
+      <!-- Ops controls -->
+      <div class="row grid-3">
+        <label>Contractors Needed
+          <select name="contractorsNeeded">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </label>
+        <label>Your Cut (%)<input name="companyCut" type="number" min="0" max="50" value="30" required></label>
+        <label>Client-ID (optional for CRM)<input name="clientId" placeholder="(optional) paste UID if known"></label>
+      </div>
+
+      <!-- Preview + actions -->
+      <div class="row">
+        <div class="actions">
+          <button type="button" id="btnPreview" class="btn btn-outline">Preview calculation</button>
+          <button type="submit" id="btnCreate" class="btn btn-solid" disabled>Create Open Job</button>
         </div>
-
-        <!-- (Organizing/Decor/Holiday blocks omitted for brevity in v1 — we start with Cleaning.
-             We can add the other calculators right after this is working.) -->
-
-        <div class="grid-2">
-          <button type="button" id="previewBtn" class="btn btn-outline">Preview Estimate</button>
-          <button type="submit" class="btn btn-solid">Create Open Job</button>
-        </div>
-
-        <div id="preview" class="muted"></div>
-        <div id="status" class="muted"></div>
+        <div id="calcCard" class="card" style="margin-top:10px;display:none"></div>
+        <div id="status" style="margin-top:8px"></div>
       </div>
     </form>
-  </section>
-</main>
+  </main>
 
-<!-- Firebase + Firestore -->
-<script type="module">
-  import { auth, db } from "./ft-firebase.js";
-  import {
-    onAuthStateChanged, signOut
-  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-  import {
-    collection, addDoc, doc, setDoc, getDoc, Timestamp, serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+  <!-- Firebase + logic -->
+  <script type="module">
+    import { auth, db } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      collection, addDoc, serverTimestamp, setDoc, doc, Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-  // ---- Gate: admin only ----
-  const gateEl   = document.getElementById('gate');
-  const toolEl   = document.getElementById('tool');
-  const whoEl    = document.getElementById('who');
-  const signOutBtn = document.getElementById('signOutBtn');
-
-  signOutBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    await signOut(auth);
-    location.href = "login.html?next=admin-manual.html";
-  });
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      gateEl.innerHTML = '<p>Please <a href="login.html?next=admin-manual.html">sign in</a> as admin.</p>';
-      return;
-    }
-    whoEl.textContent = user.email || user.uid;
-
-    // fetch role
-    const ref = doc(db, 'users', user.uid);
-    const snap = await getDoc(ref);
-    const role = snap.exists() ? (snap.data().role || '') : '';
-    if (role !== 'admin') {
-      gateEl.innerHTML = '<p class="err">Access denied — admin only.</p>';
-      return;
-    }
-    gateEl.classList.add('hide');
-    toolEl.classList.remove('hide');
-  });
-
-  // ---- Pricing (cleaning) — identical logic to site ----
-  const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
-  const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
-  const serviceMult = {"Initial Clean":1.00,"Deep Clean":1.20,"Move-In / Move-Out Clean":1.35,"Airbnb Turnover":0.55};
-  const freqDisc = { "weekly":0.85, "biweekly":0.90, "monthly":0.95, "one-time":1 };
-  const addonPricesCleaning = { "oven":35,"fridge":30,"refrigerator":30,"windows":80,"window":80,"baseboards":60,"laundry":18 };
-  const addonHoursCleaning  = { "oven":0.25,"fridge":0.25,"refrigerator":0.25,"windows":1.5,"window":1.5,"baseboards":1.0,"laundry":0.5 };
-  const roundHalf = (n)=> Math.round(n*2)/2;
-  function parseAddonsList(txt, map){ txt=(txt||"").toLowerCase(); let t=0; for (const k in map){ if (txt.includes(k)) t+=map[k]; } return t; }
-
-  function airbnbByBedrooms(beds){
-    const b = Number(beds)||0; if (b<=1) return 120; if (b===2) return 140; if (b===3) return 160; if (b===4) return 180; return 200;
-  }
-  function calcCleaning(data){
-    const sqft = data.sqft || "1000–2000";
-    const service = data.service || "Initial Clean";
-    const frequency = data.frequency || "one-time";
-    const beds = Number(data.beds||0);
-    const baths = Number(data.baths||0);
-    const otherRooms = Number(data.other_rooms||0);
-    const stories = String(data.stories||"1");
-    const pets = String(data.pets||"");
-
-    let base = 0;
-    if (service === "Standard Clean") base = standardBySqft[sqft] ?? 200;
-    else if (service === "Airbnb Turnover") base = airbnbByBedrooms(beds);
-    else { const initial = initialBySqft[sqft] ?? 300; base = initial * (serviceMult[service] ?? 1); }
-
-    const extraBaths = Math.max(0, baths-2) * 20;
-    const extraBeds  = Math.max(0, beds-3) * 12;
-    const extraRooms = Math.max(0, otherRooms) * 10;
-    const storyFee   = (stories === "2") ? 20 : 0;
-    const petsFee    = pets.trim() ? 12 : 0;
-    const addonsFee  = parseAddonsList(data.addons, addonPricesCleaning);
-
-    let est = base + extraBaths + extraBeds + extraRooms + storyFee + petsFee + addonsFee;
-    if (service === "Standard Clean") est *= (freqDisc[frequency] || 1);
-    return Math.round(est);
-  }
-  function estimateHoursCleaning(data){
-    const sqft = data.sqft || "1000–2000";
-    const service = data.service || "Initial Clean";
-    const beds = Number(data.beds||0);
-    const baths = Number(data.baths||0);
-    const otherRooms = Number(data.other_rooms||0);
-    const stories = String(data.stories||"1");
-
-    let solo = 2;
-    if (sqft === "<1000") solo = 2; else if (sqft === "1000–2000") solo = 3; else if (sqft === "2000–3000") solo = 4;
-    else if (sqft === "3000–4000") solo = 5; else solo = 6;
-
-    if (service === "Airbnb Turnover"){
-      if (beds<=1) solo=2; else if (beds===2) solo=2.5; else if (beds===3) solo=3; else if (beds===4) solo=3.5; else solo=4;
-    }
-    solo += Math.max(0, beds-3)*0.5;
-    solo += Math.max(0, baths-2)*0.75;
-    solo += Math.max(0, otherRooms)*0.25;
-    if (stories === "2") solo += 0.25;
-
-    if (service === "Deep Clean") solo *= 1.5;
-    if (service === "Move-In / Move-Out Clean") solo *= 2;
-    if (service === "Initial Clean") solo *= 1.2;
-
-    solo = roundHalf(solo);
-    const team = roundHalf(solo/2);
-    return { soloHours: solo, teamHours: team };
-  }
-  function cleaningHint(data, teamHours){
-    const service = data.service || "Initial Clean";
-    const sqft = data.sqft || "1000–2000";
-    const sqftLabel = {"<1000":"Small (≤1,000)","1000–2000":"Medium (1–2k)","2000–3000":"Large (2–3k)","3000–4000":"XL (3–4k)","4000+":"Estate (4k+)" }[sqft] || "Sized by intake";
-    if (service === "Standard Clean") return `Standard — ${sqftLabel}`;
-    if (service === "Airbnb Turnover"){
-      if (teamHours<=2.5) return "Airbnb — Quick (≈2 hr)";
-      if (teamHours<=3.5) return "Airbnb — Standard (≈3 hr)";
-      if (teamHours<=5) return "Airbnb — Extended (≈4–5 hr)";
-      return "Airbnb — Extended XL (5.5+ hr)";
-    }
-    if (teamHours<=2.5) return `${service} — Small (≈2–2.5 hr)`;
-    if (teamHours<=3.5) return `${service} — Medium (≈3–3.5 hr)`;
-    if (teamHours<=5) return `${service} — Large (≈4–5 hr)`;
-    return `${service} — XL (5.5+ hr)`;
-  }
-
-  // ---- UI helpers ----
-  const $ = (s)=> document.querySelector(s);
-  const previewEl = $('#preview');
-  const statusEl  = $('#status');
-
-  function combineDateTimeLocal(dateStr, timeStr){
-    // YYYY-MM-DD + HH:MM -> Date in local time
-    return new Date(`${dateStr}T${timeStr}:00`);
-  }
-  function scheduleLabel(dateStr, tStart, tEnd){
-    try{
-      const d = new Date(`${dateStr}T12:00:00`); // noon to format day nicely
-      const optsDay = {weekday:'short', month:'short', day:'numeric'};
-      const day = d.toLocaleDateString(undefined, optsDay);
-      return `${day} • ${tStart}–${tEnd}`;
-    }catch{ return `${dateStr} • ${tStart}–${tEnd}`; }
-  }
-
-  function gatherCleaning(){
-    return {
-      service: $('#clean_variant').value,
-      frequency: $('#clean_frequency').value,
-      beds: $('#clean_beds').value,
-      baths: $('#clean_baths').value,
-      other_rooms: $('#clean_other').value,
-      sqft: $('#clean_sqft').value,
-      stories: $('#clean_stories').value,
-      pets: $('#clean_pets').value,
-      addons: $('#clean_addons').value,
-      notes: $('#clean_notes').value
-    };
-  }
-
-  // Preview button
-  $('#previewBtn').addEventListener('click', () => {
-    try {
-      const svc = $('#serviceType').value;
-      if (svc !== 'cleaning') {
-        previewEl.innerHTML = '<span class="err">For v1, preview supports Cleaning. We can enable the others next.</span>';
-        return;
+    // Top-right smart auth button
+    const authBtn = document.getElementById('authBtn');
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        authBtn.textContent = 'Sign out';
+        authBtn.href = '#';
+        authBtn.onclick = async (e) => { e.preventDefault(); await signOut(auth); location.reload(); };
+      } else {
+        authBtn.textContent = 'Sign in';
+        authBtn.href = 'login.html?next=admin-manual.html';
       }
-      const clean = gatherCleaning();
-      const price = calcCleaning(clean);
-      const { teamHours } = estimateHoursCleaning(clean);
-      const hint = cleaningHint(clean, teamHours);
+    });
 
-      const share = Math.max(0, Math.min(100, Number($('#adminSharePct').value||30)));
-      const contractorPay = Math.round(price * (1 - share/100));
+    /* ---------- Pricing helpers (same math as your intake) ---------- */
+    const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
+    const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
+    const serviceMult = { "Initial Clean":1.00,"Deep Clean":1.20,"Move-In / Move-Out Clean":1.35,"Airbnb Turnover":0.55 };
+    const freqDisc = { "weekly":0.85, "biweekly":0.90, "monthly":0.95, "one-time":1 };
+    const addonPricesCleaning = { "oven":35,"fridge":30,"refrigerator":30,"windows":80,"window":80,"baseboards":60,"laundry":18 };
+    const addonHoursCleaning  = { "oven":0.25,"fridge":0.25,"refrigerator":0.25,"windows":1.5,"window":1.5,"baseboards":1.0,"laundry":0.5 };
+    const roundHalf = n => Math.round(n*2)/2;
 
-      const day = $('#date').value || '(pick a date)';
-      const t0 = $('#timeStart').value || '09:00';
-      const t1 = $('#timeEnd').value   || '11:00';
-      const label = scheduleLabel(day, t0, t1);
+    function parseAddonsList(txt, map){ txt=(txt||"").toLowerCase(); let t=0; for(const k of Object.keys(map)){ if(txt.includes(k)) t+=map[k]; } return t; }
 
-      previewEl.innerHTML = `
-        <div><strong>Estimate:</strong> <span class="money">$${price}</span> &middot; <strong>Contractor pay:</strong> <span class="money">$${contractorPay}</span> (${100-share}% of client price)</div>
-        <div class="muted">${hint}</div>
-        <div><strong>Window:</strong> ${label}</div>
+    function airbnbByBedrooms(beds){ const b=Number(beds)||0; if (b<=1) return 120; if (b===2) return 140; if (b===3) return 160; if (b===4) return 180; return 200; }
+
+    function calcCleaning(data){
+      const sqft = data.sqft || "1000–2000";
+      const service = data.service || "Initial Clean";
+      const frequency = data.frequency || "one-time";
+      const beds = Number(data.beds||0);
+      const baths = Number(data.baths||0);
+      const otherRooms = Number(data.other_rooms||0);
+      const stories = String(data.stories||"1");
+      const addonsFee = parseAddonsList(data.addons, addonPricesCleaning);
+
+      let base=0;
+      if (service === "Standard Clean") base = standardBySqft[sqft] ?? 200;
+      else if (service === "Airbnb Turnover") base = airbnbByBedrooms(beds);
+      else { const initial = initialBySqft[sqft] ?? 300; base = initial * (serviceMult[service] ?? 1); }
+
+      const perExtraBathroom = 20, perExtraBedroom=12, perOtherRoom=10, twoStoryFee=20, petFee=12;
+      const extraBaths = Math.max(0, (Number(baths||0)-2)) * perExtraBathroom;
+      const extraBeds  = Math.max(0, (Number(beds||0)-3))  * perExtraBedroom;
+      const extraRooms = Math.max(0, Number(otherRooms||0)) * perOtherRoom;
+      const storyFee   = (stories === "2") ? twoStoryFee : 0;
+      const petsFee    = (data.pets||"").trim() ? petFee : 0;
+
+      let est = base + extraBaths + extraBeds + extraRooms + storyFee + petsFee + addonsFee;
+      if (service === "Standard Clean") est *= (freqDisc[frequency] || 1);
+      return Math.round(est);
+    }
+
+    function estimateHoursCleaning(data){
+      const sqft = data.sqft || "1000–2000";
+      const service = data.service || "Initial Clean";
+      const beds = Number(data.beds||0);
+      const baths = Number(data.baths||0);
+      const otherRooms = Number(data.other_rooms||0);
+      const stories = String(data.stories||"1");
+      let solo = 2;
+      if (sqft === "<1000") solo=2; else if (sqft==="1000–2000") solo=3; else if (sqft==="2000–3000") solo=4; else if (sqft==="3000–4000") solo=5; else solo=6;
+      if (service === "Airbnb Turnover"){ if (beds<=1) solo=2; else if (beds===2) solo=2.5; else if (beds===3) solo=3; else if (beds===4) solo=3.5; else solo=4; }
+      solo += Math.max(0, beds-3)*0.5;
+      solo += Math.max(0, baths-2)*0.75;
+      solo += Math.max(0, otherRooms)*0.25;
+      if (stories==="2") solo+=0.25;
+      if (service==="Deep Clean") solo*=1.5;
+      if (service==="Move-In / Move-Out Clean") solo*=2;
+      if (service==="Initial Clean") solo*=1.2;
+      solo = roundHalf(solo);
+      const team = roundHalf(solo/2);
+      return { soloHours: solo, teamHours: team };
+    }
+
+    function prettyTime(hhmm){
+      if(!hhmm) return '';
+      let [h,m]=hhmm.split(':').map(Number);
+      const ampm = h>=12?'PM':'AM';
+      h = (h%12)||12;
+      return `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+    }
+
+    const form = document.getElementById('manualForm');
+    const btnPreview = document.getElementById('btnPreview');
+    const btnCreate  = document.getElementById('btnCreate');
+    const card = document.getElementById('calcCard');
+    const statusEl = document.getElementById('status');
+
+    let lastPreview = null; // stash calc result to lock before submit
+
+    btnPreview.addEventListener('click', () => {
+      statusEl.textContent = '';
+      const data = Object.fromEntries(new FormData(form).entries());
+      const price = calcCleaning(data);
+      const { teamHours } = estimateHoursCleaning(data);
+      const cutPct = Math.min(50, Math.max(0, Number(data.companyCut||30)));
+      const keep = Math.round(price * (cutPct/100));
+      const toContractors = price - keep;
+      const n = Math.max(1, Math.min(3, Number(data.contractorsNeeded||1)));
+
+      // split fairly: base + distribute remainder to first slots
+      const base = Math.floor(toContractors / n);
+      const remainder = toContractors % n;
+      const per = Array.from({length:n}, (_,i)=> base + (i<remainder?1:0));
+
+      const summary = `${Number(data.beds||0)} bed / ${Number(data.baths||0)} bath — ${(data.notes||data.service||'cleaning')}.`;
+      const window = `${prettyTime(data.start)}–${prettyTime(data.end)}`;
+
+      card.style.display = 'block';
+      card.innerHTML = `
+        <div><strong>Client price:</strong> $${price}</div>
+        <div><strong>Your cut (${cutPct}%):</strong> $${keep}</div>
+        <div><strong>To contractors (total):</strong> $${toContractors} (${n} needed)</div>
+        <div><strong>Per contractor:</strong> ${per.map(p=>'$'+p).join(' · ')}</div>
+        <div class="muted" style="margin-top:6px">
+          ${data.city || data.area || ''} · ${data.zip || ''} · ${new Date(data.date).toLocaleDateString()} ${window}<br>
+          ${summary} · Est team time ≈ <strong>${teamHours}</strong> hr
+        </div>
       `;
-    } catch (e) {
-      previewEl.textContent = 'Could not calculate. Check the form.';
-      console.warn(e);
-    }
-  });
+      btnCreate.disabled = false;
 
-  // Submit -> create job + private PII + send Formspree
-  $('#jobForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    statusEl.textContent = '';
+      lastPreview = { price, teamHours, cutPct, keep, toContractors, n, per, summary, window };
+    });
 
-    const user = auth.currentUser;
-    if (!user) { statusEl.innerHTML = '<span class="err">Please sign in.</span>'; return; }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = '';
 
-    // Role check again (paranoid)
-    const r = await getDoc(doc(db,'users',user.uid));
-    if (!r.exists() || r.data().role !== 'admin') {
-      statusEl.innerHTML = '<span class="err">Admin only.</span>'; return;
-    }
+      if (!lastPreview) { statusEl.innerHTML = '<span class="err">Click “Preview calculation” first.</span>'; return; }
 
-    const form = e.currentTarget;
-    const fd = new FormData(form);
+      const data = Object.fromEntries(new FormData(form).entries());
+      const {
+        price, teamHours, cutPct, keep, toContractors, n, per, summary, window
+      } = lastPreview;
 
-    // Required fields
-    const serviceType = fd.get('serviceType') || 'cleaning';
-    const area = String(fd.get('area')||'').trim();
-    const zip  = String(fd.get('zip')||'').trim();
-    const date = $('#date').value;
-    const tStart = $('#timeStart').value;
-    const tEnd   = $('#timeEnd').value;
-    if (!area || !zip || !date || !tStart || !tEnd) {
-      statusEl.innerHTML = '<span class="err">Please fill Area, ZIP, Date and time window.</span>';
-      return;
-    }
+      // Build public job doc (no PII)
+      const startDate = data.date ? new Date(data.date + 'T' + (data.start || '09:00') + ':00') : null;
+      const endDate   = data.date ? new Date(data.date + 'T' + (data.end || '11:00') + ':00') : null;
 
-    // Build schedule timestamps
-    const startDate = combineDateTimeLocal(date, tStart);
-    const endDate   = combineDateTimeLocal(date, tEnd);
-    const scheduledStart = Timestamp.fromDate(startDate);
-    const scheduledEnd   = Timestamp.fromDate(endDate);
-    const scheduleText   = scheduleLabel(date, tStart, tEnd);
+      const jobPublic = {
+        serviceType: "cleaning",
+        status: "open",
+        area: data.area || data.city || "",
+        zip: data.zip || "",
+        whenDate: data.date || "",
+        whenStart: data.start || "",
+        whenEnd: data.end || "",
+        whenWindow: window, // nice label
+        whenAt: startDate ? Timestamp.fromDate(startDate) : serverTimestamp(), // for sorting
+        summary,
+        beds: Number(data.beds||0),
+        baths: Number(data.baths||0),
+        estHoursTeam: Number(teamHours || 0),
+        contractorsNeeded: n,
+        contractorPayEach: per[0], // average/first
+        createdAt: serverTimestamp()
+      };
+      if (data.clientId) jobPublic.clientId = data.clientId;
 
-    // Calculate pricing (v1: cleaning)
-    let clientPrice = 0, contractorPay = 0, hint = '';
-    const share = Math.max(0, Math.min(100, Number($('#adminSharePct').value||30)));
-    if (serviceType === 'cleaning') {
-      const clean = gatherCleaning();
-      clientPrice = calcCleaning(clean);
-      const { teamHours } = estimateHoursCleaning(clean);
-      hint = cleaningHint(clean, teamHours);
-    } else {
-      statusEl.innerHTML = '<span class="err">For v1 this tool is set to Cleaning. We can add the other services next.</span>';
-      return;
-    }
-    contractorPay = Math.round(clientPrice * (1 - share/100));
+      // Build PII subdoc
+      const pii = {
+        name: data.name, email: data.email, phone: data.phone,
+        address: `${data.street}, ${data.city}, ${data.state} ${data.zip}`,
+        clientPrice: price,
+        notes: data.notes || ""
+      };
 
-    // Build public job doc (NO PII, NO client price)
-    const jobDoc = {
-      serviceType,                  // "cleaning"
-      status: "open",               // open -> claimed -> in-progress -> submitted -> approved -> paid
-      area, zip,
-      window: scheduleText,         // human label for cards
-      scheduledStart, scheduledEnd, // Firestore Timestamps
-      summary: buildSummaryForCleaning(), // e.g. "3 bed / 2 bath — Initial"
-      contractorPay,                // what contractors see
-      createdAt: serverTimestamp()
-      // (intentionally NOT storing client price here)
-    };
+      // 1) Create job
+      try {
+        const ref = await addDoc(collection(db, 'jobs'), jobPublic);
+        const jobId = ref.id;
 
-    // Write public job
-    let jobRef;
-    try {
-      jobRef = await addDoc(collection(db,'jobs'), jobDoc);
-    } catch (err) {
-      console.warn(err);
-      statusEl.innerHTML = '<span class="err">Could not create the job. Check rules and network.</span>';
-      return;
-    }
+        // 2) Create slots (slot_1..slot_n) with per-contractor pay
+        for (let i=0; i<n; i++){
+          await setDoc(doc(db, 'jobs', jobId, 'slots', `slot_${i+1}`), {
+            slotNumber: i+1,
+            status: 'open',
+            contractorId: '', // will be set by the claimant
+            pay: per[i]
+          });
+        }
 
-    // Private PII doc
-    const piiDoc = {
-      name:  String(fd.get('name')||'').trim(),
-      email: String(fd.get('email')||'').trim(),
-      phone: String(fd.get('phone')||'').trim(),
-      address: String(fd.get('address')||'').trim(),
-      clientPrice,
-      adminSharePct: share,
-      notes: ($('#clean_notes').value || ''),
-      createdAt: serverTimestamp()
-    };
-    try {
-      await setDoc(doc(db, 'jobs', jobRef.id, 'private', 'pii'), piiDoc);
-    } catch (err) {
-      console.warn(err);
-      statusEl.innerHTML = '<span class="err">Job created, but saving private details failed. You can delete and try again.</span>';
-      return;
-    }
+        // 3) Write PII (private)
+        await setDoc(doc(db, 'jobs', jobId, 'private', 'pii'), pii);
 
-    // Email to Formspree (so you get the intake by email)
-    try {
-      const fs = new FormData();
-      fs.append('_subject','Manual Intake – Cleaning');
-      fs.append('service_type', serviceType);
-      fs.append('area', area);
-      fs.append('zip', zip);
-      fs.append('window', scheduleText);
-      fs.append('client_price', `$${clientPrice}`);
-      fs.append('contractor_pay', `$${contractorPay} (${100-share}% of client price)`);
-      fs.append('name', piiDoc.name);
-      fs.append('email', piiDoc.email);
-      fs.append('phone', piiDoc.phone);
-      fs.append('address', piiDoc.address);
-      fs.append('job_id', jobRef.id);
-      fs.append('hint', hint);
+        // 4) Send to Formspree (email trail)
+        try {
+          const fd = new FormData(form);
+          fd.append('_subject', 'Manual Intake (Admin) — Cleaning');
+          fd.append('estimate_price', '$'+price);
+          fd.append('estimate_hours_team', String(teamHours));
+          fd.append('contractors_needed', String(n));
+          fd.append('contractor_pay_each', per.join(', '));
+          fd.append('job_public_id', jobId);
+          fd.append('window', window);
+          await fetch('https://formspree.io/f/mzzaogbv', { method:'POST', body: fd, headers:{'Accept':'application/json'} });
+        } catch(_) {}
 
-      await fetch('https://formspree.io/f/mzzaogbv', {
-        method: 'POST',
-        body: fs,
-        headers: { 'Accept': 'application/json' }
-      });
-    } catch (err) {
-      console.warn('Formspree failed (non-blocking):', err);
-    }
-
-    statusEl.innerHTML = `<span class="ok">Job created!</span> <a href="admin.html">Open Admin</a> · <a href="contractor.html">View Contractor Portal</a>`;
-    previewEl.innerHTML = `
-      <div><strong>Public card will show:</strong> ${serviceType} · ${area} · ${zip} · ${scheduleText}<br>
-      <em>Your pay est: $${contractorPay}</em></div>
-    `;
-    form.reset();
-    $('#adminSharePct').value = share; // keep your chosen share
-  });
-
-  function buildSummaryForCleaning(){
-    const s = $('#clean_variant').value || 'Initial Clean';
-    const beds = Number($('#clean_beds').value || 0);
-    const baths = Number($('#clean_baths').value || 0);
-    return `${beds||0} bed / ${baths||0} bath — ${s}`;
-  }
-
-  // Simple show/hide blocks for other services (future)
-  const svcSel = document.getElementById('serviceType');
-  const cleaningBlock = document.getElementById('cleaningBlock');
-  svcSel.addEventListener('change', () => {
-    cleaningBlock.style.display = (svcSel.value === 'cleaning') ? 'grid' : 'none';
-  });
-</script>
+        statusEl.innerHTML = `<span class="ok">Job created.</span> <a href="admin.html">Go to Admin</a> · <a href="contractor.html">View Contractor board</a>`;
+        btnCreate.disabled = true; lastPreview = null;
+      } catch (e) {
+        console.warn(e);
+        statusEl.innerHTML = `<span class="err">Couldn’t create job (permission?).</span>`;
+      }
+    });
+  </script>
 </body>
 </html>
+
