@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Apply to be a Contractor – The Finishing Touch</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+
+  <style>
+    body{background:#fbf8f4}
+    .wrap{width:min(780px,94%);margin:40px auto 80px;background:#fff;padding:26px;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
+    h1{font-family:"Playfair Display",serif;margin:0 0 .25rem;color:#2e2a27;text-align:center}
+    .sub{font-family:"Allura",cursive;font-size:1.75rem;color:#524a46;text-align:center;margin:0 0 12px}
+    form{display:grid;gap:14px}
+    .grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    .grid-1{display:grid;gap:12px}
+    label{display:grid;gap:6px;font-weight:700;color:#2e2a27}
+    input,select,textarea{border:1px solid #e3d9ce;border-radius:12px;padding:.8rem .9rem;background:#fffdfb;color:#2e2a27}
+    .checkrow{display:flex;flex-wrap:wrap;gap:10px}
+    .pill{display:inline-flex;gap:.45rem;align-items:center;border:1px solid #e3d9ce;background:#fff;padding:.45rem .6rem;border-radius:999px}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0}
+    .btn{display:inline-block;padding:.6rem 1rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn-solid{background:#d2bda9;color:#2a2624;border:0}
+    .btn-outline{border:1.5px solid #2e2a27;background:#fff;color:#2e2a27}
+    .note{font-size:.95rem;opacity:.85}
+    .center{text-align:center}
+    .ok{color:#116b43;font-weight:700}
+    .warn{color:#b00020;font-weight:700}
+    .card{background:#fff;border:1px solid #e8ddd1;border-radius:12px;padding:14px}
+    .hidden{display:none !important}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row">
+      <a class="btn btn-outline" href="index.html">← Back home</a>
+      <a class="btn btn-outline" href="login.html?next=contractor-apply.html">Sign in</a>
+    </div>
+
+    <h1>Apply to be a Contractor</h1>
+    <div class="sub">Work with The Finishing Touch</div>
+
+    <!-- Gate states -->
+    <div id="gate-signedout" class="card center">
+      <p>Please <a href="login.html?next=contractor-apply.html"><strong>sign in or create an account</strong></a> to apply.</p>
+      <p class="note">We’ll keep your application in “pending” until approved. You’ll get an email.</p>
+    </div>
+
+    <div id="gate-pending" class="card hidden" aria-live="polite">
+      <p class="ok">Thanks—your application is submitted and marked <strong>pending review</strong>.</p>
+      <p class="note">We’ll email you once approved. This page will automatically unlock your portal when your role is updated.</p>
+      <div id="verifyBlock" class="note hidden">
+        <hr>
+        <p><strong>Verify your email</strong> to speed things up.</p>
+        <button id="sendVerify" class="btn btn-outline">Send verification email</button>
+        <span id="sentMsg" class="ok hidden">Sent! Check your inbox.</span>
+      </div>
+    </div>
+
+    <div id="gate-approved" class="card hidden">
+      <p class="ok">You’re approved! Head to your portal.</p>
+      <p><a class="btn btn-solid" href="contractor.html">Go to Contractor Portal</a></p>
+    </div>
+
+    <!-- Application form -->
+    <form id="applyForm" class="grid-1 hidden" novalidate>
+      <div class="grid">
+        <label>Full Name
+          <input name="fullName" placeholder="First Last" required>
+        </label>
+        <label>Primary Email
+          <input name="email" type="email" required>
+        </label>
+      </div>
+
+      <div class="grid">
+        <label>City
+          <input name="city" placeholder="e.g., League City" required>
+        </label>
+        <label>Primary ZIP
+          <input name="zip" placeholder="e.g., 77573" required>
+        </label>
+      </div>
+
+      <label>What services can you take? (pick all that apply)</label>
+      <div class="checkrow" role="group" aria-label="Service types">
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="cleaning"> Cleaning</label>
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="organizing"> Organizing</label>
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="decor"> Interior Decor</label>
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="holiday"> Holiday</label>
+      </div>
+
+      <label>Tell us a bit about your experience (optional)
+        <textarea name="bio" rows="3" placeholder="Years of experience, specialties, etc."></textarea>
+      </label>
+
+      <label class="pill" style="margin-top:4px;">
+        <input type="checkbox" name="agree" required>
+        I agree to The Finishing Touch independent contractor terms.
+      </label>
+
+      <div class="row">
+        <span class="note">After you submit: your account is <strong>pending</strong>. Once approved, your portal unlocks automatically.</span>
+        <button class="btn btn-solid" type="submit">Submit Application</button>
+      </div>
+
+      <p id="applyMsg" class="note" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <script type="module">
+    import { auth, db } from "./ft-firebase.js";
+    import {
+      onAuthStateChanged, sendEmailVerification
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      doc, getDoc, setDoc, serverTimestamp, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const el = {
+      signedOut: document.getElementById('gate-signedout'),
+      pending:   document.getElementById('gate-pending'),
+      approved:  document.getElementById('gate-approved'),
+      form:      document.getElementById('applyForm'),
+      msg:       document.getElementById('applyMsg'),
+      verifyBlk: document.getElementById('verifyBlock'),
+      sendVerify:document.getElementById('sendVerify'),
+      sentMsg:   document.getElementById('sentMsg')
+    };
+
+    function show(id){
+      // hide all “gates” + form
+      el.signedOut.classList.add('hidden');
+      el.pending.classList.add('hidden');
+      el.approved.classList.add('hidden');
+      el.form.classList.add('hidden');
+      // show the requested thing
+      (id === 'signedOut') ? el.signedOut.classList.remove('hidden')
+      : (id === 'pending') ? el.pending.classList.remove('hidden')
+      : (id === 'approved') ? el.approved.classList.remove('hidden')
+      : (id === 'form') ? el.form.classList.remove('hidden') : null;
+    }
+
+    // Auth/role gate
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        show('signedOut');
+        return;
+      }
+      // live-watch your role so “pending → contractor” auto-unlocks
+      const userRef = doc(db, 'users', user.uid);
+      onSnapshot(userRef, (snap)=>{
+        const data = snap.exists() ? snap.data() : {};
+        const role = (data.role || '').toLowerCase();
+        if (role === 'contractor' || role === 'admin') {
+          show('approved');
+        } else if (role === 'pending') {
+          show('pending');
+          // suggest email verification if not verified
+          if (!user.emailVerified) el.verifyBlk.classList.remove('hidden');
+        } else {
+          // no role yet → show form
+          show('form');
+          // prefill email/name
+          const fd = new FormData(el.form);
+          el.form.elements.email.value = user.email || '';
+          if (user.displayName) el.form.elements.fullName.value = user.displayName;
+        }
+      });
+    });
+
+    // Send verification email (optional, but helpful)
+    if (el.sendVerify){
+      el.sendVerify.addEventListener('click', async ()=>{
+        try{
+          await sendEmailVerification(auth.currentUser);
+          el.sentMsg.classList.remove('hidden');
+        }catch(e){
+          alert('Could not send verification email right now.');
+        }
+      });
+    }
+
+    // Handle application submit
+    el.form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      el.msg.textContent = '';
+
+      const user = auth.currentUser;
+      if (!user) { location.href = "login.html?next=contractor-apply.html"; return; }
+
+      // Gather fields
+      const fd = new FormData(el.form);
+      const fullName = String(fd.get('fullName')||'').trim();
+      const email    = String(fd.get('email')||'').trim() || (user.email||'');
+      const city     = String(fd.get('city')||'').trim();
+      const zip      = String(fd.get('zip')||'').trim();
+      const bio      = String(fd.get('bio')||'').trim();
+      const agree    = !!fd.get('agree');
+      const serviceTypes = fd.getAll('serviceTypes').map(s=>String(s));
+
+      if (!fullName || !email || !city || !zip || !agree || serviceTypes.length===0){
+        el.msg.textContent = 'Please complete required fields (name, email, city, zip, at least one service, terms).';
+        return;
+      }
+
+      const payload = {
+        role: 'pending',
+        fullName, email, city, zip, bio,
+        serviceTypes,
+        appliedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+
+      try{
+        // Create/merge the user document with role: pending
+        await setDoc(doc(db, 'users', user.uid), payload, { merge: true });
+        show('pending');
+
+        // Notify you via Formspree (so you never miss new applicants)
+        try{
+          const fs = new FormData();
+          fs.append("_subject", "New Contractor Application — The Finishing Touch");
+          fs.append("type", "contractor_application");
+          fs.append("uid", user.uid);
+          fs.append("name", fullName);
+          fs.append("email", email);
+          fs.append("city", city);
+          fs.append("zip", zip);
+          fs.append("services", serviceTypes.join(", "));
+          fs.append("bio", bio);
+          fs.append("_page", location.href);
+          await fetch("https://formspree.io/f/mzzaogbv", { method:"POST", body:fs, headers:{Accept:"application/json"} });
+        }catch(_){ /* silent */ }
+
+      }catch(err){
+        el.msg.textContent = 'Could not submit right now. Please try again.';
+        console.warn(err);
+      }
+    });
+  </script>
+</body>
+</html>
