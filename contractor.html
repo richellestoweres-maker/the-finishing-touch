@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contractor – The Finishing Touch</title>
 
-  <!-- Fonts & Site CSS (reuses your brand styles) -->
+  <!-- Fonts & Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
@@ -23,9 +23,7 @@
       border:1px solid #e3d9ce; background:#fff; color:#2e2a27; border-radius:999px; padding:.5rem .85rem; font-weight:700; cursor:pointer;
     }
     .tabbtn.active { background: var(--accent, #d2bda9); border-color: var(--accent, #d2bda9); color:#2a2624; }
-    .main {
-      margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px;
-    }
+    .main { margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px; }
     .filters { display:flex; gap:8px; flex-wrap:wrap; }
     .chip {
       border:1px solid #e3d9ce; background:#fffdfb; color:#2e2a27; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700; font-size:.9rem;
@@ -34,10 +32,13 @@
     .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
     .card {
       background:#fff; border-radius:14px; box-shadow:var(--shadow, 0 10px 30px rgba(0,0,0,.08));
-      padding:14px; display:flex; flex-direction:column; gap:8px;
+      padding:14px; display:flex; flex-direction:column; gap:10px;
     }
-    .meta { display:flex; gap:8px; flex-wrap:wrap; font-size:.92rem; opacity:.9; }
-    .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+    .toprow { display:flex; justify-content:space-between; gap:8px; align-items:baseline; }
+    .pay { font-weight:800; }
+    .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:.92rem; opacity:.9; }
+    .meta span { display:inline-flex; align-items:center; gap:6px; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
     .btn { display:inline-block; padding:.55rem .85rem; border-radius:999px; font-weight:800; text-decoration:none; cursor:pointer; }
     .btn-outline { border:1.5px solid #2e2a27; background:#fff; color:#2e2a27; }
     .btn-solid { background: var(--accent, #d2bda9); color:#2a2624; border:0; }
@@ -45,7 +46,7 @@
     .rolepill { font-size:.8rem; padding:.2rem .5rem; border-radius:999px; border:1px solid #e3d9ce; background:#fffdfb; }
     .right { display:flex; align-items:center; gap:10px; }
     .small { font-size:.9rem; opacity:.85; }
-    .danger { color:#b00020; font-weight:700; }
+    .muted { opacity:.8; }
   </style>
 </head>
 <body>
@@ -62,11 +63,13 @@
       <div class="right">
         <span id="whoami" class="small"></span>
         <a id="homeLink" class="btn btn-outline" href="index.html">Home</a>
+        <!-- Admin-only -->
+        <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden>Manual Intake</a>
         <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
       </div>
     </div>
 
-    <!-- Tabs -->
+    <!-- Tabs + filters -->
     <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
       <div class="tabs">
         <button id="tabOpen" class="tabbtn active" type="button">Open Jobs</button>
@@ -93,7 +96,7 @@
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
       collection, query, where, orderBy, onSnapshot,
-      doc, getDoc, updateDoc, serverTimestamp
+      doc, getDoc, updateDoc, serverTimestamp, runTransaction
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     // ---- DOM refs
@@ -101,6 +104,7 @@
     const whoami   = document.getElementById('whoami');
     const btnSignOut = document.getElementById('signOutBtn');
     const chipsWrap  = document.getElementById('filterChips');
+    const adminBtn   = document.getElementById('adminIntakeBtn');
 
     const tabOpen = document.getElementById('tabOpen');
     const tabMine = document.getElementById('tabMine');
@@ -141,7 +145,6 @@
         b.addEventListener('click', () => {
           activeFilter = t;
           renderChips();
-          // Re-render lists with current filter
           drawOpenJobs(lastOpenJobs);
           drawMyJobs(lastMyJobs);
         });
@@ -152,7 +155,6 @@
     // ---- Auth gate
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // send to login, return here after
         const next = encodeURIComponent('contractor.html');
         location.href = `login.html?next=${next}`;
         return;
@@ -162,15 +164,16 @@
 
       // Load role doc
       try {
-        const userRef = doc(db, 'users', user.uid);
-        const snap = await getDoc(userRef);
+        const snap = await getDoc(doc(db, 'users', user.uid));
         const data = snap.exists() ? snap.data() : {};
         meRole = (data.role || 'contractor').toLowerCase();
         meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes : [];
         rolePill.textContent = meRole === 'admin' ? 'Admin + Contractor' : 'Contractor';
+        if (adminBtn) adminBtn.hidden = (meRole !== 'admin');
       } catch (e) {
         console.warn(e);
         rolePill.textContent = 'Contractor';
+        if (adminBtn) adminBtn.hidden = true;
       }
       renderChips();
       startListeners();
@@ -184,7 +187,7 @@
     });
 
     // ---- Firestore listeners
-    let unsubOpen = null, unsubMine = null;
+    let unsubOpen = null, unsubMineA = null, unsubMineB = null;
     let lastOpenJobs = [], lastMyJobs = [];
 
     function startListeners(){
@@ -199,46 +202,82 @@
         drawOpenJobs(lastOpenJobs);
       });
 
-      // My jobs
-      unsubMine = onSnapshot(
+      // My jobs (support both legacy single and new multi)
+      unsubMineA = onSnapshot(
         query(collection(db, 'jobs'), where('contractorId', '==', me.uid)),
-        (snap) => {
-          lastMyJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          drawMyJobs(lastMyJobs);
-        }
+        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+      );
+      unsubMineB = onSnapshot(
+        query(collection(db, 'jobs'), where('contractorIds', 'array-contains', me.uid)),
+        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() })))
       );
     }
 
-    // ---- Renderers
-    function jobCardHTML(j){
-      const rate = (typeof j.flatRate === 'number') ? `$${j.flatRate}` : (j.rate || '');
+    function mergeMine(list){
+      // de-dupe by id
+      const map = new Map(lastMyJobs.map(j => [j.id, j]));
+      list.forEach(j => map.set(j.id, j));
+      lastMyJobs = Array.from(map.values());
+      drawMyJobs(lastMyJobs);
+    }
+
+    // ---- Helpers for rendering
+    function cap(s){ return s ? (s[0].toUpperCase() + s.slice(1)) : ''; }
+    function fmtPay(n){
+      if (typeof n === 'number' && !isNaN(n)) return `$${Math.round(n)}`;
+      const x = Number(n); return isFinite(x) ? `$${Math.round(x)}` : '';
+    }
+    function fmtDate(d){
+      try { return new Date(d).toLocaleDateString([], { month:'short', day:'numeric' }); } catch { return d || ''; }
+    }
+    function payForContractor(j){
+      const p = j.payEach ?? j.contractorPayEach ?? j.payPerContractor ?? j.contractorPay ?? null;
+      return p != null ? `Your pay est: <span class="pay">${fmtPay(p)}</span>` : '';
+    }
+    function slotsLeft(j){
+      const need = Number(j.contractorsNeeded || 1);
+      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
+      const left = Math.max(0, need - have);
+      return { need, have, left };
+    }
+
+    // ---- Card HTML (no client price, no PII)
+    function jobCardHTML(j, inMine=false){
       const type = (j.serviceType || '').toLowerCase();
-      const capType = type ? (type[0].toUpperCase()+type.slice(1)) : 'Job';
-      const area = j.area || j.city || '';
-      const windowTxt = j.window || '';
-      const summary = j.summary || j.notes || '';
+      const title = type ? cap(type) : 'Job';
+      const zip = j.zip || j.postal || j.postcode || j.area || j.city || '';
+      const when = j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || '');
+      const bb = (j.beds || j.baths) ? `${j.beds||0} bd / ${j.baths||0} ba` : '';
+      const hours = j.estimatedTeamHours || j.teamHours || j.eta || '';
+      const { need, have, left } = slotsLeft(j);
+      const leftTxt = need > 1 ? `${left} of ${need} slots left` : '';
+
+      const payLine = payForContractor(j);
+      const statusChip = j.status ? `<span>• ${j.status}</span>` : '';
 
       return `
         <div class="card">
-          <div style="display:flex; justify-content:space-between; gap:8px;">
-            <strong>${capType}</strong>
-            <strong>${rate}</strong>
+          <div class="toprow">
+            <strong>${title}</strong>
+            ${payLine ? `<div class="muted">${payLine}</div>` : ''}
           </div>
           <div class="meta">
-            ${area ? `<span>📍 ${area}</span>` : ''}
-            ${windowTxt ? `<span>🕒 ${windowTxt}</span>` : ''}
-            ${j.status ? `<span>• ${j.status}</span>` : ''}
+            ${zip ? `<span>📍 <span>${zip}</span></span>` : ''}
+            ${when ? `<span>🗓️ <span>${when}</span></span>` : ''}
+            ${bb ? `<span>🛏️ <span>${bb}</span></span>` : ''}
+            ${hours ? `<span>⏱️ <span>${hours}</span></span>` : ''}
+            ${leftTxt ? `<span>👥 <span>${leftTxt}</span></span>` : ''}
+            ${statusChip}
           </div>
-          ${summary ? `<div style="font-size:.98rem;">${summary}</div>` : ''}
+          ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : '')}
           <div class="actions" data-jobid="${j.id}">
-            <!-- buttons injected per list -->
+            <!-- buttons injected -->
           </div>
         </div>
       `;
     }
 
     function drawOpenJobs(list){
-      // filter by allowed type
       const allowed = meRole === 'admin' ? ALL_TYPES : (meServices.length ? meServices : ALL_TYPES);
       const filtered = list.filter(j => {
         const type = (j.serviceType || '').toLowerCase();
@@ -251,23 +290,25 @@
         openJobsEl.innerHTML = `<div class="empty">No open jobs right now.</div>`;
         return;
       }
-      openJobsEl.innerHTML = filtered.map(jobCardHTML).join('');
+      openJobsEl.innerHTML = filtered.map(j => jobCardHTML(j, false)).join('');
 
-      // attach Claim buttons
+      // Attach actions
       filtered.forEach(j => {
         const wrap = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
         if (!wrap) return;
+
+        const { left } = slotsLeft(j);
         const claim = document.createElement('button');
         claim.className = 'btn btn-solid';
-        claim.textContent = 'Claim this job';
+        claim.textContent = left > 1 ? 'Claim a slot' : 'Claim this job';
         claim.addEventListener('click', () => claimJob(j.id));
         wrap.appendChild(claim);
 
         const msg = document.createElement('a');
         msg.className = 'btn btn-outline';
         msg.textContent = 'Message Admin';
-        msg.href = '#'; // chat soon
-        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming next!'); });
+        msg.href = '#';
+        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming soon.'); });
         wrap.appendChild(msg);
       });
     }
@@ -277,24 +318,24 @@
         myJobsEl.innerHTML = `<div class="empty">You haven’t claimed any jobs yet.</div>`;
         return;
       }
-      // optional filter by chip here (rarely needed)
-      myJobsEl.innerHTML = list.map(jobCardHTML).join('');
+      myJobsEl.innerHTML = list.map(j => jobCardHTML(j, true)).join('');
 
       list.forEach(j => {
         const wrap = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
         if (!wrap) return;
 
-        // In-progress actions
         const msg = document.createElement('a');
         msg.className = 'btn btn-outline';
         msg.textContent = 'Message Admin';
         msg.href = '#';
-        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming next!'); });
+        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming soon.'); });
         wrap.appendChild(msg);
 
         const mark = document.createElement('button');
         mark.className = 'btn btn-solid';
-        mark.textContent = j.status === 'in_progress' ? 'Mark Submitted' : (j.status === 'claimed' ? 'Start Work' : 'Submitted');
+        mark.textContent = j.status === 'in_progress' ? 'Mark Submitted'
+                        : (j.status === 'claimed' ? 'Start Work'
+                        : (j.status === 'submitted' ? 'Submitted' : 'Update Status'));
         mark.disabled = (j.status === 'submitted' || j.status === 'approved' || j.status === 'paid');
         mark.addEventListener('click', async () => {
           try {
@@ -312,29 +353,63 @@
       });
     }
 
-    // ---- Claim flow (simple, race-safe enough for MVP)
+    // ---- Claim (transaction supports multi-contractor jobs)
     async function claimJob(jobId){
       if (!me) return;
+
+      // disable current button UI optimistically
+      const card = document.querySelector(`[data-jobid="${jobId}"]`);
+      const button = card ? card.querySelector('.btn.btn-solid') : null;
+      if (button) { button.disabled = true; button.textContent = 'Claiming…'; }
+
       try {
-        // quick check: don’t claim if already claimed in current view
-        const card = document.querySelector(`[data-jobid="${jobId}"]`);
-        if (card) {
-          const b = card.querySelector('.btn.btn-solid');
-          if (b) { b.disabled = true; b.textContent = 'Claiming…'; }
-        }
-        await updateDoc(doc(db, 'jobs', jobId), {
-          status: 'claimed',
-          contractorId: me.uid,
-          contractorEmail: me.email || '',
-          claimedAt: serverTimestamp()
+        await runTransaction(db, async (tx) => {
+          const ref = doc(db, 'jobs', jobId);
+          const snap = await tx.get(ref);
+          if (!snap.exists()) throw new Error('Job not found.');
+          const j = snap.data();
+
+          if ((j.status || 'open') !== 'open') throw new Error('Already claimed.');
+
+          const need = Number(j.contractorsNeeded || 1);
+          const ids = Array.isArray(j.contractorIds) ? [...j.contractorIds] : (j.contractorId ? [j.contractorId] : []);
+          if (ids.includes(me.uid)) return; // already in
+
+          if (ids.length >= need) throw new Error('No slots left.');
+
+          ids.push(me.uid);
+          const emails = Array.isArray(j.contractorEmails) ? [...j.contractorEmails] : [];
+          if (!emails.includes(me.email || '')) emails.push(me.email || '');
+
+          const update = {
+            contractorIds: ids,
+            contractorEmails: emails,
+            updatedAt: serverTimestamp()
+          };
+
+          if (need <= ids.length) {
+            update.status = 'claimed';
+            update.claimedAt = serverTimestamp();
+          } else {
+            update.status = 'open'; // still open until fully staffed
+          }
+
+          tx.update(ref, update);
         });
-        setTab('mine'); // jump to My Jobs
+
+        setTab('mine');
       } catch (e) {
-        alert('Could not claim. It may have just been taken.');
         console.warn(e);
+        const msg = (e && e.code === 'permission-denied')
+          ? 'Permission denied claiming. (Ping me and I’ll add the tiny Firestore rule to allow contractors to claim.)'
+          : (e.message || 'Could not claim. It may have just been taken.');
+        alert(msg);
+      } finally {
+        if (button) { button.disabled = false; button.textContent = 'Claim this job'; }
       }
     }
   </script>
 </body>
 </html>
+
 
