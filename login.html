@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Minimal luxe form styles (works with your variables) -->
+  <!-- Minimal luxe form styles (same as before) -->
   <style>
     .auth-wrap {
       width: min(460px, 92%);
@@ -52,14 +52,12 @@
 
     <h1>Welcome back</h1>
 
-    <!-- CHANGED: added method="post" action="#" -->
     <form id="loginForm" method="post" action="#" novalidate>
       <label>Email
         <input id="loginEmail" type="email" name="email" autocomplete="username" required />
       </label>
 
       <label>Password
-        <!-- keeping name="password" so FormData captures autofill reliably -->
         <input id="loginPass" type="password" name="password" autocomplete="current-password" required />
       </label>
 
@@ -71,10 +69,16 @@
     </form>
   </div>
 
-  <!-- Firebase Auth wiring -->
+  <!-- Role-aware routing -->
   <script type="module">
-    import { auth } from "./ft-firebase.js";
-    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { auth, db } from "./ft-firebase.js";
+    import {
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      doc, getDoc
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     const form    = document.getElementById('loginForm');
     const emailEl = document.getElementById('loginEmail');
@@ -82,35 +86,62 @@
     const btn     = document.getElementById('loginBtn');
     const errEl   = document.getElementById('loginError');
 
-    // Helper: where to go next (respects ?next=..., but only internal paths)
-    function getNext() {
-      const params = new URLSearchParams(location.search);
-      const next = params.get('next') || 'index.html';
-      const isInternal = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
-      return isInternal ? next : 'index.html';
+    // --- utils ---
+    function safeNextFromQuery() {
+      const p = new URLSearchParams(location.search);
+      const next = (p.get("next") || "").trim();
+      const sameSite = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
+      return sameSite ? next : "";
     }
 
-    // If already signed in, go immediately
-    onAuthStateChanged(auth, (user) => {
-      if (user) window.location.href = getNext();
-    });
+    async function getRole(uid) {
+      try {
+        const snap = await getDoc(doc(db, "users", uid));
+        return (snap.exists() ? (snap.data().role || "") : "").toLowerCase();
+      } catch {
+        return "";
+      }
+    }
 
+    async function routeAfterLogin() {
+      // 1) Respect ?next= when it points to an intake page (so intake gating works)
+      const next = safeNextFromQuery();
+      if (next && next.startsWith("intake-")) {
+        location.href = next;
+        return;
+      }
+
+      // 2) Otherwise route by role
+      const u = auth.currentUser;
+      if (!u) { location.href = "login.html"; return; }
+      const role = await getRole(u.uid);
+
+      if (role === "admin")      { location.href = "admin.html"; return; }
+      if (role === "contractor") { location.href = "contractor.html"; return; }
+      // default to client portal (you can build client.html later)
+      location.href = "client.html";
+    }
+
+    // If already signed in, go straight to your portal
+    onAuthStateChanged(auth, (user) => { if (user) routeAfterLogin(); });
+
+    // Handle submit
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       errEl.hidden = true;
 
-      const originalText = btn.textContent;
+      const original = btn.textContent;
       btn.disabled = true;
       btn.textContent = "Signing in…";
 
-      // CHANGED: use FormData so autofill works on first submit
+      // Use FormData so browser autofill works on first submit
       const fd    = new FormData(form);
       const email = String(fd.get('email') || emailEl.value || '').trim();
       const pass  = String(fd.get('password') || passEl.value || '').trim();
 
       try {
         await signInWithEmailAndPassword(auth, email, pass);
-        window.location.href = getNext();
+        await routeAfterLogin();
       } catch (e) {
         const map = {
           "auth/invalid-email":     "That email doesn’t look right.",
@@ -119,15 +150,13 @@
           "auth/wrong-password":    "Incorrect password. Try again.",
           "auth/too-many-requests": "Too many attempts. Please wait a moment and try again."
         };
-        const code = e.code || "";
-        errEl.textContent = map[code] || (e.message?.replace("Firebase: ", "") || "Sign in failed.");
+        errEl.textContent = map[e.code] || (e.message?.replace("Firebase: ", "") || "Sign in failed.");
         errEl.hidden = false;
-
-        btn.disabled = false;
-        btn.textContent = originalText;
+        btn.disabled = false; btn.textContent = original;
       }
     });
   </script>
 </body>
 </html>
+
 
