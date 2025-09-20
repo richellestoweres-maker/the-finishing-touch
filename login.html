@@ -9,43 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Minimal luxe form styles (same as before) -->
   <style>
-    .auth-wrap {
-      width: min(460px, 92%);
-      margin: 64px auto;
-      background: #fff;
-      padding: 28px;
-      border-radius: 16px;
-      box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08));
-    }
-    .auth-wrap h1 {
-      font-family: "Playfair Display", serif;
-      font-size: 1.9rem;
-      text-align: center;
-      margin: 0 0 1rem;
-      color: var(--taupe-900, #2e2a27);
-    }
-    .auth-wrap form { display: grid; gap: 14px; }
-    .auth-wrap label { display: grid; gap: 6px; font-weight: 600; color: var(--taupe-900, #2e2a27); }
-    .auth-wrap input {
-      border: 1px solid #e3d9ce;
-      border-radius: 12px;
-      padding: .8rem .9rem;
-      background: #fffdfb;
-      color: var(--taupe-900, #2e2a27);
-      font-size: 16px;
-    }
-    .auth-wrap .btn { width: 100%; margin-top: 6px; }
-    .auth-wrap p { text-align: center; margin-top: 14px; }
-    .auth-wrap a { color: var(--taupe-900, #2e2a27); font-weight: 600; text-decoration: none; }
-    .error { color: #b00020; font-weight: 600; margin-top: 6px; text-align: center; }
-    .muted { color: #7b746e; font-size: .95rem; }
+    .auth-wrap{width:min(460px,92%);margin:64px auto;background:#fff;padding:28px;border-radius:16px;box-shadow:var(--shadow,0 12px 30px rgba(0,0,0,.08))}
+    .auth-wrap h1{font-family:"Playfair Display",serif;font-size:1.9rem;text-align:center;margin:0 0 1rem;color:var(--taupe-900,#2e2a27)}
+    .auth-wrap form{display:grid;gap:14px}
+    .auth-wrap label{display:grid;gap:6px;font-weight:600;color:var(--taupe-900,#2e2a27)}
+    .auth-wrap input{border:1px solid #e3d9ce;border-radius:12px;padding:.8rem .9rem;background:#fffdfb;color:var(--taupe-900,#2e2a27);font-size:16px}
+    .auth-wrap .btn{width:100%;margin-top:6px}
+    .auth-wrap p{text-align:center;margin-top:14px}
+    .auth-wrap a{color:var(--taupe-900,#2e2a27);font-weight:600;text-decoration:none}
+    .error{color:#b00020;font-weight:600;margin-top:6px;text-align:center}
+    .muted{color:#7b746e;font-size:.95rem}
   </style>
 </head>
 <body>
   <div class="auth-wrap">
-    <!-- Back home button (inside the card) -->
     <div style="margin-bottom:10px;">
       <a class="btn btn-outline" href="index.html">← Back home</a>
     </div>
@@ -69,73 +47,56 @@
     </form>
   </div>
 
-  <!-- Role-aware routing -->
+  <!-- Role-aware routing: admins/contractors -> contractor.html; clients -> intake/client portal -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
-    import {
-      signInWithEmailAndPassword,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import {
-      doc, getDoc
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const form    = document.getElementById('loginForm');
+    const form = document.getElementById('loginForm');
     const emailEl = document.getElementById('loginEmail');
     const passEl  = document.getElementById('loginPass');
     const btn     = document.getElementById('loginBtn');
     const errEl   = document.getElementById('loginError');
 
-    // --- utils ---
-    function safeNextFromQuery() {
+    function safeNextFromQuery(){
       const p = new URLSearchParams(location.search);
-      const next = (p.get("next") || "").trim();
+      const next = (p.get('next') || '').trim();
       const sameSite = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
-      return sameSite ? next : "";
+      return sameSite ? next : '';
     }
 
-    async function getRole(uid) {
+    async function getRole(uid){
       try {
-        const snap = await getDoc(doc(db, "users", uid));
-        return (snap.exists() ? (snap.data().role || "") : "").toLowerCase();
-      } catch {
-        return "";
-      }
+        const snap = await getDoc(doc(db, 'users', uid));
+        return (snap.exists() ? (snap.data().role || '') : '').toLowerCase();
+      } catch { return ''; }
     }
 
-    async function routeAfterLogin() {
-      // 1) Respect ?next= when it points to an intake page (so intake gating works)
-      const next = safeNextFromQuery();
-      if (next && next.startsWith("intake-")) {
-        location.href = next;
-        return;
-      }
-
-      // 2) Otherwise route by role
+    async function routeAfterLogin(){
       const u = auth.currentUser;
-      if (!u) { location.href = "login.html"; return; }
+      if (!u) { location.href = 'login.html'; return; }
       const role = await getRole(u.uid);
 
-      if (role === "admin")      { location.href = "admin.html"; return; }
-      if (role === "contractor") { location.href = "contractor.html"; return; }
-      // default to client portal (you can build client.html later)
-      location.href = "client.html";
+      // Admins and contractors ALWAYS land on the portal
+      if (role === 'admin' || role === 'contractor') { location.href = 'contractor.html'; return; }
+
+      // Clients can follow ?next=intake-... else client portal
+      const next = safeNextFromQuery();
+      if (next && next.startsWith('intake-')) { location.href = next; return; }
+      location.href = 'client.html';
     }
 
-    // If already signed in, go straight to your portal
     onAuthStateChanged(auth, (user) => { if (user) routeAfterLogin(); });
 
-    // Handle submit
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       errEl.hidden = true;
 
       const original = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = "Signing in…";
+      btn.disabled = true; btn.textContent = 'Signing in…';
 
-      // Use FormData so browser autofill works on first submit
-      const fd    = new FormData(form);
+      const fd = new FormData(form);
       const email = String(fd.get('email') || emailEl.value || '').trim();
       const pass  = String(fd.get('password') || passEl.value || '').trim();
 
@@ -150,7 +111,7 @@
           "auth/wrong-password":    "Incorrect password. Try again.",
           "auth/too-many-requests": "Too many attempts. Please wait a moment and try again."
         };
-        errEl.textContent = map[e.code] || (e.message?.replace("Firebase: ", "") || "Sign in failed.");
+        errEl.textContent = map[e.code] || (e.message?.replace('Firebase: ','') || 'Sign in failed.');
         errEl.hidden = false;
         btn.disabled = false; btn.textContent = original;
       }
@@ -158,5 +119,6 @@
   </script>
 </body>
 </html>
+
 
 
