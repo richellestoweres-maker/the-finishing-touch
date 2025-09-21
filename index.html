@@ -10,13 +10,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Site CSS -->
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="styles.css?v=8" />
 
   <style>
     html { scroll-behavior: smooth; }
-    #book { scroll-margin-top: 80px; } /* keeps anchor scroll nice */
+    #book { scroll-margin-top: 80px; }
 
-    /* ===== Services grid: 4 across on desktop, 2×2 on mobile ===== */
+    /* Services grid: 4 across on desktop, 2×2 on mobile */
     .services .cards{
       display:grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -36,7 +36,7 @@
       .services .cards{ grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
 
-    /* ===== Chat widget base z-index so it stays on top ===== */
+    /* Chat widget z-index so it stays on top */
     #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
   </style>
 </head>
@@ -100,7 +100,7 @@
       <article class="card">
         <i class="fa-solid fa-couch service-icon" aria-hidden="true"></i>
         <h3>Staging &amp; Styling</h3>
-        <p>Elevate spaces for living or showings</p>
+      <p>Elevate spaces for living or showings</p>
       </article>
 
       <!-- Row 2 -->
@@ -134,7 +134,91 @@
     </div>
   </section>
 
-  <!-- ===== Full-bleed Gallery Belt (kept as #book for existing links) ===== -->
+  <!-- ===== Showcase Video (full-bleed, sits above gallery & reviews) ===== -->
+  <section class="showcase-video">
+    <style>
+      .showcase-video { position: relative; overflow: hidden; background:#000; }
+      .showcase-video .sv-wrap {
+        position: relative; left: 50%; right: 50%;
+        margin-left: -50vw; margin-right: -50vw; width: 100vw;
+        max-height: 70vh;
+      }
+      .showcase-video video {
+        width: 100%; height: 100%; max-height: 70vh;
+        object-fit: cover; object-position: center;
+        display: block; filter: saturate(1.05) contrast(1.03);
+      }
+      .showcase-video .sv-overlay {
+        position:absolute; inset:0; display:grid; place-items:center;
+        padding: 24px; pointer-events:none;
+        background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.35));
+      }
+      .showcase-video .sv-copy {
+        text-align:center; color:#fff; max-width:min(900px,92%);
+        font-family: "Playfair Display", serif;
+      }
+      .showcase-video .sv-copy h2 { margin:0 0 .35rem; font-size:clamp(1.6rem, 3.5vw, 2.4rem); }
+      .showcase-video .sv-copy p  { margin:0; font-size:clamp(1rem, 1.8vw, 1.15rem); opacity:.95; }
+      .sv-ctrl {
+        position:absolute; right:14px; bottom:14px; z-index:2;
+        background:rgba(255,255,255,.9); border:0; border-radius:999px;
+        padding:.45rem .8rem; font-weight:800; cursor:pointer;
+        box-shadow:0 8px 20px rgba(0,0,0,.18);
+      }
+      @media (max-width: 640px){
+        .showcase-video .sv-wrap, .showcase-video video { max-height: 56vh; }
+      }
+    </style>
+
+    <div class="sv-wrap">
+      <video
+        id="homeReel"
+        playsinline
+        muted
+        loop
+        autoplay
+        preload="metadata"
+        poster="video-poster.jpg">
+        <source src="home-reel.webm" type="video/webm" />
+        <source src="home-reel.mp4"  type="video/mp4" />
+        Your browser doesn’t support embedded video.
+      </video>
+
+      <button class="sv-ctrl" id="svToggle" aria-label="Pause video">Pause</button>
+
+      <div class="sv-overlay">
+        <div class="sv-copy">
+          <h2>Luxury finishes, effortless living</h2>
+          <p>Cleaning • Organizing • Staging • Seasonal Styling</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        const vid = document.getElementById('homeReel');
+        const btn = document.getElementById('svToggle');
+        try {
+          const io = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (!e.isIntersecting) vid.pause(); else vid.play().catch(()=>{}); });
+          }, { threshold: 0.25 });
+          io.observe(vid);
+        } catch(_) {}
+
+        function updateLabel(){
+          btn.textContent = vid.paused ? 'Play' : 'Pause';
+          btn.setAttribute('aria-label', vid.paused ? 'Play video' : 'Pause video');
+        }
+        btn.addEventListener('click', () => { vid.paused ? vid.play() : vid.pause(); updateLabel(); });
+        vid.addEventListener('play',  updateLabel);
+        vid.addEventListener('pause', updateLabel);
+        vid.muted = true;
+        vid.play().catch(()=>{ /* mobile may require a tap; button is visible */ });
+      })();
+    </script>
+  </section>
+
+  <!-- ===== Full-bleed Gallery Belt ===== -->
   <section id="book" class="sp-belt">
     <style>
       .sp-belt{ --belt-height: 380px; --belt-gap: 18px; background:#2e2a27; color:#fff; padding:0; }
@@ -259,7 +343,7 @@
       start();
 
       const GBP_SEARCH_URL = "https://www.google.com/maps/search/?api=1&query=The+Finishing+Touch+Galveston+TX";
-      const GBP_PROFILE_URL = ""; // add later if you have a short link
+      const GBP_PROFILE_URL = "";
       const GBP_REVIEW_URL  = "";
       const badge = document.getElementById("googleBadge");
       const write = document.getElementById("googleWriteReview");
@@ -287,7 +371,7 @@
   <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
 
   <!-- Site JS -->
-  <script src="script.js?v=7" defer></script>
+  <script src="script.js?v=8" defer></script>
 
   <!-- === Finishing Touch — AI Concierge Chat (self-contained) === -->
   <style>
@@ -431,7 +515,6 @@
               "<strong>Happy to help you choose!</strong>",
               "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
               "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
-              "<em>Move-Out:</em> 5 hr ≈ up to ~1,500 sq ft · 7 hr ≈ ~1,500–3,000+ sq ft.",
               `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`
             ].join("<br>");
           default:
@@ -444,14 +527,16 @@
       }
 
       launcher.addEventListener("click", ()=>{
-        panel.style.display = "block";
-        if (!thread.dataset.greeted){
+        const open = panel.style.display !== "block";
+        panel.style.display = open ? "block" : "none";
+        if (open && !thread.dataset.greeted){
           add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
           thread.dataset.greeted = "1";
         }
-        input.focus();
+        if (open) input.focus();
       });
       closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
       form.addEventListener("submit",(e)=>{
         e.preventDefault();
         const text = input.value.trim();
@@ -563,6 +648,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
