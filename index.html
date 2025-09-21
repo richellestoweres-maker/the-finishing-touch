@@ -15,7 +15,29 @@
   <style>
     html { scroll-behavior: smooth; }
     #book { scroll-margin-top: 80px; } /* keeps anchor scroll nice */
-    #ftt-chat-launcher, #ftt-chat { z-index: 9999; } /* chat on top */
+
+    /* ===== Services grid: 4 across on desktop, 2×2 on mobile ===== */
+    .services .cards{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:14px;
+      align-items:stretch;
+    }
+    .services .card{
+      background:#fff; border-radius:16px; padding:18px; text-align:center;
+      box-shadow:0 10px 26px rgba(0,0,0,.08);
+      display:flex; flex-direction:column; gap:8px; justify-content:center;
+    }
+    .service-icon{ font-size:28px; color:#2e2a27; opacity:.9; }
+    .services .card h3{ margin:.25rem 0 .15rem; }
+    .services .card p{ margin:0; opacity:.9; }
+
+    @media (max-width: 920px){
+      .services .cards{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    /* ===== Chat widget base z-index so it stays on top ===== */
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
   </style>
 </head>
 <body class="page-home">
@@ -41,7 +63,7 @@
   <!-- Hero -->
   <section class="hero">
     <div class="hero-media">
-      <img src="bed-banner.png" alt="Luxury styled bedroom by The Finishing Touch">
+      <img src="bed-banner.png" alt="Luxury styled bedroom by The Finishing Touch" loading="eager" fetchpriority="high">
       <div class="hero-scrim"></div>
     </div>
 
@@ -68,6 +90,7 @@
   <!-- Services -->
   <section id="services" class="section services">
     <div class="container cards">
+      <!-- Row 1 -->
       <article class="card">
         <i class="fa-solid fa-broom service-icon" aria-hidden="true"></i>
         <h3>Cleaning</h3>
@@ -80,6 +103,7 @@
         <p>Elevate spaces for living or showings</p>
       </article>
 
+      <!-- Row 2 -->
       <article class="card">
         <i class="fa-solid fa-border-all service-icon" aria-hidden="true"></i>
         <h3>Organizing</h3>
@@ -89,7 +113,7 @@
       <article class="card">
         <i class="fa-solid fa-snowman service-icon" aria-hidden="true"></i>
         <h3>Holiday Decorating</h3>
-        <p>Festive styling for gatherings & celebrations</p>
+        <p>Festive styling for gatherings &amp; celebrations</p>
       </article>
     </div>
   </section>
@@ -98,7 +122,7 @@
   <section id="about" class="section about">
     <div class="container about-grid">
       <div class="about-photo">
-        <img src="fall-candles.jpg" alt="Cozy styled tray with candles and pumpkins">
+        <img src="fall-candles.jpg" alt="Cozy styled tray with candles and pumpkins" loading="lazy">
       </div>
       <div class="about-copy">
         <h2>About</h2>
@@ -113,67 +137,19 @@
   <!-- ===== Full-bleed Gallery Belt (kept as #book for existing links) ===== -->
   <section id="book" class="sp-belt">
     <style>
-      /* ---- Belt sizing knobs ---- */
-      .sp-belt { 
-        --belt-height: 380px;   /* ⬅️ make this 420px or 460px if you want it even bigger */
-        --belt-gap: 18px;
-        background:#2e2a27; 
-        color:#fff; 
-        padding:0; 
-      }
-
-      /* Full-bleed wrapper */
-      .sp-fullbleed { 
-        position:relative; 
-        left:50%; right:50%; 
-        margin-left:-50vw; margin-right:-50vw; 
-        width:100vw; 
-      }
-
-      /* Horizontal gallery */
-      .belt-viewport { overflow:hidden; }
-      .belt-track { 
-        display:flex; 
-        align-items:center;              /* centers images vertically in the belt */
-        gap:var(--belt-gap); 
-        padding:16px 24px; 
-        animation: beltScroll 55s linear infinite; 
-        will-change: transform; 
-      }
-      .belt-track:hover { animation-play-state: paused; }
-
-      /* BIG images that "fit" the belt */
-      .belt-img { 
-        height: var(--belt-height); 
-        width: calc(var(--belt-height) * 1.65);   /* ~cinematic ratio; adjust to taste */
-        object-fit: cover; 
-        border-radius:16px; 
-        flex:0 0 auto; 
-        opacity:.98; 
-        box-shadow:0 12px 28px rgba(0,0,0,.22); 
-      }
-
-      /* Edge fades so the belt feels continuous */
-      .belt-grad { position:relative; }
-      .belt-grad::before, .belt-grad::after {
-        content:""; position:absolute; top:0; bottom:0; width:70px; pointer-events:none; z-index:2;
-        background:linear-gradient(to right, #2e2a27 0%, rgba(46,42,39,0) 100%);
-      }
-      .belt-grad::after { right:0; left:auto; transform:scaleX(-1); }
-
-      /* Smooth continuous motion */
-      @keyframes beltScroll { 
-        0% { transform: translateX(0); } 
-        100% { transform: translateX(-50%); } 
-      }
-
-      /* Responsive tweaks */
-      @media (max-width: 1100px) { .sp-belt { --belt-height: 320px; } }
-      @media (max-width: 820px)  { .sp-belt { --belt-height: 260px; } }
-      @media (max-width: 640px)  { 
-        .sp-belt { --belt-height: 54vw; }       /* belt height scales with screen width */
-        .belt-img { width: calc(var(--belt-height) * 1.4); }
-      }
+      .sp-belt{ --belt-height: 380px; --belt-gap: 18px; background:#2e2a27; color:#fff; padding:0; }
+      .sp-fullbleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
+      .belt-viewport{ overflow:hidden; }
+      .belt-track{ display:flex; align-items:center; gap:var(--belt-gap); padding:16px 24px; animation: beltScroll 55s linear infinite; will-change: transform; }
+      .belt-track:hover{ animation-play-state: paused; }
+      .belt-img{ height: var(--belt-height); width: calc(var(--belt-height) * 1.65); object-fit: cover; border-radius:16px; flex:0 0 auto; opacity:.98; box-shadow:0 12px 28px rgba(0,0,0,.22); }
+      .belt-grad{ position:relative; }
+      .belt-grad::before,.belt-grad::after{ content:""; position:absolute; top:0; bottom:0; width:70px; pointer-events:none; z-index:2; background:linear-gradient(to right, #2e2a27 0%, rgba(46,42,39,0) 100%); }
+      .belt-grad::after{ right:0; left:auto; transform:scaleX(-1); }
+      @keyframes beltScroll{ 0%{ transform: translateX(0);} 100%{ transform: translateX(-50%);} }
+      @media (max-width: 1100px){ .sp-belt{ --belt-height: 320px; } }
+      @media (max-width: 820px){ .sp-belt{ --belt-height: 260px; } }
+      @media (max-width: 640px){ .sp-belt{ --belt-height: 54vw; } .belt-img{ width: calc(var(--belt-height) * 1.4); } }
     </style>
 
     <div class="sp-fullbleed belt-grad">
@@ -182,9 +158,7 @@
       </div>
     </div>
 
-    <!-- Build the gallery track -->
     <script>
-      /* ==== DATA: your real photos (files in site root) ==== */
       const PHOTOS = [
         { src: "1.jpg",  alt: "Finished home — photo 1" },
         { src: "2.jpg",  alt: "Finished home — photo 2" },
@@ -197,18 +171,15 @@
         { src: "9.jpg",  alt: "Finished home — photo 9" },
         { src: "10.jpg", alt: "Finished home — photo 10" }
       ];
-
       const belt = document.getElementById('beltTrack');
       if (belt) {
-        const slides = PHOTOS.map(p => 
-          `<img class="belt-img" loading="lazy" src="${p.src}" alt="${p.alt || 'Cleaned space'}">`
-        ).join('');
+        const slides = PHOTOS.map(p => `<img class="belt-img" loading="lazy" src="${p.src}" alt="${p.alt || 'Cleaned space'}">`).join('');
         belt.innerHTML = slides + slides; /* duplicate for seamless loop */
       }
     </script>
   </section>
 
-  <!-- ===== Reviews (separate, below the belt) ===== -->
+  <!-- Reviews -->
   <section id="reviews" class="section">
     <style>
       .reviews-wrap { max-width: 1000px; margin: 0 auto; padding: 24px 18px; }
@@ -242,7 +213,6 @@
     </div>
 
     <script>
-      /* Reviews data + rotator */
       const REVIEWS = [
         { text:"Spotless! They transformed our home in one afternoon. I could breathe again.", by:"— A. Martinez, League City", stars:5 },
         { text:"Attention to detail is unreal. Baseboards, fixtures, even vents… all gleaming.", by:"— T. Reynolds, Pearland",   stars:5 },
@@ -288,14 +258,11 @@
       [...dotsWrap.children][0]?.classList.add('active');
       start();
 
-      /* Google links: works now, upgrades after verification */
       const GBP_SEARCH_URL = "https://www.google.com/maps/search/?api=1&query=The+Finishing+Touch+Galveston+TX";
-      const GBP_PROFILE_URL = ""; // e.g. https://g.page/r/XXXX  (add after verification)
-      const GBP_REVIEW_URL  = ""; // e.g. https://g.page/r/XXXX/review
-
+      const GBP_PROFILE_URL = ""; // add later if you have a short link
+      const GBP_REVIEW_URL  = "";
       const badge = document.getElementById("googleBadge");
       const write = document.getElementById("googleWriteReview");
-
       badge.href = GBP_PROFILE_URL || GBP_SEARCH_URL;
       if (GBP_REVIEW_URL) {
         write.href = GBP_REVIEW_URL;
@@ -322,10 +289,41 @@
   <!-- Site JS -->
   <script src="script.js?v=7" defer></script>
 
-  <!-- === Finishing Touch — AI Concierge Chat === -->
+  <!-- === Finishing Touch — AI Concierge Chat (self-contained) === -->
+  <style>
+    #ftt-chat-launcher{
+      position:fixed; right:18px; bottom:18px;
+      width:54px; height:54px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.18);
+    }
+    #ftt-chat{
+      position:fixed; right:18px; bottom:84px;
+      width:340px; max-width:calc(100vw - 36px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
+    .ftt-title{ font-weight:800; color:#2e2a27 }
+    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
+    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
+    .ftt-thread{ height:300px; overflow:auto; padding:12px }
+    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
+    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
+    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
+    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
+    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
+    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
+    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
+    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
+    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+  </style>
+
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
 
-  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
     <div class="ftt-chat-header">
       <div>
         <div class="ftt-title">The Finishing Touch</div>
@@ -347,9 +345,130 @@
       <button data-q="services">Services</button>
       <button data-q="book">Book now</button>
       <button data-q="human">Talk to a person</button>
-      <button data-q="recommend">Help me choose</button>
+      <button data-q="help">Help me choose</button>
     </div>
   </div>
+
+  <script>
+    (function(){
+      const CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-cleaning.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messenger: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+
+      const panel   = document.getElementById("ftt-chat");
+      const thread  = document.getElementById("ftt-thread");
+      const form    = document.getElementById("ftt-inputbar");
+      const input   = document.getElementById("ftt-input");
+      const quick   = document.querySelector(".ftt-quick");
+      const closeBtn= document.querySelector(".ftt-close");
+      const launcher= document.getElementById("ftt-chat-launcher");
+
+      function add(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|deep|standard|move|organize|staging|decor)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
+        return "fallback";
+      }
+      function answer(intent){
+        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Intake</a>`;
+        const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Quick pricing (final depends on size/condition):",
+              "• Initial/Deep: typically $350–$400 for average homes.",
+              "• Standard Maintenance: commonly $275–$300.",
+              "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + "."
+            ].join("<br>");
+          case "availability":
+            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
+          case "services":
+            return [
+              "We offer luxury cleaning, organizing, and staging/decor.",
+              "• Deep/Initial: top-to-bottom detail.",
+              "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
+              "• Move-Out/Make-Ready: inside cabinets/fridge/oven by request.",
+              "Want the full checklist? " + intakeLink + " and I’ll tailor it."
+            ].join("<br>");
+          case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
+          case "human":
+            return isWithinBusinessHours()
+              ? `Absolutely. Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`
+              : `We’re offline. You can still <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply ASAP.`;
+          case "recommend":
+            return [
+              "<strong>Happy to help you choose!</strong>",
+              "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
+              "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
+              "<em>Move-Out:</em> 5 hr ≈ up to ~1,500 sq ft · 7 hr ≈ ~1,500–3,000+ sq ft.",
+              `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`
+            ].join("<br>");
+          default:
+            return [
+              "I can help with pricing, availability, and services.",
+              "Try “what’s your pricing?” or “do you have Friday slots?”",
+              "Say “human” any time to talk to a person."
+            ].join("<br>");
+        }
+      }
+
+      launcher.addEventListener("click", ()=>{
+        panel.style.display = "block";
+        if (!thread.dataset.greeted){
+          add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+          thread.dataset.greeted = "1";
+        }
+        input.focus();
+      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+      form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        add(text, "me"); input.value = "";
+        setTimeout(()=> add(answer(detectIntent(text))), 120);
+      });
+      quick.addEventListener("click",(e)=>{
+        if (e.target.matches("button[data-q]")){
+          const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+          const intent = map[e.target.getAttribute("data-q")] || "fallback";
+          add(e.target.textContent, "me");
+          setTimeout(()=> add(answer(intent)), 80);
+        }
+      });
+    })();
+  </script>
 
   <!-- Quote dropdown behavior -->
   <style>
@@ -385,12 +504,8 @@
         document.removeEventListener('click', onDocClick, true);
         document.removeEventListener('keydown', onKey);
       }
-      function onDocClick(e){
-        if (!menu.contains(e.target) && e.target !== btn) closeMenu();
-      }
-      function onKey(e){
-        if (e.key === 'Escape') closeMenu();
-      }
+      function onDocClick(e){ if (!menu.contains(e.target) && e.target !== btn) closeMenu(); }
+      function onKey(e){ if (e.key === 'Escape') closeMenu(); }
       btn.addEventListener('click', (e)=>{
         e.preventDefault();
         const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -442,13 +557,14 @@
     });
   </script>
 
-  <!-- Base Firebase import (as requested) -->
+  <!-- Base Firebase import (keeps module available) -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
-    // no-op import to ensure the module is loaded; leaves existing behavior unchanged.
   </script>
 </body>
 </html>
+
+
 
 
 
