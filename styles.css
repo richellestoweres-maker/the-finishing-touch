@@ -234,5 +234,198 @@ input,textarea,select{
   .hero-title{font-size:2.4rem}
 }
 
+/* =========================================================
+   MOBILE TUNE-UP (drop-in)
+   Makes headers, forms, grids, and the contractor portal
+   look clean on small screens without changing desktop.
+   Paste at the END of styles.css
+   ========================================================= */
+
+/* Helpful defaults */
+:root{
+  --container-pad: 16px;
+}
+
+/* Containers */
+.container,
+.header-inner,
+.intake-wrap,
+.portal{
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-pad);
+  padding-right: var(--container-pad);
+}
+
+/* Text sizing – keep readable on small screens */
+@media (max-width: 640px){
+  body { line-height: 1.45; }
+}
+
+/* -------- Header / Nav -------- */
+.site-header .container,
+.header-inner{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.main-nav{
+  display:flex;
+  gap:12px;
+  flex-wrap: wrap; /* allow wrapping on small screens */
+}
+.main-nav a{
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+
+/* Quote dropdown stays inside viewport on phones */
+.quote-dropdown{ position: relative; }
+.quote-menu{
+  right: 0;
+  left: auto;
+  min-width: 220px;
+  max-width: 92vw;
+  transform: translateX(0);
+}
+
+/* -------- Grids / Cards -------- */
+.grid{ display:grid; gap:12px; }
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+.grid-1{ display:grid; gap:14px; }
+
+@media (max-width: 900px){
+  .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid-2{ grid-template-columns: 1fr; } /* forms stack */
+}
+@media (max-width: 640px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+/* Buttons: comfy taps on mobile */
+.btn{
+  line-height: 1.1;
+  padding: .85rem 1rem;
+  border-radius: 999px;
+}
+@media (max-width: 640px){
+  .btn{ width: 100%; } /* full-width buttons on phones */
+  .actions .btn + .btn{ margin-top:8px; }
+}
+
+/* -------- Intake pages -------- */
+.intake-wrap{
+  background:#fff;
+  border-radius:16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+  padding: 22px;
+}
+@media (max-width: 640px){
+  .intake-title{ font-size: 1.5rem; }
+  .intake-script{ font-size: 1.35rem; }
+}
+
+/* Labels & inputs scale nicely on touch */
+.intake-wrap label{ display:grid; gap:6px; font-weight:600; }
+.intake-wrap input,
+.intake-wrap select,
+.intake-wrap textarea{
+  appearance: none;
+  width: 100%;
+  padding: .85rem .9rem;
+  border:1px solid #e3d9ce;
+  border-radius:12px;
+  background:#fffdfb;
+  font-size:16px; /* prevents iOS zoom */
+}
+
+/* Submit row: keep estimate + button tidy */
+.submit-row{ display:grid; gap:10px; }
+#estimateCleaning, #estimateOrganizing, #estimateDecor, #estimateHoliday{
+  font-size: 1rem;
+}
+
+/* -------- Contractor portal -------- */
+.portal{ margin-top: 16px; }
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  background:#fff;
+  padding:12px 16px;
+  border-radius:14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  flex-wrap: wrap; /* allow wrap on phones */
+}
+.topbar .right{
+  display:flex;
+  gap:10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.tabs{
+  display:flex;
+  gap:10px;
+  overflow-x: auto;        /* horizontal scroll on phones */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+.tabs::-webkit-scrollbar{ display: none; }
+
+.filters{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+}
+.chip{
+  white-space: nowrap;
+}
+
+/* Job cards */
+.card{
+  background:#fff;
+  border-radius:14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.meta{ display:flex; gap:8px; flex-wrap:wrap; font-size:.95rem; opacity:.9; }
+
+/* -------- Chat widget (if present) -------- */
+#ftt-chat{
+  width: 380px;
+  max-width: 92vw;
+  height: 520px;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}
+#ftt-chat-launcher{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+}
+@media (max-width: 640px){
+  #ftt-chat{
+    width: 100vw;
+    height: 70vh;
+    right: 0; left: 0; bottom: 0;
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+/* -------- Small polish -------- */
+.rolepill{ font-size:.8rem; padding:.2rem .6rem; }
+.hint{ font-size:.92rem; opacity:.95; }
+
+/* Ensure iframes (Square embeds) are fluid */
+iframe{ max-width:100%; }
+
 
 
