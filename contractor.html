@@ -13,46 +13,57 @@
     body { background: var(--paper, #fbf8f4); }
     .portal { width:min(1100px, 94%); margin: 24px auto 60px; }
     .topbar {
-      display:flex; align-items:center; justify-content:space-between;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
       background:#fff; padding:12px 16px; border-radius:14px; box-shadow:var(--shadow, 0 10px 30px rgba(0,0,0,.08));
+      flex-wrap:wrap;
     }
     .brand-mini { display:flex; align-items:center; gap:.6rem; }
     .brand-mini .vase-logo { width:28px; height:36px; background:url('logo-vase.png') center / contain no-repeat; display:inline-block; }
-    .tabs { display:flex; gap:10px; }
+    .rolepill { font-size:.8rem; padding:.2rem .6rem; border-radius:999px; border:1px solid #e3d9ce; background:#fffdfb; }
+    .right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .small { font-size:.9rem; opacity:.85; }
+
+    .tabs { display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .tabbtn {
-      border:1px solid #e3d9ce; background:#fff; color:#2e2a27; border-radius:999px; padding:.5rem .85rem; font-weight:700; cursor:pointer;
+      border:1.5px solid #e3d9ce; background:#fff; color:#2e2a27; border-radius:999px; padding:.5rem .85rem; font-weight:800; cursor:pointer; white-space:nowrap;
     }
     .tabbtn.active { background: var(--accent, #d2bda9); border-color: var(--accent, #d2bda9); color:#2a2624; }
-    .main { margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px; }
+
     .filters { display:flex; gap:8px; flex-wrap:wrap; }
     .chip {
-      border:1px solid #e3d9ce; background:#fffdfb; color:#2e2a27; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700; font-size:.9rem;
+      border:1px solid #e3d9ce; background:#fffdfb; color:#2e2a27; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:800; font-size:.9rem;
+      white-space:nowrap;
     }
     .chip.active { background:#2e2a27; color:#fff; border-color:#2e2a27; }
+
+    .main { margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px; }
     .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
     .card {
       background:#fff; border-radius:14px; box-shadow:var(--shadow, 0 10px 30px rgba(0,0,0,.08));
       padding:14px; display:flex; flex-direction:column; gap:10px;
     }
     .toprow { display:flex; justify-content:space-between; gap:8px; align-items:baseline; }
-    .pay { font-weight:800; }
-    .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:.92rem; opacity:.9; }
+    .muted { opacity:.85; }
+    .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:.95rem; opacity:.95; }
     .meta span { display:inline-flex; align-items:center; gap:6px; }
+    .pay { font-weight:800; }
     .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
     .btn { display:inline-block; padding:.55rem .85rem; border-radius:999px; font-weight:800; text-decoration:none; cursor:pointer; }
     .btn-outline { border:1.5px solid #2e2a27; background:#fff; color:#2e2a27; }
     .btn-solid { background: var(--accent, #d2bda9); color:#2a2624; border:0; }
     .empty { text-align:center; padding:24px; background:#fff; border-radius:14px; border:1px dashed #e3d9ce; }
-    .rolepill { font-size:.8rem; padding:.2rem .5rem; border-radius:999px; border:1px solid #e3d9ce; background:#fffdfb; }
-    .right { display:flex; align-items:center; gap:10px; }
-    .small { font-size:.9rem; opacity:.85; }
-    .muted { opacity:.8; }
+
+    .toast {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 16px; background:#0f172a; color:#fff; padding:10px 14px; border-radius:10px;
+      box-shadow:0 10px 25px rgba(0,0,0,.25); z-index: 99999; font-weight:700; display:none;
+    }
   </style>
 </head>
 <body>
   <div class="portal">
     <!-- Top bar -->
-    <div class="topbar">
+    <div class="topbar" role="banner">
       <div class="brand-mini">
         <span class="vase-logo" aria-hidden="true"></span>
         <div>
@@ -62,31 +73,33 @@
       </div>
       <div class="right">
         <span id="whoami" class="small"></span>
-        <a id="homeLink" class="btn btn-outline" href="index.html">Home</a>
-        <!-- Admin-only -->
+        <a class="btn btn-outline" href="index.html">Home</a>
+        <!-- Admin quick link (only if admin) -->
         <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden>Manual Intake</a>
-        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
+        <a id="signOutBtn" class="btn btn-outline" href="#" aria-label="Sign out">Sign out</a>
       </div>
     </div>
 
     <!-- Tabs + filters -->
     <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
-      <div class="tabs">
-        <button id="tabOpen" class="tabbtn active" type="button">Open Jobs</button>
-        <button id="tabMine" class="tabbtn" type="button">My Jobs</button>
+      <div class="tabs" role="tablist" aria-label="Job views">
+        <button id="tabOpen" class="tabbtn active" type="button" role="tab" aria-selected="true" aria-controls="panelOpen">Open Jobs</button>
+        <button id="tabMine" class="tabbtn" type="button" role="tab" aria-selected="false" aria-controls="panelMine">My Jobs</button>
       </div>
       <div class="filters" id="filterChips" aria-label="Filters"></div>
     </div>
 
     <!-- Panels -->
-    <section id="panelOpen" class="main">
+    <section id="panelOpen" class="main" role="tabpanel" aria-labelledby="tabOpen">
       <div id="openJobs" class="grid" aria-live="polite"></div>
     </section>
 
-    <section id="panelMine" class="main" hidden>
+    <section id="panelMine" class="main" role="tabpanel" aria-labelledby="tabMine" hidden>
       <div id="myJobs" class="grid" aria-live="polite"></div>
     </section>
   </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <!-- Firebase / Firestore logic -->
   <script type="module">
@@ -100,41 +113,77 @@
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     // ---- DOM refs
-    const rolePill = document.getElementById('rolePill');
-    const whoami   = document.getElementById('whoami');
+    const rolePill   = document.getElementById('rolePill');
+    const whoami     = document.getElementById('whoami');
     const btnSignOut = document.getElementById('signOutBtn');
     const chipsWrap  = document.getElementById('filterChips');
     const adminBtn   = document.getElementById('adminIntakeBtn');
 
-    const tabOpen = document.getElementById('tabOpen');
-    const tabMine = document.getElementById('tabMine');
-    const panelOpen = document.getElementById('panelOpen');
-    const panelMine = document.getElementById('panelMine');
+    const tabOpen    = document.getElementById('tabOpen');
+    const tabMine    = document.getElementById('tabMine');
+    const panelOpen  = document.getElementById('panelOpen');
+    const panelMine  = document.getElementById('panelMine');
 
     const openJobsEl = document.getElementById('openJobs');
     const myJobsEl   = document.getElementById('myJobs');
+    const toastEl    = document.getElementById('toast');
 
     // ---- State
     let me = null;                // auth user
-    let meRole = 'contractor';    // default
-    let meServices = [];          // allowed service types
+    let meRole = 'contractor';    // 'admin' | 'contractor' | 'client' (we care about admin/contractor here)
+    let meServices = [];          // allowed service types (from users doc)
     let activeFilter = 'all';     // chip filter
+    let lastOpenJobs = [], lastMyJobs = []; // for redraws
+
+    const ALL_TYPES = ['cleaning','organizing','decor','holiday'];
+
+    // ---- Small helpers
+    function showToast(msg, ms=1900){
+      toastEl.textContent = msg;
+      toastEl.style.display = 'block';
+      setTimeout(()=> toastEl.style.display = 'none', ms);
+    }
+    function cap(s){ return s ? (s[0].toUpperCase() + s.slice(1)) : ''; }
+    function fmtPay(n){
+      if (typeof n === 'number' && !isNaN(n)) return `$${Math.round(n)}`;
+      const x = Number(n); return isFinite(x) ? `$${Math.round(x)}` : '';
+    }
+    function fmtDate(d){
+      try { return new Date(d).toLocaleDateString([], { month:'short', day:'numeric' }); } catch { return d || ''; }
+    }
+    function payForContractor(j){
+      const p = j.payEach ?? j.contractorPayEach ?? j.payPerContractor ?? j.contractorPay ?? null;
+      return p != null ? `Your pay est: <span class="pay">${fmtPay(p)}</span>` : '';
+    }
+    function slotsLeft(j){
+      const need = Number(j.contractorsNeeded || 1);
+      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
+      const left = Math.max(0, need - have);
+      return { need, have, left };
+    }
+    function canClaimRole(){
+      // Admin may also claim; pure clients cannot get here.
+      return meRole === 'contractor' || meRole === 'admin';
+    }
 
     // ---- Tabs
     function setTab(which){
       const open = which === 'open';
       tabOpen.classList.toggle('active', open);
       tabMine.classList.toggle('active', !open);
+      tabOpen.setAttribute('aria-selected', String(open));
+      tabMine.setAttribute('aria-selected', String(!open));
       panelOpen.hidden = !open;
       panelMine.hidden = open;
     }
     tabOpen.addEventListener('click', () => setTab('open'));
     tabMine.addEventListener('click', () => setTab('mine'));
 
-    // ---- Chips
-    const ALL_TYPES = ['cleaning','organizing','decor','holiday'];
+    // ---- Filter chips
     function renderChips(){
-      const allowed = meRole === 'admin' ? ALL_TYPES : (meServices.length ? meServices : ALL_TYPES);
+      const allowed = (meServices && meServices.length)
+        ? meServices.map(s => s.toLowerCase())
+        : ALL_TYPES;
       const types = ['all', ...allowed];
       chipsWrap.innerHTML = '';
       types.forEach(t => {
@@ -168,13 +217,14 @@
         const data = snap.exists() ? snap.data() : {};
         meRole = (data.role || 'contractor').toLowerCase();
         meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes : [];
-        rolePill.textContent = meRole === 'admin' ? 'Admin + Contractor' : 'Contractor';
+        rolePill.textContent = (meRole === 'admin') ? 'Admin + Contractor' : 'Contractor';
         if (adminBtn) adminBtn.hidden = (meRole !== 'admin');
       } catch (e) {
         console.warn(e);
         rolePill.textContent = 'Contractor';
         if (adminBtn) adminBtn.hidden = true;
       }
+
       renderChips();
       startListeners();
     });
@@ -182,16 +232,14 @@
     // ---- Sign out
     btnSignOut.addEventListener('click', async (e) => {
       e.preventDefault();
-      await signOut(auth);
-      location.href = 'index.html';
+      try { await signOut(auth); } finally { location.href = 'index.html'; }
     });
 
     // ---- Firestore listeners
     let unsubOpen = null, unsubMineA = null, unsubMineB = null;
-    let lastOpenJobs = [], lastMyJobs = [];
 
     function startListeners(){
-      // Open jobs
+      // Open jobs (visible to contractors via rules; admin sees all via admin rule)
       const qOpen = query(
         collection(db, 'jobs'),
         where('status', '==', 'open'),
@@ -200,16 +248,20 @@
       unsubOpen = onSnapshot(qOpen, (snap) => {
         lastOpenJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         drawOpenJobs(lastOpenJobs);
-      });
+      }, (err) => console.warn('open jobs listener error:', err));
 
-      // My jobs (support both legacy single and new multi)
+      // My jobs — legacy single-assignee
       unsubMineA = onSnapshot(
-        query(collection(db, 'jobs'), where('contractorId', '==', me.uid)),
-        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+        query(collection(db, 'jobs'), where('contractorId', '==', (me?.uid || ''))),
+        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+        (err) => console.warn('my jobs (A) listener error:', err)
       );
+
+      // My jobs — new multi-assignee
       unsubMineB = onSnapshot(
-        query(collection(db, 'jobs'), where('contractorIds', 'array-contains', me.uid)),
-        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+        query(collection(db, 'jobs'), where('contractorIds', 'array-contains', (me?.uid || ''))),
+        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+        (err) => console.warn('my jobs (B) listener error:', err)
       );
     }
 
@@ -221,64 +273,45 @@
       drawMyJobs(lastMyJobs);
     }
 
-    // ---- Helpers for rendering
-    function cap(s){ return s ? (s[0].toUpperCase() + s.slice(1)) : ''; }
-    function fmtPay(n){
-      if (typeof n === 'number' && !isNaN(n)) return `$${Math.round(n)}`;
-      const x = Number(n); return isFinite(x) ? `$${Math.round(x)}` : '';
-    }
-    function fmtDate(d){
-      try { return new Date(d).toLocaleDateString([], { month:'short', day:'numeric' }); } catch { return d || ''; }
-    }
-    function payForContractor(j){
-      const p = j.payEach ?? j.contractorPayEach ?? j.payPerContractor ?? j.contractorPay ?? null;
-      return p != null ? `Your pay est: <span class="pay">${fmtPay(p)}</span>` : '';
-    }
-    function slotsLeft(j){
-      const need = Number(j.contractorsNeeded || 1);
-      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
-      const left = Math.max(0, need - have);
-      return { need, have, left };
-    }
-
-    // ---- Card HTML (no client price, no PII)
+    // ---- Rendering
     function jobCardHTML(j, inMine=false){
-      const type = (j.serviceType || '').toLowerCase();
+      const type  = (j.serviceType || '').toLowerCase();
       const title = type ? cap(type) : 'Job';
-      const zip = j.zip || j.postal || j.postcode || j.area || j.city || '';
-      const when = j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || '');
-      const bb = (j.beds || j.baths) ? `${j.beds||0} bd / ${j.baths||0} ba` : '';
+      const zip   = j.zip || j.postal || j.postcode || j.area || j.city || '';
+      const when  = j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || '');
+      const bb    = (j.beds || j.baths) ? `${j.beds||0} bd / ${j.baths||0} ba` : '';
       const hours = j.estimatedTeamHours || j.teamHours || j.eta || '';
-      const { need, have, left } = slotsLeft(j);
+      const { need, left } = slotsLeft(j);
       const leftTxt = need > 1 ? `${left} of ${need} slots left` : '';
-
       const payLine = payForContractor(j);
       const statusChip = j.status ? `<span>• ${j.status}</span>` : '';
 
       return `
-        <div class="card">
+        <div class="card" data-jobid="${j.id}">
           <div class="toprow">
             <strong>${title}</strong>
             ${payLine ? `<div class="muted">${payLine}</div>` : ''}
           </div>
           <div class="meta">
-            ${zip ? `<span>📍 <span>${zip}</span></span>` : ''}
-            ${when ? `<span>🗓️ <span>${when}</span></span>` : ''}
-            ${bb ? `<span>🛏️ <span>${bb}</span></span>` : ''}
+            ${zip   ? `<span>📍 <span>${zip}</span></span>` : ''}
+            ${when  ? `<span>🗓️ <span>${when}</span></span>` : ''}
+            ${bb    ? `<span>🛏️ <span>${bb}</span></span>` : ''}
             ${hours ? `<span>⏱️ <span>${hours}</span></span>` : ''}
             ${leftTxt ? `<span>👥 <span>${leftTxt}</span></span>` : ''}
             ${statusChip}
           </div>
           ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : '')}
-          <div class="actions" data-jobid="${j.id}">
-            <!-- buttons injected -->
-          </div>
+          <div class="actions"><!-- buttons injected --></div>
         </div>
       `;
     }
 
     function drawOpenJobs(list){
-      const allowed = meRole === 'admin' ? ALL_TYPES : (meServices.length ? meServices : ALL_TYPES);
+      // Filter by contractor allowed service types AND active chip
+      const allowed = (meServices && meServices.length)
+        ? meServices.map(s => s.toLowerCase())
+        : ALL_TYPES;
+
       const filtered = list.filter(j => {
         const type = (j.serviceType || '').toLowerCase();
         const okType = allowed.includes(type);
@@ -292,25 +325,7 @@
       }
       openJobsEl.innerHTML = filtered.map(j => jobCardHTML(j, false)).join('');
 
-      // Attach actions
-      filtered.forEach(j => {
-        const wrap = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
-        if (!wrap) return;
-
-        const { left } = slotsLeft(j);
-        const claim = document.createElement('button');
-        claim.className = 'btn btn-solid';
-        claim.textContent = left > 1 ? 'Claim a slot' : 'Claim this job';
-        claim.addEventListener('click', () => claimJob(j.id));
-        wrap.appendChild(claim);
-
-        const msg = document.createElement('a');
-        msg.className = 'btn btn-outline';
-        msg.textContent = 'Message Admin';
-        msg.href = '#';
-        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming soon.'); });
-        wrap.appendChild(msg);
-      });
+      filtered.forEach(j => injectOpenActions(j));
     }
 
     function drawMyJobs(list){
@@ -319,48 +334,73 @@
         return;
       }
       myJobsEl.innerHTML = list.map(j => jobCardHTML(j, true)).join('');
+      list.forEach(j => injectMineActions(j));
+    }
 
-      list.forEach(j => {
-        const wrap = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
-        if (!wrap) return;
+    function injectOpenActions(j){
+      const card = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
+      if (!card) return;
+      const actions = card.querySelector('.actions');
 
-        const msg = document.createElement('a');
-        msg.className = 'btn btn-outline';
-        msg.textContent = 'Message Admin';
-        msg.href = '#';
-        msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Chat coming soon.'); });
-        wrap.appendChild(msg);
+      // Claim button (only if role can claim)
+      if (canClaimRole()){
+        const { left } = slotsLeft(j);
+        const claim = document.createElement('button');
+        claim.className = 'btn btn-solid';
+        claim.textContent = left > 1 ? 'Claim a slot' : 'Claim this job';
+        claim.addEventListener('click', () => claimJob(j.id, claim));
+        actions.appendChild(claim);
+      }
 
-        const mark = document.createElement('button');
-        mark.className = 'btn btn-solid';
-        mark.textContent = j.status === 'in_progress' ? 'Mark Submitted'
-                        : (j.status === 'claimed' ? 'Start Work'
-                        : (j.status === 'submitted' ? 'Submitted' : 'Update Status'));
-        mark.disabled = (j.status === 'submitted' || j.status === 'approved' || j.status === 'paid');
-        mark.addEventListener('click', async () => {
-          try {
-            const newStatus = j.status === 'claimed' ? 'in_progress' : 'submitted';
-            await updateDoc(doc(db, 'jobs', j.id), {
-              status: newStatus,
-              updatedAt: serverTimestamp()
-            });
-          } catch (e) {
-            alert('Could not update status.');
-            console.warn(e);
-          }
-        });
-        wrap.appendChild(mark);
+      // Message Admin (placeholder)
+      const msg = document.createElement('a');
+      msg.className = 'btn btn-outline';
+      msg.textContent = 'Message Admin';
+      msg.href = '#';
+      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
+      actions.appendChild(msg);
+    }
+
+    function injectMineActions(j){
+      const card = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
+      if (!card) return;
+      const actions = card.querySelector('.actions');
+
+      const msg = document.createElement('a');
+      msg.className = 'btn btn-outline';
+      msg.textContent = 'Message Admin';
+      msg.href = '#';
+      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
+      actions.appendChild(msg);
+
+      const mark = document.createElement('button');
+      mark.className = 'btn btn-solid';
+      mark.textContent = j.status === 'in_progress' ? 'Mark Submitted'
+                      : (j.status === 'claimed' ? 'Start Work'
+                      : (j.status === 'submitted' ? 'Submitted' : 'Update Status'));
+      mark.disabled = (j.status === 'submitted' || j.status === 'approved' || j.status === 'paid');
+      mark.addEventListener('click', async () => {
+        try {
+          const newStatus = j.status === 'claimed' ? 'in_progress' : 'submitted';
+          await updateDoc(doc(db, 'jobs', j.id), {
+            status: newStatus,
+            updatedAt: serverTimestamp()
+          });
+          showToast(newStatus === 'in_progress' ? 'Marked in progress' : 'Marked submitted');
+        } catch (e) {
+          console.warn(e);
+          alert('Could not update status.');
+        }
       });
+      actions.appendChild(mark);
     }
 
     // ---- Claim (transaction supports multi-contractor jobs)
-    async function claimJob(jobId){
+    async function claimJob(jobId, buttonEl){
       if (!me) return;
 
-      // disable current button UI optimistically
-      const card = document.querySelector(`[data-jobid="${jobId}"]`);
-      const button = card ? card.querySelector('.btn.btn-solid') : null;
-      if (button) { button.disabled = true; button.textContent = 'Claiming…'; }
+      // Optimistic UI
+      if (buttonEl) { buttonEl.disabled = true; buttonEl.textContent = 'Claiming…'; }
 
       try {
         await runTransaction(db, async (tx) => {
@@ -372,14 +412,16 @@
           if ((j.status || 'open') !== 'open') throw new Error('Already claimed.');
 
           const need = Number(j.contractorsNeeded || 1);
-          const ids = Array.isArray(j.contractorIds) ? [...j.contractorIds] : (j.contractorId ? [j.contractorId] : []);
-          if (ids.includes(me.uid)) return; // already in
+          const ids = Array.isArray(j.contractorIds) ? [...j.contractorIds]
+                    : (j.contractorId ? [j.contractorId] : []);
+          if (ids.includes(me.uid)) return; // already added
 
           if (ids.length >= need) throw new Error('No slots left.');
 
           ids.push(me.uid);
           const emails = Array.isArray(j.contractorEmails) ? [...j.contractorEmails] : [];
-          if (!emails.includes(me.email || '')) emails.push(me.email || '');
+          const myEmail = me.email || '';
+          if (myEmail && !emails.includes(myEmail)) emails.push(myEmail);
 
           const update = {
             contractorIds: ids,
@@ -387,29 +429,32 @@
             updatedAt: serverTimestamp()
           };
 
-          if (need <= ids.length) {
+          // If fully staffed, flip to claimed; else remain open
+          if (ids.length >= need) {
             update.status = 'claimed';
             update.claimedAt = serverTimestamp();
           } else {
-            update.status = 'open'; // still open until fully staffed
+            update.status = 'open';
           }
 
           tx.update(ref, update);
         });
 
+        showToast('Job claimed');
         setTab('mine');
       } catch (e) {
         console.warn(e);
         const msg = (e && e.code === 'permission-denied')
-          ? 'Permission denied claiming. (Ping me and I’ll add the tiny Firestore rule to allow contractors to claim.)'
+          ? 'Permission denied claiming. Check Firestore rules for the contractor-claim update.'
           : (e.message || 'Could not claim. It may have just been taken.');
         alert(msg);
       } finally {
-        if (button) { button.disabled = false; button.textContent = 'Claim this job'; }
+        if (buttonEl) { buttonEl.disabled = false; buttonEl.textContent = 'Claim this job'; }
       }
     }
   </script>
 </body>
 </html>
+
 
 
