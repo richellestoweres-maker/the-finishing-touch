@@ -46,13 +46,41 @@
     .panel{display:none}
     .panel.active{display:block}
 
-    /* Create Job form */
+    /* Forms */
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .form-grid label{display:grid;gap:6px;font-weight:700}
     .form-grid input,.form-grid select,.form-grid textarea{border:1px solid #e3d9ce;border-radius:10px;padding:.6rem .7rem;background:#fffdfb}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .hint{font-size:.92rem;opacity:.9}
     .small{font-size:.9rem;opacity:.85}
+
+    /* Admin helper chat (bottom-right) */
+    #admin-help-launcher{
+      position:fixed;right:20px;bottom:20px;width:52px;height:52px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;background:#0f172a;color:#fff;font-size:22px;
+      box-shadow:0 10px 25px rgba(0,0,0,.25);cursor:pointer;z-index:9999
+    }
+    #admin-help{
+      position:fixed;right:20px;bottom:86px;width:360px;max-width:90vw;background:#fff;border:1px solid #eee;border-radius:16px;overflow:hidden;
+      box-shadow:0 20px 50px rgba(0,0,0,.25);z-index:9999;font-family:system-ui,sans-serif;display:none
+    }
+    .ah-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#0f172a;color:#fff}
+    .ah-title{font-weight:700}.ah-sub{font-size:12px;opacity:.8}
+    .ah-close{background:transparent;border:none;color:#fff;font-size:24px;cursor:pointer}
+    .ah-thread{max-height:50vh;overflow:auto;padding:12px;background:#f8fafc;display:flex;flex-direction:column;gap:10px}
+    .ah-bubble{max-width:85%;padding:10px 12px;border-radius:12px;line-height:1.35;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .ah-bubble.bot{background:#fff;border:1px solid #eef2f7;align-self:flex-start}
+    .ah-bubble.me{background:#0ea5e9;color:#fff;align-self:flex-end}
+    .ah-input{display:flex;gap:8px;padding:10px;border-top:1px solid #eef2f7;background:#fff}
+    .ah-input input{flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:10px;font-size:14px}
+    .ah-send{background:#0f172a;color:#fff;border:none;border-radius:10px;padding:0 14px;cursor:pointer}
+    .ah-quick{display:flex;gap:6px;padding:8px 10px;flex-wrap:wrap;background:#fff;border-top:1px solid #eef2f7}
+    .ah-quick button{font-size:12px;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:6px 10px;cursor:pointer}
+    @media (max-width:480px){#admin-help{right:10px;bottom:80px;width:92vw}}
+    @media (max-width:640px){
+      #admin-help{right:0;left:0;bottom:0;width:100vw;height:70vh;border-radius:16px 16px 0 0}
+      #admin-help-launcher{right:12px;bottom:12px}
+    }
   </style>
 </head>
 <body>
@@ -82,9 +110,10 @@
       <button class="tabbtn" data-tab="contractors">Contractors</button>
       <button class="tabbtn" data-tab="clients">Clients</button>
       <button class="tabbtn" data-tab="apps">Applications</button>
+      <button class="tabbtn" data-tab="estimate">Estimate</button>
     </div>
 
-    <!-- Filter/search -->
+    <!-- Filter/search (for jobs lists) -->
     <div class="bar">
       <div class="filters" id="filterChips" aria-label="Filter by service type"></div>
       <div class="search">
@@ -160,9 +189,184 @@
       <section id="panel-apps" class="panel" aria-live="polite">
         <div id="listApps" class="grid"></div>
       </section>
+
+      <!-- Quick Estimate (no PII) -->
+      <section id="panel-estimate" class="panel">
+        <div class="card" style="padding:16px">
+          <div class="row" style="margin-bottom:10px;gap:10px;align-items:flex-end;flex-wrap:wrap">
+            <label>Service
+              <select id="estService">
+                <option value="cleaning">Cleaning</option>
+                <option value="organizing">Organizing</option>
+                <option value="decor">Decor</option>
+                <option value="holiday">Holiday</option>
+              </select>
+            </label>
+            <button id="estCalcBtn" class="btn btn-solid" type="button">Calculate</button>
+            <span class="hint">Basic inputs only—perfect for phone quotes.</span>
+          </div>
+
+          <!-- CLEANING inputs -->
+          <div id="estCleaning" class="form-grid" style="margin-top:8px">
+            <label>Home Size
+              <select id="c_sqft">
+                <option>&lt;1000</option>
+                <option selected>1000–2000</option>
+                <option>2000–3000</option>
+                <option>3000–4000</option>
+                <option>4000+</option>
+              </select>
+            </label>
+            <label>Service
+              <select id="c_service">
+                <option>Initial Clean</option>
+                <option>Deep Clean</option>
+                <option>Move-In / Move-Out Clean</option>
+                <option>Airbnb Turnover</option>
+                <option>Standard Clean</option>
+              </select>
+            </label>
+            <label>Beds <input id="c_beds" type="number" min="0" value="3"></label>
+            <label>Baths <input id="c_baths" type="number" min="0" value="2"></label>
+            <label>Other Rooms <input id="c_other" type="number" min="0" value="0"></label>
+            <label>Stories
+              <select id="c_stories"><option>1</option><option>2</option></select>
+            </label>
+            <label>Frequency (only affects Standard)
+              <select id="c_freq">
+                <option value="one-time">one-time</option>
+                <option value="weekly">weekly</option>
+                <option value="biweekly">biweekly</option>
+                <option value="monthly">monthly</option>
+              </select>
+            </label>
+            <label>Add-ons (keywords: oven, fridge, windows, baseboards, laundry)
+              <input id="c_addons" placeholder="e.g., oven, windows">
+            </label>
+          </div>
+
+          <!-- ORGANIZING inputs -->
+          <div id="estOrganizing" class="form-grid" style="display:none;margin-top:8px">
+            <label>Area
+              <select id="o_area">
+                <option>Closet</option><option>Kitchen</option><option>Pantry</option>
+                <option>Bedroom</option><option>Bathroom</option><option>Garage</option>
+                <option>Laundry Room</option><option>Office</option><option>Playroom</option>
+                <option>Whole Home (multi-area)</option>
+              </select>
+            </label>
+            <label>Size
+              <select id="o_size"><option>Small</option><option selected>Medium</option><option>Large</option></select>
+            </label>
+            <label># Spaces <input id="o_spaces" type="number" min="1" value="1"></label>
+            <label>Complexity
+              <select id="o_complex"><option>Light</option><option selected>Moderate</option><option>Heavy</option></select>
+            </label>
+            <label>Clutter
+              <select id="o_clutter"><option>Light</option><option selected>Moderate</option><option>Heavy</option></select>
+            </label>
+            <label>Decision Speed
+              <select id="o_decision"><option>Fast</option><option selected>Average</option><option>Slow</option></select>
+            </label>
+            <label>Volume
+              <select id="o_volume"><option>Low</option><option selected>Medium</option><option>High</option></select>
+            </label>
+            <label>Containers
+              <select id="o_cont"><option>None</option><option>Some (up to 10)</option><option>Many (10+)</option></select>
+            </label>
+            <label>Add-ons (bins, labels, bins/labels)
+              <input id="o_addons" placeholder="e.g., bins/labels">
+            </label>
+          </div>
+
+          <!-- DECOR inputs -->
+          <div id="estDecor" class="form-grid" style="display:none;margin-top:8px">
+            <label>Room
+              <select id="d_room">
+                <option>Living Room</option><option>Bedroom</option><option>Dining Room</option><option>Home Office</option>
+                <option>Kitchen / Nook</option><option>Entryway</option><option>Multiple Rooms</option>
+              </select>
+            </label>
+            <label># Rooms <input id="d_count" type="number" min="1" value="1"></label>
+            <label>Scope
+              <select id="d_scope">
+                <option>Light refresh (styling)</option>
+                <option>Refresh + small sourcing</option>
+                <option>Full design (sourcing + install)</option>
+              </select>
+            </label>
+            <label>Type
+              <select id="d_type">
+                <option>Interior Decorating (refresh)</option>
+                <option>Staging — Occupied</option>
+                <option>Staging — Vacant</option>
+              </select>
+            </label>
+            <label>Add-ons (moodboard, sourcing, shopping, install, window treatments, art hanging)
+              <input id="d_addons" placeholder="e.g., install, shopping">
+            </label>
+          </div>
+
+          <!-- HOLIDAY inputs -->
+          <div id="estHoliday" class="form-grid" style="display:none;margin-top:8px">
+            <label># Trees <input id="h_trees" type="number" min="0" value="1"></label>
+            <label>Tallest Tree
+              <select id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
+            </label>
+            <label>Tree Style
+              <select id="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
+            </label>
+            <label>Ribbon? <select id="h_ribbon"><option>No</option><option>Yes</option></select></label>
+            <label>Wreaths <input id="h_wreaths" type="number" min="0" value="0"></label>
+            <label>Garland Sections <input id="h_garland" type="number" min="0" value="0"></label>
+            <label>Stair Sections <input id="h_stairs" type="number" min="0" value="0"></label>
+            <label>Mantle? <select id="h_mantle"><option>No</option><option>Yes</option></select></label>
+            <label>Tablescapes <input id="h_tables" type="number" min="0" value="0"></label>
+            <label>Storage
+              <select id="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
+            </label>
+            <label>Shopping Trips
+              <select id="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
+            </label>
+            <label>Include Teardown? <select id="h_teardown"><option>Yes</option><option>No</option></select></label>
+          </div>
+
+          <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
+            <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 
+  <!-- Admin Helper Chat -->
+  <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
+  <div id="admin-help" aria-live="polite" aria-label="Admin help chat">
+    <div class="ah-head">
+      <div>
+        <div class="ah-title">Admin Help</div>
+        <div class="ah-sub">Short answers + quick links</div>
+      </div>
+      <button class="ah-close" aria-label="Close">×</button>
+    </div>
+    <div id="ah-thread" class="ah-thread"></div>
+    <div class="ah-quick">
+      <button data-q="how quote">How do I quote?</button>
+      <button data-q="organizing">Organizing time?</button>
+      <button data-q="assign">Assign a job</button>
+      <button data-q="status">Statuses</button>
+      <button data-q="booking">Booking link</button>
+    </div>
+    <div class="ah-input">
+      <input id="ah-input" type="text" placeholder="Ask a quick question…" />
+      <button class="ah-send" id="ah-send">Send</button>
+    </div>
+  </div>
+
+  <!-- Calculators (exposes calcCleaning, etc.) -->
+  <script src="script.js" defer></script>
+
+  <!-- Firebase + logic -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
     import {
@@ -185,7 +389,6 @@
       const roleSnap = await getDoc(doc(db, "users", user.uid));
       const role = (roleSnap.exists() ? (roleSnap.data().role || "") : "").toLowerCase();
       if (role !== "admin") {
-        // Not an admin — send to contractor view (still useful)
         location.href = "contractor.html";
         return;
       }
@@ -247,13 +450,13 @@
         snap => { lastOpen = snap.docs.map(d=>({id:d.id, ...d.data()})); drawOpen(lastOpen); }
       );
 
-      // All jobs (limit to recent 200)
+      // All jobs (recent 200)
       unsubAll = onSnapshot(
         query(collection(db,"jobs"), orderBy("createdAt","desc"), limit(200)),
         snap => { lastAll = snap.docs.map(d=>({id:d.id, ...d.data()})); drawAll(lastAll); }
       );
 
-      // Contractors (includes admins for assignment)
+      // Contractors (includes admins)
       unsubCons = onSnapshot(
         query(collection(db,"users"), where("role","in",["contractor","admin"])),
         snap => { drawPeople(elCons, snap.docs.map(d=>({id:d.id, ...d.data()})), "contractor"); }
@@ -263,13 +466,15 @@
         query(collection(db,"users"), where("role","==","client")),
         snap => { drawPeople(elClients, snap.docs.map(d=>({id:d.id, ...d.data()})), "client"); }
       );
-      // Applications (pending)
+      // Applications
       unsubApps = onSnapshot(
         query(collection(db,"users"), where("role","==","pending")),
         snap => { drawApps(snap.docs.map(d=>({id:d.id, ...d.data()}))); }
       );
 
       wireCreateForm();
+      wireEstimator();
+      wireAdminHelp();
     }
 
     // ---------- Render helpers ----------
@@ -331,13 +536,13 @@
 
     function drawOpen(list){
       const filtered = list.filter(matchFilters);
-      elOpen.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No open jobs match.</div>`;
-      hookJobActions(elOpen, filtered);
+      document.getElementById('listOpen').innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No open jobs match.</div>`;
+      hookJobActions(document.getElementById('listOpen'), filtered);
     }
     function drawAll(list){
       const filtered = list.filter(matchFilters);
-      elAll.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No jobs match.</div>`;
-      hookJobActions(elAll, filtered);
+      document.getElementById('listAll').innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No jobs match.</div>`;
+      hookJobActions(document.getElementById('listAll'), filtered);
     }
 
     function drawPeople(container, people, role){
@@ -367,6 +572,7 @@
     }
 
     function drawApps(apps){
+      const elApps = document.getElementById('listApps');
       if (!apps.length){ elApps.innerHTML = `<div class="empty">No pending applications.</div>`; return; }
       elApps.innerHTML = apps.map(a=>`
         <div class="card">
@@ -446,12 +652,11 @@
       const email = prompt("Enter contractor email to assign:");
       if (!email) return;
       try{
-        // Look up user by email (simple query)
         const q = query(collection(db,"users"), where("email","==", email));
         const snap = await getDocs(q);
         if (snap.empty){ alert("No user with that email."); return; }
         const u = { id: snap.docs[0].id, ...snap.docs[0].data() };
-        if ((u.role||"").toLowerCase()==="pending"){ alert("User is still pending; approve first."); return; }
+        if ((u.role||"").toLowerCase()==="pending"){ alert("User is pending; approve first."); return; }
 
         await runTransaction(db, async tx=>{
           const ref=doc(db,"jobs",jobId), ds=await tx.get(ref);
@@ -504,13 +709,12 @@
       try{ await deleteDoc(doc(db,"jobs",jobId)); }catch(e){ alert("Could not delete."); console.warn(e); }
     }
 
-    // Minimal private note doc editor (single doc named "main")
+    // Minimal private subdoc editor (single doc named "main")
     async function editPrivate(jobId){
       const note = prompt("Private note (replaces jobs/{id}/private/main.note). Leave blank to clear.");
       try{
         const ref = doc(db, "jobs", jobId, "private", "main");
-        if (!note){ await setDoc(ref, { note:"", updatedAt: serverTimestamp() }); }
-        else { await setDoc(ref, { note, updatedAt: serverTimestamp() }); }
+        await setDoc(ref, { note: (note||""), updatedAt: serverTimestamp() });
         alert("Saved.");
       }catch(e){ alert("Could not save private note."); console.warn(e); }
     }
@@ -527,7 +731,6 @@
         const fd = new FormData(form);
         const data = Object.fromEntries(fd.entries());
 
-        // Normalize fields
         const job = {
           serviceType: (data.serviceType||"").toLowerCase(),
           status: (data.status||"open"),
@@ -544,7 +747,6 @@
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         };
-        // remove empty strings/nulls where appropriate
         if (!job.zip) delete job.zip;
         if (!job.area) delete job.area;
         if (!job.window) delete job.window;
@@ -566,6 +768,199 @@
         }
       });
     }
+
+    // ---------- Quick Estimator (uses script.js calculators) ----------
+    function showEstSection(key){
+      document.getElementById('estCleaning').style.display  = (key==='cleaning' ? '' : 'none');
+      document.getElementById('estOrganizing').style.display= (key==='organizing' ? '' : 'none');
+      document.getElementById('estDecor').style.display     = (key==='decor' ? '' : 'none');
+      document.getElementById('estHoliday').style.display   = (key==='holiday' ? '' : 'none');
+    }
+    function wireEstimator(){
+      const svc = document.getElementById('estService');
+      const btn = document.getElementById('estCalcBtn');
+      const out = document.getElementById('estOut');
+
+      showEstSection(svc.value);
+      svc.addEventListener('change', ()=> showEstSection(svc.value));
+
+      btn.addEventListener('click', () => {
+        const type = svc.value;
+        try{
+          if (type === 'cleaning'){
+            const data = {
+              sqft: document.getElementById('c_sqft').value,
+              service: document.getElementById('c_service').value,
+              beds: document.getElementById('c_beds').value,
+              baths: document.getElementById('c_baths').value,
+              other_rooms: document.getElementById('c_other').value,
+              stories: document.getElementById('c_stories').value,
+              frequency: document.getElementById('c_freq').value,
+              addons: document.getElementById('c_addons').value
+            };
+            const price = (window.calcCleaning ? calcCleaning(data) : 0);
+            const { teamHours } = (window.estimateHoursCleaning ? estimateHoursCleaning(data) : {teamHours:0});
+            const hint = (window.cleaningHint ? cleaningHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+          if (type === 'organizing'){
+            const data = {
+              org_area: document.getElementById('o_area').value,
+              org_size: document.getElementById('o_size').value,
+              spaces: document.getElementById('o_spaces').value,
+              complexity: document.getElementById('o_complex').value,
+              org_clutter: document.getElementById('o_clutter').value,
+              org_decision_speed: document.getElementById('o_decision').value,
+              org_volume: document.getElementById('o_volume').value,
+              org_containers: document.getElementById('o_cont').value,
+              addons: document.getElementById('o_addons').value
+            };
+            const price = (window.calcOrganizing ? calcOrganizing(data) : 0);
+            const { teamHours } = (window.estimateHoursOrganizing ? estimateHoursOrganizing(data) : {teamHours:0});
+            const hint = (window.organizingHint ? organizingHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+          if (type === 'decor'){
+            const data = {
+              room: document.getElementById('d_room').value,
+              count: document.getElementById('d_count').value,
+              decor_scope: document.getElementById('d_scope').value,
+              decor_type: document.getElementById('d_type').value,
+              addons: document.getElementById('d_addons').value
+            };
+            const price = (window.calcDecor ? calcDecor(data) : 0);
+            const { teamHours } = (window.estimateHoursDecor ? estimateHoursDecor(data) : {teamHours:0});
+            const hint = (window.decorHint ? decorHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+          if (type === 'holiday'){
+            const data = {
+              trees: document.getElementById('h_trees').value,
+              tallest: document.getElementById('h_tallest').value,
+              tree_style: document.getElementById('h_style').value,
+              tree_ribbon: document.getElementById('h_ribbon').value,
+              wreaths: document.getElementById('h_wreaths').value,
+              garland_sections: document.getElementById('h_garland').value,
+              stair_sections: document.getElementById('h_stairs').value,
+              mantle: document.getElementById('h_mantle').value,
+              tablescapes: document.getElementById('h_tables').value,
+              storage: document.getElementById('h_storage').value,
+              shopping_trips: document.getElementById('h_trips').value,
+              teardown: document.getElementById('h_teardown').value
+            };
+            const res = (window.calcHoliday ? calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
+            const hint = (window.holidayHint ? holidayHint(data, res.teamHours) : '');
+            const lines = [
+              `Install est: <strong>$${res.price}</strong>`,
+              `Team time: ~${res.teamHours} hrs`,
+            ];
+            if (res.teardownHours){
+              lines.push(`Teardown: ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
+            }
+            lines.push(`<span class="hint">${hint}</span>`);
+            out.innerHTML = lines.join('<br>');
+            return;
+          }
+          out.textContent = 'Pick a service.';
+        } catch (e){
+          console.warn(e);
+          out.textContent = 'Could not calculate. Check your inputs.';
+        }
+      });
+    }
+
+    // ---------- Admin Helper Chat (rule-based mini assistant) ----------
+    function wireAdminHelp(){
+      const launcher = document.getElementById('admin-help-launcher');
+      const panel = document.getElementById('admin-help');
+      const thread = document.getElementById('ah-thread');
+      const input = document.getElementById('ah-input');
+      const send = document.getElementById('ah-send');
+      const close = document.querySelector('#admin-help .ah-close');
+      const quick = document.querySelector('#admin-help .ah-quick');
+
+      const bookUrl = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
+
+      function addMsg(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ah-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function greet(){
+        addMsg("Hi! This is your admin helper. Ask about quoting, statuses, assigning, or booking links.");
+      }
+      function detectIntent(t){
+        t=t.toLowerCase();
+        if(/quote|estimate|price/.test(t)) return "quote";
+        if(/organizing|closet|pantry|garage/.test(t)) return "organizing";
+        if(/assign|unassign|add.*contractor/.test(t)) return "assign";
+        if(/status|submitted|approved|paid|claimed/.test(t)) return "status";
+        if(/book|calendar|square/.test(t)) return "booking";
+        return "fallback";
+      }
+      function answer(intent){
+        switch(intent){
+          case "quote":
+            return [
+              "Use the <strong>Estimate</strong> tab for instant prices:",
+              "• Cleaning: set size/service, beds/baths, add-ons; it suggests time blocks.",
+              "• Organizing: area/size + clutter & decision speed adjust hours.",
+              "• Decor/Holiday supported too.",
+              "Share ballpark verbally; create a job later under <em>Create Job</em>."
+            ].join("<br>");
+          case "organizing":
+            return [
+              "Organizing defaults: Medium area ≈ 3–4 hr team block.",
+              "Heavier clutter or slow decisions increase hours; bins/labels add a bit.",
+              "Estimator tab → Organizing for a quick breakdown."
+            ].join("<br>");
+          case "assign":
+            return [
+              "Open/All Jobs → card buttons:",
+              "• <strong>Assign me</strong> adds you to contractorIds.",
+              "• <strong>Assign by email</strong> finds a user and adds them.",
+              "• <strong>Unassign</strong> removes a UID.",
+              "Status flips to <em>claimed</em> when slots are filled."
+            ].join("<br>");
+          case "status":
+            return [
+              "<code>open → claimed → in_progress → submitted → approved → paid</code>",
+              "Contractors move their jobs forward; you can override with the dropdown.",
+              "Use Private note for entry codes/PII in <code>jobs/{id}/private/main</code>."
+            ].join("<br>");
+          case "booking":
+            return `Send the live calendar: <a href="${bookUrl}" target="_blank" rel="noopener">Open Square calendar</a>.`;
+          default:
+            return "Try: “How do I quote?”, “Organizing time?”, “Assign a job”, “Statuses”, or “Booking link”.";
+        }
+      }
+
+      launcher.addEventListener('click', ()=>{
+        panel.style.display = 'block';
+        if (!thread.dataset.greeted){ greet(); thread.dataset.greeted="1"; }
+        input.focus();
+      });
+      close.addEventListener('click', ()=> panel.style.display='none');
+
+      send.addEventListener('click', ()=>{
+        const text = input.value.trim(); if(!text) return;
+        addMsg(text, "me"); input.value="";
+        setTimeout(()=> addMsg(answer(detectIntent(text))), 150);
+      });
+      input.addEventListener('keydown', (e)=>{ if(e.key==="Enter"){ e.preventDefault(); send.click(); }});
+
+      quick.addEventListener('click', (e)=>{
+        if (e.target.matches('button[data-q]')){
+          const q = e.target.getAttribute('data-q');
+          addMsg(e.target.textContent, "me");
+          setTimeout(()=> addMsg(answer(detectIntent(q))), 150);
+        }
+      });
+    }
   </script>
 </body>
 </html>
+
