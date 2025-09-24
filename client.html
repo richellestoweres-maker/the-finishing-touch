@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Client Portal – The Finishing Touch</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body{background:var(--paper,#fbf8f4)}
+    .portal{width:min(1100px,94%);margin:24px auto 60px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background:#fff;padding:12px 16px;border-radius:14px;box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08))
+    }
+    .brand-mini{display:flex;align-items:center;gap:.6rem}
+    .brand-mini .vase-logo{width:28px;height:36px;background:url('logo-vase.png') center/contain no-repeat;display:inline-block}
+    .right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .small{font-size:.92rem;opacity:.85}
+    .pill{font-size:.8rem;padding:.2rem .6rem;border-radius:999px;border:1px solid #e3d9ce;background:#fffdfb}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .card{background:#fff;border-radius:14px;box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));padding:14px;display:flex;flex-direction:column;gap:8px}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;font-size:.95rem;opacity:.9}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .empty{background:#fff;border:1px dashed #e3d9ce;border-radius:14px;padding:22px;text-align:center}
+    .section{padding:0}
+    .section h2{margin:10px 0}
+    .muted{opacity:.85}
+  </style>
+</head>
+<body>
+  <div class="portal">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand-mini">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <div>
+          <div style="font-family:'Playfair Display',serif;line-height:1;color:#2e2a27;">The Finishing Touch</div>
+          <div id="rolePill" class="pill">Client</div>
+        </div>
+      </div>
+      <div class="right">
+        <span id="whoami" class="small"></span>
+        <a class="btn btn-outline" href="index.html">Home</a>
+        <!-- Shortcuts visible if the same user is also contractor/admin -->
+        <a id="toContractor" class="btn btn-outline" href="contractor.html" hidden>Contractor</a>
+        <a id="toAdmin" class="btn btn-solid" href="admin-dashboard.html" hidden>Admin</a>
+        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
+      </div>
+    </div>
+
+    <!-- Welcome -->
+    <section class="section" style="margin-top:12px;">
+      <div class="card" style="gap:6px">
+        <div id="welcomeName" style="font-weight:800">Welcome</div>
+        <div class="muted">View your upcoming appointments, rebook, or reschedule/cancel.</div>
+      </div>
+    </section>
+
+    <!-- Quick actions -->
+    <section class="section" aria-label="Quick actions">
+      <div class="card" style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+        <div>
+          <strong>Need another visit?</strong><br>
+          <span class="muted">“Book Again” opens our live calendar with recommended time blocks on the intake pages.</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="btn btn-solid" href="index.html#book">Book Again</a>
+          <a class="btn btn-outline" target="_blank" rel="noopener"
+             href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9">Reschedule / Cancel</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upcoming -->
+    <section class="section">
+      <h2>Upcoming</h2>
+      <div id="upcoming" class="grid" aria-live="polite"></div>
+    </section>
+
+    <!-- Past / Unscheduled -->
+    <section class="section">
+      <h2>Past &amp; Unscheduled</h2>
+      <div id="past" class="grid" aria-live="polite"></div>
+    </section>
+
+    <!-- Help -->
+    <section class="section">
+      <div class="card">
+        <strong>Need help?</strong>
+        <div class="muted">Message us on Facebook or email and we’ll get right back to you.</div>
+        <div class="actions" style="margin-top:6px">
+          <a class="btn btn-outline" target="_blank" rel="noopener" href="https://m.me/thefinishingtouch.tx">Message on Facebook</a>
+          <a class="btn btn-outline" href="mailto:contact.thefinishingtouch.tx@gmail.com">Email us</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { auth, db } from "./ft-firebase.js";
+    import {
+      onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      collection, query, where, orderBy, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import {
+      doc, getDoc
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const whoami = document.getElementById('whoami');
+    const rolePill = document.getElementById('rolePill');
+    const welcomeName = document.getElementById('welcomeName');
+    const btnSignOut = document.getElementById('signOutBtn');
+    const toContractor = document.getElementById('toContractor');
+    const toAdmin = document.getElementById('toAdmin');
+
+    const upcomingEl = document.getElementById('upcoming');
+    const pastEl = document.getElementById('past');
+
+    const SQUARE_CAL = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
+
+    const cap = (s) => s ? (s[0].toUpperCase() + s.slice(1)) : "";
+    const fmtDate = (val) => {
+      try {
+        // Accept ISO string, millis, or leave as-is
+        const d = typeof val === "number" ? new Date(val) : new Date(String(val));
+        if (isNaN(d.getTime())) return "";
+        return d.toLocaleString([], { month:"short", day:"numeric", hour:"numeric", minute:"2-digit" });
+      } catch { return ""; }
+    };
+
+    function jobCard(j){
+      const title = cap(j.serviceType || "Service");
+      const when  = j.date ? fmtDate(j.date) : (j.window || "Unscheduled");
+      const where = j.area || j.city || j.zip || "";
+      const status = j.status ? cap(j.status) : "";
+
+      return `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;">
+            <strong>${title}</strong>
+            <span class="pill">${status}</span>
+          </div>
+          <div class="meta">
+            ${when ? `<span>🗓️ ${when}</span>` : ""}
+            ${where ? `<span>📍 ${where}</span>` : ""}
+            ${(j.beds||j.baths) ? `<span>🛏️ ${j.beds||0} bd / ${j.baths||0} ba</span>` : ""}
+          </div>
+          ${j.summary ? `<div>${j.summary}</div>` : ""}
+          <div class="actions">
+            <a class="btn btn-solid" href="index.html#book">Book Again</a>
+            <a class="btn btn-outline" target="_blank" rel="noopener" href="${SQUARE_CAL}">Reschedule / Cancel</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderEmpty(el, text){
+      el.innerHTML = `<div class="empty">${text}</div>`;
+    }
+
+    // Auth gate + role hints
+    onAuthStateChanged(auth, async (user) => {
+      if (!user){
+        const next = encodeURIComponent("client.html");
+        location.href = `login.html?next=${next}`;
+        return;
+      }
+      whoami.textContent = user.email || user.uid;
+      // Try to show their name & role shortcuts
+      try{
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (snap.exists()){
+          const data = snap.data();
+          if (data.displayName) welcomeName.textContent = `Welcome, ${data.displayName}`;
+          const role = (data.role || "client").toLowerCase();
+          rolePill.textContent = cap(role);
+          if (role === "admin"){ toAdmin.hidden = false; }
+          if (role === "contractor" || role === "admin"){ toContractor.hidden = false; }
+        }
+      }catch(e){ console.warn(e); }
+
+      // Start listening to this client's jobs
+      const q = query(
+        collection(db, "jobs"),
+        where("clientId", "==", user.uid),
+        orderBy("createdAt", "desc")
+      );
+      onSnapshot(q, (snap) => {
+        const jobs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        // Partition: upcoming if status is 'open' or 'claimed' or 'in_progress'
+        const upcoming = jobs.filter(j => ["open","claimed","in_progress","scheduled"].includes((j.status||"").toLowerCase()));
+        const past     = jobs.filter(j => !["open","claimed","in_progress","scheduled"].includes((j.status||"").toLowerCase()));
+
+        if (!upcoming.length) renderEmpty(upcomingEl, "No upcoming appointments yet.");
+        else upcomingEl.innerHTML = upcoming.map(jobCard).join("");
+
+        if (!past.length) renderEmpty(pastEl, "Nothing here yet. Book your first appointment!");
+        else pastEl.innerHTML = past.map(jobCard).join("");
+      });
+    });
+
+    btnSignOut.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await signOut(auth);
+      location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
