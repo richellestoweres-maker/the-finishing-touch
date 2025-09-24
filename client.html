@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Client Portal – The Finishing Touch</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Fonts + Site CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <style>
@@ -17,17 +18,18 @@
     }
     .brand-mini{display:flex;align-items:center;gap:.6rem}
     .brand-mini .vase-logo{width:28px;height:36px;background:url('logo-vase.png') center/contain no-repeat;display:inline-block}
-    .right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .small{font-size:.92rem;opacity:.85}
-    .pill{font-size:.8rem;padding:.2rem .6rem;border-radius:999px;border:1px solid #e3d9ce;background:#fffdfb}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-    .card{background:#fff;border-radius:14px;box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));padding:14px;display:flex;flex-direction:column;gap:8px}
-    .meta{display:flex;gap:10px;flex-wrap:wrap;font-size:.95rem;opacity:.9}
     .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .empty{background:#fff;border:1px dashed #e3d9ce;border-radius:14px;padding:22px;text-align:center}
-    .section{padding:0}
-    .section h2{margin:10px 0}
+    .btn{display:inline-block;padding:.6rem .9rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn-outline{border:1.5px solid #2e2a27;background:#fff;color:#2e2a27}
+    .btn-solid{background:var(--accent,#d2bda9);color:#2a2624;border:0}
+    .grid{display:grid;gap:14px}
+    .grid-cols{grid-template-columns:1.1fr .9fr}
+    @media (max-width:1000px){.grid-cols{grid-template-columns:1fr}}
+    .card{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:16px}
     .muted{opacity:.85}
+    .list a{display:inline-block;margin:.25rem .35rem 0 0}
+    .inline-badges{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{border:1px solid #e3d9ce;border-radius:999px;padding:.2rem .6rem;background:#fffdfb;font-weight:700;font-size:.85rem}
   </style>
 </head>
 <body>
@@ -38,178 +40,245 @@
         <span class="vase-logo" aria-hidden="true"></span>
         <div>
           <div style="font-family:'Playfair Display',serif;line-height:1;color:#2e2a27;">The Finishing Touch</div>
-          <div id="rolePill" class="pill">Client</div>
+          <div class="muted" id="whoami">Loading…</div>
         </div>
       </div>
-      <div class="right">
-        <span id="whoami" class="small"></span>
+      <div class="actions">
         <a class="btn btn-outline" href="index.html">Home</a>
-        <!-- Shortcuts visible if the same user is also contractor/admin -->
-        <a id="toContractor" class="btn btn-outline" href="contractor.html" hidden>Contractor</a>
-        <a id="toAdmin" class="btn btn-solid" href="admin-dashboard.html" hidden>Admin</a>
         <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
       </div>
     </div>
 
-    <!-- Welcome -->
-    <section class="section" style="margin-top:12px;">
-      <div class="card" style="gap:6px">
-        <div id="welcomeName" style="font-weight:800">Welcome</div>
-        <div class="muted">View your upcoming appointments, rebook, or reschedule/cancel.</div>
-      </div>
-    </section>
-
-    <!-- Quick actions -->
-    <section class="section" aria-label="Quick actions">
-      <div class="card" style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
-        <div>
-          <strong>Need another visit?</strong><br>
-          <span class="muted">“Book Again” opens our live calendar with recommended time blocks on the intake pages.</span>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <a class="btn btn-solid" href="index.html#book">Book Again</a>
-          <a class="btn btn-outline" target="_blank" rel="noopener"
-             href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9">Reschedule / Cancel</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Upcoming -->
-    <section class="section">
-      <h2>Upcoming</h2>
-      <div id="upcoming" class="grid" aria-live="polite"></div>
-    </section>
-
-    <!-- Past / Unscheduled -->
-    <section class="section">
-      <h2>Past &amp; Unscheduled</h2>
-      <div id="past" class="grid" aria-live="polite"></div>
-    </section>
-
-    <!-- Help -->
-    <section class="section">
+    <!-- Main content -->
+    <section class="grid grid-cols" style="margin-top:14px;">
       <div class="card">
-        <strong>Need help?</strong>
-        <div class="muted">Message us on Facebook or email and we’ll get right back to you.</div>
-        <div class="actions" style="margin-top:6px">
-          <a class="btn btn-outline" target="_blank" rel="noopener" href="https://m.me/thefinishingtouch.tx">Message on Facebook</a>
-          <a class="btn btn-outline" href="mailto:contact.thefinishingtouch.tx@gmail.com">Email us</a>
+        <h2 style="margin:0 0 .25rem">Welcome 👋</h2>
+        <p class="muted" id="greeting">Let’s get you scheduled.</p>
+
+        <div class="inline-badges" style="margin:8px 0 12px">
+          <span class="badge">Instant quote</span>
+          <span class="badge">Book in 1–2 min</span>
+          <span class="badge">Update/cancel anytime</span>
+        </div>
+
+        <div class="list">
+          <a class="btn btn-solid" href="intake-cleaning.html">Cleaning — Start Intake</a>
+          <a class="btn btn-solid" href="intake-organizing.html">Organizing — Start Intake</a>
+          <a class="btn btn-solid" href="intake-decor.html">Interior Decorating — Start Intake</a>
+          <a class="btn btn-solid" href="intake-holiday.html">Holiday (Indoor) — Start Intake</a>
+        </div>
+
+        <p class="muted" style="margin-top:12px">
+          Your intake shows a tailored ballpark on the page and emails a copy. Then click <strong>Book Now</strong> to jump to our calendar with the recommended time block.
+        </p>
+
+        <div style="margin-top:12px">
+          <a class="btn btn-outline" href="index.html#book">Go to Booking Calendar</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 .25rem">Your Appointments</h3>
+        <p class="muted">We’ll add upcoming visits here soon. For now, use the booking calendar to manage dates.</p>
+        <div style="margin-top:10px">
+          <a class="btn btn-outline" href="index.html#book">Manage bookings</a>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- Firebase -->
+  <!-- Auth gate + sign out -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
-    import {
-      onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import {
-      collection, query, where, orderBy, onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    import {
-      doc, getDoc
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const whoami = document.getElementById('whoami');
-    const rolePill = document.getElementById('rolePill');
-    const welcomeName = document.getElementById('welcomeName');
-    const btnSignOut = document.getElementById('signOutBtn');
-    const toContractor = document.getElementById('toContractor');
-    const toAdmin = document.getElementById('toAdmin');
+    const who = document.getElementById('whoami');
+    const greet = document.getElementById('greeting');
+    const btnOut = document.getElementById('signOutBtn');
 
-    const upcomingEl = document.getElementById('upcoming');
-    const pastEl = document.getElementById('past');
-
-    const SQUARE_CAL = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
-
-    const cap = (s) => s ? (s[0].toUpperCase() + s.slice(1)) : "";
-    const fmtDate = (val) => {
-      try {
-        // Accept ISO string, millis, or leave as-is
-        const d = typeof val === "number" ? new Date(val) : new Date(String(val));
-        if (isNaN(d.getTime())) return "";
-        return d.toLocaleString([], { month:"short", day:"numeric", hour:"numeric", minute:"2-digit" });
-      } catch { return ""; }
-    };
-
-    function jobCard(j){
-      const title = cap(j.serviceType || "Service");
-      const when  = j.date ? fmtDate(j.date) : (j.window || "Unscheduled");
-      const where = j.area || j.city || j.zip || "";
-      const status = j.status ? cap(j.status) : "";
-
-      return `
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;">
-            <strong>${title}</strong>
-            <span class="pill">${status}</span>
-          </div>
-          <div class="meta">
-            ${when ? `<span>🗓️ ${when}</span>` : ""}
-            ${where ? `<span>📍 ${where}</span>` : ""}
-            ${(j.beds||j.baths) ? `<span>🛏️ ${j.beds||0} bd / ${j.baths||0} ba</span>` : ""}
-          </div>
-          ${j.summary ? `<div>${j.summary}</div>` : ""}
-          <div class="actions">
-            <a class="btn btn-solid" href="index.html#book">Book Again</a>
-            <a class="btn btn-outline" target="_blank" rel="noopener" href="${SQUARE_CAL}">Reschedule / Cancel</a>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderEmpty(el, text){
-      el.innerHTML = `<div class="empty">${text}</div>`;
-    }
-
-    // Auth gate + role hints
     onAuthStateChanged(auth, async (user) => {
-      if (!user){
-        const next = encodeURIComponent("client.html");
+      if (!user) {
+        const next = encodeURIComponent('client.html');
         location.href = `login.html?next=${next}`;
         return;
       }
-      whoami.textContent = user.email || user.uid;
-      // Try to show their name & role shortcuts
-      try{
-        const snap = await getDoc(doc(db, "users", user.uid));
-        if (snap.exists()){
-          const data = snap.data();
-          if (data.displayName) welcomeName.textContent = `Welcome, ${data.displayName}`;
-          const role = (data.role || "client").toLowerCase();
-          rolePill.textContent = cap(role);
-          if (role === "admin"){ toAdmin.hidden = false; }
-          if (role === "contractor" || role === "admin"){ toContractor.hidden = false; }
-        }
-      }catch(e){ console.warn(e); }
-
-      // Start listening to this client's jobs
-      const q = query(
-        collection(db, "jobs"),
-        where("clientId", "==", user.uid),
-        orderBy("createdAt", "desc")
-      );
-      onSnapshot(q, (snap) => {
-        const jobs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-        // Partition: upcoming if status is 'open' or 'claimed' or 'in_progress'
-        const upcoming = jobs.filter(j => ["open","claimed","in_progress","scheduled"].includes((j.status||"").toLowerCase()));
-        const past     = jobs.filter(j => !["open","claimed","in_progress","scheduled"].includes((j.status||"").toLowerCase()));
-
-        if (!upcoming.length) renderEmpty(upcomingEl, "No upcoming appointments yet.");
-        else upcomingEl.innerHTML = upcoming.map(jobCard).join("");
-
-        if (!past.length) renderEmpty(pastEl, "Nothing here yet. Book your first appointment!");
-        else pastEl.innerHTML = past.map(jobCard).join("");
-      });
+      try {
+        const snap = await getDoc(doc(db,'users',user.uid));
+        const prof = snap.exists() ? snap.data() : {};
+        const name = prof.displayName || user.displayName || user.email || 'Client';
+        who.textContent = user.email || name;
+        greet.textContent = `Hi ${name.split(' ')[0]}, pick a service to get an instant quote.`;
+      } catch {
+        who.textContent = user.email || user.uid;
+      }
     });
 
-    btnSignOut.addEventListener('click', async (e) => {
+    btnOut.addEventListener('click', async (e) => {
       e.preventDefault();
       await signOut(auth);
-      location.href = "index.html";
+      location.href = 'index.html';
     });
+  </script>
+
+  <!-- === Finishing Touch — AI Concierge Chat (page-aware, guard against double init) === -->
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="help">Help me choose</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      if (window.__FTT_CHAT_READY__) return; // guard so we don't double-init
+      window.__FTT_CHAT_READY__ = true;
+
+      const FTT_CFG = {
+        timezone: "America/Chicago",
+        // Where "Start Intake" should point when chat answers
+        intakeAnchor: "intake-cleaning.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messengerDeepLink: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
+      };
+
+      const el = {
+        launcher: document.getElementById("ftt-chat-launcher"),
+        panel: document.getElementById("ftt-chat"),
+        thread: document.getElementById("ftt-thread"),
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: FTT_CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US",opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const wdShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = map[wdShort] ?? now.getDay();
+          const [oH,oM]=FTT_CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=FTT_CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return FTT_CFG.hours.days.includes(wd) && after && before;
+        }catch{return false;}
+      }
+
+      function addMsg(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
+      }
+
+      function greet(){
+        addMsg("Hi! I’m your AI concierge. Ask me about pricing, availability, or services. Say “human” any time and I’ll route you.","bot");
+      }
+
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|decor|holiday|organize|clean|what do you do)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
+        return "fallback";
+      }
+
+      function answer(intent){
+        const hoursNote = isWithinBusinessHours()
+          ? "We’re online now—ask me anything or say “human” to chat with a person."
+          : "We’re offline at the moment, but I can still help or route your message.";
+        const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
+        const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Get an instant quote by starting an intake. Your estimate shows on the page and is emailed to you.",
+              intakeLink + " • or " + bookLink + " to see the calendar.",
+              hoursNote
+            ].join("<br>");
+          case "availability":
+            return ["Availability is live in Square.", bookLink + " to see current openings, or " + intakeLink + " first.", hoursNote].join("<br>");
+          case "services":
+            return [
+              "We offer Cleaning, Organizing, Interior Decorating, and Indoor Holiday installs.",
+              "Each intake gives you a tailored ballpark estimate.",
+              "Start here: " + intakeLink + " • Or jump to " + bookLink + "."
+            ].join("<br>");
+          case "book": return "Perfect—" + bookLink + " (Square opens in a new tab), or " + intakeLink + " for a tailored estimate first.";
+          case "human":
+            return isWithinBusinessHours()
+              ? `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
+              : `We’re offline. You can still <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
+          case "recommend":
+            return [
+              "<strong>Happy to help you choose!</strong>",
+              "Small: single area. Medium: a room plus accents. Large: multiple areas or deep setup.",
+              `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`
+            ].join("<br>");
+          default:
+            return ["I can help with pricing, availability, and services.", "Try “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
+        }
+      }
+
+      function init(){
+        const launcher=document.getElementById("ftt-chat-launcher");
+        const panel=document.getElementById("ftt-chat");
+        const closeBtn=document.querySelector(".ftt-close");
+        const input=document.getElementById("ftt-input");
+        const form=document.getElementById("ftt-inputbar");
+        const quick=document.querySelector(".ftt-quick");
+
+        launcher.addEventListener("click", ()=>{
+          panel.hidden=false;
+          if (!document.getElementById("ftt-thread").dataset.greeted){
+            greet(); document.getElementById("ftt-thread").dataset.greeted="1";
+          }
+          input.focus();
+        });
+        closeBtn.addEventListener("click", ()=>{ panel.hidden=true; });
+        form.addEventListener("submit",(e)=>{
+          e.preventDefault();
+          const t=input.value.trim(); if(!t) return;
+          addMsg(t,"me"); input.value="";
+          setTimeout(()=> addMsg(answer(detectIntent(t)),"bot"), 200);
+        });
+        quick.addEventListener("click",(e)=>{
+          if (e.target.matches("button[data-q]")){
+            const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+            const intent=map[e.target.getAttribute("data-q")]||"fallback";
+            addMsg(e.target.textContent,"me"); setTimeout(()=>addMsg(answer(intent),"bot"),200);
+          }
+        });
+      }
+      document.addEventListener("DOMContentLoaded", init);
+    })();
   </script>
 </body>
 </html>
+
