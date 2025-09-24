@@ -74,7 +74,6 @@
       <div class="right">
         <span id="whoami" class="small"></span>
         <a class="btn btn-outline" href="index.html">Home</a>
-        <!-- Admin quick link (only if admin) -->
         <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden>Manual Intake</a>
         <a id="signOutBtn" class="btn btn-outline" href="#" aria-label="Sign out">Sign out</a>
       </div>
@@ -104,15 +103,12 @@
   <!-- Firebase / Firestore logic -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import {
-      collection, query, where, orderBy, onSnapshot,
+      collection, query, where, onSnapshot,
       doc, getDoc, updateDoc, serverTimestamp, runTransaction
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // ---- DOM refs
     const rolePill   = document.getElementById('rolePill');
     const whoami     = document.getElementById('whoami');
     const btnSignOut = document.getElementById('signOutBtn');
@@ -128,16 +124,14 @@
     const myJobsEl   = document.getElementById('myJobs');
     const toastEl    = document.getElementById('toast');
 
-    // ---- State
-    let me = null;                // auth user
-    let meRole = 'contractor';    // 'admin' | 'contractor' | 'client' (we care about admin/contractor here)
-    let meServices = [];          // allowed service types (from users doc)
-    let activeFilter = 'all';     // chip filter
-    let lastOpenJobs = [], lastMyJobs = []; // for redraws
+    let me = null;
+    let meRole = 'contractor';
+    let meServices = [];
+    let activeFilter = 'all';
+    let lastOpenJobs = [], lastMyJobs = [];
 
     const ALL_TYPES = ['cleaning','organizing','decor','holiday'];
 
-    // ---- Small helpers
     function showToast(msg, ms=1900){
       toastEl.textContent = msg;
       toastEl.style.display = 'block';
@@ -161,12 +155,8 @@
       const left = Math.max(0, need - have);
       return { need, have, left };
     }
-    function canClaimRole(){
-      // Admin may also claim; pure clients cannot get here.
-      return meRole === 'contractor' || meRole === 'admin';
-    }
+    function canClaimRole(){ return meRole === 'contractor' || meRole === 'admin'; }
 
-    // ---- Tabs
     function setTab(which){
       const open = which === 'open';
       tabOpen.classList.toggle('active', open);
@@ -179,10 +169,9 @@
     tabOpen.addEventListener('click', () => setTab('open'));
     tabMine.addEventListener('click', () => setTab('mine'));
 
-    // ---- Filter chips
     function renderChips(){
       const allowed = (meServices && meServices.length)
-        ? meServices.map(s => s.toLowerCase())
+        ? meServices.map(s => String(s).toLowerCase())
         : ALL_TYPES;
       const types = ['all', ...allowed];
       chipsWrap.innerHTML = '';
@@ -201,7 +190,6 @@
       });
     }
 
-    // ---- Auth gate
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         const next = encodeURIComponent('contractor.html');
@@ -211,12 +199,12 @@
       me = user;
       whoami.textContent = user.email || user.uid;
 
-      // Load role doc
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
         const data = snap.exists() ? snap.data() : {};
         meRole = (data.role || 'contractor').toLowerCase();
-        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes : [];
+        // *** normalize to lowercase so filters match ***
+        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes.map(s=>String(s).toLowerCase()) : [];
         rolePill.textContent = (meRole === 'admin') ? 'Admin + Contractor' : 'Contractor';
         if (adminBtn) adminBtn.hidden = (meRole !== 'admin');
       } catch (e) {
@@ -229,26 +217,24 @@
       startListeners();
     });
 
-    // ---- Sign out
     btnSignOut.addEventListener('click', async (e) => {
       e.preventDefault();
       try { await signOut(auth); } finally { location.href = 'index.html'; }
     });
 
-    // ---- Firestore listeners
     let unsubOpen = null, unsubMineA = null, unsubMineB = null;
 
     function startListeners(){
-      // Open jobs (visible to contractors via rules; admin sees all via admin rule)
-      const qOpen = query(
-        collection(db, 'jobs'),
-        where('status', '==', 'open'),
-        orderBy('createdAt', 'desc')
+      // Open jobs (NO orderBy; sort in JS to avoid index requirement)
+      unsubOpen = onSnapshot(
+        query(collection(db, 'jobs'), where('status', '==', 'open')),
+        (snap) => {
+          const byCreatedDesc = (a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0);
+          lastOpenJobs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort(byCreatedDesc);
+          drawOpenJobs(lastOpenJobs);
+        },
+        (err) => console.warn('open jobs listener error:', err)
       );
-      unsubOpen = onSnapshot(qOpen, (snap) => {
-        lastOpenJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        drawOpenJobs(lastOpenJobs);
-      }, (err) => console.warn('open jobs listener error:', err));
 
       // My jobs — legacy single-assignee
       unsubMineA = onSnapshot(
@@ -266,14 +252,12 @@
     }
 
     function mergeMine(list){
-      // de-dupe by id
       const map = new Map(lastMyJobs.map(j => [j.id, j]));
       list.forEach(j => map.set(j.id, j));
       lastMyJobs = Array.from(map.values());
       drawMyJobs(lastMyJobs);
     }
 
-    // ---- Rendering
     function jobCardHTML(j, inMine=false){
       const type  = (j.serviceType || '').toLowerCase();
       const title = type ? cap(type) : 'Job';
@@ -301,17 +285,13 @@
             ${statusChip}
           </div>
           ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : '')}
-          <div class="actions"><!-- buttons injected --></div>
+          <div class="actions"></div>
         </div>
       `;
     }
 
     function drawOpenJobs(list){
-      // Filter by contractor allowed service types AND active chip
-      const allowed = (meServices && meServices.length)
-        ? meServices.map(s => s.toLowerCase())
-        : ALL_TYPES;
-
+      const allowed = (meServices && meServices.length) ? meServices : ALL_TYPES;
       const filtered = list.filter(j => {
         const type = (j.serviceType || '').toLowerCase();
         const okType = allowed.includes(type);
@@ -324,7 +304,6 @@
         return;
       }
       openJobsEl.innerHTML = filtered.map(j => jobCardHTML(j, false)).join('');
-
       filtered.forEach(j => injectOpenActions(j));
     }
 
@@ -342,7 +321,6 @@
       if (!card) return;
       const actions = card.querySelector('.actions');
 
-      // Claim button (only if role can claim)
       if (canClaimRole()){
         const { left } = slotsLeft(j);
         const claim = document.createElement('button');
@@ -352,7 +330,6 @@
         actions.appendChild(claim);
       }
 
-      // Message Admin (placeholder)
       const msg = document.createElement('a');
       msg.className = 'btn btn-outline';
       msg.textContent = 'Message Admin';
@@ -382,10 +359,7 @@
       mark.addEventListener('click', async () => {
         try {
           const newStatus = j.status === 'claimed' ? 'in_progress' : 'submitted';
-          await updateDoc(doc(db, 'jobs', j.id), {
-            status: newStatus,
-            updatedAt: serverTimestamp()
-          });
+          await updateDoc(doc(db, 'jobs', j.id), { status: newStatus, updatedAt: serverTimestamp() });
           showToast(newStatus === 'in_progress' ? 'Marked in progress' : 'Marked submitted');
         } catch (e) {
           console.warn(e);
@@ -395,11 +369,8 @@
       actions.appendChild(mark);
     }
 
-    // ---- Claim (transaction supports multi-contractor jobs)
     async function claimJob(jobId, buttonEl){
       if (!me) return;
-
-      // Optimistic UI
       if (buttonEl) { buttonEl.disabled = true; buttonEl.textContent = 'Claiming…'; }
 
       try {
@@ -414,8 +385,7 @@
           const need = Number(j.contractorsNeeded || 1);
           const ids = Array.isArray(j.contractorIds) ? [...j.contractorIds]
                     : (j.contractorId ? [j.contractorId] : []);
-          if (ids.includes(me.uid)) return; // already added
-
+          if (ids.includes(me.uid)) return;
           if (ids.length >= need) throw new Error('No slots left.');
 
           ids.push(me.uid);
@@ -428,15 +398,12 @@
             contractorEmails: emails,
             updatedAt: serverTimestamp()
           };
-
-          // If fully staffed, flip to claimed; else remain open
           if (ids.length >= need) {
             update.status = 'claimed';
             update.claimedAt = serverTimestamp();
           } else {
             update.status = 'open';
           }
-
           tx.update(ref, update);
         });
 
@@ -455,6 +422,7 @@
   </script>
 </body>
 </html>
+
 
 
 
