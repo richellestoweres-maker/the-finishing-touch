@@ -109,7 +109,7 @@
       const role = String(profile.role || "").toLowerCase();
       const next = safeNextFromQuery();
 
-      if (role === "admin")      { window.location.href = "admin.html"; return; }
+      if (role === "admin")      { window.location.href = "admin-dashboard.html"; return; }
       if (role === "contractor") { window.location.href = "contractor.html"; return; }
       if (role === "pending")    { window.location.href = "contractor-apply.html"; return; }
       if (role === "client")     { window.location.href = (next || "client.html"); return; }
