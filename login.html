@@ -41,23 +41,40 @@
 
       <button id="loginBtn" type="submit" class="btn btn-solid">Sign In</button>
 
-      <p class="muted">Don’t have an account? <a href="signup.html">Create one</a></p>
+      <p class="muted">Don’t have an account? <a id="signupLink" href="signup.html">Create one</a></p>
       <p id="loginError" class="error" aria-live="polite" hidden></p>
-      <p class="muted"><a href="reset-password.html">Forgot your password?</a></p>
+      <p class="muted"><a id="resetLink" href="reset-password.html">Forgot your password?</a></p>
     </form>
   </div>
 
-  <!-- Role-aware routing -->
+  <!-- Role-aware routing with auto-create user profile -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
-    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import {
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      doc, getDoc, setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     const form   = document.getElementById('loginForm');
     const email  = document.getElementById('loginEmail');
     const pass   = document.getElementById('loginPass');
     const btn    = document.getElementById('loginBtn');
     const errEl  = document.getElementById('loginError');
+    const signupLink = document.getElementById('signupLink');
+    const resetLink  = document.getElementById('resetLink');
+
+    // Preserve ?next= on the secondary links
+    (function attachNextToLinks(){
+      const p = new URLSearchParams(location.search);
+      const next = p.get('next');
+      if (next) {
+        signupLink.href = `signup.html?next=${encodeURIComponent(next)}`;
+        resetLink.href  = `reset-password.html?next=${encodeURIComponent(next)}`;
+      }
+    })();
 
     // Only allow internal relative paths from ?next=
     function safeNextFromQuery(){
@@ -67,32 +84,43 @@
       return isInternal ? next : '';
     }
 
-    async function fetchRole(uid){
-      try{
-        const snap = await getDoc(doc(db, "users", uid));
-        return (snap.exists() ? (snap.data().role || "") : "").toLowerCase();
-      }catch{
-        return "";
+    async function ensureUserDoc(user){
+      // If the user profile doc doesn't exist, create a simple default
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          displayName: user.displayName || user.email || user.uid,
+          email: user.email || "",
+          role: "client",            // default role for new accounts
+          serviceTypes: [],
+          createdAt: serverTimestamp()
+        });
+        return (await getDoc(ref)).data() || {};
       }
+      return snap.data() || {};
     }
 
-    async function sendToPortal(user){
+    async function routeByRole(user){
       if (!user) { window.location.href = "index.html"; return; }
-      const role = await fetchRole(user.uid);
+
+      // Make sure a profile exists; then read role
+      const profile = await ensureUserDoc(user);
+      const role = String(profile.role || "").toLowerCase();
       const next = safeNextFromQuery();
 
-      if (role === "admin")      { window.location.href = "contractor.html"; return; }
+      if (role === "admin")      { window.location.href = "admin-dashboard.html"; return; }
       if (role === "contractor") { window.location.href = "contractor.html"; return; }
       if (role === "pending")    { window.location.href = "contractor-apply.html"; return; }
       if (role === "client")     { window.location.href = (next || "client.html"); return; }
 
-      // Unknown / no role: send to homepage (or a gentle holding page)
-      window.location.href = "index.html";
+      // Fallback: treat unknown as client
+      window.location.href = (next || "client.html");
     }
 
     // Already signed-in users jump immediately to their portal
     onAuthStateChanged(auth, (user) => {
-      if (user) sendToPortal(user);
+      if (user) routeByRole(user);
     });
 
     form.addEventListener('submit', async (e) => {
@@ -109,7 +137,7 @@
 
       try {
         await signInWithEmailAndPassword(auth, emailVal, passVal);
-        await sendToPortal(auth.currentUser);
+        await routeByRole(auth.currentUser);
       } catch (e) {
         const map = {
           "auth/invalid-email":     "That email doesn’t look right.",
@@ -127,6 +155,7 @@
   </script>
 </body>
 </html>
+
 
 
 
