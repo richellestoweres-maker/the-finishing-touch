@@ -12,31 +12,81 @@
   <!-- Site CSS -->
   <link rel="stylesheet" href="styles.css?v=8" />
 
-  <style>
+  <!-- Desktop + Mobile polish (scoped to this page) -->
+  <style id="home-desktop-fixes">
     html { scroll-behavior: smooth; }
     #book { scroll-margin-top: 80px; }
+    .page-home .container{ width:min(1180px,94%); margin-inline:auto; }
 
-    /* Services grid: 4 across on desktop, 2×2 on mobile */
-    .services .cards{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap:14px;
-      align-items:stretch;
+    /* Header layout */
+    .page-home .header-inner{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 0;
     }
-    .services .card{
+    .page-home .main-nav{ display:flex; flex-wrap:wrap; gap:10px; }
+    .page-home .main-nav a{ white-space:nowrap; }
+
+    /* HERO: text over image on desktop; mobile-friendly height */
+    .page-home .hero{ position:relative; }
+    .page-home .hero-media img{
+      width:100%;
+      height:clamp(360px, 48vw, 560px);
+      object-fit:cover; object-position:center; display:block;
+    }
+    .page-home .hero-scrim{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35));
+      pointer-events:none;
+    }
+    .page-home .hero-content{ position:absolute; inset:0; display:grid; align-content:center; }
+    .page-home .hero-content .script-kicker,
+    .page-home .hero-content .hero-title,
+    .page-home .hero-content .hero-sub,
+    .page-home .hero-content .quote-dropdown{
+      max-width:min(720px, 90%); color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.25);
+    }
+    .page-home .quote-menu a{ color:#2e2a27; }
+
+    /* SERVICES: responsive grid 2→3→4 columns */
+    .page-home .services .cards{
+      display:grid; grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:14px; align-items:stretch;
+    }
+    @media (min-width: 920px){
+      .page-home .services .cards{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (min-width: 1200px){
+      .page-home .services .cards{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+    }
+    .page-home .services .card{
       background:#fff; border-radius:16px; padding:18px; text-align:center;
       box-shadow:0 10px 26px rgba(0,0,0,.08);
       display:flex; flex-direction:column; gap:8px; justify-content:center;
     }
-    .service-icon{ font-size:28px; color:#2e2a27; opacity:.9; }
-    .services .card h3{ margin:.25rem 0 .15rem; }
-    .services .card p{ margin:0; opacity:.9; }
+    .page-home .service-icon{ font-size:28px; color:#2e2a27; opacity:.9; }
+    .page-home .services .card h3{ margin:.25rem 0 .15rem; }
+    .page-home .services .card p{ margin:0; opacity:.9; }
 
-    @media (max-width: 920px){
-      .services .cards{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    /* ABOUT: 1 col mobile, split on desktop */
+    .page-home .about-grid{
+      display:grid; grid-template-columns:1fr; gap:16px; align-items:center;
+    }
+    @media (min-width: 900px){
+      .page-home .about-grid{ grid-template-columns: 1.1fr .9fr; }
+    }
+    .page-home .about-photo img{
+      width:100%; height:auto; border-radius:16px; box-shadow:0 10px 26px rgba(0,0,0,.08);
+      display:block;
     }
 
-    /* Chat widget z-index so it stays on top */
+    /* Reviews spacing harmony */
+    .page-home #reviews .reviews-wrap{ padding: 28px 18px; }
+
+    /* Chat always above media */
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
+
+  <!-- Chat widget base z-index (extra safety) -->
+  <style>
     #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
   </style>
 </head>
@@ -90,7 +140,6 @@
   <!-- Services -->
   <section id="services" class="section services">
     <div class="container cards">
-      <!-- Row 1 -->
       <article class="card">
         <i class="fa-solid fa-broom service-icon" aria-hidden="true"></i>
         <h3>Cleaning</h3>
@@ -100,10 +149,9 @@
       <article class="card">
         <i class="fa-solid fa-couch service-icon" aria-hidden="true"></i>
         <h3>Staging &amp; Styling</h3>
-      <p>Elevate spaces for living or showings</p>
+        <p>Elevate spaces for living or showings</p>
       </article>
 
-      <!-- Row 2 -->
       <article class="card">
         <i class="fa-solid fa-border-all service-icon" aria-hidden="true"></i>
         <h3>Organizing</h3>
@@ -134,7 +182,7 @@
     </div>
   </section>
 
-  <!-- ===== Showcase Video (full-bleed, sits above gallery & reviews) ===== -->
+  <!-- ===== Showcase Video (full-bleed) ===== -->
   <section class="showcase-video">
     <style>
       .showcase-video { position: relative; overflow: hidden; background:#000; }
@@ -213,7 +261,7 @@
         vid.addEventListener('play',  updateLabel);
         vid.addEventListener('pause', updateLabel);
         vid.muted = true;
-        vid.play().catch(()=>{ /* mobile may require a tap; button is visible */ });
+        vid.play().catch(()=>{});
       })();
     </script>
   </section>
@@ -599,7 +647,7 @@
     })();
   </script>
 
-  <!-- Gate all intake links: if not signed in, send to login with ?next=... -->
+  <!-- Gate intake links if not signed in -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
@@ -648,6 +696,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
