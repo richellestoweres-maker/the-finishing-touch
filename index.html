@@ -14,81 +14,54 @@
 
   <!-- Desktop + Mobile polish (scoped to this page) -->
   <style id="home-desktop-fixes">
-    html { scroll-behavior: smooth; }
-    #book { scroll-margin-top: 80px; }
-    .page-home .container{ width:min(1180px,94%); margin-inline:auto; }
+    html{scroll-behavior:smooth}
+    #book{scroll-margin-top:80px}
 
-    /* Header layout */
-    .page-home .header-inner{
-      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 0;
-    }
-    .page-home .main-nav{ display:flex; flex-wrap:wrap; gap:10px; }
-    .page-home .main-nav a{ white-space:nowrap; }
+    /* Container */
+    .page-home .container{max-width:1200px; margin-inline:auto; padding:0 20px}
 
-    /* HERO: text over image on desktop; mobile-friendly height */
-    .page-home .hero{ position:relative; }
-    .page-home .hero-media img{
-      width:100%;
-      height:clamp(360px, 48vw, 560px);
-      object-fit:cover; object-position:center; display:block;
-    }
-    .page-home .hero-scrim{
-      position:absolute; inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35));
-      pointer-events:none;
-    }
-    .page-home .hero-content{ position:absolute; inset:0; display:grid; align-content:center; }
-    .page-home .hero-content .script-kicker,
-    .page-home .hero-content .hero-title,
-    .page-home .hero-content .hero-sub,
-    .page-home .hero-content .quote-dropdown{
-      max-width:min(720px, 90%); color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.25);
-    }
-    .page-home .quote-menu a{ color:#2e2a27; }
+    /* Header (stay above hero) */
+    .site-header{position:sticky; top:0; z-index:1000; background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.88)); backdrop-filter:saturate(1.1) blur(6px); border-bottom:1px solid #f0e9e2}
+    .page-home .header-inner{display:flex; align-items:center; justify-content:space-between; gap:12px; height:64px}
+    .page-home .main-nav{display:flex; flex-wrap:wrap; gap:12px}
+    .page-home .main-nav a{white-space:nowrap}
 
-    /* SERVICES: responsive grid 2→3→4 columns */
-    .page-home .services .cards{
-      display:grid; grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:14px; align-items:stretch;
-    }
-    @media (min-width: 920px){
-      .page-home .services .cards{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-    }
-    @media (min-width: 1200px){
-      .page-home .services .cards{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-    }
-    .page-home .services .card{
-      background:#fff; border-radius:16px; padding:18px; text-align:center;
-      box-shadow:0 10px 26px rgba(0,0,0,.08);
-      display:flex; flex-direction:column; gap:8px; justify-content:center;
-    }
-    .page-home .service-icon{ font-size:28px; color:#2e2a27; opacity:.9; }
-    .page-home .services .card h3{ margin:.25rem 0 .15rem; }
-    .page-home .services .card p{ margin:0; opacity:.9; }
+    /* HERO */
+    .page-home .hero{position:relative; min-height:72vh; display:grid; place-items:center; overflow:hidden}
+    .page-home .hero-media{position:absolute; inset:0}
+    .page-home .hero-media img{width:100%; height:100%; object-fit:cover; object-position:center; display:block}
+    .page-home .hero-scrim{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.38)); pointer-events:none}
+    .page-home .hero-content{position:relative; z-index:2; text-align:center; color:#fff; padding:clamp(20px,6vw,64px) 0}
+    .page-home .hero-content .script-kicker{font-family:"Allura",cursive; font-size:clamp(18px,2.2vw,24px); margin:0 0 .4rem; text-shadow:0 2px 8px rgba(0,0,0,.25)}
+    .page-home .hero-content .hero-title{font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.2px; margin:.25rem 0; text-shadow:0 3px 12px rgba(0,0,0,.35); font-size:clamp(30px,5vw,58px)}
+    .page-home .hero-content .hero-sub{opacity:.95; margin:.35rem 0 1.1rem; font-size:clamp(14px,1.4vw,18px); text-shadow:0 2px 10px rgba(0,0,0,.25)}
+    .page-home .quote-menu a{color:#2e2a27}
 
-    /* ABOUT: 1 col mobile, split on desktop */
-    .page-home .about-grid{
-      display:grid; grid-template-columns:1fr; gap:16px; align-items:center;
-    }
-    @media (min-width: 900px){
-      .page-home .about-grid{ grid-template-columns: 1.1fr .9fr; }
-    }
-    .page-home .about-photo img{
-      width:100%; height:auto; border-radius:16px; box-shadow:0 10px 26px rgba(0,0,0,.08);
-      display:block;
-    }
+    /* SERVICES grid: 1→2→3→4 */
+    .page-home .services .cards{display:grid; gap:16px; align-items:stretch}
+    @media (max-width:559.98px){ .page-home .services .cards{grid-template-columns:1fr} }
+    @media (min-width:560px) and (max-width:919.98px){ .page-home .services .cards{grid-template-columns:repeat(2,1fr)} }
+    @media (min-width:920px) and (max-width:1199.98px){ .page-home .services .cards{grid-template-columns:repeat(3,1fr)} }
+    @media (min-width:1200px){ .page-home .services .cards{grid-template-columns:repeat(4,1fr)} }
+    .page-home .services .card{background:#fff; border-radius:16px; padding:20px; text-align:center; box-shadow:0 10px 26px rgba(0,0,0,.08); display:flex; flex-direction:column; gap:8px; justify-content:center}
+    .page-home .service-icon{font-size:28px; color:#2e2a27; opacity:.9}
+    .page-home .services .card h3{margin:.25rem 0 .15rem}
+    .page-home .services .card p{margin:0; opacity:.9}
 
-    /* Reviews spacing harmony */
-    .page-home #reviews .reviews-wrap{ padding: 28px 18px; }
+    /* ABOUT */
+    .page-home .about-grid{display:grid; grid-template-columns:1fr; gap:18px; align-items:center}
+    @media (min-width:960px){ .page-home .about-grid{grid-template-columns:1.15fr .85fr} }
+    .page-home .about-photo img{width:100%; height:auto; border-radius:16px; box-shadow:0 12px 34px rgba(0,0,0,.16); display:block}
+
+    /* Reviews spacing */
+    .page-home #reviews .reviews-wrap{padding:28px 18px}
 
     /* Chat always above media */
-    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+    #ftt-chat-launcher, #ftt-chat{z-index:2000}
   </style>
 
   <!-- Chat widget base z-index (extra safety) -->
-  <style>
-    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
-  </style>
+  <style>#ftt-chat-launcher, #ftt-chat { z-index: 9999; }</style>
 </head>
 <body class="page-home">
 
@@ -124,9 +97,7 @@
 
       <!-- Quote dropdown -->
       <div class="quote-dropdown" id="quoteDropdownHero">
-        <button class="btn btn-quote" id="quoteBtnHero" aria-expanded="false" aria-controls="quoteMenuHero">
-          Get Your Quote ▾
-        </button>
+        <button class="btn btn-quote" id="quoteBtnHero" aria-expanded="false" aria-controls="quoteMenuHero">Get Your Quote ▾</button>
         <div class="quote-menu" id="quoteMenuHero" role="menu" aria-hidden="true">
           <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
           <a role="menuitem" href="intake-organizing.html">Organizing</a>
@@ -185,55 +156,24 @@
   <!-- ===== Showcase Video (full-bleed) ===== -->
   <section class="showcase-video">
     <style>
-      .showcase-video { position: relative; overflow: hidden; background:#000; }
-      .showcase-video .sv-wrap {
-        position: relative; left: 50%; right: 50%;
-        margin-left: -50vw; margin-right: -50vw; width: 100vw;
-        max-height: 70vh;
-      }
-      .showcase-video video {
-        width: 100%; height: 100%; max-height: 70vh;
-        object-fit: cover; object-position: center;
-        display: block; filter: saturate(1.05) contrast(1.03);
-      }
-      .showcase-video .sv-overlay {
-        position:absolute; inset:0; display:grid; place-items:center;
-        padding: 24px; pointer-events:none;
-        background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.35));
-      }
-      .showcase-video .sv-copy {
-        text-align:center; color:#fff; max-width:min(900px,92%);
-        font-family: "Playfair Display", serif;
-      }
-      .showcase-video .sv-copy h2 { margin:0 0 .35rem; font-size:clamp(1.6rem, 3.5vw, 2.4rem); }
-      .showcase-video .sv-copy p  { margin:0; font-size:clamp(1rem, 1.8vw, 1.15rem); opacity:.95; }
-      .sv-ctrl {
-        position:absolute; right:14px; bottom:14px; z-index:2;
-        background:rgba(255,255,255,.9); border:0; border-radius:999px;
-        padding:.45rem .8rem; font-weight:800; cursor:pointer;
-        box-shadow:0 8px 20px rgba(0,0,0,.18);
-      }
-      @media (max-width: 640px){
-        .showcase-video .sv-wrap, .showcase-video video { max-height: 56vh; }
-      }
+      .showcase-video{position:relative; overflow:hidden; background:#000}
+      .showcase-video .sv-wrap{position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; max-height:70vh}
+      .showcase-video video{width:100%; height:100%; max-height:70vh; object-fit:cover; object-position:center; display:block; filter:saturate(1.05) contrast(1.03)}
+      .showcase-video .sv-overlay{position:absolute; inset:0; display:grid; place-items:center; padding:24px; pointer-events:none; background:linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.35))}
+      .showcase-video .sv-copy{text-align:center; color:#fff; max-width:min(900px,92%); font-family:"Playfair Display",serif}
+      .showcase-video .sv-copy h2{margin:0 0 .35rem; font-size:clamp(1.6rem,3.5vw,2.4rem)}
+      .showcase-video .sv-copy p{margin:0; font-size:clamp(1rem,1.8vw,1.15rem); opacity:.95}
+      .sv-ctrl{position:absolute; right:14px; bottom:14px; z-index:2; background:rgba(255,255,255,.9); border:0; border-radius:999px; padding:.45rem .8rem; font-weight:800; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.18)}
+      @media (max-width:640px){ .showcase-video .sv-wrap, .showcase-video video{max-height:56vh} }
     </style>
 
     <div class="sv-wrap">
-      <video
-        id="homeReel"
-        playsinline
-        muted
-        loop
-        autoplay
-        preload="metadata"
-        poster="video-poster.jpg">
+      <video id="homeReel" playsinline muted loop autoplay preload="metadata" poster="video-poster.jpg">
         <source src="home-reel.webm" type="video/webm" />
         <source src="home-reel.mp4"  type="video/mp4" />
         Your browser doesn’t support embedded video.
       </video>
-
       <button class="sv-ctrl" id="svToggle" aria-label="Pause video">Pause</button>
-
       <div class="sv-overlay">
         <div class="sv-copy">
           <h2>Luxury finishes, effortless living</h2>
@@ -244,24 +184,12 @@
 
     <script>
       (function(){
-        const vid = document.getElementById('homeReel');
-        const btn = document.getElementById('svToggle');
-        try {
-          const io = new IntersectionObserver(entries => {
-            entries.forEach(e => { if (!e.isIntersecting) vid.pause(); else vid.play().catch(()=>{}); });
-          }, { threshold: 0.25 });
-          io.observe(vid);
-        } catch(_) {}
-
-        function updateLabel(){
-          btn.textContent = vid.paused ? 'Play' : 'Pause';
-          btn.setAttribute('aria-label', vid.paused ? 'Play video' : 'Pause video');
-        }
-        btn.addEventListener('click', () => { vid.paused ? vid.play() : vid.pause(); updateLabel(); });
-        vid.addEventListener('play',  updateLabel);
-        vid.addEventListener('pause', updateLabel);
-        vid.muted = true;
-        vid.play().catch(()=>{});
+        const vid=document.getElementById('homeReel'); const btn=document.getElementById('svToggle');
+        try{ const io=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)vid.pause(); else vid.play().catch(()=>{});});},{threshold:.25}); io.observe(vid);}catch(_){}
+        function label(){btn.textContent=vid.paused?'Play':'Pause'; btn.setAttribute('aria-label', vid.paused?'Play video':'Pause video');}
+        btn.addEventListener('click',()=>{vid.paused?vid.play():vid.pause(); label();});
+        vid.addEventListener('play',label); vid.addEventListener('pause',label);
+        vid.muted=true; vid.play().catch(()=>{});
       })();
     </script>
   </section>
@@ -269,19 +197,19 @@
   <!-- ===== Full-bleed Gallery Belt ===== -->
   <section id="book" class="sp-belt">
     <style>
-      .sp-belt{ --belt-height: 380px; --belt-gap: 18px; background:#2e2a27; color:#fff; padding:0; }
-      .sp-fullbleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
-      .belt-viewport{ overflow:hidden; }
-      .belt-track{ display:flex; align-items:center; gap:var(--belt-gap); padding:16px 24px; animation: beltScroll 55s linear infinite; will-change: transform; }
-      .belt-track:hover{ animation-play-state: paused; }
-      .belt-img{ height: var(--belt-height); width: calc(var(--belt-height) * 1.65); object-fit: cover; border-radius:16px; flex:0 0 auto; opacity:.98; box-shadow:0 12px 28px rgba(0,0,0,.22); }
-      .belt-grad{ position:relative; }
-      .belt-grad::before,.belt-grad::after{ content:""; position:absolute; top:0; bottom:0; width:70px; pointer-events:none; z-index:2; background:linear-gradient(to right, #2e2a27 0%, rgba(46,42,39,0) 100%); }
-      .belt-grad::after{ right:0; left:auto; transform:scaleX(-1); }
-      @keyframes beltScroll{ 0%{ transform: translateX(0);} 100%{ transform: translateX(-50%);} }
-      @media (max-width: 1100px){ .sp-belt{ --belt-height: 320px; } }
-      @media (max-width: 820px){ .sp-belt{ --belt-height: 260px; } }
-      @media (max-width: 640px){ .sp-belt{ --belt-height: 54vw; } .belt-img{ width: calc(var(--belt-height) * 1.4); } }
+      .sp-belt{--belt-height:380px; --belt-gap:18px; background:#2e2a27; color:#fff; padding:0}
+      .sp-fullbleed{position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw}
+      .belt-viewport{overflow:hidden}
+      .belt-track{display:flex; align-items:center; gap:var(--belt-gap); padding:16px 24px; animation:beltScroll 55s linear infinite; will-change:transform}
+      .belt-track:hover{animation-play-state:paused}
+      .belt-img{height:var(--belt-height); width:calc(var(--belt-height) * 1.65); object-fit:cover; border-radius:16px; flex:0 0 auto; opacity:.98; box-shadow:0 12px 28px rgba(0,0,0,.22)}
+      .belt-grad{position:relative}
+      .belt-grad::before,.belt-grad::after{content:""; position:absolute; top:0; bottom:0; width:70px; pointer-events:none; z-index:2; background:linear-gradient(to right, #2e2a27 0%, rgba(46,42,39,0) 100%)}
+      .belt-grad::after{right:0; left:auto; transform:scaleX(-1)}
+      @keyframes beltScroll{0%{transform:translateX(0)} 100%{transform:translateX(-50%)}}
+      @media (max-width:1100px){ .sp-belt{--belt-height:320px} }
+      @media (max-width:820px){ .sp-belt{--belt-height:260px} }
+      @media (max-width:640px){ .sp-belt{--belt-height:54vw} .belt-img{width:calc(var(--belt-height) * 1.4)} }
     </style>
 
     <div class="sp-fullbleed belt-grad">
@@ -291,42 +219,28 @@
     </div>
 
     <script>
-      const PHOTOS = [
-        { src: "1.jpg",  alt: "Finished home — photo 1" },
-        { src: "2.jpg",  alt: "Finished home — photo 2" },
-        { src: "3.jpg",  alt: "Finished home — photo 3" },
-        { src: "4.jpg",  alt: "Finished home — photo 4" },
-        { src: "5.jpg",  alt: "Finished home — photo 5" },
-        { src: "6.jpg",  alt: "Finished home — photo 6" },
-        { src: "7.jpg",  alt: "Finished home — photo 7" },
-        { src: "8.jpg",  alt: "Finished home — photo 8" },
-        { src: "9.jpg",  alt: "Finished home — photo 9" },
-        { src: "10.jpg", alt: "Finished home — photo 10" }
-      ];
-      const belt = document.getElementById('beltTrack');
-      if (belt) {
-        const slides = PHOTOS.map(p => `<img class="belt-img" loading="lazy" src="${p.src}" alt="${p.alt || 'Cleaned space'}">`).join('');
-        belt.innerHTML = slides + slides; /* duplicate for seamless loop */
-      }
+      const PHOTOS=[{src:"1.jpg",alt:"Finished home — photo 1"},{src:"2.jpg",alt:"Finished home — photo 2"},{src:"3.jpg",alt:"Finished home — photo 3"},{src:"4.jpg",alt:"Finished home — photo 4"},{src:"5.jpg",alt:"Finished home — photo 5"},{src:"6.jpg",alt:"Finished home — photo 6"},{src:"7.jpg",alt:"Finished home — photo 7"},{src:"8.jpg",alt:"Finished home — photo 8"},{src:"9.jpg",alt:"Finished home — photo 9"},{src:"10.jpg",alt:"Finished home — photo 10"}];
+      const belt=document.getElementById('beltTrack');
+      if(belt){ const slides=PHOTOS.map(p=>`<img class="belt-img" loading="lazy" src="${p.src}" alt="${p.alt||'Cleaned space'}">`).join(''); belt.innerHTML=slides+slides; }
     </script>
   </section>
 
   <!-- Reviews -->
   <section id="reviews" class="section">
     <style>
-      .reviews-wrap { max-width: 1000px; margin: 0 auto; padding: 24px 18px; }
-      .review-card { background:#24201d; color:#fff; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.22); padding:24px; min-height:220px; position:relative; text-align:center; }
-      .review-pop { position:absolute; inset:24px; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
-      .review-pop.show { opacity:1; transform:translateY(0); }
-      .review-stars { color:#f8d477; letter-spacing:2px; margin-bottom:8px; }
-      .review-text { font-size:1.12rem; line-height:1.6; margin:0 0 10px; }
-      .review-meta { opacity:.9; font-weight:700; }
-      .dots { position:absolute; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:6px; }
-      .dots button { width:8px; height:8px; border-radius:50%; border:0; background:#2e2a27; opacity:.35; cursor:pointer; }
-      .dots button.active { opacity:1; }
-      .review-ctas { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:12px; }
-      .review-ctas .btn { padding:.4rem .7rem; }
-      .reviews-title { text-align:center; margin:0 0 12px; font-size:1.6rem; }
+      .reviews-wrap{max-width:1000px; margin:0 auto; padding:24px 18px}
+      .review-card{background:#24201d; color:#fff; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.22); padding:24px; min-height:220px; position:relative; text-align:center}
+      .review-pop{position:absolute; inset:24px; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease}
+      .review-pop.show{opacity:1; transform:translateY(0)}
+      .review-stars{color:#f8d477; letter-spacing:2px; margin-bottom:8px}
+      .review-text{font-size:1.12rem; line-height:1.6; margin:0 0 10px}
+      .review-meta{opacity:.9; font-weight:700}
+      .dots{position:absolute; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:6px}
+      .dots button{width:8px; height:8px; border-radius:50%; border:0; background:#2e2a27; opacity:.35; cursor:pointer}
+      .dots button.active{opacity:1}
+      .review-ctas{display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:12px}
+      .review-ctas .btn{padding:.4rem .7rem}
+      .reviews-title{text-align:center; margin:0 0 12px; font-size:1.6rem}
     </style>
 
     <div class="reviews-wrap">
@@ -345,65 +259,22 @@
     </div>
 
     <script>
-      const REVIEWS = [
-        { text:"Spotless! They transformed our home in one afternoon. I could breathe again.", by:"— A. Martinez, League City", stars:5 },
-        { text:"Attention to detail is unreal. Baseboards, fixtures, even vents… all gleaming.", by:"— T. Reynolds, Pearland",   stars:5 },
-        { text:"The organizing add-on changed my mornings. Everything finally has a home.",    by:"— K. Li, Friendswood",       stars:5 },
-        { text:"Holiday decorating looked like a magazine spread. Zero stress, only sparkle.", by:"— J. Carter, Kemah",          stars:5 }
-      ];
-
-      const ra = document.getElementById('revA');
-      const rb = document.getElementById('revB');
-      const dotsWrap = document.getElementById('revDots');
-      let rIdx = 0, showingA = true, rTimer = null;
-
-      const star = "★";
-      function reviewHTML(r){
-        return `
-          <div class="review-stars" aria-hidden="true">${star.repeat(r.stars || 5)}</div>
-          <blockquote class="review-text">“${r.text}”</blockquote>
-          <div class="review-meta">${r.by}</div>
-        `;
-      }
-      function showReview(i){
-        const r = REVIEWS[i];
-        const inEl  = showingA ? ra : rb;
-        const outEl = showingA ? rb : ra;
-        inEl.innerHTML = reviewHTML(r);
-        inEl.classList.add('show');
-        outEl.classList.remove('show');
-        [...dotsWrap.children].forEach((d,idx)=> d.classList.toggle('active', idx===i));
-        showingA = !showingA;
-      }
-      REVIEWS.forEach((_,i)=> {
-        const b = document.createElement('button');
-        b.setAttribute('aria-label', `Show review ${i+1}`);
-        b.onclick = ()=>{ rIdx=i; showReview(rIdx); restart(); };
-        dotsWrap.appendChild(b);
-      });
-      function next(){ rIdx = (rIdx+1) % REVIEWS.length; showReview(rIdx); }
-      function start(){ stop(); rTimer = setInterval(next, 5200); }
-      function stop(){ if (rTimer) clearInterval(rTimer); }
-      function restart(){ start(); }
-
-      ra.classList.add('show'); ra.innerHTML = reviewHTML(REVIEWS[0]);
-      [...dotsWrap.children][0]?.classList.add('active');
-      start();
-
-      const GBP_SEARCH_URL = "https://www.google.com/maps/search/?api=1&query=The+Finishing+Touch+Galveston+TX";
-      const GBP_PROFILE_URL = "";
-      const GBP_REVIEW_URL  = "";
-      const badge = document.getElementById("googleBadge");
-      const write = document.getElementById("googleWriteReview");
-      badge.href = GBP_PROFILE_URL || GBP_SEARCH_URL;
-      if (GBP_REVIEW_URL) {
-        write.href = GBP_REVIEW_URL;
-        write.removeAttribute("aria-disabled");
-        write.style.pointerEvents = "auto";
-        write.style.opacity = "1";
-        write.textContent = "Leave a Google review";
-        write.target = "_blank"; write.rel = "noopener";
-      }
+      const REVIEWS=[{text:"Spotless! They transformed our home in one afternoon. I could breathe again.",by:"— A. Martinez, League City",stars:5},{text:"Attention to detail is unreal. Baseboards, fixtures, even vents… all gleaming.",by:"— T. Reynolds, Pearland",stars:5},{text:"The organizing add-on changed my mornings. Everything finally has a home.",by:"— K. Li, Friendswood",stars:5},{text:"Holiday decorating looked like a magazine spread. Zero stress, only sparkle.",by:"— J. Carter, Kemah",stars:5}];
+      const ra=document.getElementById('revA'); const rb=document.getElementById('revB'); const dotsWrap=document.getElementById('revDots');
+      let rIdx=0, showingA=true, rTimer=null;
+      const star="★";
+      function reviewHTML(r){return `<div class="review-stars" aria-hidden="true">${star.repeat(r.stars||5)}</div><blockquote class="review-text">“${r.text}”</blockquote><div class="review-meta">${r.by}</div>`;}
+      function showReview(i){const r=REVIEWS[i]; const inEl=showingA?ra:rb; const outEl=showingA?rb:ra; inEl.innerHTML=reviewHTML(r); inEl.classList.add('show'); outEl.classList.remove('show'); [...dotsWrap.children].forEach((d,idx)=>d.classList.toggle('active',idx===i)); showingA=!showingA;}
+      REVIEWS.forEach((_,i)=>{const b=document.createElement('button'); b.setAttribute('aria-label',`Show review ${i+1}`); b.onclick=()=>{rIdx=i; showReview(rIdx); restart();}; dotsWrap.appendChild(b);});
+      function next(){rIdx=(rIdx+1)%REVIEWS.length; showReview(rIdx);}
+      function start(){stop(); rTimer=setInterval(next,5200);}
+      function stop(){if(rTimer) clearInterval(rTimer);}
+      function restart(){start();}
+      ra.classList.add('show'); ra.innerHTML=reviewHTML(REVIEWS[0]); [...dotsWrap.children][0]?.classList.add('active'); start();
+      const GBP_SEARCH_URL="https://www.google.com/maps/search/?api=1&query=The+Finishing+Touch+Galveston+TX"; const GBP_PROFILE_URL=""; const GBP_REVIEW_URL="";
+      const badge=document.getElementById("googleBadge"); const write=document.getElementById("googleWriteReview");
+      badge.href=GBP_PROFILE_URL||GBP_SEARCH_URL;
+      if(GBP_REVIEW_URL){write.href=GBP_REVIEW_URL; write.removeAttribute("aria-disabled"); write.style.pointerEvents="auto"; write.style.opacity="1"; write.textContent="Leave a Google review"; write.target="_blank"; write.rel="noopener";}
     </script>
   </section>
 
@@ -423,38 +294,25 @@
 
   <!-- === Finishing Touch — AI Concierge Chat (self-contained) === -->
   <style>
-    #ftt-chat-launcher{
-      position:fixed; right:18px; bottom:18px;
-      width:54px; height:54px; border-radius:999px;
-      display:flex; align-items:center; justify-content:center;
-      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
-      box-shadow:0 10px 28px rgba(0,0,0,.18);
-    }
-    #ftt-chat{
-      position:fixed; right:18px; bottom:84px;
-      width:340px; max-width:calc(100vw - 36px);
-      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
-      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
-      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
-    .ftt-title{ font-weight:800; color:#2e2a27 }
-    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
-    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
-    .ftt-thread{ height:300px; overflow:auto; padding:12px }
-    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
-    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
-    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
-    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
-    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
-    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
-    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
-    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
-    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+    #ftt-chat-launcher{position:fixed; right:18px; bottom:18px; width:54px; height:54px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:#2e2a27; color:#fff; font-size:22px; cursor:pointer; box-shadow:0 10px 28px rgba(0,0,0,.18)}
+    #ftt-chat{position:fixed; right:18px; bottom:84px; width:340px; max-width:calc(100vw - 36px); background:#fff; border:1px solid #e8ddd1; border-radius:14px; box-shadow:0 14px 40px rgba(0,0,0,.18); display:none; font-family:Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif}
+    .ftt-chat-header{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb}
+    .ftt-title{font-weight:800; color:#2e2a27}
+    .ftt-subtitle{font-size:.9rem; color:#7b746e}
+    .ftt-close{border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1}
+    .ftt-thread{height:300px; overflow:auto; padding:12px}
+    .ftt-bubble{max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3}
+    .ftt-bubble.bot{background:#fbf8f4; color:#2e2a27}
+    .ftt-bubble.me{background:#2e2a27; color:#fff; margin-left:auto}
+    .ftt-inputbar{display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px}
+    .ftt-inputbar input{flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb}
+    .ftt-inputbar button{border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer}
+    .ftt-quick{display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2}
+    .ftt-quick button{border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700}
+    @media (max-width:420px){ .ftt-thread{height:48vh} }
   </style>
 
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
     <div class="ftt-chat-header">
       <div>
@@ -483,167 +341,45 @@
 
   <script>
     (function(){
-      const CFG = {
-        timezone: "America/Chicago",
-        intakeAnchor: "intake-cleaning.html",
-        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
-        email: "contact.thefinishingtouch.tx@gmail.com",
-        messenger: "https://m.me/thefinishingtouch.tx",
-        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
-      };
-
-      function isWithinBusinessHours(){
-        try{
-          const now = new Date();
-          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
-          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
-          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
-          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
-          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
-          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-          const wd = dayMap[dayShort] ?? now.getDay();
-          const [oH,oM]=CFG.hours.open.split(":").map(Number);
-          const [cH,cM]=CFG.hours.close.split(":").map(Number);
-          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
-          return CFG.hours.days.includes(wd) && after && before;
-        } catch { return false; }
-      }
-
-      const panel   = document.getElementById("ftt-chat");
-      const thread  = document.getElementById("ftt-thread");
-      const form    = document.getElementById("ftt-inputbar");
-      const input   = document.getElementById("ftt-input");
-      const quick   = document.querySelector(".ftt-quick");
-      const closeBtn= document.querySelector(".ftt-close");
-      const launcher= document.getElementById("ftt-chat-launcher");
-
-      function add(html, who="bot"){
-        const b=document.createElement("div");
-        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
-        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
-      }
-      function detectIntent(text){
-        const t=text.toLowerCase();
-        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
-        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
-        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(service|deep|standard|move|organize|staging|decor)/.test(t)) return "services";
-        if (/(book|booking|schedule now)/.test(t)) return "book";
-        if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
-        return "fallback";
-      }
-      function answer(intent){
-        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Intake</a>`;
-        const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
-        switch(intent){
-          case "pricing":
-            return [
-              "Quick pricing (final depends on size/condition):",
-              "• Initial/Deep: typically $350–$400 for average homes.",
-              "• Standard Maintenance: commonly $275–$300.",
-              "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + "."
-            ].join("<br>");
-          case "availability":
-            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
-          case "services":
-            return [
-              "We offer luxury cleaning, organizing, and staging/decor.",
-              "• Deep/Initial: top-to-bottom detail.",
-              "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
-              "• Move-Out/Make-Ready: inside cabinets/fridge/oven by request.",
-              "Want the full checklist? " + intakeLink + " and I’ll tailor it."
-            ].join("<br>");
-          case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
-          case "human":
-            return isWithinBusinessHours()
-              ? `Absolutely. Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`
-              : `We’re offline. You can still <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply ASAP.`;
-          case "recommend":
-            return [
-              "<strong>Happy to help you choose!</strong>",
-              "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
-              "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
-              `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`
-            ].join("<br>");
-          default:
-            return [
-              "I can help with pricing, availability, and services.",
-              "Try “what’s your pricing?” or “do you have Friday slots?”",
-              "Say “human” any time to talk to a person."
-            ].join("<br>");
-        }
-      }
-
-      launcher.addEventListener("click", ()=>{
-        const open = panel.style.display !== "block";
-        panel.style.display = open ? "block" : "none";
-        if (open && !thread.dataset.greeted){
-          add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
-          thread.dataset.greeted = "1";
-        }
-        if (open) input.focus();
-      });
-      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
-
-      form.addEventListener("submit",(e)=>{
-        e.preventDefault();
-        const text = input.value.trim();
-        if (!text) return;
-        add(text, "me"); input.value = "";
-        setTimeout(()=> add(answer(detectIntent(text))), 120);
-      });
-      quick.addEventListener("click",(e)=>{
-        if (e.target.matches("button[data-q]")){
-          const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
-          const intent = map[e.target.getAttribute("data-q")] || "fallback";
-          add(e.target.textContent, "me");
-          setTimeout(()=> add(answer(intent)), 80);
-        }
-      });
+      const CFG={timezone:"America/Chicago", intakeAnchor:"intake-cleaning.html", bookUrl:"https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9", email:"contact.thefinishingtouch.tx@gmail.com", messenger:"https://m.me/thefinishingtouch.tx", hours:{days:[1,2,3,4,5], open:"09:00", close:"17:00"}};
+      function isWithinBusinessHours(){try{const now=new Date(); const opt={timeZone:CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit"}; const parts=new Intl.DateTimeFormat("en-US",opt).formatToParts(now); const hh=+(parts.find(p=>p.type==="hour")?.value||"0"); const mm=+(parts.find(p=>p.type==="minute")?.value||"0"); const dayShort=parts.find(p=>p.type==="weekday")?.value||""; const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}; const wd=dayMap[dayShort]??now.getDay(); const [oH,oM]=CFG.hours.open.split(":").map(Number); const [cH,cM]=CFG.hours.close.split(":").map(Number); const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM); return CFG.hours.days.includes(wd)&&after&&before;}catch{return false;}}
+      const panel=document.getElementById("ftt-chat"); const thread=document.getElementById("ftt-thread"); const form=document.getElementById("ftt-inputbar"); const input=document.getElementById("ftt-input"); const quick=document.querySelector(".ftt-quick"); const closeBtn=document.querySelector(".ftt-close"); const launcher=document.getElementById("ftt-chat-launcher");
+      function add(html,who="bot"){const b=document.createElement("div"); b.className=`ftt-bubble ${who}`; b.innerHTML=html; thread.appendChild(b); thread.scrollTop=thread.scrollHeight;}
+      function detectIntent(t){t=t.toLowerCase(); if(/(human|person|agent|representative|call|talk)/.test(t))return"human"; if(/(price|pricing|cost|rate|how much)/.test(t))return"pricing"; if(/(avail|slot|appointment|when|schedule|open)/.test(t))return"availability"; if(/(service|deep|standard|move|organize|staging|decor)/.test(t))return"services"; if(/(book|booking|schedule now)/.test(t))return"book"; if(/(which|help|recommend|not sure|choose)/.test(t))return"recommend"; return"fallback";}
+      function answer(intent){const intakeLink=`<a href="${CFG.intakeAnchor}">Start Intake</a>`; const bookLink=`<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`; switch(intent){
+        case"pricing":return["Quick pricing (final depends on size/condition):","• Initial/Deep: typically $350–$400 for average homes.","• Standard Maintenance: commonly $275–$300.","We’ll tailor it after your intake. "+intakeLink+" or "+bookLink+"."].join("<br>");
+        case"availability":return["We update availability live in Square.",bookLink+" to see current openings, or "+intakeLink+" and I’ll route you."].join("<br>");
+        case"services":return["We offer luxury cleaning, organizing, and staging/decor.","• Deep/Initial: top-to-bottom detail.","• Standard: recurring maintenance (weekly/bi-weekly/monthly).","• Move-Out/Make-Ready: inside cabinets/fridge/oven by request.","Want the full checklist? "+intakeLink+" and I’ll tailor it."].join("<br>");
+        case"book":return"Perfect—"+bookLink+" or "+intakeLink+" if you’d like a quick tailored route first.";
+        case"human":return isWithinBusinessHours()?`Absolutely. Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`:`We’re offline. You can still <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply ASAP.`;
+        case"recommend":return["<strong>Happy to help you choose!</strong>","<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.","<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",`Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`].join("<br>");
+        default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” any time to talk to a person."].join("<br>");
+      }}
+      launcher.addEventListener("click",()=>{const open=panel.style.display!=="block"; panel.style.display=open?"block":"none"; if(open&&!thread.dataset.greeted){add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); thread.dataset.greeted="1";} if(open) input.focus();});
+      closeBtn.addEventListener("click",()=>{panel.style.display="none";});
+      form.addEventListener("submit",(e)=>{e.preventDefault(); const text=input.value.trim(); if(!text)return; add(text,"me"); input.value=""; setTimeout(()=>add(answer(detectIntent(text))),120);});
+      quick.addEventListener("click",(e)=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; add(e.target.textContent,"me"); setTimeout(()=>add(answer(intent)),80);}});
     })();
   </script>
 
   <!-- Quote dropdown behavior -->
   <style>
-    .quote-dropdown { position: relative; }
-    .quote-menu {
-      position: absolute; top: calc(100% + 8px); right: 0;
-      background: #fff; border-radius: 12px; padding: 8px; min-width: 220px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.12); z-index: 1001;
-    }
-    .quote-menu[aria-hidden="false"] { display: block; }
-    .quote-menu[aria-hidden="true"]  { display: none; }
-    .quote-menu a { display: block; padding: 10px 12px; color: #2e2a27; text-decoration: none; border-radius: 10px; }
-    .quote-menu a:hover { background: #f6f3ef; }
+    .quote-dropdown{position:relative}
+    .quote-menu{position:absolute; top:calc(100% + 8px); right:0; background:#fff; border-radius:12px; padding:8px; min-width:220px; box-shadow:0 10px 30px rgba(0,0,0,.12); z-index:1001}
+    .quote-menu[aria-hidden="false"]{display:block}
+    .quote-menu[aria-hidden="true"]{display:none}
+    .quote-menu a{display:block; padding:10px 12px; color:#2e2a27; text-decoration:none; border-radius:10px}
+    .quote-menu a:hover{background:#f6f3ef}
   </style>
   <script>
     (function(){
-      const btn  = document.getElementById('quoteBtnHero');
-      const menu = document.getElementById('quoteMenuHero');
-      if (!btn || !menu) return;
-
-      btn.setAttribute('aria-expanded', 'false');
-      menu.setAttribute('aria-hidden', 'true');
-
-      function openMenu(){
-        btn.setAttribute('aria-expanded','true');
-        menu.setAttribute('aria-hidden','false');
-        document.addEventListener('click', onDocClick, true);
-        document.addEventListener('keydown', onKey);
-      }
-      function closeMenu(){
-        btn.setAttribute('aria-expanded','false');
-        menu.setAttribute('aria-hidden','true');
-        document.removeEventListener('click', onDocClick, true);
-        document.removeEventListener('keydown', onKey);
-      }
-      function onDocClick(e){ if (!menu.contains(e.target) && e.target !== btn) closeMenu(); }
-      function onKey(e){ if (e.key === 'Escape') closeMenu(); }
-      btn.addEventListener('click', (e)=>{
-        e.preventDefault();
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        expanded ? closeMenu() : openMenu();
-      });
+      const btn=document.getElementById('quoteBtnHero'); const menu=document.getElementById('quoteMenuHero'); if(!btn||!menu) return;
+      btn.setAttribute('aria-expanded','false'); menu.setAttribute('aria-hidden','true');
+      function openMenu(){btn.setAttribute('aria-expanded','true'); menu.setAttribute('aria-hidden','false'); document.addEventListener('click',onDoc,true); document.addEventListener('keydown',onKey);}
+      function closeMenu(){btn.setAttribute('aria-expanded','false'); menu.setAttribute('aria-hidden','true'); document.removeEventListener('click',onDoc,true); document.removeEventListener('keydown',onKey);}
+      function onDoc(e){if(!menu.contains(e.target)&&e.target!==btn) closeMenu();}
+      function onKey(e){if(e.key==='Escape') closeMenu();}
+      btn.addEventListener('click',(e)=>{e.preventDefault(); const ex=btn.getAttribute('aria-expanded')==='true'; ex?closeMenu():openMenu();});
     })();
   </script>
 
@@ -651,51 +387,26 @@
   <script type="module">
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-
-    const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
-    let isAuthed = false;
-    onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
-
-    function gateClick(e) {
-      if (isAuthed) return;
-      e.preventDefault();
-      const target = e.currentTarget.getAttribute('href');
-      const next = encodeURIComponent(target);
-      window.location.href = `login.html?next=${next}`;
-    }
-    intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
+    const intakeLinks=Array.from(document.querySelectorAll('a[href^="intake-"]')); let isAuthed=false;
+    onAuthStateChanged(auth,(user)=>{isAuthed=!!user;});
+    function gateClick(e){ if(isAuthed) return; e.preventDefault(); const target=e.currentTarget.getAttribute('href'); const next=encodeURIComponent(target); window.location.href=`login.html?next=${next}`; }
+    intakeLinks.forEach(a=>a.addEventListener('click',gateClick));
   </script>
 
   <!-- Smart auth button -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-
-    const btn = document.querySelector('.btn-auth');
-    onAuthStateChanged(auth, (user) => {
-      if (!btn) return;
-      if (user) {
-        btn.textContent = 'Sign out';
-        btn.href = '#';
-        btn.onclick = async (e) => {
-          e.preventDefault();
-          await signOut(auth);
-          window.location.reload();
-        };
-      } else {
-        btn.textContent = 'Sign in / Create account';
-        btn.href = 'login.html';
-        btn.onclick = null;
-      }
-    });
+    const btn=document.querySelector('.btn-auth');
+    onAuthStateChanged(auth,(user)=>{ if(!btn) return; if(user){ btn.textContent='Sign out'; btn.href='#'; btn.onclick=async(e)=>{e.preventDefault(); await signOut(auth); window.location.reload();}; }else{ btn.textContent='Sign in / Create account'; btn.href='login.html'; btn.onclick=null; }});
   </script>
 
   <!-- Base Firebase import (keeps module available) -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-  </script>
+  <script type="module"> import { auth } from "./ft-firebase.js"; </script>
 </body>
 </html>
+
+
 
 
 
