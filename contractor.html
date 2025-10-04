@@ -58,6 +58,10 @@
       bottom: 16px; background:#0f172a; color:#fff; padding:10px 14px; border-radius:10px;
       box-shadow:0 10px 25px rgba(0,0,0,.25); z-index: 99999; font-weight:700; display:none;
     }
+
+    /* Gate cards */
+    .gate { margin-top:14px; }
+    .hidden{ display:none !important; }
   </style>
 </head>
 <body>
@@ -79,8 +83,29 @@
       </div>
     </div>
 
-    <!-- Tabs + filters -->
-    <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+    <!-- Gate states (only one shows at a time) -->
+    <section id="gate-signedout" class="card gate">
+      <p>Please <a href="login.html?next=contractor.html"><strong>sign in or create an account</strong></a> to continue.</p>
+      <p class="muted">New? <a href="contractor-apply.html"><strong>Apply here</strong></a> — you’ll be marked “pending” until approved.</p>
+    </section>
+
+    <section id="gate-notapplied" class="card gate hidden">
+      <p><strong>No application on file.</strong></p>
+      <p class="muted">Please submit your contractor application so we can approve your access.</p>
+      <div>
+        <a class="btn btn-solid" href="contractor-apply.html">Apply to be a Contractor</a>
+      </div>
+    </section>
+
+    <section id="gate-pending" class="card gate hidden" aria-live="polite">
+      <p class="muted"><strong>Your account is pending review.</strong> We’ll email you once approved. This page will unlock automatically.</p>
+      <div>
+        <a class="btn btn-outline" href="contractor-apply.html">View / Update your application</a>
+      </div>
+    </section>
+
+    <!-- Tabs + filters (shown only for approved contractor/admin) -->
+    <div id="portal-ui" class="hidden" style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
       <div class="tabs" role="tablist" aria-label="Job views">
         <button id="tabOpen" class="tabbtn active" type="button" role="tab" aria-selected="true" aria-controls="panelOpen">Open Jobs</button>
         <button id="tabMine" class="tabbtn" type="button" role="tab" aria-selected="false" aria-controls="panelMine">My Jobs</button>
@@ -124,13 +149,37 @@
     const myJobsEl   = document.getElementById('myJobs');
     const toastEl    = document.getElementById('toast');
 
+    const gateSignedOut  = document.getElementById('gate-signedout');
+    const gateNotApplied = document.getElementById('gate-notapplied');
+    const gatePending    = document.getElementById('gate-pending');
+    const portalUI       = document.getElementById('portal-ui');
+
     let me = null;
-    let meRole = 'contractor';
+    let meRole = '';
     let meServices = [];
     let activeFilter = 'all';
     let lastOpenJobs = [], lastMyJobs = [];
 
     const ALL_TYPES = ['cleaning','organizing','decor','holiday'];
+
+    function showGate(which){
+      // hide all gates + portal
+      [gateSignedOut, gateNotApplied, gatePending].forEach(x => x.classList.add('hidden'));
+      portalUI.classList.add('hidden');
+      panelOpen.style.display = 'none';
+      panelMine.style.display = 'none';
+
+      switch(which){
+        case 'signedout': gateSignedOut.classList.remove('hidden'); break;
+        case 'notapplied': gateNotApplied.classList.remove('hidden'); break;
+        case 'pending': gatePending.classList.remove('hidden'); break;
+        case 'portal':
+          portalUI.classList.remove('hidden');
+          panelOpen.style.display = '';
+          panelMine.style.display = '';
+          break;
+      }
+    }
 
     function showToast(msg, ms=1900){
       toastEl.textContent = msg;
@@ -190,42 +239,76 @@
       });
     }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        const next = encodeURIComponent('contractor.html');
-        location.href = `login.html?next=${next}`;
-        return;
-      }
-      me = user;
-      whoami.textContent = user.email || user.uid;
-
-      try {
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        const data = snap.exists() ? snap.data() : {};
-        meRole = (data.role || 'contractor').toLowerCase();
-        // *** normalize to lowercase so filters match ***
-        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes.map(s=>String(s).toLowerCase()) : [];
-        rolePill.textContent = (meRole === 'admin') ? 'Admin + Contractor' : 'Contractor';
-        if (adminBtn) adminBtn.hidden = (meRole !== 'admin');
-      } catch (e) {
-        console.warn(e);
-        rolePill.textContent = 'Contractor';
-        if (adminBtn) adminBtn.hidden = true;
-      }
-
-      renderChips();
-      startListeners();
-    });
-
     btnSignOut.addEventListener('click', async (e) => {
       e.preventDefault();
       try { await signOut(auth); } finally { location.href = 'index.html'; }
     });
 
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        whoami.textContent = '';
+        rolePill.textContent = 'Signed out';
+        adminBtn.hidden = true;
+        showGate('signedout');
+        return;
+      }
+
+      me = user;
+      whoami.textContent = user.email || user.uid;
+      rolePill.textContent = 'Checking role…';
+      adminBtn.hidden = true;
+
+      // Get the user doc to determine role
+      const uref = doc(db, 'users', user.uid);
+      try {
+        const snap = await getDoc(uref);
+        if (!snap.exists()) {
+          meRole = '';
+          meServices = [];
+          rolePill.textContent = 'No role yet';
+          showGate('notapplied');
+          return;
+        }
+
+        const data = snap.data();
+        meRole = (data.role || '').toLowerCase();
+        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes.map(s=>String(s).toLowerCase()) : [];
+        rolePill.textContent = meRole ? cap(meRole) : 'No role yet';
+
+        if (meRole === 'pending') {
+          showGate('pending');
+          return;
+        }
+
+        if (meRole === 'contractor' || meRole === 'admin') {
+          adminBtn.hidden = (meRole !== 'admin');
+          showGate('portal');
+          renderChips();
+          startListeners();     // <-- only start now (prevents permission-denied)
+          return;
+        }
+
+        // Unknown/empty role
+        showGate('notapplied');
+      } catch (e) {
+        console.warn('Role check error:', e);
+        rolePill.textContent = 'Unknown role';
+        showGate('notapplied');
+      }
+    });
+
     let unsubOpen = null, unsubMineA = null, unsubMineB = null;
+    function cleanup(){
+      try { unsubOpen && unsubOpen(); } catch {}
+      try { unsubMineA && unsubMineA(); } catch {}
+      try { unsubMineB && unsubMineB(); } catch {}
+      unsubOpen = unsubMineA = unsubMineB = null;
+    }
 
     function startListeners(){
-      // Open jobs (NO orderBy; sort in JS to avoid index requirement)
+      cleanup();
+
+      // Open jobs (contractor/admin can read per rules)
       unsubOpen = onSnapshot(
         query(collection(db, 'jobs'), where('status', '==', 'open')),
         (snap) => {
@@ -412,7 +495,7 @@
       } catch (e) {
         console.warn(e);
         const msg = (e && e.code === 'permission-denied')
-          ? 'Permission denied claiming. Check Firestore rules for the contractor-claim update.'
+          ? 'Permission denied claiming. Your account may still be pending.'
           : (e.message || 'Could not claim. It may have just been taken.');
         alert(msg);
       } finally {
