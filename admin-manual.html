@@ -73,9 +73,27 @@
         <label>End Time<input name="end" type="time" required></label>
       </div>
 
-      <!-- Service specifics (Cleaning) -->
-      <div class="row grid-2">
-        <label>Service Type
+      <!-- Service Category -->
+      <div class="row grid-3">
+        <label>Service Category
+          <select id="svcCategory" name="svcCategory">
+            <option value="cleaning" selected>Cleaning</option>
+            <option value="holiday">Holiday (Indoor)</option>
+          </select>
+        </label>
+        <label>Contractors Needed
+          <select name="contractorsNeeded">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </label>
+        <label>Your Cut (%)<input name="companyCut" type="number" min="0" max="50" value="30" required></label>
+      </div>
+
+      <!-- Cleaning block (default visible) -->
+      <div id="cleaningBlock" class="row grid-2">
+        <label>Service
           <select name="service">
             <option>Initial Clean</option>
             <option>Standard Clean</option>
@@ -107,17 +125,28 @@
         <label>Notes for summary<input name="notes" placeholder="e.g., initial deep clean"></label>
       </div>
 
-      <!-- Ops controls -->
-      <div class="row grid-3">
-        <label>Contractors Needed
-          <select name="contractorsNeeded">
-            <option value="1" selected>1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
+      <!-- Holiday block (hidden until selected) -->
+      <div id="holidayBlock" class="row grid-3" style="display:none">
+        <label># Trees <input name="h_trees" type="number" min="0" value="1"></label>
+        <label>Tallest Tree
+          <select name="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
         </label>
-        <label>Your Cut (%)<input name="companyCut" type="number" min="0" max="50" value="30" required></label>
-        <label>Client-ID (optional for CRM)<input name="clientId" placeholder="(optional) paste UID if known"></label>
+        <label>Tree Style
+          <select name="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
+        </label>
+        <label>Ribbon? <select name="h_ribbon"><option>No</option><option>Yes</option></select></label>
+        <label>Wreaths <input name="h_wreaths" type="number" min="0" value="0"></label>
+        <label>Garland Sections <input name="h_garland" type="number" min="0" value="0"></label>
+        <label>Stair Sections <input name="h_stairs" type="number" min="0" value="0"></label>
+        <label>Mantle? <select name="h_mantle"><option>No</option><option>Yes</option></select></label>
+        <label>Tablescapes <input name="h_tables" type="number" min="0" value="0"></label>
+        <label>Storage
+          <select name="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
+        </label>
+        <label>Shopping Trips
+          <select name="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
+        </label>
+        <label>Include Teardown? <select name="h_teardown"><option>Yes</option><option>No</option></select></label>
       </div>
 
       <!-- Preview + actions -->
@@ -131,6 +160,9 @@
       </div>
     </form>
   </main>
+
+  <!-- Calculators: uses your public pricing logic -->
+  <script src="script.js" defer></script>
 
   <!-- Firebase + logic -->
   <script type="module">
@@ -153,197 +185,213 @@
       }
     });
 
-    /* ---------- Pricing helpers (same math as your intake) ---------- */
-    const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
-    const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
-    const serviceMult = { "Initial Clean":1.00,"Deep Clean":1.20,"Move-In / Move-Out Clean":1.35,"Airbnb Turnover":0.55 };
-    const freqDisc = { "weekly":0.85, "biweekly":0.90, "monthly":0.95, "one-time":1 };
-    const addonPricesCleaning = { "oven":35,"fridge":30,"refrigerator":30,"windows":80,"window":80,"baseboards":60,"laundry":18 };
-    const addonHoursCleaning  = { "oven":0.25,"fridge":0.25,"refrigerator":0.25,"windows":1.5,"window":1.5,"baseboards":1.0,"laundry":0.5 };
-    const roundHalf = n => Math.round(n*2)/2;
-
-    function parseAddonsList(txt, map){ txt=(txt||"").toLowerCase(); let t=0; for(const k of Object.keys(map)){ if(txt.includes(k)) t+=map[k]; } return t; }
-
-    function airbnbByBedrooms(beds){ const b=Number(beds)||0; if (b<=1) return 120; if (b===2) return 140; if (b===3) return 160; if (b===4) return 180; return 200; }
-
-    function calcCleaning(data){
-      const sqft = data.sqft || "1000–2000";
-      const service = data.service || "Initial Clean";
-      const frequency = data.frequency || "one-time";
-      const beds = Number(data.beds||0);
-      const baths = Number(data.baths||0);
-      const otherRooms = Number(data.other_rooms||0);
-      const stories = String(data.stories||"1");
-      const addonsFee = parseAddonsList(data.addons, addonPricesCleaning);
-
-      let base=0;
-      if (service === "Standard Clean") base = standardBySqft[sqft] ?? 200;
-      else if (service === "Airbnb Turnover") base = airbnbByBedrooms(beds);
-      else { const initial = initialBySqft[sqft] ?? 300; base = initial * (serviceMult[service] ?? 1); }
-
-      const perExtraBathroom = 20, perExtraBedroom=12, perOtherRoom=10, twoStoryFee=20, petFee=12;
-      const extraBaths = Math.max(0, (Number(baths||0)-2)) * perExtraBathroom;
-      const extraBeds  = Math.max(0, (Number(beds||0)-3))  * perExtraBedroom;
-      const extraRooms = Math.max(0, Number(otherRooms||0)) * perOtherRoom;
-      const storyFee   = (stories === "2") ? twoStoryFee : 0;
-      const petsFee    = (data.pets||"").trim() ? petFee : 0;
-
-      let est = base + extraBaths + extraBeds + extraRooms + storyFee + petsFee + addonsFee;
-      if (service === "Standard Clean") est *= (freqDisc[frequency] || 1);
-      return Math.round(est);
-    }
-
-    function estimateHoursCleaning(data){
-      const sqft = data.sqft || "1000–2000";
-      const service = data.service || "Initial Clean";
-      const beds = Number(data.beds||0);
-      const baths = Number(data.baths||0);
-      const otherRooms = Number(data.other_rooms||0);
-      const stories = String(data.stories||"1");
-      let solo = 2;
-      if (sqft === "<1000") solo=2; else if (sqft==="1000–2000") solo=3; else if (sqft==="2000–3000") solo=4; else if (sqft==="3000–4000") solo=5; else solo=6;
-      if (service === "Airbnb Turnover"){ if (beds<=1) solo=2; else if (beds===2) solo=2.5; else if (beds===3) solo=3; else if (beds===4) solo=3.5; else solo=4; }
-      solo += Math.max(0, beds-3)*0.5;
-      solo += Math.max(0, baths-2)*0.75;
-      solo += Math.max(0, otherRooms)*0.25;
-      if (stories==="2") solo+=0.25;
-      if (service==="Deep Clean") solo*=1.5;
-      if (service==="Move-In / Move-Out Clean") solo*=2;
-      if (service==="Initial Clean") solo*=1.2;
-      solo = roundHalf(solo);
-      const team = roundHalf(solo/2);
-      return { soloHours: solo, teamHours: team };
-    }
-
-    function prettyTime(hhmm){
-      if(!hhmm) return '';
-      let [h,m]=hhmm.split(':').map(Number);
-      const ampm = h>=12?'PM':'AM';
-      h = (h%12)||12;
-      return `${h}:${String(m).padStart(2,'0')} ${ampm}`;
-    }
-
+    // --- UI refs
     const form = document.getElementById('manualForm');
     const btnPreview = document.getElementById('btnPreview');
     const btnCreate  = document.getElementById('btnCreate');
-    const card = document.getElementById('calcCard');
-    const statusEl = document.getElementById('status');
+    const calcCard   = document.getElementById('calcCard');
+    const statusEl   = document.getElementById('status');
 
-    let lastPreview = null; // stash calc result to lock before submit
+    const svcCategory = document.getElementById('svcCategory');
+    const cleaningBlock = document.getElementById('cleaningBlock');
+    const holidayBlock  = document.getElementById('holidayBlock');
 
+    // Toggle service blocks
+    svcCategory.addEventListener('change', () => {
+      const isHoliday = svcCategory.value === 'holiday';
+      cleaningBlock.style.display = isHoliday ? 'none' : '';
+      holidayBlock.style.display  = isHoliday ? '' : 'none';
+      calcCard.style.display = 'none';
+      statusEl.textContent = '';
+      btnCreate.disabled = true;
+    });
+
+    // Helpers
+    const USD = (n) => `$${Math.round(Number(n||0))}`;
+    function prettyTime(hhmm){
+      if(!hhmm) return '';
+      let [h,m]=hhmm.split(':').map(Number);
+      const ampm = h>=12?'PM':'AM'; h = (h%12)||12;
+      return `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+    }
+
+    let lastPreview = null;
+
+    // PREVIEW
     btnPreview.addEventListener('click', () => {
       statusEl.textContent = '';
-      const data = Object.fromEntries(new FormData(form).entries());
-      const price = calcCleaning(data);
-      const { teamHours } = estimateHoursCleaning(data);
-      const cutPct = Math.min(50, Math.max(0, Number(data.companyCut||30)));
+      const d = Object.fromEntries(new FormData(form).entries());
+      const isHoliday = (svcCategory.value === 'holiday');
+
+      if (isHoliday) {
+        // Holiday calculation via script.js
+        const data = {
+          trees: d.h_trees, tallest: d.h_tallest, tree_style: d.h_style, tree_ribbon: d.h_ribbon,
+          wreaths: d.h_wreaths, garland_sections: d.h_garland, stair_sections: d.h_stairs,
+          mantle: d.h_mantle, tablescapes: d.h_tables, storage: d.h_storage,
+          shopping_trips: d.h_trips, teardown: d.h_teardown
+        };
+        const res = (window.calcHoliday ? window.calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
+        const hint = (window.holidayHint ? window.holidayHint(data, res.teamHours) : '');
+
+        const cutPct = Math.min(50, Math.max(0, Number(d.companyCut||30)));
+        const keep = Math.round(res.price * (cutPct/100));
+        const toContractors = res.price - keep;
+        const n = Math.max(1, Math.min(3, Number(d.contractorsNeeded||1)));
+        const base = Math.floor(toContractors / n);
+        const remainder = toContractors % n;
+        const per = Array.from({length:n}, (_,i)=> base + (i<remainder?1:0));
+
+        const windowLbl = `${prettyTime(d.start)}–${prettyTime(d.end)}`;
+
+        calcCard.style.display = 'block';
+        calcCard.innerHTML = `
+          <div><strong>Client price (install):</strong> ${USD(res.price)}</div>
+          ${res.teardownPrice ? `<div><strong>Teardown (optional):</strong> ${USD(res.teardownPrice)}</div>` : ``}
+          <div><strong>Your cut (${cutPct}%):</strong> ${USD(keep)}</div>
+          <div><strong>To contractors (total):</strong> ${USD(toContractors)} (${n} needed)</div>
+          <div><strong>Per contractor:</strong> ${per.map(p=>USD(p)).join(' · ')}</div>
+          <div class="muted" style="margin-top:6px">
+            ${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br>
+            Est team time ≈ <strong>${res.teamHours}</strong> hr · ${hint}
+          </div>
+        `;
+        btnCreate.disabled = false;
+
+        lastPreview = {
+          holiday:true,
+          price: res.price,
+          teamHours: res.teamHours,
+          teardownHours: res.teardownHours,
+          teardownPrice: res.teardownPrice,
+          cutPct, toContractors, n, per,
+          windowLbl
+        };
+        return;
+      }
+
+      // Cleaning preview (uses script.js)
+      const price = (window.calcCleaning ? calcCleaning(d) : 0);
+      const hours = (window.estimateHoursCleaning ? estimateHoursCleaning(d) : {teamHours:0});
+      const cutPct = Math.min(50, Math.max(0, Number(d.companyCut||30)));
       const keep = Math.round(price * (cutPct/100));
       const toContractors = price - keep;
-      const n = Math.max(1, Math.min(3, Number(data.contractorsNeeded||1)));
-
-      // split fairly: base + distribute remainder to first slots
+      const n = Math.max(1, Math.min(3, Number(d.contractorsNeeded||1)));
       const base = Math.floor(toContractors / n);
       const remainder = toContractors % n;
       const per = Array.from({length:n}, (_,i)=> base + (i<remainder?1:0));
 
-      const summary = `${Number(data.beds||0)} bed / ${Number(data.baths||0)} bath — ${(data.notes||data.service||'cleaning')}.`;
-      const window = `${prettyTime(data.start)}–${prettyTime(data.end)}`;
+      const summary = `${Number(d.beds||0)} bed / ${Number(d.baths||0)} bath — ${(d.notes||d.service||'cleaning')}.`;
+      const windowLbl = `${prettyTime(d.start)}–${prettyTime(d.end)}`;
 
-      card.style.display = 'block';
-      card.innerHTML = `
-        <div><strong>Client price:</strong> $${price}</div>
-        <div><strong>Your cut (${cutPct}%):</strong> $${keep}</div>
-        <div><strong>To contractors (total):</strong> $${toContractors} (${n} needed)</div>
-        <div><strong>Per contractor:</strong> ${per.map(p=>'$'+p).join(' · ')}</div>
+      calcCard.style.display = 'block';
+      calcCard.innerHTML = `
+        <div><strong>Client price:</strong> ${USD(price)}</div>
+        <div><strong>Your cut (${cutPct}%):</strong> ${USD(keep)}</div>
+        <div><strong>To contractors (total):</strong> ${USD(toContractors)} (${n} needed)</div>
+        <div><strong>Per contractor:</strong> ${per.map(p=>USD(p)).join(' · ')}</div>
         <div class="muted" style="margin-top:6px">
-          ${data.city || data.area || ''} · ${data.zip || ''} · ${new Date(data.date).toLocaleDateString()} ${window}<br>
-          ${summary} · Est team time ≈ <strong>${teamHours}</strong> hr
+          ${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br>
+          ${summary} · Est team time ≈ <strong>${hours.teamHours}</strong> hr
         </div>
       `;
       btnCreate.disabled = false;
 
-      lastPreview = { price, teamHours, cutPct, keep, toContractors, n, per, summary, window };
+      lastPreview = {
+        holiday:false,
+        price,
+        teamHours: hours.teamHours || 0,
+        cutPct, toContractors, n, per,
+        summary, windowLbl
+      };
     });
 
+    // SUBMIT (Create Job)
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       statusEl.textContent = '';
-
       if (!lastPreview) { statusEl.innerHTML = '<span class="err">Click “Preview calculation” first.</span>'; return; }
 
-      const data = Object.fromEntries(new FormData(form).entries());
+      const d = Object.fromEntries(new FormData(form).entries());
+      btnCreate.disabled = true;
+
+      const serviceType = (svcCategory.value === 'holiday') ? 'holiday' : 'cleaning';
       const {
-        price, teamHours, cutPct, keep, toContractors, n, per, summary, window
+        price, teamHours, teardownPrice, n, per, summary, windowLbl, holiday
       } = lastPreview;
 
-      // Build public job doc (no PII)
-      const startDate = data.date ? new Date(data.date + 'T' + (data.start || '09:00') + ':00') : null;
-      const endDate   = data.date ? new Date(data.date + 'T' + (data.end || '11:00') + ':00') : null;
+      const startDate = d.date ? new Date(d.date + 'T' + (d.start || '09:00') + ':00') : null;
 
-      const jobPublic = {
-        serviceType: "cleaning",
+      const publicJob = {
+        serviceType,
         status: "open",
-        area: data.area || data.city || "",
-        zip: data.zip || "",
-        whenDate: data.date || "",
-        whenStart: data.start || "",
-        whenEnd: data.end || "",
-        whenWindow: window, // nice label
-        whenAt: startDate ? Timestamp.fromDate(startDate) : serverTimestamp(), // for sorting
-        summary,
-        beds: Number(data.beds||0),
-        baths: Number(data.baths||0),
+        area: d.area || d.city || "",
+        zip: d.zip || "",
+        whenDate: d.date || "",
+        whenStart: d.start || "",
+        whenEnd: d.end || "",
+        whenWindow: windowLbl || "",
+        whenAt: startDate ? Timestamp.fromDate(startDate) : serverTimestamp(),
+        summary: holiday ? "Holiday (indoor) install" : (summary || "Cleaning"),
         estHoursTeam: Number(teamHours || 0),
-        contractorsNeeded: n,
-        contractorPayEach: per[0], // average/first
+        contractorsNeeded: Math.max(1, Number(d.contractorsNeeded||1)),
+        contractorPayEach: per ? per[0] : null,
+        flatRate: Number(price || 0), // client-facing estimate for reference
         createdAt: serverTimestamp()
       };
-      if (data.clientId) jobPublic.clientId = data.clientId;
+      if (publicJob.contractorPayEach == null) delete publicJob.contractorPayEach;
 
-      // Build PII subdoc
-      const pii = {
-        name: data.name, email: data.email, phone: data.phone,
-        address: `${data.street}, ${data.city}, ${data.state} ${data.zip}`,
-        clientPrice: price,
-        notes: data.notes || ""
-      };
-
-      // 1) Create job
       try {
-        const ref = await addDoc(collection(db, 'jobs'), jobPublic);
-        const jobId = ref.id;
+        // 1) Create job doc
+        const ref = await addDoc(collection(db, 'jobs'), publicJob);
 
-        // 2) Create slots (slot_1..slot_n) with per-contractor pay
-        for (let i=0; i<n; i++){
-          await setDoc(doc(db, 'jobs', jobId, 'slots', `slot_${i+1}`), {
+        // 2) Create slots with per-contractor pay
+        const need = Math.max(1, Number(d.contractorsNeeded||1));
+        for (let i=0; i<need; i++){
+          await setDoc(doc(db, 'jobs', ref.id, 'slots', `slot_${i+1}`), {
             slotNumber: i+1,
             status: 'open',
-            contractorId: '', // will be set by the claimant
-            pay: per[i]
+            contractorId: '',
+            pay: per ? per[i] : null
           });
         }
 
-        // 3) Write PII (private)
-        await setDoc(doc(db, 'jobs', jobId, 'private', 'pii'), pii);
+        // 3) Private PII doc
+        await setDoc(doc(db, 'jobs', ref.id, 'private', 'pii'), {
+          name: d.name, email: d.email, phone: d.phone,
+          address: `${d.street}, ${d.city}, ${d.state} ${d.zip}`,
+          clientPrice: Number(price||0),
+          notes: (d.notes||"")
+        });
 
-        // 4) Send to Formspree (email trail)
+        // 4) Optional: email Formspree trail (same endpoint)
         try {
-          const fd = new FormData(form);
-          fd.append('_subject', 'Manual Intake (Admin) — Cleaning');
-          fd.append('estimate_price', '$'+price);
-          fd.append('estimate_hours_team', String(teamHours));
-          fd.append('contractors_needed', String(n));
-          fd.append('contractor_pay_each', per.join(', '));
-          fd.append('job_public_id', jobId);
-          fd.append('window', window);
+          const fd = new FormData();
+          fd.append('_subject', holiday ? 'Manual Intake (Admin) — Holiday' : 'Manual Intake (Admin) — Cleaning');
+          fd.append('service_type', serviceType);
+          fd.append('client_name', d.name||'');
+          fd.append('client_email', d.email||'');
+          fd.append('client_phone', d.phone||'');
+          fd.append('client_address', `${d.street}, ${d.city}, ${d.state} ${d.zip}`);
+          fd.append('public_area', publicJob.area);
+          fd.append('public_zip', publicJob.zip);
+          fd.append('window', publicJob.whenWindow || '');
+          fd.append('estimate_client_total', USD(price||0));
+          if (holiday && teardownPrice) fd.append('estimate_teardown', USD(teardownPrice));
+          fd.append('contractors_needed', String(need));
+          if (per) fd.append('contractor_pay_each', per.join(', '));
+          fd.append('job_public_id', ref.id);
           await fetch('https://formspree.io/f/mzzaogbv', { method:'POST', body: fd, headers:{'Accept':'application/json'} });
         } catch(_) {}
 
-        statusEl.innerHTML = `<span class="ok">Job created.</span> <a href="admin.html">Go to Admin</a> · <a href="contractor.html">View Contractor board</a>`;
-        btnCreate.disabled = true; lastPreview = null;
+        statusEl.innerHTML = `<span class="ok">Job created.</span> <a href="admin.html">Admin</a> · <a href="contractor.html">Contractor board</a>`;
+        calcCard.style.display = 'none';
+        lastPreview = null;
       } catch (e) {
         console.warn(e);
-        statusEl.innerHTML = `<span class="err">Couldn’t create job (permission?).</span>`;
+        statusEl.innerHTML = `<span class="err">Couldn’t create job (permissions or network?).</span>`;
+      } finally {
+        btnCreate.disabled = false;
       }
     });
   </script>
