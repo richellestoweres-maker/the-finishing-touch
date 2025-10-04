@@ -365,84 +365,146 @@ function decorHint(data, teamHours){
   if (teamHours <= 4)   return `${room} — ${scope} (Medium, ≈3–4 hr)`;
   if (teamHours <= 6)   return `${room} — ${scope} (Large, ≈5–6 hr)`;
   return `${room} — ${scope} (XL, 6.5+ hr)`;
+}
 
 /* =========================================
-   HOLIDAY DECORATING — INDOOR ONLY
+   HOLIDAY DECORATING — INDOOR ONLY (multi-holiday)
    ========================================= */
-}
-const HOLI_HOURLY = 85;
-const HOLI_MIN_HOURS = 3;
+const HOLI_HOURLY = 85;   // solo hourly
+const HOLI_MIN_HOURS = 3; // minimum chargeable install
 
+// Per-tree hours based on tallest size + style/ribbon
 function hoursForTrees(count, tallest, style, ribbon){
-  const t = Number(count)||0; if(!t) return 0;
+  const t = Math.max(0, Number(count)||0);
+  if (!t) return 0;
+
   const map = {
-    "≤6 ft":   {base:1.5, addl:1.2},
-    "7–8 ft":  {base:2.5, addl:1.8},
-    "9–10 ft": {base:3.5, addl:2.5},
-    "11–12+ ft": {base:4.5, addl:3.0}
+    "≤6 ft":     { base: 1.5, addl: 1.2 },
+    "7–8 ft":    { base: 2.7, addl: 1.9 },
+    "9–10 ft":   { base: 3.6, addl: 2.5 },
+    "11–12+ ft": { base: 4.6, addl: 3.1 }
   };
   const m = map[tallest] || map["7–8 ft"];
-  let h = m.base + Math.max(0,t-1)*m.addl;
-  const styleFactor = style==="Full design + sourcing" ? 1.6
-                    : style==="Needs ribbon/theme refresh" ? 1.25 : 1.0;
-  h *= styleFactor;
-  if ((ribbon||"").toLowerCase()==="yes") h += 0.4 * t;
-  return h;
+
+  let hours = m.base + Math.max(0, t - 1) * m.addl;
+
+  // Style bumps
+  const s = String(style || "").toLowerCase();
+  if (s.includes("full design")) hours += 1.4;     // sourcing & design
+  else if (s.includes("refresh")) hours += 0.6;    // ribbon/theme refresh
+
+  // Ribbon add
+  if (String(ribbon || "No") === "Yes") hours += 0.4 * t;
+
+  return hours;
 }
 
+// Compute install hours with holiday-specific multipliers
 function estimateHoursHoliday(data){
-  // Indoor only
-  let hrs = 0;
+  const holiday = String(data.holiday || "christmas").toLowerCase();
 
-  // Trees
-  hrs += hoursForTrees(
-    Number(data.trees||0),
-    data.tallest || "7–8 ft",
-    data.tree_style || "Ready: ornaments & lights on hand",
-    data.tree_ribbon || "No"
-  );
+  const trees    = Number(data.trees || 0);
+  const tallest  = data.tallest || "7–8 ft";
+  const style    = data.tree_style || "Ready: ornaments & lights on hand";
+  const ribbon   = data.tree_ribbon || "No";
 
-  // Interior decor elements
-  hrs += (Number(data.wreaths||0) * 0.4);
-  hrs += (Number(data.garland_sections||0) * 0.6);
-  hrs += (Number(data.stair_sections||0) * 0.7);
-  if ((data.mantle||"No")==="Yes") hrs += 0.8;
-  hrs += (Number(data.tablescapes||0) * 0.4);
+  const wreaths  = Math.max(0, Number(data.wreaths || 0));
+  const garland  = Math.max(0, Number(data.garland_sections || 0));
+  const stairs   = Math.max(0, Number(data.stair_sections || 0));
+  const mantle   = String(data.mantle || "No") === "Yes";
+  const tables   = Math.max(0, Number(data.tablescapes || 0));
 
-  // Logistics
-  const storage = data.storage || "Garage/closet (easy)";
-  if (storage === "Attic (ladder)") hrs += 0.5;
-  if (storage === "Offsite pickup") hrs += 1.0;
+  const storage  = String(data.storage || "Garage/closet (easy)");
+  const tripsStr = String(data.shopping_trips || "0");
+  const trips    = (tripsStr === "3+") ? 3 : Math.max(0, Number(tripsStr || 0));
+
+  const teardownWanted = String(data.teardown || "No") === "Yes";
+
+  // Base unit times (hours per item/section)
+  const PER_WREATH      = 0.30;
+  const PER_GARLAND     = 0.50;
+  const PER_STAIRS      = 0.75;
+  const PER_MANTLE      = 0.60;
+  const PER_TABLESCAPE  = 0.40;
+
+  // Holiday multipliers (small nudges)
+  let holMult = 1.0;
+  let wreathMult = 1.0, garlandMult = 1.0, tablesMult = 1.0, mantleMult = 1.0, stairsMult = 1.0;
+
+  switch (holiday) {
+    case "halloween":
+      holMult = 1.05; wreathMult = 1.10; garlandMult = 1.10; tablesMult = 1.10; mantleMult = 1.15; stairsMult = 1.05;
+      break;
+    case "thanksgiving":
+      tablesMult = 1.20; mantleMult = 1.05;
+      break;
+    case "valentines":
+    case "galentines":
+      tablesMult = 1.15; mantleMult = 1.05; garlandMult = 0.95;
+      break;
+    case "july4":
+    case "4th of july":
+      wreathMult = 0.95; tablesMult = 1.05;
+      break;
+    case "easter":
+      tablesMult = 1.15; wreathMult = 1.05; garlandMult = 1.05;
+      break;
+    case "other":
+      holMult = 1.05;
+      break;
+    default:
+      // christmas = defaults
+      break;
+  }
+
+  // Start with trees (mostly Christmas; harmless if 0 for others)
+  let solo = 0;
+  solo += hoursForTrees(trees, tallest, style, ribbon);
+
+  // Add indoor décor pieces
+  solo += wreaths * PER_WREATH * wreathMult;
+  solo += garland * PER_GARLAND * garlandMult;
+  solo += stairs  * PER_STAIRS  * stairsMult;
+  if (mantle) solo += PER_MANTLE * mantleMult;
+  solo += tables * PER_TABLESCAPE * tablesMult;
+
+  // Storage / logistics
+  if (/attic/i.test(storage))         solo += 0.5;
+  else if (/offsite/i.test(storage))  solo += 1.0;
 
   // Shopping trips
-  const trips = (data.shopping_trips||"0")==="3+" ? 3 : Number(data.shopping_trips||0);
-  hrs += trips * 1.0;
+  solo += trips * 1.0;
 
-  // Baseline overhead & minimum
-  hrs = Math.max(HOLI_MIN_HOURS, roundHalf(hrs + 0.5));
+  // Apply overall holiday multiplier
+  solo *= holMult;
 
-  // Suggest schedule time if 2-person crew (for internal plan)
-  const teamHours = roundHalf(hrs / 2);
+  // Overhead + minimum, quarter-hour rounding
+  const roundQ = x => Math.max(0, Math.round(x * 4) / 4);
+  solo = roundQ(Math.max(HOLI_MIN_HOURS, solo + 0.5));
 
-  // Teardown ~60% of install hours
-  const teardownHours = (data.teardown||"Yes")==="Yes" ? roundHalf(hrs * 0.6) : 0;
+  // Split to team hours (assume 2 stylists)
+  const teamHours = roundQ(solo / 2);
 
-  return { soloHours: hrs, teamHours, teardownHours };
+  // Teardown ≈ 60% of install
+  const teardownHours = teardownWanted ? roundQ(Math.max(1, solo * 0.6)) : 0;
+
+  return { soloHours: solo, teamHours, teardownHours };
 }
 
 function calcHoliday(data){
   const { soloHours, teamHours, teardownHours } = estimateHoursHoliday(data);
-  const priceInstall = Math.round(HOLI_HOURLY * soloHours);
-  const priceTeardown = teardownHours ? Math.round(HOLI_HOURLY * teardownHours) : 0;
-  return { price: priceInstall, soloHours, teamHours, teardownHours, teardownPrice: priceTeardown };
+  const price         = Math.round(HOLI_HOURLY * soloHours);
+  const teardownPrice = teardownHours ? Math.round(HOLI_HOURLY * teardownHours) : 0;
+  return { price, soloHours, teamHours, teardownHours, teardownPrice };
 }
 
 function holidayHint(data, teamHours){
-  // simple guidance line
-  if (teamHours <= 2.5) return `Holiday (indoor) — Small (≈2–2.5 hr)`;
-  if (teamHours <= 4)   return `Holiday (indoor) — Medium (≈3–4 hr)`;
-  if (teamHours <= 6)   return `Holiday (indoor) — Large (≈5–6 hr)`;
-  return `Holiday (indoor) — XL (6.5+ hr)`;
+  const hRaw = String(data.holiday || "Christmas");
+  const h = hRaw.charAt(0).toUpperCase() + hRaw.slice(1);
+  if (teamHours <= 2.5) return `${h} — Small (≈2–2.5 hr)`;
+  if (teamHours <= 4)   return `${h} — Medium (≈3–4 hr)`;
+  if (teamHours <= 6)   return `${h} — Large (≈5–6 hr)`;
+  return `${h} — XL (6.5+ hr)`;
 }
 
 /* ==========================================================
@@ -570,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Decor handler error:", err); }
 
-  /* HOLIDAY (INDOOR) intake */
+  /* HOLIDAY (INDOOR) intake — now multi-holiday */
   try {
     const form = document.getElementById('intakeFormHoliday');
     if (form){
@@ -619,7 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch (err){ console.error("Contact handler error:", err); }
 }); // ← closes DOMContentLoaded only; nothing else after this
 
-/* AUTH FORMS: Login + Signup */
+/* AUTH FORMS: Login + Signup (placeholder) */
 try {
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
@@ -643,8 +705,3 @@ try {
 } catch (err) {
   console.error("Auth handler error:", err);
 }
-
-
-
-
-
