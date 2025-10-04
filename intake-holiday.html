@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers (lightweight) -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -20,11 +19,11 @@
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
-    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
     .hint{font-size:.92rem;opacity:.9}
+    .muted{opacity:.85}
 
-    /* Minimal dropdown styles in case global CSS isn't applied here */
+    /* Dropdown bits (light) */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -36,10 +35,12 @@
     .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
     .quote-menu a:hover{background:#f3ece6}
     .quote-dropdown.open .quote-menu{display:block}
+
+    .hidden { display:none!important; }
   </style>
 </head>
 <body>
-  <!-- Header with Home + dropdown -->
+  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -69,7 +70,6 @@
     </div>
   </header>
 
-  <!-- extra clear back-to-home -->
   <div class="mini-bar">
     <a class="btn btn-outline" href="index.html">← Back to Home</a>
   </div>
@@ -77,9 +77,11 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Holiday Decorating Intake (Indoor)</div>
-    <p class="intake-note">Indoor holiday decorating only. Complete this brief form for an instant ballpark estimate (shown below). When ready, click <strong>Book Now</strong> to open our calendar in a new tab.</p>
+    <p class="intake-note">
+      Tell us what you’re celebrating! We’ll show an instant ballpark install estimate below
+      (teardown optional). When ready, hit <strong>Book Now</strong> to open our calendar.
+    </p>
 
-    <!-- INDOOR-ONLY HOLIDAY FORM -->
     <form id="intakeFormHoliday" class="grid-1" novalidate>
       <!-- Contact -->
       <div class="grid-2">
@@ -89,28 +91,56 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Scope (no team size, no preferred install window) -->
+      <!-- Holiday -->
       <div class="fieldset grid-2">
-        <label>Number of Trees
-          <input name="trees" type="number" min="0" value="1">
-        </label>
-        <label>Tallest Tree Size
-          <select name="tallest">
-            <option>≤6 ft</option><option selected>7–8 ft</option>
-            <option>9–10 ft</option><option>11–12+ ft</option>
+        <label>Which holiday?
+          <select name="holiday" id="holidaySelect">
+            <option value="christmas" selected>Christmas</option>
+            <option value="halloween">Halloween</option>
+            <option value="thanksgiving">Thanksgiving</option>
+            <option value="valentines">Valentine’s / Galentines</option>
+            <option value="july4">4th of July</option>
+            <option value="easter">Easter</option>
+            <option value="other">Other (indoor)</option>
           </select>
         </label>
+        <label>Decor style vibe
+          <select name="vibe">
+            <option>Classic & cozy</option>
+            <option>Modern & minimal</option>
+            <option>Bold & colorful</option>
+            <option>Neutral & natural</option>
+          </select>
+        </label>
+      </div>
 
-        <label>Tree Style / Approach
-          <select name="tree_style">
-            <option selected>Ready: ornaments & lights on hand</option>
-            <option>Needs ribbon/theme refresh</option>
-            <option>Full design + sourcing</option>
-          </select>
-        </label>
-        <label>Use ribbon/mesh on tree?
-          <select name="tree_ribbon"><option>No</option><option>Yes</option></select>
-        </label>
+      <!-- Scope -->
+      <div class="fieldset grid-2">
+        <!-- Tree cluster (auto hidden unless Christmas) -->
+        <div class="grid-2" id="treeCluster">
+          <label>Number of Trees
+            <input name="trees" id="trees" type="number" min="0" value="1">
+          </label>
+          <label>Tallest Tree Size
+            <select name="tallest" id="tallest">
+              <option>≤6 ft</option><option selected>7–8 ft</option>
+              <option>9–10 ft</option><option>11–12+ ft</option>
+            </select>
+          </label>
+          <label>Tree Style / Approach
+            <select name="tree_style" id="tree_style">
+              <option selected>Ready: ornaments & lights on hand</option>
+              <option>Needs ribbon/theme refresh</option>
+              <option>Full design + sourcing</option>
+            </select>
+          </label>
+          <label>Use ribbon/mesh on tree?
+            <select name="tree_ribbon" id="tree_ribbon"><option>No</option><option>Yes</option></select>
+          </label>
+          <div class="grid-1" style="grid-column:1/-1">
+            <span class="muted">Tree fields are hidden for non-Christmas holidays.</span>
+          </div>
+        </div>
 
         <label>Wreaths (count)
           <input name="wreaths" type="number" min="0" value="0">
@@ -143,39 +173,36 @@
           </select>
         </label>
         <label>Include Teardown (January)?
-          <select name="teardown"><option>Yes</option><option>No</option></select>
+          <select name="teardown"><option>Yes</option><option selected>No</option></select>
         </label>
 
-        <label>Notes / Special Requests
+        <label style="grid-column:1/-1">Notes / Special Requests
           <input name="notes" placeholder="colors, themes, fragile items, access notes">
         </label>
+
         <label>Payment Preference
           <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
         </label>
       </div>
 
-      <!-- CONSENTS -->
+      <!-- Consents -->
       <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_work_photos" required>
-          <span>I allow The Finishing Touch to take before/after photos for job verification and quality control. These will not be used for marketing unless I also consent below.</span>
+          <span>I allow before/after photos for job verification and quality control (not for marketing unless I also consent below).</span>
         </label>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_marketing_photos">
-          <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. I can revoke this in writing.</span>
+          <span>Okay to use select photos for marketing (no street address/personal items shown). I can revoke in writing.</span>
         </label>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_terms" required>
-          <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+          <span>I agree to the service terms. <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
         </label>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_updates">
-          <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
+          <span>Okay to email/SMS me with scheduling & updates.</span>
         </label>
       </fieldset>
 
@@ -183,7 +210,6 @@
       <div class="submit-row">
         <button class="btn btn-solid" type="submit">Get Holiday Estimate</button>
         <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
-        <!-- Book button will be injected below after estimate -->
       </div>
     </form>
   </main>
@@ -207,14 +233,30 @@
   </script>
 
   <!-- Your site JS (pricing/time calculators) -->
-  <script src="script.js?v=6" defer></script>
+  <script src="script.js?v=7" defer></script>
 
-  <!-- OVERRIDE: Estimate in place + "Book Now" in new tab (NO redirect to home) -->
+  <!-- In-page glue: keep the flow + hide/show tree fields -->
   <script>
     (function(){
       const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
+      const treeCluster = document.getElementById('treeCluster');
+      const holidaySel  = document.getElementById('holidaySelect');
+      const treesInput  = document.getElementById('trees');
 
-      // Lightweight local hours->label helper for the hint line
+      function showTrees(yes){
+        if (yes){ treeCluster.classList.remove('hidden'); }
+        else {
+          treeCluster.classList.add('hidden');
+          if (treesInput) treesInput.value = 0;
+        }
+      }
+      function updateTreeVisibility(){
+        const h = (holidaySel.value||'christmas').toLowerCase();
+        showTrees(h === 'christmas');
+      }
+      document.addEventListener('DOMContentLoaded', updateTreeVisibility);
+      holidaySel.addEventListener('change', updateTreeVisibility);
+
       function labelFromHours(teamHours){
         if (teamHours <= 2.5) return "Holiday Decorating — Small (≈2–2.5 hr)";
         if (teamHours <= 4)   return "Holiday Decorating — Medium (≈3–4 hr)";
@@ -226,14 +268,11 @@
         const formHol = document.getElementById('intakeFormHoliday');
         if (!formHol) return;
 
-        // Capture-phase so we override any global redirect-to-home behavior
         formHol.addEventListener('submit', (e)=>{
           e.preventDefault();
           e.stopImmediatePropagation();
 
           const data = Object.fromEntries(new FormData(formHol).entries());
-
-          // Use your global calcHoliday from script.js
           try {
             if (typeof calcHoliday === 'function') {
               const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
@@ -246,10 +285,9 @@
               if (teardownHours){
                 parts.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
               }
-              parts.push(`<span class="hint">Materials (ribbon/ornaments/garland) are separate and billed to your budget.</span>`);
-              if (estEl) estEl.innerHTML = parts.join("<br>");
+              parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
+              estEl.innerHTML = parts.join("<br>");
 
-              // Inject/refresh "Book Now" button (opens Square in a new tab)
               let btn = document.getElementById('scheduleOnSquareHoliday');
               if (!btn){
                 btn = document.createElement('a');
@@ -263,7 +301,6 @@
               btn.target = '_blank';
               btn.rel = 'noopener';
 
-              // Guidance line under the Book button
               let hintEl = document.getElementById('holidayHint');
               if (!hintEl){
                 hintEl = document.createElement('p');
@@ -279,9 +316,8 @@
     })();
   </script>
 
-  <!-- === Finishing Touch — AI Concierge Chat (show on this page) === -->
+  <!-- Chat (unchanged) -->
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
     <div class="ftt-chat-header">
       <div>
@@ -290,14 +326,11 @@
       </div>
       <button class="ftt-close" aria-label="Close chat">×</button>
     </div>
-
     <div id="ftt-thread" class="ftt-thread"></div>
-
     <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
       <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
       <button class="ftt-send" type="submit">Send</button>
     </form>
-
     <div class="ftt-quick">
       <button data-q="pricing">Pricing</button>
       <button data-q="availability">Availability</button>
@@ -307,103 +340,17 @@
       <button data-q="help">Help me choose</button>
     </div>
   </div>
-
   <script>
-    // Self-contained chat (same UX as Decor page)
     (function(){
-      const FTT_CFG = {
-        timezone: "America/Chicago",
-        intakeAnchor: "intake-holiday.html",
-        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
-        email: "contact.thefinishingtouch.tx@gmail.com",
-        messengerDeepLink: "https://m.me/thefinishingtouch.tx",
-        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
-      };
-      const el = {
-        launcher: document.getElementById("ftt-chat-launcher"),
-        panel: document.getElementById("ftt-chat"),
-        thread: document.getElementById("ftt-thread"),
-        input: null, form: null, quick: null, close: null,
-      };
-      function isWithinBusinessHours(){
-        try{
-          const now = new Date();
-          const opt = { timeZone: FTT_CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
-          const parts = new Intl.DateTimeFormat("en-US",opt).formatToParts(now);
-          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
-          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
-          const wdShort=parts.find(p=>p.type==="weekday")?.value||"";
-          const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-          const wd = map[wdShort] ?? now.getDay();
-          const [oH,oM]=FTT_CFG.hours.open.split(":").map(Number);
-          const [cH,cM]=FTT_CFG.hours.close.split(":").map(Number);
-          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
-          return FTT_CFG.hours.days.includes(wd) && after && before;
-        }catch{return false;}
-      }
-      function addMsg(html, who="bot"){
-        const b=document.createElement("div");
-        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
-        el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
-      }
-      function greet(){ addMsg("Hi! I’m your AI concierge. Ask me about holiday decorating, pricing, or availability. Say “human” anytime.","bot"); }
-      function detectIntent(text){
-        const t=text.toLowerCase();
-        if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
-        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
-        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(service|decor|holiday|what do you do)/.test(t)) return "services";
-        if (/(book|booking|schedule now)/.test(t)) return "book";
-        if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
-        return "fallback";
-      }
-      function answer(intent){
-        const hoursNote = isWithinBusinessHours()
-          ? "We’re online now—ask me anything or say “human” to chat with a person."
-          : "We’re offline at the moment, but I can still help or route your message.";
-        const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
-        const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
-        switch(intent){
-          case "pricing":
-            return [
-              "Indoor holiday installs are billed by time; your intake will show a tailored ballpark with optional teardown.",
-              intakeLink + " • or " + bookLink + " to see the calendar.",
-              hoursNote
-            ].join("<br>");
-          case "availability":
-            return ["Availability is live in Square.", bookLink + " to see current openings, or " + intakeLink + " first.", hoursNote].join("<br>");
-          case "services":
-            return ["Indoor trees, mantles, stairs, wreaths, garlands, tablescapes. Outdoor installs currently unavailable.", "Start here: " + intakeLink + " • Or jump to " + bookLink + "."].join("<br>");
-          case "book": return "Perfect—" + bookLink + " (Square opens in a new tab), or " + intakeLink + " for a tailored estimate first.";
-          case "human":
-            return isWithinBusinessHours()
-              ? `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
-              : `We’re offline. You can still <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
-          case "recommend":
-            return [
-              "<strong>Happy to help you choose!</strong>",
-              "Small: single tree + light accents. Medium: tree + mantle/rail. Large: multiple areas or extra sourcing.",
-              `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`
-            ].join("<br>");
-          default:
-            return ["I can help with pricing, availability, and services.", "Try “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
-        }
-      }
-      function init(){
-        const closeBtn=document.querySelector(".ftt-close");
-        const launcher=document.getElementById("ftt-chat-launcher");
-        const panel=document.getElementById("ftt-chat");
-        const form=document.getElementById("ftt-inputbar");
-        const input=document.getElementById("ftt-input");
-        const quick=document.querySelector(".ftt-quick");
-        launcher.addEventListener("click", ()=>{ panel.hidden=false; if(!document.getElementById("ftt-thread").dataset.greeted){ greet(); document.getElementById("ftt-thread").dataset.greeted="1"; } input.focus(); });
-        closeBtn.addEventListener("click", ()=>{ panel.hidden=true; });
-        form.addEventListener("submit",(e)=>{ e.preventDefault(); const t=input.value.trim(); if(!t) return; addMsg(t,"me"); input.value=""; setTimeout(()=>addMsg(answer(detectIntent(t)),"bot"),200); });
-        quick.addEventListener("click",(e)=>{ if(e.target.matches("button[data-q]")){ const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; addMsg(e.target.textContent,"me"); setTimeout(()=>addMsg(answer(intent),"bot"),200); } });
-      }
-      document.addEventListener("DOMContentLoaded", init);
+      const C={timezone:"America/Chicago",intakeAnchor:"intake-holiday.html",bookUrl:"https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",email:"contact.thefinishingtouch.tx@gmail.com",messengerDeepLink:"https://m.me/thefinishingtouch.tx",hours:{days:[1,2,3,4,5],open:"09:00",close:"17:00"}};
+      const el={launcher:document.getElementById("ftt-chat-launcher"),panel:document.getElementById("ftt-chat"),thread:document.getElementById("ftt-thread")};
+      function add(html,who="bot"){const b=document.createElement("div");b.className=`ftt-bubble ${who}`;b.innerHTML=html;el.thread.appendChild(b);el.thread.scrollTop=el.thread.scrollHeight;}
+      function greet(){add("Hi! I’m your AI concierge. Ask me about holiday decorating, pricing, or availability. Say “human” anytime.","bot");}
+      function intent(t){t=t.toLowerCase();if(/human|person|agent|representative|someone|call|talk/.test(t))return"human";if(/price|pricing|cost|rate|how much/.test(t))return"pricing";if(/avail|slot|appointment|when|schedule|open/.test(t))return"availability";if(/service|decor|holiday/.test(t))return"services";if(/book|booking/.test(t))return"book";if(/which|help choose|recommend|not sure|what should i (pick|choose)|suggest/.test(t))return"recommend";return"fallback";}
+      function ans(i){const intake=`<a href="${C.intakeAnchor}">Start Intake</a>`,book=`<a href="${C.bookUrl}" target="_blank" rel="noopener">Book now</a>`;switch(i){case"pricing":return["Indoor holiday installs are billed by time; your intake shows a tailored ballpark with optional teardown.",intake+" • or "+book].join("<br>");case"availability":return["Availability is live in Square.",book+" to see openings, or "+intake+" first."].join("<br>");case"services":return["Indoor trees (when Christmas), mantles, stairs, wreaths, garlands, tablescapes. Outdoor installs currently unavailable.","Start here: "+intake+" • Or jump to "+book+"."].join("<br>");case"book":return"Perfect—"+book+" (opens in a new tab), or "+intake+" for a tailored estimate first.";case"human":return`Tap <a href="${C.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${C.email}">${C.email}</a>.`;case"recommend":return["<strong>Happy to help!</strong> Small: single tree or accent set. Medium: tree + mantle/rail. Large: multiple areas or extra sourcing.",`Ready to book? ${book} (new tab). Or ${intake} first.`].join("<br>");default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” to talk to a person."].join("<br>");}}
+      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i),"bot"),200);}});}
+      document.addEventListener("DOMContentLoaded",init);
     })();
   </script>
 </body>
 </html>
-
