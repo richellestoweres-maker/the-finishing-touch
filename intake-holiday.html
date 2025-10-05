@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Holiday (Indoor) Intake – The Finishing Touch</title>
+  <title>Holiday & Event (Indoor) Intake – The Finishing Touch</title>
 
   <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
@@ -63,7 +63,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-            <a role="menuitem" href="intake-holiday.html">Holiday (Indoor)</a>
+            <a role="menuitem" href="intake-holiday.html">Holiday & Event (Indoor)</a>
           </div>
         </div>
       </nav>
@@ -76,9 +76,9 @@
 
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
-    <div class="intake-script">Holiday Decorating Intake (Indoor)</div>
+    <div class="intake-script">Holiday & Event Decorating Intake (Indoor)</div>
     <p class="intake-note">
-      Tell us what you’re celebrating! We’ll show an instant ballpark install estimate below
+      Tell us what you’re celebrating! We’ll show an instant ballpark <strong>install</strong> estimate below
       (teardown optional). When ready, hit <strong>Book Now</strong> to open our calendar.
     </p>
 
@@ -91,19 +91,61 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Holiday -->
+      <!-- Occasion -->
       <div class="fieldset grid-2">
-        <label>Which holiday?
-          <select name="holiday" id="holidaySelect">
-            <option value="christmas" selected>Christmas</option>
-            <option value="halloween">Halloween</option>
-            <option value="thanksgiving">Thanksgiving</option>
-            <option value="valentines">Valentine’s / Galentines</option>
-            <option value="july4">4th of July</option>
-            <option value="easter">Easter</option>
-            <option value="other">Other (indoor)</option>
+        <label>Occasion / Holiday
+          <select name="occasion" id="occasionSelect" required>
+            <option value="">Select an occasion</option>
+
+            <optgroup label="Winter">
+              <option>New Year’s Day</option>
+              <option>Valentine’s Day</option>
+              <option>Galentine’s Party</option>
+            </optgroup>
+
+            <optgroup label="Spring">
+              <option>St. Patrick’s Day</option>
+              <option>Easter</option>
+              <option>Mother’s Day</option>
+              <option>Graduation</option>
+            </optgroup>
+
+            <optgroup label="Summer">
+              <option>Memorial Day</option>
+              <option>Juneteenth</option>
+              <option>4th of July</option>
+              <option>Back to School</option>
+              <option>Labor Day</option>
+            </optgroup>
+
+            <optgroup label="Fall">
+              <option>Halloween</option>
+              <option>Thanksgiving</option>
+            </optgroup>
+
+            <optgroup label="Winter Holidays">
+              <option>Hanukkah</option>
+              <option>Christmas</option>
+              <option>New Year’s Eve</option>
+            </optgroup>
+
+            <optgroup label="Events & Parties">
+              <option>Birthday</option>
+              <option>Baby Shower</option>
+              <option>Bridal Shower</option>
+              <option>Engagement</option>
+              <option>Anniversary</option>
+              <option>Retirement</option>
+              <option>Game Day / Super Bowl</option>
+              <option value="Custom">Other / Custom…</option>
+            </optgroup>
           </select>
         </label>
+
+        <label id="occasionCustomWrap" style="display:none">What’s the occasion?
+          <input name="occasion_custom" id="occasionCustom" placeholder="e.g., Quinceañera, Diwali, Mardi Gras">
+        </label>
+
         <label>Decor style vibe
           <select name="vibe">
             <option>Classic & cozy</option>
@@ -138,7 +180,7 @@
             <select name="tree_ribbon" id="tree_ribbon"><option>No</option><option>Yes</option></select>
           </label>
           <div class="grid-1" style="grid-column:1/-1">
-            <span class="muted">Tree fields are hidden for non-Christmas holidays.</span>
+            <span class="muted">Tree fields are hidden for non-Christmas occasions.</span>
           </div>
         </div>
 
@@ -172,7 +214,7 @@
             <option>0</option><option>1</option><option>2</option><option>3+</option>
           </select>
         </label>
-        <label>Include Teardown (January)?
+        <label>Include Teardown?
           <select name="teardown"><option>Yes</option><option selected>No</option></select>
         </label>
 
@@ -208,7 +250,7 @@
 
       <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Get Holiday Estimate</button>
+        <button class="btn btn-solid" type="submit">Get Holiday/Event Estimate</button>
         <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
       </div>
     </form>
@@ -235,13 +277,23 @@
   <!-- Your site JS (pricing/time calculators) -->
   <script src="script.js?v=7" defer></script>
 
-  <!-- In-page glue: keep the flow + hide/show tree fields -->
+  <!-- In-page glue: occasion logic, show/hide tree fields, inline estimate + Book Now -->
   <script>
     (function(){
       const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
-      const treeCluster = document.getElementById('treeCluster');
-      const holidaySel  = document.getElementById('holidaySelect');
-      const treesInput  = document.getElementById('trees');
+
+      const treeCluster   = document.getElementById('treeCluster');
+      const treesInput    = document.getElementById('trees');
+      const occasionSel   = document.getElementById('occasionSelect');
+      const occCustomWrap = document.getElementById('occasionCustomWrap');
+      const occCustom     = document.getElementById('occasionCustom');
+
+      function currentOccasion(){
+        const val = (occasionSel?.value || "").trim();
+        if (!val) return "";
+        if (val === "Custom") return (occCustom?.value || "").trim();
+        return val;
+      }
 
       function showTrees(yes){
         if (yes){ treeCluster.classList.remove('hidden'); }
@@ -251,28 +303,49 @@
         }
       }
       function updateTreeVisibility(){
-        const h = (holidaySel.value||'christmas').toLowerCase();
-        showTrees(h === 'christmas');
+        const occ = currentOccasion().toLowerCase();
+        showTrees(occ.includes('christmas'));
       }
-      document.addEventListener('DOMContentLoaded', updateTreeVisibility);
-      holidaySel.addEventListener('change', updateTreeVisibility);
+      function toggleOccasionCustom(){
+        const isCustom = occasionSel && (occasionSel.value === "Custom");
+        occCustomWrap.style.display = isCustom ? "" : "none";
+        if (!isCustom) occCustom.value = "";
+        updateTreeVisibility();
+      }
 
-      function labelFromHours(teamHours){
-        if (teamHours <= 2.5) return "Holiday Decorating — Small (≈2–2.5 hr)";
-        if (teamHours <= 4)   return "Holiday Decorating — Medium (≈3–4 hr)";
-        if (teamHours <= 6)   return "Holiday Decorating — Large (≈5–6 hr)";
-        return "Holiday Decorating — XL (6.5+ hr)";
+      // Lightweight label helper that includes the occasion
+      function labelFromHours(teamHours, occasionLabel){
+        const occ = occasionLabel ? ` — ${occasionLabel}` : "";
+        if (teamHours <= 2.5) return `Holiday & Event (indoor${occ}) — Small (≈2–2.5 hr)`;
+        if (teamHours <= 4)   return `Holiday & Event (indoor${occ}) — Medium (≈3–4 hr)`;
+        if (teamHours <= 6)   return `Holiday & Event (indoor${occ}) — Large (≈5–6 hr)`;
+        return `Holiday & Event (indoor${occ}) — XL (6.5+ hr)`;
       }
 
       document.addEventListener('DOMContentLoaded', () => {
+        toggleOccasionCustom();
+
+        if (occasionSel){
+          occasionSel.addEventListener('change', toggleOccasionCustom);
+        }
+        if (occCustom){
+          occCustom.addEventListener('input', updateTreeVisibility);
+        }
+
         const formHol = document.getElementById('intakeFormHoliday');
         if (!formHol) return;
 
+        // Keep this page’s inline estimate + open Square in new tab
         formHol.addEventListener('submit', (e)=>{
           e.preventDefault();
-          e.stopImmediatePropagation();
+          e.stopImmediatePropagation(); // keep the global handler from taking over
 
           const data = Object.fromEntries(new FormData(formHol).entries());
+
+          // Ensure occasion fields are included in data object consumed by calcHoliday/holidayHint (harmless if unused)
+          data.occasion = currentOccasion();
+          data.occasion_custom = occCustom?.value || "";
+
           try {
             if (typeof calcHoliday === 'function') {
               const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
@@ -288,6 +361,7 @@
               parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
               estEl.innerHTML = parts.join("<br>");
 
+              // Inject/refresh Book button (opens Square in a new tab)
               let btn = document.getElementById('scheduleOnSquareHoliday');
               if (!btn){
                 btn = document.createElement('a');
@@ -301,6 +375,7 @@
               btn.target = '_blank';
               btn.rel = 'noopener';
 
+              // Guidance line under the Book button with occasion included
               let hintEl = document.getElementById('holidayHint');
               if (!hintEl){
                 hintEl = document.createElement('p');
@@ -308,7 +383,7 @@
                 hintEl.className = 'hint';
                 btn.parentNode.insertBefore(hintEl, btn.nextSibling);
               }
-              hintEl.textContent = `Recommended: ${labelFromHours(teamHours)}. Square opens in a new tab—choose the closest matching time block.`;
+              hintEl.textContent = `Recommended: ${labelFromHours(teamHours, data.occasion)}. Square opens in a new tab—choose the closest matching time block.`;
             }
           } catch(err){ console.warn("Holiday estimate error:", err); }
         }, true);
@@ -348,7 +423,7 @@
       function greet(){add("Hi! I’m your AI concierge. Ask me about holiday decorating, pricing, or availability. Say “human” anytime.","bot");}
       function intent(t){t=t.toLowerCase();if(/human|person|agent|representative|someone|call|talk/.test(t))return"human";if(/price|pricing|cost|rate|how much/.test(t))return"pricing";if(/avail|slot|appointment|when|schedule|open/.test(t))return"availability";if(/service|decor|holiday/.test(t))return"services";if(/book|booking/.test(t))return"book";if(/which|help choose|recommend|not sure|what should i (pick|choose)|suggest/.test(t))return"recommend";return"fallback";}
       function ans(i){const intake=`<a href="${C.intakeAnchor}">Start Intake</a>`,book=`<a href="${C.bookUrl}" target="_blank" rel="noopener">Book now</a>`;switch(i){case"pricing":return["Indoor holiday installs are billed by time; your intake shows a tailored ballpark with optional teardown.",intake+" • or "+book].join("<br>");case"availability":return["Availability is live in Square.",book+" to see openings, or "+intake+" first."].join("<br>");case"services":return["Indoor trees (when Christmas), mantles, stairs, wreaths, garlands, tablescapes. Outdoor installs currently unavailable.","Start here: "+intake+" • Or jump to "+book+"."].join("<br>");case"book":return"Perfect—"+book+" (opens in a new tab), or "+intake+" for a tailored estimate first.";case"human":return`Tap <a href="${C.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${C.email}">${C.email}</a>.`;case"recommend":return["<strong>Happy to help!</strong> Small: single tree or accent set. Medium: tree + mantle/rail. Large: multiple areas or extra sourcing.",`Ready to book? ${book} (new tab). Or ${intake} first.`].join("<br>");default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” to talk to a person."].join("<br>");}}
-      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i),"bot"),200);}});}
+      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i)),"bot",200);}});}
       document.addEventListener("DOMContentLoaded",init);
     })();
   </script>
