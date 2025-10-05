@@ -301,67 +301,74 @@
             </label>
           </div>
 
-         <!-- HOLIDAY inputs (with Occasion) -->
-<div id="estHoliday" class="form-grid" style="display:none;margin-top:8px">
-  <label>Occasion / Holiday
-    <input id="h_occasion" list="occasionOptions" placeholder="e.g., Christmas, Birthday, Thanksgiving">
-    <datalist id="occasionOptions">
-      <!-- Winter -->
-      <option value="New Year’s Day"></option>
-      <option value="Valentine’s Day"></option>
-      <option value="Galentine’s Party"></option>
-      <!-- Spring -->
-      <option value="St. Patrick’s Day"></option>
-      <option value="Easter"></option>
-      <option value="Mother’s Day"></option>
-      <option value="Graduation"></option>
-      <!-- Summer -->
-      <option value="Memorial Day"></option>
-      <option value="Juneteenth"></option>
-      <option value="4th of July"></option>
-      <option value="Back to School"></option>
-      <option value="Labor Day"></option>
-      <!-- Fall -->
-      <option value="Halloween"></option>
-      <option value="Thanksgiving"></option>
-      <!-- Winter Holidays -->
-      <option value="Hanukkah"></option>
-      <option value="Christmas"></option>
-      <option value="New Year’s Eve"></option>
-      <!-- Events & Parties -->
-      <option value="Birthday"></option>
-      <option value="Baby Shower"></option>
-      <option value="Bridal Shower"></option>
-      <option value="Engagement"></option>
-      <option value="Anniversary"></option>
-      <option value="Retirement"></option>
-      <option value="Game Day / Super Bowl"></option>
-      <option value="Custom"></option>
-    </datalist>
-  </label>
+          <!-- HOLIDAY inputs (with Occasion) -->
+          <div id="estHoliday" class="form-grid" style="display:none;margin-top:8px">
+            <label>Occasion / Holiday
+              <input id="h_occasion" list="occasionOptions" placeholder="e.g., Christmas, Birthday, Thanksgiving">
+              <datalist id="occasionOptions">
+                <!-- Winter -->
+                <option value="New Year’s Day"></option>
+                <option value="Valentine’s Day"></option>
+                <option value="Galentine’s Party"></option>
+                <!-- Spring -->
+                <option value="St. Patrick’s Day"></option>
+                <option value="Easter"></option>
+                <option value="Mother’s Day"></option>
+                <option value="Graduation"></option>
+                <!-- Summer -->
+                <option value="Memorial Day"></option>
+                <option value="Juneteenth"></option>
+                <option value="4th of July"></option>
+                <option value="Back to School"></option>
+                <option value="Labor Day"></option>
+                <!-- Fall -->
+                <option value="Halloween"></option>
+                <option value="Thanksgiving"></option>
+                <!-- Winter Holidays -->
+                <option value="Hanukkah"></option>
+                <option value="Christmas"></option>
+                <option value="New Year’s Eve"></option>
+                <!-- Events & Parties -->
+                <option value="Birthday"></option>
+                <option value="Baby Shower"></option>
+                <option value="Bridal Shower"></option>
+                <option value="Engagement"></option>
+                <option value="Anniversary"></option>
+                <option value="Retirement"></option>
+                <option value="Game Day / Super Bowl"></option>
+                <option value="Custom"></option>
+              </datalist>
+            </label>
 
-  <label># Trees <input id="h_trees" type="number" min="0" value="1"></label>
-  <label>Tallest Tree
-    <select id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
-  </label>
-  <label>Tree Style
-    <select id="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
-  </label>
-  <label>Ribbon? <select id="h_ribbon"><option>No</option><option>Yes</option></select></label>
-  <label>Wreaths <input id="h_wreaths" type="number" min="0" value="0"></label>
-  <label>Garland Sections <input id="h_garland" type="number" min="0" value="0"></label>
-  <label>Stair Sections <input id="h_stairs" type="number" min="0" value="0"></label>
-  <label>Mantle? <select id="h_mantle"><option>No</option><option>Yes</option></select></label>
-  <label>Tablescapes <input id="h_tables" type="number" min="0" value="0"></label>
-  <label>Storage
-    <select id="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
-  </label>
-  <label>Shopping Trips
-    <select id="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
-  </label>
-  <label>Include Teardown? <select id="h_teardown"><option>Yes</option><option>No</option></select></label>
-</div>
+            <label># Trees <input id="h_trees" type="number" min="0" value="1"></label>
+            <label>Tallest Tree
+              <select id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
+            </label>
+            <label>Tree Style
+              <select id="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
+            </label>
+            <label>Ribbon? <select id="h_ribbon"><option>No</option><option>Yes</option></select></label>
+            <label>Wreaths <input id="h_wreaths" type="number" min="0" value="0"></label>
+            <label>Garland Sections <input id="h_garland" type="number" min="0" value="0"></label>
+            <label>Stair Sections <input id="h_stairs" type="number" min="0" value="0"></label>
+            <label>Mantle? <select id="h_mantle"><option>No</option><option>Yes</option></select></label>
+            <label>Tablescapes <input id="h_tables" type="number" min="0" value="0"></label>
+            <label>Storage
+              <select id="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
+            </label>
+            <label>Shopping Trips
+              <select id="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
+            </label>
+            <label>Include Teardown? <select id="h_teardown"><option>Yes</option><option>No</option></select></label>
+          </div>
 
+          <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
+            <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <!-- Admin Helper Chat -->
   <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
@@ -380,6 +387,12 @@
       <button data-q="assign">Assign a job</button>
       <button data-q="status">Statuses</button>
       <button data-q="booking">Booking link</button>
+
+      <!-- New quick helpers -->
+      <button data-q="gameday">Game Day fields</button>
+      <button data-q="birthday">Birthday fields</button>
+      <button data-q="christmas">Christmas fields</button>
+      <button data-q="holiday">Holiday cheat sheet</button>
     </div>
     <div class="ah-input">
       <input id="ah-input" type="text" placeholder="Ask a quick question…" />
@@ -461,7 +474,7 @@
     function init(){
       renderChips();
 
-      // Open jobs (NO orderBy here; sort in JS to avoid composite index)
+      // Open jobs
       unsubOpen = onSnapshot(
         query(collection(db,"jobs"), where("status","==","open")),
         snap => {
@@ -471,7 +484,7 @@
         }
       );
 
-      // All jobs (OK to orderBy if index exists; if console warns, remove/order in JS similarly)
+      // All jobs
       unsubAll = onSnapshot(
         query(collection(db,"jobs"), orderBy("createdAt","desc"), limit(200)),
         snap => { lastAll = snap.docs.map(d=>({id:d.id, ...d.data()})); drawAll(lastAll); }
@@ -784,123 +797,121 @@
       document.getElementById('estHoliday').style.display   = (key==='holiday' ? '' : 'none');
     }
     function wireEstimator(){
-  const svc = document.getElementById('estService');
-  const btn = document.getElementById('estCalcBtn');
-  const out = document.getElementById('estOut');
+      const svc = document.getElementById('estService');
+      const btn = document.getElementById('estCalcBtn');
+      const out = document.getElementById('estOut');
 
-  function showEstSection(key){
-    document.getElementById('estCleaning').style.display  = (key==='cleaning' ? '' : 'none');
-    document.getElementById('estOrganizing').style.display= (key==='organizing' ? '' : 'none');
-    document.getElementById('estDecor').style.display     = (key==='decor' ? '' : 'none');
-    document.getElementById('estHoliday').style.display   = (key==='holiday' ? '' : 'none');
-  }
-
-  showEstSection(svc.value);
-  svc.addEventListener('change', ()=> showEstSection(svc.value));
-
-  // Helper: include occasion in label for Holiday/Event
-  function labelFromHours(teamHours, occasionLabel){
-    const occ = occasionLabel ? ` — ${occasionLabel}` : "";
-    if (teamHours <= 2.5) return `Holiday & Event (indoor${occ}) — Small (≈2–2.5 hr)`;
-    if (teamHours <= 4)   return `Holiday & Event (indoor${occ}) — Medium (≈3–4 hr)`;
-    if (teamHours <= 6)   return `Holiday & Event (indoor${occ}) — Large (≈5–6 hr)`;
-    return `Holiday & Event (indoor${occ}) — XL (6.5+ hr)`;
-  }
-
-  btn.addEventListener('click', () => {
-    const type = svc.value;
-    try{
-      if (type === 'cleaning'){
-        const data = {
-          sqft: document.getElementById('c_sqft').value,
-          service: document.getElementById('c_service').value,
-          beds: document.getElementById('c_beds').value,
-          baths: document.getElementById('c_baths').value,
-          other_rooms: document.getElementById('c_other').value,
-          stories: document.getElementById('c_stories').value,
-          frequency: document.getElementById('c_freq').value,
-          addons: document.getElementById('c_addons').value
-        };
-        const price = (window.calcCleaning ? calcCleaning(data) : 0);
-        const { teamHours } = (window.estimateHoursCleaning ? estimateHoursCleaning(data) : {teamHours:0});
-        const hint = (window.cleaningHint ? cleaningHint(data, teamHours) : '');
-        out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
-        return;
+      function showEstSectionLocal(key){
+        document.getElementById('estCleaning').style.display  = (key==='cleaning' ? '' : 'none');
+        document.getElementById('estOrganizing').style.display= (key==='organizing' ? '' : 'none');
+        document.getElementById('estDecor').style.display     = (key==='decor' ? '' : 'none');
+        document.getElementById('estHoliday').style.display   = (key==='holiday' ? '' : 'none');
       }
 
-      if (type === 'organizing'){
-        const data = {
-          org_area: document.getElementById('o_area').value,
-          org_size: document.getElementById('o_size').value,
-          spaces: document.getElementById('o_spaces').value,
-          complexity: document.getElementById('o_complex').value,
-          org_clutter: document.getElementById('o_clutter').value,
-          org_decision_speed: document.getElementById('o_decision').value,
-          org_volume: document.getElementById('o_volume').value,
-          org_containers: document.getElementById('o_cont').value,
-          addons: document.getElementById('o_addons').value
-        };
-        const price = (window.calcOrganizing ? calcOrganizing(data) : 0);
-        const { teamHours } = (window.estimateHoursOrganizing ? estimateHoursOrganizing(data) : {teamHours:0});
-        const hint = (window.organizingHint ? organizingHint(data, teamHours) : '');
-        out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
-        return;
+      showEstSectionLocal(svc.value);
+      svc.addEventListener('change', ()=> showEstSectionLocal(svc.value));
+
+      function labelFromHours(teamHours, occasionLabel){
+        const occ = occasionLabel ? ` — ${occasionLabel}` : "";
+        if (teamHours <= 2.5) return `Holiday & Event (indoor${occ}) — Small (≈2–2.5 hr)`;
+        if (teamHours <= 4)   return `Holiday & Event (indoor${occ}) — Medium (≈3–4 hr)`;
+        if (teamHours <= 6)   return `Holiday & Event (indoor${occ}) — Large (≈5–6 hr)`;
+        return `Holiday & Event (indoor${occ}) — XL (6.5+ hr)`;
       }
 
-      if (type === 'decor'){
-        const data = {
-          room: document.getElementById('d_room').value,
-          count: document.getElementById('d_count').value,
-          decor_scope: document.getElementById('d_scope').value,
-          decor_type: document.getElementById('d_type').value,
-          addons: document.getElementById('d_addons').value
-        };
-        const price = (window.calcDecor ? calcDecor(data) : 0);
-        const { teamHours } = (window.estimateHoursDecor ? estimateHoursDecor(data) : {teamHours:0});
-        const hint = (window.decorHint ? decorHint(data, teamHours) : '');
-        out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
-        return;
-      }
+      btn.addEventListener('click', () => {
+        const type = svc.value;
+        try{
+          if (type === 'cleaning'){
+            const data = {
+              sqft: document.getElementById('c_sqft').value,
+              service: document.getElementById('c_service').value,
+              beds: document.getElementById('c_beds').value,
+              baths: document.getElementById('c_baths').value,
+              other_rooms: document.getElementById('c_other').value,
+              stories: document.getElementById('c_stories').value,
+              frequency: document.getElementById('c_freq').value,
+              addons: document.getElementById('c_addons').value
+            };
+            const price = (window.calcCleaning ? calcCleaning(data) : 0);
+            const { teamHours } = (window.estimateHoursCleaning ? estimateHoursCleaning(data) : {teamHours:0});
+            const hint = (window.cleaningHint ? cleaningHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
 
-      if (type === 'holiday'){
-        const occasion = (document.getElementById('h_occasion').value || '').trim();
-        const data = {
-          occasion, // passes through to your Formspree if you wire it later
-          trees: document.getElementById('h_trees').value,
-          tallest: document.getElementById('h_tallest').value,
-          tree_style: document.getElementById('h_style').value,
-          tree_ribbon: document.getElementById('h_ribbon').value,
-          wreaths: document.getElementById('h_wreaths').value,
-          garland_sections: document.getElementById('h_garland').value,
-          stair_sections: document.getElementById('h_stairs').value,
-          mantle: document.getElementById('h_mantle').value,
-          tablescapes: document.getElementById('h_tables').value,
-          storage: document.getElementById('h_storage').value,
-          shopping_trips: document.getElementById('h_trips').value,
-          teardown: document.getElementById('h_teardown').value
-        };
-        const res = (window.calcHoliday ? calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
-        const fancyHint = labelFromHours(res.teamHours, occasion);
-        const lines = [
-          `Install est: <strong>$${res.price}</strong>`,
-          `Team time: ~${res.teamHours} hrs`,
-        ];
-        if (res.teardownHours){
-          lines.push(`Teardown: ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
+          if (type === 'organizing'){
+            const data = {
+              org_area: document.getElementById('o_area').value,
+              org_size: document.getElementById('o_size').value,
+              spaces: document.getElementById('o_spaces').value,
+              complexity: document.getElementById('o_complex').value,
+              org_clutter: document.getElementById('o_clutter').value,
+              org_decision_speed: document.getElementById('o_decision').value,
+              org_volume: document.getElementById('o_volume').value,
+              org_containers: document.getElementById('o_cont').value,
+              addons: document.getElementById('o_addons').value
+            };
+            const price = (window.calcOrganizing ? calcOrganizing(data) : 0);
+            const { teamHours } = (window.estimateHoursOrganizing ? estimateHoursOrganizing(data) : {teamHours:0});
+            const hint = (window.organizingHint ? organizingHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+
+          if (type === 'decor'){
+            const data = {
+              room: document.getElementById('d_room').value,
+              count: document.getElementById('d_count').value,
+              decor_scope: document.getElementById('d_scope').value,
+              decor_type: document.getElementById('d_type').value,
+              addons: document.getElementById('d_addons').value
+            };
+            const price = (window.calcDecor ? calcDecor(data) : 0);
+            const { teamHours } = (window.estimateHoursDecor ? estimateHoursDecor(data) : {teamHours:0});
+            const hint = (window.decorHint ? decorHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+
+          if (type === 'holiday'){
+            const occasion = (document.getElementById('h_occasion')?.value || '').trim();
+            const data = {
+              occasion,
+              trees: document.getElementById('h_trees').value,
+              tallest: document.getElementById('h_tallest').value,
+              tree_style: document.getElementById('h_style').value,
+              tree_ribbon: document.getElementById('h_ribbon').value,
+              wreaths: document.getElementById('h_wreaths').value,
+              garland_sections: document.getElementById('h_garland').value,
+              stair_sections: document.getElementById('h_stairs').value,
+              mantle: document.getElementById('h_mantle').value,
+              tablescapes: document.getElementById('h_tables').value,
+              storage: document.getElementById('h_storage').value,
+              shopping_trips: document.getElementById('h_trips').value,
+              teardown: document.getElementById('h_teardown').value
+            };
+            const res = (window.calcHoliday ? calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
+            const fancyHint = labelFromHours(res.teamHours, occasion);
+            const lines = [
+              `Install est: <strong>$${res.price}</strong>`,
+              `Team time: ~${res.teamHours} hrs`,
+            ];
+            if (res.teardownHours){
+              lines.push(`Teardown: ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
+            }
+            lines.push(`<span class="hint">${fancyHint}</span>`);
+            out.innerHTML = lines.join('<br>');
+            return;
+          }
+
+          out.textContent = 'Pick a service.';
+        } catch (e){
+          console.warn(e);
+          out.textContent = 'Could not calculate. Check your inputs.';
         }
-        lines.push(`<span class="hint">${fancyHint}</span>`);
-        out.innerHTML = lines.join('<br>');
-        return;
-      }
-
-      out.textContent = 'Pick a service.';
-    } catch (e){
-      console.warn(e);
-      out.textContent = 'Could not calculate. Check your inputs.';
+      });
     }
-  });
-}
-
 
     function wireAdminHelp(){
       const launcher = document.getElementById('admin-help-launcher');
@@ -918,51 +929,104 @@
         b.className=`ah-bubble ${who}`; b.innerHTML=html;
         thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
       }
-      function greet(){ addMsg("Hi! This is your admin helper. Ask about quoting, statuses, assigning, or booking links."); }
+      function greet(){
+        addMsg("Hi! Admin helper here. Ask about quoting, statuses, assigning, booking links — or type a holiday like <em>Game Day</em>, <em>Birthday</em>, or <em>Christmas</em> to see which fields to fill in.");
+      }
+
       function detectIntent(t){
-        t=t.toLowerCase();
-        if(/quote|estimate|price/.test(t)) return "quote";
-        if(/organizing|closet|pantry|garage/.test(t)) return "organizing";
-        if(/assign|unassign|add.*contractor/.test(t)) return "assign";
-        if(/status|submitted|approved|paid|claimed/.test(t)) return "status";
-        if(/book|calendar|square/.test(t)) return "booking";
+        t=(t||"").toLowerCase();
+        if (/\b(game\s*day|gameday|super ?bowl|football|sports)\b/.test(t)) return "gameday";
+        if (/\b(birthday|bday)\b/.test(t)) return "birthday";
+        if (/\b(christmas|xmas)\b/.test(t)) return "christmas";
+        if (/\b(holiday|event|which fields|holiday cheat|help.*holiday)\b/.test(t)) return "holiday";
+        if (/quote|estimate|price|how do i quote/.test(t)) return "quote";
+        if (/organizing|closet|pantry|garage/.test(t)) return "organizing";
+        if (/assign|unassign|add.*contractor/.test(t)) return "assign";
+        if (/status|submitted|approved|paid|claimed/.test(t)) return "status";
+        if (/book|calendar|square/.test(t)) return "booking";
         return "fallback";
       }
+
       function answer(intent){
+        const booking = `Send the calendar: <a href="${bookUrl}" target="_blank" rel="noopener">Open Square</a>.`;
+        const estTab = `Use the <strong>Estimate</strong> tab for a fast ballpark (no saving).`;
+
+        const GAME_DAY = [
+          "<strong>Game Day (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Game Day</strong>",
+          "Set: <em>Tablescapes</em> (coffee table, console, food bar), <em>Garland</em> (entry/TV wall), <em>Wreaths</em> if any.",
+          "<strong>No trees.</strong>"
+        ].join("<br>");
+
+        const BIRTHDAY = [
+          "<strong>Birthday (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Birthday</strong>",
+          "Use: <em>Tablescapes</em> (cake/gift table), <em>Garland</em>, <em>Mantle</em> if used.",
+          "<strong>No trees.</strong>"
+        ].join("<br>");
+
+        const CHRISTMAS = [
+          "<strong>Christmas (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Christmas</strong>",
+          "Set: <strong># Trees + Tallest Size + Style</strong> (add <em>Ribbon</em> if used).",
+          "Then add: <em>Wreaths</em> / <em>Garland</em> / <em>Stairs</em> / <em>Mantle</em> / <em>Tablescapes</em>."
+        ].join("<br>");
+
         switch(intent){
+          case "gameday":   return GAME_DAY;
+          case "birthday":  return BIRTHDAY;
+          case "christmas": return CHRISTMAS;
+          case "holiday":
+            return [
+              "<strong>Holiday/Event cheat sheet</strong>",
+              GAME_DAY, "", BIRTHDAY, "", CHRISTMAS,
+              "<span class='small' style='opacity:.8'>Tip: Storage (Attic/Offsite) + Shopping Trips add time; optional Teardown quotes its own hours + $.</span>"
+            ].join("<br>");
+
           case "quote":
             return [
-              "Use the <strong>Estimate</strong> tab for instant prices:",
-              "• Cleaning: set size/service, beds/baths, add-ons; it suggests time blocks.",
-              "• Organizing: area/size + clutter & decision speed adjust hours.",
-              "• Decor/Holiday supported too.",
-              "Share ballpark verbally; create a job later under <em>Create Job</em>."
+              estTab,
+              "• Cleaning: size/service, beds/baths, add-ons → time hint.",
+              "• Organizing: area/size + clutter/decision → time hint.",
+              "• Decor/Holiday: pick elements; Christmas unlocks tree fields.",
+              booking
             ].join("<br>");
+
           case "organizing":
             return [
               "Organizing defaults: Medium area ≈ 3–4 hr team block.",
-              "Heavier clutter or slow decisions increase hours; bins/labels add a bit.",
-              "Estimator tab → Organizing for a quick breakdown."
+              "Heavier clutter / slower decisions increase hours; bins/labels add a bit.",
+              estTab
             ].join("<br>");
+
           case "assign":
             return [
-              "Open/All Jobs → card buttons:",
-              "• <strong>Assign me</strong> adds you to contractorIds.",
-              "• <strong>Assign by email</strong> finds a user and adds them.",
+              "Open/All Jobs → card actions:",
+              "• <strong>Assign me</strong> adds you.",
+              "• <strong>Assign by email</strong> finds user by email and adds them.",
               "• <strong>Unassign</strong> removes a UID.",
-              "Status flips to <em>claimed</em> when slots are filled."
+              "Status flips to <em>claimed</em> when all slots are filled."
             ].join("<br>");
+
           case "status":
             return [
               "<code>open → claimed → in_progress → submitted → approved → paid</code>",
-              "Contractors move their jobs forward; you can override with the dropdown.",
-              "Use Private note for entry codes/PII in <code>jobs/{id}/private/main</code>."
+              "Contractors progress jobs; you can override with the dropdown.",
+              "Use <em>Private note</em> for entry codes/PII."
             ].join("<br>");
+
           case "booking":
-            return `Send the live calendar: <a href="${bookUrl}" target="_blank" rel="noopener">Open Square calendar</a>.`;
+            return booking;
+
           default:
-            return "Try: “How do I quote?”, “Organizing time?”, “Assign a job”, “Statuses”, or “Booking link”.";
+            return "Try: “Game Day fields”, “Birthday fields”, “Christmas fields”, or “Holiday cheat sheet”. Also: “How do I quote?”, “Assign a job”, “Statuses”, “Booking link”.";
         }
+      }
+
+      function sendText(txt){
+        const t = (txt||"").trim(); if(!t) return;
+        addMsg(t, "me");
+        setTimeout(()=> addMsg(answer(detectIntent(t))), 120);
       }
 
       launcher.addEventListener('click', ()=>{
@@ -971,24 +1035,17 @@
         input.focus();
       });
       close.addEventListener('click', ()=> panel.style.display='none');
-
-      send.addEventListener('click', ()=>{
-        const text = input.value.trim(); if(!text) return;
-        addMsg(text, "me"); input.value="";
-        setTimeout(()=> addMsg(answer(detectIntent(text))), 150);
-      });
-      input.addEventListener('keydown', (e)=>{ if(e.key==="Enter"){ e.preventDefault(); send.click(); }});
-
+      send.addEventListener('click', ()=>{ sendText(input.value); input.value=""; });
+      input.addEventListener('keydown', (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendText(input.value); input.value=""; }});
       quick.addEventListener('click', (e)=>{
-        if (e.target.matches('button[data-q]')){
-          const q = e.target.getAttribute('data-q');
-          addMsg(e.target.textContent, "me");
-          setTimeout(()=> addMsg(answer(detectIntent(q))), 150);
-        }
+        if (!e.target.matches('button[data-q]')) return;
+        const q = e.target.getAttribute('data-q');
+        addMsg(e.target.textContent, "me");
+        setTimeout(()=> addMsg(answer(detectIntent(q))), 120);
       });
     }
   </script>
 </body>
-
 </html>
+
 
