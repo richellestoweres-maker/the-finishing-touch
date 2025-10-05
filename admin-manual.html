@@ -3,442 +3,676 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin – Manual Intake (Create Job)</title>
+  <title>Admin Dashboard – The Finishing Touch</title>
 
+  <!-- Fonts & Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    body{background:#fbf8f4}
-    .wrap{width:min(960px,92%);margin:28px auto 60px;background:#fff;padding:24px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-    h1{font-family:"Playfair Display",serif;margin:0 0 .75rem;color:#2e2a27}
-    .grid-1{display:grid;gap:14px}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-    .row{margin:14px 0;border-top:1px solid #e8ddd1;padding-top:14px}
-    label{display:grid;gap:6px;font-weight:700;color:#2e2a27}
-    input,select,textarea{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:#2e2a27}
-    .muted{opacity:.85}
-    .btn{display:inline-block;padding:.65rem 1rem;border-radius:999px;font-weight:800;cursor:pointer;text-decoration:none}
-    .btn-solid{background:#d2bda9;color:#2a2624;border:0}
-    .btn-outline{border:1.5px solid #2a2624;color:#2a2624;background:#fff}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-    .card{border:1px solid #e8ddd1;border-radius:12px;padding:12px;background:#fffdfb}
-    .ok{color:#0a7d33;font-weight:800}
-    .err{color:#b00020;font-weight:800}
-    .pill{border:1px solid #e8ddd1;border-radius:10px;padding:8px 10px;background:#fffdfb}
-    .est{font-weight:900}
+    body{background:var(--paper,#fbf8f4)}
+    .portal{width:min(1180px,94%);margin:24px auto 80px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background:#fff;padding:12px 16px;border-radius:14px;box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08))
+    }
+    .brand-mini{display:flex;align-items:center;gap:.6rem}
+    .brand-mini .vase-logo{width:28px;height:36px;background:url('logo-vase.png') center/contain no-repeat;display:inline-block}
+    .rolepill{font-size:.8rem;padding:.2rem .6rem;border-radius:999px;border:1px solid #e3d9ce;background:#fffdfb}
+
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .tabbtn{border:1px solid #e3d9ce;background:#fff;color:#2e2a27;border-radius:999px;padding:.55rem .9rem;font-weight:800;cursor:pointer}
+    .tabbtn.active{background:var(--accent,#d2bda9);border-color:var(--accent,#d2bda9);color:#2a2624}
+
+    .bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
+    .filters{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{white-space:nowrap;border:1px solid #e3d9ce;background:#fffdfb;color:#2e2a27;border-radius:999px;padding:.35rem .7rem;cursor:pointer;font-weight:700;font-size:.9rem}
+    .chip.active{background:#2e2a27;color:#fff;border-color:#2e2a27}
+    .search{display:flex;gap:8px}
+    .search input{border:1px solid #e3d9ce;border-radius:10px;padding:.55rem .7rem}
+
+    .panels{margin-top:14px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+    .card{background:#fff;border-radius:14px;box-shadow:var(--shadow,0 10px 30px rgba(0,0,0,.08));padding:14px;display:flex;flex-direction:column;gap:10px}
+    .toprow{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;font-size:.92rem;opacity:.9}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{display:inline-block;padding:.55rem .85rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer}
+    .btn-outline{border:1.5px solid #2e2a27;background:#fff;color:#2e2a27}
+    .btn-solid{background:var(--accent,#d2bda9);color:#2a2624;border:0}
+    .btn-danger{background:#7f1d1d;color:#fff;border:0}
+    .empty{background:#fff;border:1px dashed #e3d9ce;border-radius:14px;padding:22px;text-align:center}
+
+    .panel{display:none}
+    .panel.active{display:block}
+
+    /* Forms */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .form-grid label{display:grid;gap:6px;font-weight:700}
+    .form-grid input,.form-grid select,.form-grid textarea{border:1px solid #e3d9ce;border-radius:10px;padding:.6rem .7rem;background:#fffdfb}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .hint{font-size:.92rem;opacity:.9}
+    .small{font-size:.9rem;opacity:.85}
+    .mini{font-size:.88rem;opacity:.85}
+
+    /* Admin helper chat (bottom-right) */
+    #admin-help-launcher{
+      position:fixed;right:20px;bottom:20px;width:52px;height:52px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;background:#0f172a;color:#fff;font-size:22px;
+      box-shadow:0 10px 25px rgba(0,0,0,.25);cursor:pointer;z-index:9999
+    }
+    #admin-help{
+      position:fixed;right:20px;bottom:86px;width:360px;max-width:90vw;background:#fff;border:1px solid #eee;border-radius:16px;overflow:hidden;
+      box-shadow:0 20px 50px rgba(0,0,0,.25);z-index:9999;font-family:system-ui,sans-serif;display:none
+    }
+    .ah-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#0f172a;color:#fff}
+    .ah-title{font-weight:700}.ah-sub{font-size:12px;opacity:.8}
+    .ah-close{background:transparent;border:none;color:#fff;font-size:24px;cursor:pointer}
+    .ah-thread{max-height:50vh;overflow:auto;padding:12px;background:#f8fafc;display:flex;flex-direction:column;gap:10px}
+    .ah-bubble{max-width:85%;padding:10px 12px;border-radius:12px;line-height:1.35;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .ah-bubble.bot{background:#fff;border:1px solid #eef2f7;align-self:flex-start}
+    .ah-bubble.me{background:#0ea5e9;color:#fff;align-self:flex-end}
+    .ah-input{display:flex;gap:8px;padding:10px;border-top:1px solid #eef2f7;background:#fff}
+    .ah-input input{flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:10px;font-size:14px}
+    .ah-send{background:#0f172a;color:#fff;border:none;border-radius:10px;padding:0 14px;cursor:pointer}
+    .ah-quick{display:flex;gap:6px;padding:8px 10px;flex-wrap:wrap;background:#fff;border-top:1px solid #eef2f7}
+    .ah-quick button{font-size:12px;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:6px 10px;cursor:pointer}
+    @media (max-width:480px){#admin-help{right:10px;bottom:80px;width:92vw}}
+    @media (max-width:640px){
+      #admin-help{right:0;left:0;bottom:0;width:100vw;height:70vh;border-radius:16px 16px 0 0}
+      #admin-help-launcher{right:12px;bottom:12px}
+    }
     .hidden{display:none!important}
-    .mini{font-size:.9rem;opacity:.85}
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand">
-        <a href="index.html" class="brand-link" style="display:flex;align-items:center;gap:.6rem;text-decoration:none;color:inherit">
-          <span class="vase-logo" aria-hidden="true"></span>
-          <span class="brand-name">The Finishing Touch</span>
-        </a>
-      </div>
-      <nav class="main-nav">
-        <a href="admin.html">Admin</a>
-        <a class="active" href="admin-manual.html">Manual Intake</a>
-        <a href="contractor.html">Contractor</a>
-        <a class="btn btn-outline" id="authBtn" href="login.html">Sign in</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <h1>Manual Intake – Create Job</h1>
-    <p class="muted">Phone/text intakes: pick a service, calculate the quote, split contractor pay, email Formspree, and post the job.</p>
-
-    <!-- Top row: service + live pills -->
-    <div class="grid-3" style="align-items:end;margin-bottom:6px">
-      <label>Service Category
-        <select id="svcCategory" name="svcCategory">
-          <option value="cleaning" selected>Cleaning</option>
-          <option value="holiday">Holiday / Event (Indoor)</option>
-        </select>
-      </label>
-      <div id="pillClient" class="pill">Client total: <span class="est">—</span></div>
-      <div id="pillHint" class="pill">Recommended: <span>—</span></div>
-    </div>
-
-    <form id="manualForm" class="grid-1">
-      <!-- Client PII (kept private) -->
-      <div class="row grid-2">
-        <label>Client Name<input name="name" required></label>
-        <label>Email<input name="email" type="email" required></label>
-        <label>Phone<input name="phone" required></label>
-        <label>Street Address<input name="street" required placeholder="123 Bay St"></label>
-        <label>City<input name="city" required placeholder="League City"></label>
-        <div class="grid-3">
-          <label>State<input name="state" required value="TX"></label>
-          <label>ZIP<input name="zip" required></label>
-          <label>Area (display label)<input name="area" placeholder="League City"></label>
+  <div class="portal">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand-mini">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <div>
+          <div style="font-family:'Playfair Display',serif;line-height:1;color:#2e2a27">The Finishing Touch</div>
+          <div class="rolepill">Admin</div>
         </div>
       </div>
-
-      <!-- Scheduling (public) -->
-      <div class="row grid-3">
-        <label>Date<input name="date" type="date" required></label>
-        <label>Start Time<input name="start" type="time" required></label>
-        <label>End Time<input name="end" type="time" required></label>
-      </div>
-
-      <!-- Ops (public) -->
-      <div class="row grid-3">
-        <label>Contractors Needed
-          <select name="contractorsNeeded">
-            <option value="1" selected>1</option><option value="2">2</option><option value="3">3</option>
-          </select>
-        </label>
-        <label>Your Cut (%)<input name="companyCut" type="number" min="0" max="50" value="30" required></label>
-        <label>Client-ID (optional)<input name="clientId" placeholder="paste UID if known"></label>
-      </div>
-
-      <!-- CLEANING block -->
-      <div id="cleaningBlock" class="row grid-2">
-        <label>Service
-          <select name="service">
-            <option>Initial Clean</option>
-            <option>Standard Clean</option>
-            <option>Deep Clean</option>
-            <option>Move-In / Move-Out Clean</option>
-            <option>Airbnb Turnover</option>
-          </select>
-        </label>
-        <label>Frequency
-          <select name="frequency"><option>one-time</option><option>weekly</option><option>biweekly</option><option>monthly</option></select>
-        </label>
-        <label>Bedrooms<input name="beds" type="number" min="0" value="3" required></label>
-        <label>Bathrooms<input name="baths" type="number" min="0" value="2" required></label>
-        <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
-        <label>Square Footage
-          <select name="sqft">
-            <option>&lt;1000</option><option selected>1000–2000</option><option>2000–3000</option><option>3000–4000</option><option>4000+</option>
-          </select>
-        </label>
-        <label>Stories
-          <select name="stories"><option>1</option><option>2</option></select>
-        </label>
-        <label>Pets (type & number)<input name="pets" /></label>
-        <label>Add-ons (comma list)<input name="addons" placeholder="oven, fridge, windows, baseboards, laundry"></label>
-        <label>Notes for summary<input name="notes" placeholder="e.g., initial deep clean"></label>
-      </div>
-
-      <!-- HOLIDAY / EVENT block -->
-      <div id="holidayBlock" class="row grid-2 hidden">
-        <label>Holiday / Event
-          <select name="h_holiday" id="h_holiday">
-            <option value="newyear">New Year’s</option>
-            <option value="valentines">Valentine’s / Galentines</option>
-            <option value="stpatricks">St. Patrick’s Day</option>
-            <option value="easter">Easter</option>
-            <option value="graduation">Graduation</option>
-            <option value="july4">July 4th</option>
-            <option value="gameday">Game Day / Sports</option>
-            <option value="halloween">Halloween</option>
-            <option value="thanksgiving">Thanksgiving</option>
-            <option value="hanukkah">Hanukkah</option>
-            <option value="christmas" selected>Christmas</option>
-            <option value="birthday">Birthday</option>
-            <option value="other">Other (indoor)</option>
-          </select>
-        </label>
-        <label>Vibe / Style
-          <select name="h_vibe">
-            <option>Classic & cozy</option><option>Modern & minimal</option><option>Bold & colorful</option><option>Neutral & natural</option>
-          </select>
-        </label>
-
-        <!-- Christmas-only tree cluster -->
-        <div class="grid-2" id="treeCluster">
-          <label># Trees <input name="h_trees" id="h_trees" type="number" min="0" value="1"></label>
-          <label>Tallest Tree
-            <select name="h_tallest" id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
-          </label>
-          <label>Tree Style
-            <select name="h_tree_style" id="h_tree_style"><option selected>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
-          </label>
-          <label>Ribbon/Mesh?
-            <select name="h_tree_ribbon" id="h_tree_ribbon"><option>No</option><option>Yes</option></select>
-          </label>
-          <div class="mini" style="grid-column:1/-1">Tree fields auto-hide for non-Christmas events.</div>
-        </div>
-
-        <label>Wreaths <input name="h_wreaths" type="number" min="0" value="0"></label>
-        <label>Garland Sections (mantle/rail/door/backdrop) <input name="h_garland" type="number" min="0" value="0"></label>
-        <label>Stair/Railing Sections <input name="h_stairs" type="number" min="0" value="0"></label>
-        <label>Decorate Mantle? <select name="h_mantle"><option>No</option><option>Yes</option></select></label>
-        <label>Tablescapes / Vignettes (zones) <input name="h_tables" type="number" min="0" value="0"><span class="mini">Snack table, drink station, entry console, photo op = 1 each</span></label>
-        <label>Storage / Access
-          <select name="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
-        </label>
-        <label>Shopping Trips
-          <select name="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
-        </label>
-        <label>Include Teardown (after event)? <select name="h_teardown"><option>Yes</option><option selected>No</option></select></label>
-
-        <label style="grid-column:1/-1">Notes / Special Requests
-          <input name="h_notes" placeholder="Team, colors, balloon backdrop, photo moment, fragile items, access notes">
-        </label>
-      </div>
-
-      <!-- Preview + actions -->
       <div class="row">
-        <div class="actions">
-          <button type="button" id="btnPreview" class="btn btn-outline">Preview calculation</button>
-          <button type="submit" id="btnCreate" class="btn btn-solid" disabled>Create Open Job</button>
-        </div>
-        <div id="calcCard" class="card" style="margin-top:10px;display:none"></div>
-        <div id="status" style="margin-top:8px"></div>
+        <span id="whoami" class="small"></span>
+        <a class="btn btn-outline" href="index.html">Home</a>
+        <a class="btn btn-outline" href="contractor.html">Contractor view</a>
+        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
       </div>
-    </form>
-  </main>
+    </div>
 
-  <!-- Calculators (your public pricing/time logic) -->
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Admin sections">
+      <button class="tabbtn active" data-tab="open">Open Jobs</button>
+      <button class="tabbtn" data-tab="all">All Jobs</button>
+      <button class="tabbtn" data-tab="create">Create Job</button>
+      <button class="tabbtn" data-tab="contractors">Contractors</button>
+      <button class="tabbtn" data-tab="clients">Clients</button>
+      <button class="tabbtn" data-tab="apps">Applications</button>
+      <button class="tabbtn" data-tab="estimate">Estimate</button>
+    </div>
+
+    <!-- Filter/search -->
+    <div class="bar">
+      <div class="filters" id="filterChips" aria-label="Filter by service type"></div>
+      <div class="search">
+        <input id="searchBox" type="search" placeholder="Search jobs: zip, summary, notes…" />
+        <button id="clearSearch" class="btn btn-outline" type="button">Clear</button>
+      </div>
+    </div>
+
+    <!-- Panels -->
+    <div class="panels">
+      <section id="panel-open" class="panel active" aria-live="polite">
+        <div id="listOpen" class="grid"></div>
+      </section>
+
+      <section id="panel-all" class="panel" aria-live="polite">
+        <div id="listAll" class="grid"></div>
+      </section>
+
+      <section id="panel-create" class="panel">
+        <!-- (unchanged) your Create Job form remains here -->
+        <div class="card"><div class="small">Use the <strong>Estimate</strong> tab for quotes; then paste into Create Job if needed.</div></div>
+      </section>
+
+      <section id="panel-contractors" class="panel" aria-live="polite">
+        <div id="listContractors" class="grid"></div>
+      </section>
+
+      <section id="panel-clients" class="panel" aria-live="polite">
+        <div id="listClients" class="grid"></div>
+      </section>
+
+      <section id="panel-apps" class="panel" aria-live="polite">
+        <div id="listApps" class="grid"></div>
+      </section>
+
+      <!-- ===== Upgraded Quick Estimate ===== -->
+      <section id="panel-estimate" class="panel">
+        <div class="card" style="padding:16px">
+          <div class="row" style="margin-bottom:10px;gap:10px;align-items:flex-end;flex-wrap:wrap">
+            <label>Service
+              <select id="estService">
+                <option value="cleaning">Cleaning</option>
+                <option value="organizing">Organizing</option>
+                <option value="decor">Decor</option>
+                <option value="holiday">Holiday / Event (Indoor)</option>
+              </select>
+            </label>
+            <button id="estCalcBtn" class="btn btn-solid" type="button">Calculate</button>
+            <span class="hint">Phone quotes: fast fields + ballpark + time block.</span>
+          </div>
+
+          <!-- CLEANING inputs -->
+          <div id="estCleaning" class="form-grid" style="margin-top:8px">
+            <label>Home Size
+              <select id="c_sqft">
+                <option>&lt;1000</option><option selected>1000–2000</option><option>2000–3000</option><option>3000–4000</option><option>4000+</option>
+              </select>
+            </label>
+            <label>Service
+              <select id="c_service">
+                <option>Initial Clean</option><option>Deep Clean</option><option>Move-In / Move-Out Clean</option><option>Airbnb Turnover</option><option>Standard Clean</option>
+              </select>
+            </label>
+            <label>Beds <input id="c_beds" type="number" min="0" value="3"></label>
+            <label>Baths <input id="c_baths" type="number" min="0" value="2"></label>
+            <label>Other Rooms <input id="c_other" type="number" min="0" value="0"></label>
+            <label>Stories
+              <select id="c_stories"><option>1</option><option>2</option></select>
+            </label>
+            <label>Frequency (Standard only)
+              <select id="c_freq"><option value="one-time">one-time</option><option value="weekly">weekly</option><option value="biweekly">biweekly</option><option value="monthly">monthly</option></select>
+            </label>
+            <label>Add-ons (keywords: oven, fridge, windows, baseboards, laundry)
+              <input id="c_addons" placeholder="e.g., oven, windows">
+            </label>
+          </div>
+
+          <!-- ORGANIZING inputs -->
+          <div id="estOrganizing" class="form-grid" style="display:none;margin-top:8px">
+            <label>Area
+              <select id="o_area">
+                <option>Closet</option><option>Kitchen</option><option>Pantry</option><option>Bedroom</option><option>Bathroom</option><option>Garage</option><option>Laundry Room</option><option>Office</option><option>Playroom</option><option>Whole Home (multi-area)</option>
+              </select>
+            </label>
+            <label>Size
+              <select id="o_size"><option>Small</option><option selected>Medium</option><option>Large</option></select>
+            </label>
+            <label># Spaces <input id="o_spaces" type="number" min="1" value="1"></label>
+            <label>Complexity
+              <select id="o_complex"><option>Light</option><option selected>Moderate</option><option>Heavy</option></select>
+            </label>
+            <label>Clutter
+              <select id="o_clutter"><option>Light</option><option selected>Moderate</option><option>Heavy</option></select>
+            </label>
+            <label>Decision Speed
+              <select id="o_decision"><option>Fast</option><option selected>Average</option><option>Slow</option></select>
+            </label>
+            <label>Volume
+              <select id="o_volume"><option>Low</option><option selected>Medium</option><option>High</option></select>
+            </label>
+            <label>Containers
+              <select id="o_cont"><option>None</option><option>Some (up to 10)</option><option>Many (10+)</option></select>
+            </label>
+            <label>Add-ons (bins, labels, bins/labels)
+              <input id="o_addons" placeholder="e.g., bins/labels">
+            </label>
+          </div>
+
+          <!-- DECOR inputs -->
+          <div id="estDecor" class="form-grid" style="display:none;margin-top:8px">
+            <label>Room
+              <select id="d_room">
+                <option>Living Room</option><option>Bedroom</option><option>Dining Room</option><option>Home Office</option><option>Kitchen / Nook</option><option>Entryway</option><option>Multiple Rooms</option>
+              </select>
+            </label>
+            <label># Rooms <input id="d_count" type="number" min="1" value="1"></label>
+            <label>Scope
+              <select id="d_scope"><option>Light refresh (styling)</option><option>Refresh + small sourcing</option><option>Full design (sourcing + install)</option></select>
+            </label>
+            <label>Type
+              <select id="d_type"><option>Interior Decorating (refresh)</option><option>Staging — Occupied</option><option>Staging — Vacant</option></select>
+            </label>
+            <label>Add-ons (moodboard, sourcing, shopping, install, window treatments, art hanging)
+              <input id="d_addons" placeholder="e.g., install, shopping">
+            </label>
+          </div>
+
+          <!-- HOLIDAY / EVENT inputs -->
+          <div id="estHoliday" class="form-grid" style="display:none;margin-top:8px">
+            <label>Holiday / Event
+              <select id="h_holiday">
+                <option value="newyear">New Year’s</option>
+                <option value="valentines">Valentine’s / Galentines</option>
+                <option value="stpatricks">St. Patrick’s Day</option>
+                <option value="easter">Easter</option>
+                <option value="graduation">Graduation</option>
+                <option value="july4">July 4th</option>
+                <option value="gameday">Game Day / Sports</option>
+                <option value="halloween">Halloween</option>
+                <option value="thanksgiving">Thanksgiving</option>
+                <option value="hanukkah">Hanukkah</option>
+                <option value="christmas" selected>Christmas</option>
+                <option value="birthday">Birthday</option>
+                <option value="other">Other (indoor)</option>
+              </select>
+            </label>
+            <label>Vibe / Style
+              <select id="h_vibe"><option>Classic & cozy</option><option>Modern & minimal</option><option>Bold & colorful</option><option>Neutral & natural</option></select>
+            </label>
+
+            <!-- Christmas-only tree cluster -->
+            <div id="h_treeCluster" class="form-grid" style="grid-column:1/-1">
+              <label># Trees <input id="h_trees" type="number" min="0" value="1"></label>
+              <label>Tallest Tree
+                <select id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
+              </label>
+              <label>Tree Style
+                <select id="h_tree_style"><option selected>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
+              </label>
+              <label>Ribbon/Mesh?
+                <select id="h_tree_ribbon"><option>No</option><option>Yes</option></select>
+              </label>
+              <div class="mini" style="grid-column:1/-1">Tree fields auto-hide unless “Christmas”.</div>
+            </div>
+
+            <label>Wreaths <input id="h_wreaths" type="number" min="0" value="0"></label>
+            <label>Garland Sections <input id="h_garland" type="number" min="0" value="0"></label>
+            <label>Stair/Railing Sections <input id="h_stairs" type="number" min="0" value="0"></label>
+            <label>Decorate Mantle? <select id="h_mantle"><option>No</option><option>Yes</option></select></label>
+            <label>Tablescapes / Vignettes (zones) <input id="h_tables" type="number" min="0" value="0"></label>
+            <label>Storage / Access
+              <select id="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
+            </label>
+            <label>Shopping Trips
+              <select id="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
+            </label>
+            <label>Include Teardown (after event)? <select id="h_teardown"><option>Yes</option><option selected>No</option></select></label>
+          </div>
+
+          <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
+            <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Admin Helper Chat -->
+  <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
+  <div id="admin-help" aria-live="polite" aria-label="Admin help chat">
+    <div class="ah-head">
+      <div>
+        <div class="ah-title">Admin Help</div>
+        <div class="ah-sub">Short answers + quick links</div>
+      </div>
+      <button class="ah-close" aria-label="Close">×</button>
+    </div>
+    <div id="ah-thread" class="ah-thread"></div>
+    <div class="ah-quick">
+      <button data-q="how quote">How do I quote?</button>
+      <button data-q="organizing">Organizing time?</button>
+      <button data-q="assign">Assign a job</button>
+      <button data-q="status">Statuses</button>
+      <button data-q="booking">Booking link</button>
+    </div>
+    <div class="ah-input">
+      <input id="ah-input" type="text" placeholder="Ask a quick question…" />
+      <button class="ah-send" id="ah-send">Send</button>
+    </div>
+  </div>
+
+  <!-- Calculators (exposes calcCleaning, etc.) -->
   <script src="script.js" defer></script>
 
   <!-- Firebase + logic -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { collection, addDoc, setDoc, doc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import {
+      onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      collection, query, where, orderBy, onSnapshot, limit,
+      doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+      serverTimestamp, runTransaction
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // Auth button
-    const authBtn = document.getElementById('authBtn');
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authBtn.textContent = 'Sign out'; authBtn.href = '#';
-        authBtn.onclick = async (e) => { e.preventDefault(); await signOut(auth); location.reload(); };
-      } else {
-        authBtn.textContent = 'Sign in'; authBtn.href = 'login.html?next=admin-manual.html';
-      }
+    const whoami = document.getElementById('whoami');
+    const btnOut = document.getElementById('signOutBtn');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { location.href = "login.html?next=" + encodeURIComponent("admin.html"); return; }
+      whoami.textContent = user.email || user.uid;
+
+      const roleSnap = await getDoc(doc(db, "users", user.uid));
+      const role = (roleSnap.exists() ? (roleSnap.data().role || "") : "").toLowerCase();
+      if (role !== "admin") { location.href = "contractor.html"; return; }
+      init();
     });
 
-    // UI refs
-    const svcCategory = document.getElementById('svcCategory');
-    const cleaningBlock = document.getElementById('cleaningBlock');
-    const holidayBlock  = document.getElementById('holidayBlock');
-    const treeCluster   = document.getElementById('treeCluster');
-    const hHolidaySel   = document.getElementById('h_holiday');
+    btnOut.addEventListener('click', async (e) => {
+      e.preventDefault(); await signOut(auth); location.href = "index.html";
+    });
 
-    const form = document.getElementById('manualForm');
-    const btnPreview = document.getElementById('btnPreview');
-    const btnCreate  = document.getElementById('btnCreate');
-    const calcCard   = document.getElementById('calcCard');
-    const statusEl   = document.getElementById('status');
+    const ALL_TYPES = ["cleaning","organizing","decor","holiday"];
+    const chipsWrap = document.getElementById('filterChips');
+    const searchBox = document.getElementById('searchBox');
+    const clearSearch = document.getElementById('clearSearch');
+    let activeType = "all";
+    let searchTerm = "";
 
-    const pillClient = document.querySelector('#pillClient .est');
-    const pillHint   = document.querySelector('#pillHint span');
-
-    function showBlocks(){
-      const isHoliday = (svcCategory.value==='holiday');
-      cleaningBlock.classList.toggle('hidden', isHoliday);
-      holidayBlock.classList.toggle('hidden', !isHoliday);
-      updateTreeVisibility();
-      pillClient.textContent = '—'; pillHint.textContent = '—';
-      calcCard.style.display = 'none'; statusEl.textContent = '';
-      btnCreate.disabled = true;
-    }
-    svcCategory.addEventListener('change', showBlocks);
-
-    function updateTreeVisibility(){
-      const h = (hHolidaySel.value||'christmas').toLowerCase();
-      if (h==='christmas'){ treeCluster.classList.remove('hidden'); }
-      else { treeCluster.classList.add('hidden'); const t=document.getElementById('h_trees'); if (t) t.value = 0; }
-    }
-    hHolidaySel.addEventListener('change', updateTreeVisibility);
-
-    const USD = n => '$' + Math.round(Number(n||0)).toLocaleString();
-    function prettyTime(hhmm){ if(!hhmm) return ''; let [h,m]=hhmm.split(':').map(Number); const ampm=h>=12?'PM':'AM'; h=(h%12)||12; return `${h}:${String(m).padStart(2,'0')} ${ampm}`; }
-    const labelHoliday = code => ({
-      newyear:"New Year’s", valentines:"Valentine’s/Galentines", stpatricks:"St. Patrick’s Day",
-      easter:"Easter", graduation:"Graduation", july4:"July 4th", gameday:"Game Day",
-      halloween:"Halloween", thanksgiving:"Thanksgiving", hanukkah:"Hanukkah",
-      christmas:"Christmas", birthday:"Birthday", other:"Other"
-    }[code] || 'Holiday');
-
-    function ensureCalcsReady(){
-      return new Promise(res=>{
-        const t=setInterval(()=>{
-          if (window.calcCleaning && window.estimateHoursCleaning && window.calcHoliday && window.holidayHint){ clearInterval(t); res(true); }
-        }, 25);
-        setTimeout(()=>res(true),700);
+    function renderChips(){
+      chipsWrap.innerHTML = "";
+      ["all", ...ALL_TYPES].forEach(t => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip" + (t===activeType ? " active" : "");
+        b.textContent = t==="all" ? "All" : (t[0].toUpperCase()+t.slice(1));
+        b.addEventListener("click", () => { activeType = t; drawOpen(lastOpen); drawAll(lastAll); });
+        chipsWrap.appendChild(b);
       });
     }
 
-    let lastPreview = null;
+    const tabs = Array.from(document.querySelectorAll(".tabbtn"));
+    const panels = Array.from(document.querySelectorAll(".panel"));
+    function setTab(key){
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab===key));
+      panels.forEach(p => p.classList.toggle("active", p.id === "panel-"+key));
+    }
+    tabs.forEach(t => t.addEventListener("click", () => setTab(t.dataset.tab)));
 
-    btnPreview.addEventListener('click', async ()=>{
-      statusEl.textContent=''; await ensureCalcsReady();
-      const d = Object.fromEntries(new FormData(form).entries());
-      const isHoliday = (svcCategory.value==='holiday');
+    searchBox.addEventListener("input", () => { searchTerm = searchBox.value.trim().toLowerCase(); drawOpen(lastOpen); drawAll(lastAll); });
+    clearSearch.addEventListener("click", () => { searchBox.value=""; searchTerm=""; drawOpen(lastOpen); drawAll(lastAll); });
 
-      if (isHoliday){
-        const hData = {
-          trees: d.h_trees, tallest: d.h_tallest, tree_style: d.h_tree_style, tree_ribbon: d.h_tree_ribbon,
-          wreaths: d.h_wreaths, garland_sections: d.h_garland, stair_sections: d.h_stairs,
-          mantle: d.h_mantle, tablescapes: d.h_tables, storage: d.h_storage,
-          shopping_trips: d.h_trips, teardown: d.h_teardown
-        };
-        const res  = calcHoliday ? calcHoliday(hData) : {price:0,teamHours:0,teardownHours:0,teardownPrice:0};
-        const hint = holidayHint ? holidayHint(hData, res.teamHours) : 'Holiday — time block';
+    const elOpen = document.getElementById('listOpen');
+    const elAll  = document.getElementById('listAll');
+    const elCons = document.getElementById('listContractors');
+    const elClients = document.getElementById('listClients');
+    const elApps = document.getElementById('listApps');
 
-        const cutPct = Math.min(50, Math.max(0, Number(d.companyCut||30)));
-        const keep = Math.round(res.price * (cutPct/100));
-        const toContractors = res.price - keep;
-        const n = Math.max(1, Math.min(3, Number(d.contractorsNeeded||1)));
-        const base = Math.floor(toContractors / n), remainder = toContractors % n;
-        const per = Array.from({length:n}, (_,i)=> base + (i<remainder?1:0));
+    let unsubOpen=null, unsubAll=null, unsubCons=null, unsubClients=null, unsubApps=null;
+    let lastOpen=[], lastAll=[];
 
-        const windowLbl = `${prettyTime(d.start)}–${prettyTime(d.end)}`;
+    function init(){
+      renderChips();
 
-        // Build a nice summary for the job card
-        const parts=[];
-        if (d.h_mantle==='Yes') parts.push('mantle');
-        const g=+d.h_garland||0; if(g) parts.push(`${g} garland`);
-        const w=+d.h_wreaths||0; if(w) parts.push(`${w} wreath${w>1?'s':''}`);
-        const s=+d.h_stairs||0; if(s) parts.push(`${s} stairs`);
-        const t=+d.h_tables||0; if(t) parts.push(`${t} tablescape${t>1?'s':''}`);
-        if ((d.h_holiday||'')==='christmas'){ const tr=+d.h_trees||0; if(tr) parts.push(`${tr} tree${tr>1?'s':''}`); }
-        const summary = `${labelHoliday(d.h_holiday)} — ${parts.length?parts.join(', '):'accent décor'}.`;
-
-        pillClient.textContent = USD(res.price);
-        pillHint.textContent   = hint;
-
-        const lines = [
-          `<div><strong>Client price (install):</strong> ${USD(res.price)} &nbsp; • &nbsp; <strong>Your cut:</strong> ${USD(keep)} &nbsp; • &nbsp; <strong>To contractors:</strong> ${USD(toContractors)}</div>`,
-          `<div><strong>Per contractor (${n}):</strong> ${per.map(p=>USD(p)).join(' · ')}</div>`,
-          `<div class="muted" style="margin-top:6px">${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br> ${summary} · Est team time ≈ <strong>${res.teamHours}</strong> hr</div>`
-        ];
-        if (res.teardownHours){ lines.push(`<div class="muted">Teardown: ~${res.teardownHours} hrs • ≈ ${USD(res.teardownPrice)}</div>`); }
-        calcCard.style.display='block'; calcCard.innerHTML = lines.join('');
-
-        btnCreate.disabled=false;
-        lastPreview = { svc:'holiday', price:res.price, teamHours:res.teamHours, teardownHours:res.teardownHours, teardownPrice:res.teardownPrice, per, n, windowLbl, summary };
-        return;
-      }
-
-      // Cleaning
-      const price = calcCleaning ? calcCleaning(d) : 0;
-      const { teamHours } = estimateHoursCleaning ? estimateHoursCleaning(d) : {teamHours:0};
-      const hint = cleaningHint ? cleaningHint(d, teamHours) : 'Cleaning — time block';
-
-      const cutPct = Math.min(50, Math.max(0, Number(d.companyCut||30)));
-      const keep = Math.round(price * (cutPct/100));
-      const toContractors = price - keep;
-      const n = Math.max(1, Math.min(3, Number(d.contractorsNeeded||1)));
-      const base = Math.floor(toContractors / n), remainder = toContractors % n;
-      const per = Array.from({length:n}, (_,i)=> base + (i<remainder?1:0));
-
-      const summary = `${Number(d.beds||0)} bed / ${Number(d.baths||0)} bath — ${(d.notes||d.service||'cleaning')}.`;
-      const windowLbl = `${prettyTime(d.start)}–${prettyTime(d.end)}`;
-
-      pillClient.textContent = USD(price);
-      pillHint.textContent   = hint;
-
-      calcCard.style.display='block';
-      calcCard.innerHTML = `
-        <div><strong>Client price:</strong> ${USD(price)} &nbsp; • &nbsp; <strong>Your cut:</strong> ${USD(keep)} &nbsp; • &nbsp; <strong>To contractors:</strong> ${USD(toContractors)}</div>
-        <div><strong>Per contractor (${n}):</strong> ${per.map(p=>USD(p)).join(' · ')}</div>
-        <div class="muted" style="margin-top:6px">${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br>
-        ${summary} · Est team time ≈ <strong>${teamHours}</strong> hr</div>
-      `;
-      btnCreate.disabled=false;
-      lastPreview = { svc:'cleaning', price, teamHours, per, n, windowLbl, summary };
-    });
-
-    // Create Job
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      statusEl.textContent=''; calcCard.style.display='none';
-      if (!lastPreview){ statusEl.innerHTML='<span class="err">Click “Preview calculation” first.</span>'; return; }
-
-      const d = Object.fromEntries(new FormData(form).entries());
-      btnCreate.disabled=true;
-
-      const startDate = d.date ? new Date(d.date+'T'+(d.start||'09:00')+':00') : null;
-
-      const job = {
-        serviceType: lastPreview.svc==='holiday' ? 'holiday' : 'cleaning',
-        status: 'open',
-        area: d.area || d.city || '',
-        zip: d.zip || '',
-        whenDate: d.date || '',
-        whenStart: d.start || '',
-        whenEnd: d.end || '',
-        whenWindow: lastPreview.windowLbl || '',
-        whenAt: startDate ? Timestamp.fromDate(startDate) : serverTimestamp(),
-        summary: lastPreview.summary || (lastPreview.svc==='holiday' ? 'Holiday (indoor) install' : 'Cleaning'),
-        estimatedTeamHours: Number(lastPreview.teamHours||0),
-        contractorsNeeded: Math.max(1, Number(d.contractorsNeeded||1)),
-        contractorPayEach: lastPreview.per ? lastPreview.per[0] : null,
-        flatRate: Number(lastPreview.price||0),
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      };
-      if (job.contractorPayEach==null) delete job.contractorPayEach;
-      if (d.clientId) job.clientId = d.clientId.trim();
-
-      try{
-        const ref = await addDoc(collection(db,'jobs'), job);
-
-        // slots
-        const need = Math.max(1, Number(d.contractorsNeeded||1));
-        for (let i=0;i<need;i++){
-          await setDoc(doc(db,'jobs',ref.id,'slots',`slot_${i+1}`), {
-            slotNumber:i+1, status:'open', contractorId:'', pay: lastPreview.per ? lastPreview.per[i] : null
-          });
+      unsubOpen = onSnapshot(
+        query(collection(db,"jobs"), where("status","==","open")),
+        snap => {
+          const byCreatedDesc = (a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0);
+          lastOpen = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(byCreatedDesc);
+          drawOpen(lastOpen);
         }
+      );
 
-        // PII
-        await setDoc(doc(db,'jobs',ref.id,'private','pii'), {
-          name:d.name, email:d.email, phone:d.phone,
-          address:`${d.street}, ${d.city}, ${d.state} ${d.zip}`,
-          clientPrice:Number(lastPreview.price||0)
-        });
+      unsubAll = onSnapshot(
+        query(collection(db,"jobs"), orderBy("createdAt","desc"), limit(200)),
+        snap => { lastAll = snap.docs.map(d=>({id:d.id, ...d.data()})); drawAll(lastAll); }
+      );
 
-        // (Optional) billing snapshot
-        await setDoc(doc(db,'jobs',ref.id,'private','billing'), {
-          contractorSplit: lastPreview.per || [],
-          teamHours: lastPreview.teamHours,
-          teardown: lastPreview.teardownHours ? { hours:lastPreview.teardownHours, price:lastPreview.teardownPrice } : null
-        });
+      unsubCons = onSnapshot(
+        query(collection(db,"users"), where("role","in",["contractor","admin"])) ,
+        snap => { drawPeople(elCons, snap.docs.map(d=>({id:d.id, ...d.data()})), "contractor"); }
+      );
+      unsubClients = onSnapshot(
+        query(collection(db,"users"), where("role","==","client")),
+        snap => { drawPeople(elClients, snap.docs.map(d=>({id:d.id, ...d.data()})), "client"); }
+      );
+      unsubApps = onSnapshot(
+        query(collection(db,"users"), where("role","==","pending")),
+        snap => { drawApps(snap.docs.map(d=>({id:d.id, ...d.data()}))); }
+      );
 
-        // Formspree trail
+      wireEstimator();   // << updated
+      wireAdminHelp();   // unchanged helper
+    }
+
+    function cap(s){ return s ? (s[0].toUpperCase()+s.slice(1)) : ""; }
+    function fmt(n){ return (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : ""; }
+    function matchFilters(j){
+      const type = (j.serviceType||"").toLowerCase();
+      const okType = (activeType==="all") || (type===activeType);
+      if (!okType) return false;
+      if (!searchTerm) return true;
+      const hay = JSON.stringify(j).toLowerCase();
+      return hay.includes(searchTerm);
+    }
+    function slots(j){
+      const need = Number(j.contractorsNeeded || 1);
+      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
+      const left = Math.max(0, need - have);
+      return {need,have,left};
+    }
+
+    function jobCard(j){
+      const {need, have, left} = slots(j);
+      const when = j.window || j.whenWindow || "";
+      const hours = j.estimatedTeamHours || j.teamHours || "";
+      const zip = j.zip || j.area || j.city || "";
+      const title = cap(j.serviceType||"job");
+      const payLine = j.flatRate!=null ? `<span>Client est: <strong>${fmt(j.flatRate)}</strong></span>` : "";
+      const leftTxt = need>1 ? `• ${left} of ${need} slots left` : "";
+
+      return `
+        <div class="card" data-id="${j.id}">
+          <div class="toprow">
+            <strong>${title}</strong>
+            <span class="small">Status: <code>${j.status||''}</code></span>
+          </div>
+          <div class="meta">
+            ${zip?`<span>📍 ${zip}</span>`:""}
+            ${when?`<span>🗓️ ${when}</span>`:""}
+            ${hours?`<span>⏱️ ${hours} hrs</span>`:""}
+            ${leftTxt}
+            ${payLine}
+          </div>
+          ${j.summary?`<div>${j.summary}</div>`:""}
+        </div>
+      `;
+    }
+
+    function drawOpen(list){
+      const filtered = list.filter(matchFilters);
+      elOpen.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No open jobs match.</div>`;
+    }
+    function drawAll(list){
+      const filtered = list.filter(matchFilters);
+      elAll.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No jobs match.</div>`;
+    }
+
+    function drawPeople(container, people, role){
+      if (!people.length){ container.innerHTML = `<div class="empty">No ${role}s found.</div>`; return; }
+      container.innerHTML = people.map(p=>`
+        <div class="card">
+          <div class="toprow">
+            <strong>${p.displayName || p.email || p.id}</strong>
+            <span class="rolepill">${p.role || ""}</span>
+          </div>
+          <div class="meta">
+            ${p.email?`<span>📧 ${p.email}</span>`:""}
+            ${Array.isArray(p.serviceTypes)&&p.serviceTypes.length?`<span>🧰 ${p.serviceTypes.join(", ")}</span>`:""}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    /* =======================
+       ESTIMATOR (UPDATED)
+       ======================= */
+    function showEstSection(key){
+      document.getElementById('estCleaning').style.display  = (key==='cleaning' ? '' : 'none');
+      document.getElementById('estOrganizing').style.display= (key==='organizing' ? '' : 'none');
+      document.getElementById('estDecor').style.display     = (key==='decor' ? '' : 'none');
+      document.getElementById('estHoliday').style.display   = (key==='holiday' ? '' : 'none');
+      toggleTreeCluster();
+      document.getElementById('estOut').textContent = 'Fill fields and hit “Calculate”.';
+    }
+
+    function toggleTreeCluster(){
+      const cluster = document.getElementById('h_treeCluster');
+      const holiday = (document.getElementById('h_holiday')?.value || 'christmas').toLowerCase();
+      if (!cluster) return;
+      if (holiday === 'christmas'){ cluster.classList.remove('hidden'); }
+      else { cluster.classList.add('hidden'); const t=document.getElementById('h_trees'); if(t) t.value=0; }
+    }
+
+    function wireEstimator(){
+      const svc = document.getElementById('estService');
+      const btn = document.getElementById('estCalcBtn');
+      const out = document.getElementById('estOut');
+
+      showEstSection(svc.value);
+      svc.addEventListener('change', ()=> showEstSection(svc.value));
+      document.getElementById('h_holiday').addEventListener('change', toggleTreeCluster);
+
+      btn.addEventListener('click', () => {
+        const type = svc.value;
         try{
-          const fd = new FormData();
-          fd.append('_subject', lastPreview.svc==='holiday' ? 'Manual Intake (Admin) — Holiday' : 'Manual Intake (Admin) — Cleaning');
-          fd.append('service_type', job.serviceType);
-          fd.append('client_name', d.name||'');
-          fd.append('client_email', d.email||'');
-          fd.append('client_phone', d.phone||'');
-          fd.append('client_address', `${d.street}, ${d.city}, ${d.state} ${d.zip}`);
-          fd.append('public_area', job.area);
-          fd.append('public_zip', job.zip);
-          fd.append('window', job.whenWindow || '');
-          fd.append('summary', job.summary || '');
-          fd.append('estimate_client_total', USD(lastPreview.price||0));
-          fd.append('contractors_needed', String(need));
-          if (lastPreview.per) fd.append('contractor_pay_each', lastPreview.per.join(', '));
-          await fetch('https://formspree.io/f/mzzaogbv', { method:'POST', body:fd, headers:{'Accept':'application/json'} });
-        }catch(_){}
+          if (type === 'cleaning'){
+            const data = {
+              sqft: c_sqft.value, service: c_service.value, beds: c_beds.value, baths: c_baths.value,
+              other_rooms: c_other.value, stories: c_stories.value, frequency: c_freq.value, addons: c_addons.value
+            };
+            const price = (window.calcCleaning ? calcCleaning(data) : 0);
+            const { teamHours } = (window.estimateHoursCleaning ? estimateHoursCleaning(data) : {teamHours:0});
+            const hint = (window.cleaningHint ? cleaningHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+          if (type === 'organizing'){
+            const data = {
+              org_area: o_area.value, org_size: o_size.value, spaces: o_spaces.value, complexity: o_complex.value,
+              org_clutter: o_clutter.value, org_decision_speed: o_decision.value, org_volume: o_volume.value,
+              org_containers: o_cont.value, addons: o_addons.value
+            };
+            const price = (window.calcOrganizing ? calcOrganizing(data) : 0);
+            const { teamHours } = (window.estimateHoursOrganizing ? estimateHoursOrganizing(data) : {teamHours:0});
+            const hint = (window.organizingHint ? organizingHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+          if (type === 'decor'){
+            const data = { room: d_room.value, count: d_count.value, decor_scope: d_scope.value, decor_type: d_type.value, addons: d_addons.value };
+            const price = (window.calcDecor ? calcDecor(data) : 0);
+            const { teamHours } = (window.estimateHoursDecor ? estimateHoursDecor(data) : {teamHours:0});
+            const hint = (window.decorHint ? decorHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+          if (type === 'holiday'){
+            const data = {
+              trees: h_trees.value, tallest: h_tallest.value, tree_style: h_tree_style.value, tree_ribbon: h_tree_ribbon.value,
+              wreaths: h_wreaths.value, garland_sections: h_garland.value, stair_sections: h_stairs.value,
+              mantle: h_mantle.value, tablescapes: h_tables.value, storage: h_storage.value,
+              shopping_trips: h_trips.value, teardown: h_teardown.value
+            };
+            const res = (window.calcHoliday ? calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
+            const hint = (window.holidayHint ? holidayHint(data, res.teamHours) : '');
+            const lines = [
+              `Install est: <strong>$${res.price}</strong>`,
+              `Team time: ~${res.teamHours} hrs`,
+            ];
+            if (res.teardownHours){
+              lines.push(`Teardown: ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
+            }
+            // Add a short label for which holiday/event
+            const labelHoliday = code => ({
+              newyear:"New Year’s", valentines:"Valentine’s/Galentines", stpatricks:"St. Patrick’s Day", easter:"Easter",
+              graduation:"Graduation", july4:"July 4th", gameday:"Game Day", halloween:"Halloween", thanksgiving:"Thanksgiving",
+              hanukkah:"Hanukkah", christmas:"Christmas", birthday:"Birthday", other:"Other"
+            }[code] || 'Holiday');
+            lines.push(`<span class="hint">${labelHoliday(h_holiday.value)} — ${hint}</span>`);
+            out.innerHTML = lines.join('<br>');
+            return;
+          }
+          out.textContent = 'Pick a service.';
+        } catch (e){
+          console.warn(e);
+          out.textContent = 'Could not calculate. Check your inputs.';
+        }
+      });
+    }
 
-        statusEl.innerHTML = `<span class="ok">Job created.</span> <a href="admin.html">Admin</a> · <a href="contractor.html">Contractor board</a>`;
-      }catch(err){
-        console.warn(err);
-        statusEl.innerHTML = `<span class="err">Couldn’t create job (permissions or network?).</span>`;
-      }finally{
-        btnCreate.disabled=false;
+    /* ===== Helper Chat (unchanged) ===== */
+    function wireAdminHelp(){
+      const launcher = document.getElementById('admin-help-launcher');
+      const panel = document.getElementById('admin-help');
+      const thread = document.getElementById('ah-thread');
+      const input = document.getElementById('ah-input');
+      const send = document.getElementById('ah-send');
+      const close = document.querySelector('#admin-help .ah-close');
+      const quick = document.querySelector('#admin-help .ah-quick');
+
+      const bookUrl = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
+
+      function addMsg(html, who="bot"){ const b=document.createElement("div"); b.className=`ah-bubble ${who}`; b.innerHTML=html; thread.appendChild(b); thread.scrollTop=thread.scrollHeight; }
+      function greet(){ addMsg("Hi! This is your admin helper. Ask about quoting, statuses, assigning, or booking links."); }
+      function detectIntent(t){
+        t=t.toLowerCase();
+        if(/quote|estimate|price/.test(t)) return "quote";
+        if(/organizing|closet|pantry|garage/.test(t)) return "organizing";
+        if(/assign|unassign|add.*contractor/.test(t)) return "assign";
+        if(/status|submitted|approved|paid|claimed/.test(t)) return "status";
+        if(/book|calendar|square/.test(t)) return "booking";
+        return "fallback";
       }
-    });
+      function answer(intent){
+        switch(intent){
+          case "quote":
+            return [
+              "Use the <strong>Estimate</strong> tab for instant prices:",
+              "• Cleaning / Organizing / Decor / Holiday-Event.",
+              "• Holiday auto-hides trees unless Christmas; add tablescapes/garlands quickly.",
+              "Share ballpark verbally; create a job later under <em>Create Job</em>."
+            ].join("<br>");
+          case "organizing":
+            return [
+              "Organizing defaults: Medium area ≈ 3–4 hr team block.",
+              "Heavier clutter or slow decisions increase hours; bins/labels add a bit.",
+              "Estimator tab → Organizing for a quick breakdown."
+            ].join("<br>");
+          case "assign":
+            return [
+              "Open/All Jobs → card buttons: Assign me / Assign by email / Unassign.",
+              "Status flips to <em>claimed</em> when slots are filled."
+            ].join("<br>");
+          case "status":
+            return "<code>open → claimed → in_progress → submitted → approved → paid</code>";
+          case "booking":
+            return `Send the live calendar: <a href="${bookUrl}" target="_blank" rel="noopener">Open Square calendar</a>.`;
+          default:
+            return "Try: “How do I quote?”, “Organizing time?”, “Assign a job”, “Statuses”, or “Booking link”.";
+        }
+      }
 
-    // init
-    showBlocks();
+      launcher.addEventListener('click', ()=>{
+        panel.style.display = 'block';
+        if (!thread.dataset.greeted){ greet(); thread.dataset.greeted="1"; }
+        input.focus();
+      });
+      close.addEventListener('click', ()=> panel.style.display='none');
+
+      send.addEventListener('click', ()=>{
+        const text = input.value.trim(); if(!text) return;
+        addMsg(text, "me"); input.value="";
+        setTimeout(()=> addMsg(answer(detectIntent(text))), 150);
+      });
+      input.addEventListener('keydown', (e)=>{ if(e.key==="Enter"){ e.preventDefault(); send.click(); }});
+
+      quick.addEventListener('click', (e)=>{
+        if (e.target.matches('button[data-q]')){
+          const q = e.target.getAttribute('data-q');
+          addMsg(e.target.textContent, "me");
+          setTimeout(()=> addMsg(answer(detectIntent(q))), 150);
+        }
+      });
+    }
   </script>
 </body>
 </html>
+
