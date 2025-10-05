@@ -301,37 +301,67 @@
             </label>
           </div>
 
-          <!-- HOLIDAY inputs -->
-          <div id="estHoliday" class="form-grid" style="display:none;margin-top:8px">
-            <label># Trees <input id="h_trees" type="number" min="0" value="1"></label>
-            <label>Tallest Tree
-              <select id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
-            </label>
-            <label>Tree Style
-              <select id="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
-            </label>
-            <label>Ribbon? <select id="h_ribbon"><option>No</option><option>Yes</option></select></label>
-            <label>Wreaths <input id="h_wreaths" type="number" min="0" value="0"></label>
-            <label>Garland Sections <input id="h_garland" type="number" min="0" value="0"></label>
-            <label>Stair Sections <input id="h_stairs" type="number" min="0" value="0"></label>
-            <label>Mantle? <select id="h_mantle"><option>No</option><option>Yes</option></select></label>
-            <label>Tablescapes <input id="h_tables" type="number" min="0" value="0"></label>
-            <label>Storage
-              <select id="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
-            </label>
-            <label>Shopping Trips
-              <select id="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
-            </label>
-            <label>Include Teardown? <select id="h_teardown"><option>Yes</option><option>No</option></select></label>
-          </div>
+         <!-- HOLIDAY inputs (with Occasion) -->
+<div id="estHoliday" class="form-grid" style="display:none;margin-top:8px">
+  <label>Occasion / Holiday
+    <input id="h_occasion" list="occasionOptions" placeholder="e.g., Christmas, Birthday, Thanksgiving">
+    <datalist id="occasionOptions">
+      <!-- Winter -->
+      <option value="New Year’s Day"></option>
+      <option value="Valentine’s Day"></option>
+      <option value="Galentine’s Party"></option>
+      <!-- Spring -->
+      <option value="St. Patrick’s Day"></option>
+      <option value="Easter"></option>
+      <option value="Mother’s Day"></option>
+      <option value="Graduation"></option>
+      <!-- Summer -->
+      <option value="Memorial Day"></option>
+      <option value="Juneteenth"></option>
+      <option value="4th of July"></option>
+      <option value="Back to School"></option>
+      <option value="Labor Day"></option>
+      <!-- Fall -->
+      <option value="Halloween"></option>
+      <option value="Thanksgiving"></option>
+      <!-- Winter Holidays -->
+      <option value="Hanukkah"></option>
+      <option value="Christmas"></option>
+      <option value="New Year’s Eve"></option>
+      <!-- Events & Parties -->
+      <option value="Birthday"></option>
+      <option value="Baby Shower"></option>
+      <option value="Bridal Shower"></option>
+      <option value="Engagement"></option>
+      <option value="Anniversary"></option>
+      <option value="Retirement"></option>
+      <option value="Game Day / Super Bowl"></option>
+      <option value="Custom"></option>
+    </datalist>
+  </label>
 
-          <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
-            <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
+  <label># Trees <input id="h_trees" type="number" min="0" value="1"></label>
+  <label>Tallest Tree
+    <select id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
+  </label>
+  <label>Tree Style
+    <select id="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
+  </label>
+  <label>Ribbon? <select id="h_ribbon"><option>No</option><option>Yes</option></select></label>
+  <label>Wreaths <input id="h_wreaths" type="number" min="0" value="0"></label>
+  <label>Garland Sections <input id="h_garland" type="number" min="0" value="0"></label>
+  <label>Stair Sections <input id="h_stairs" type="number" min="0" value="0"></label>
+  <label>Mantle? <select id="h_mantle"><option>No</option><option>Yes</option></select></label>
+  <label>Tablescapes <input id="h_tables" type="number" min="0" value="0"></label>
+  <label>Storage
+    <select id="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
+  </label>
+  <label>Shopping Trips
+    <select id="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
+  </label>
+  <label>Include Teardown? <select id="h_teardown"><option>Yes</option><option>No</option></select></label>
+</div>
+
 
   <!-- Admin Helper Chat -->
   <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
@@ -936,4 +966,5 @@
     }
   </script>
 </body>
+
 </html>
