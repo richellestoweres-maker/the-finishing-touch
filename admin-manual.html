@@ -10,14 +10,14 @@
 
   <style>
     body{background:#fbf8f4}
-    .wrap{width:min(960px,92%);margin:28px auto 60px;background:#fff;padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .wrap{width:min(960px,92%);margin:28px auto 60px;background:#fff;padding:24px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
     h1{font-family:"Playfair Display",serif;margin:0 0 .75rem;color:#2e2a27}
+    .grid-1{display:grid;gap:14px}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-    .grid-1{display:grid;gap:14px}
+    .row{margin:14px 0;border-top:1px solid #e8ddd1;padding-top:14px}
     label{display:grid;gap:6px;font-weight:700;color:#2e2a27}
     input,select,textarea{border:1px solid #e3d9ce;border-radius:12px;padding:.75rem;background:#fffdfb;color:#2e2a27}
-    .row{margin:14px 0;border-top:1px solid #e8ddd1;padding-top:14px}
     .muted{opacity:.85}
     .btn{display:inline-block;padding:.65rem 1rem;border-radius:999px;font-weight:800;cursor:pointer;text-decoration:none}
     .btn-solid{background:#d2bda9;color:#2a2624;border:0}
@@ -26,7 +26,10 @@
     .card{border:1px solid #e8ddd1;border-radius:12px;padding:12px;background:#fffdfb}
     .ok{color:#0a7d33;font-weight:800}
     .err{color:#b00020;font-weight:800}
-    .right{display:flex;gap:10px;align-items:center}
+    .pill{border:1px solid #e8ddd1;border-radius:10px;padding:8px 10px;background:#fffdfb}
+    .est{font-weight:900}
+    .hidden{display:none!important}
+    .mini{font-size:.9rem;opacity:.85}
   </style>
 </head>
 <body>
@@ -49,10 +52,22 @@
 
   <main class="wrap">
     <h1>Manual Intake – Create Job</h1>
-    <p class="muted">Fill this when a client calls/texts. We’ll calculate the quote, split contractor pay, email Formspree, and post the job for contractors.</p>
+    <p class="muted">Phone/text intakes: pick a service, calculate the quote, split contractor pay, email Formspree, and post the job.</p>
+
+    <!-- Top row: service + live pills -->
+    <div class="grid-3" style="align-items:end;margin-bottom:6px">
+      <label>Service Category
+        <select id="svcCategory" name="svcCategory">
+          <option value="cleaning" selected>Cleaning</option>
+          <option value="holiday">Holiday / Event (Indoor)</option>
+        </select>
+      </label>
+      <div id="pillClient" class="pill">Client total: <span class="est">—</span></div>
+      <div id="pillHint" class="pill">Recommended: <span>—</span></div>
+    </div>
 
     <form id="manualForm" class="grid-1">
-      <!-- Client PII (kept out of job doc) -->
+      <!-- Client PII (kept private) -->
       <div class="row grid-2">
         <label>Client Name<input name="name" required></label>
         <label>Email<input name="email" type="email" required></label>
@@ -66,32 +81,25 @@
         </div>
       </div>
 
-      <!-- Scheduling (shown to contractors) -->
+      <!-- Scheduling (public) -->
       <div class="row grid-3">
         <label>Date<input name="date" type="date" required></label>
         <label>Start Time<input name="start" type="time" required></label>
         <label>End Time<input name="end" type="time" required></label>
       </div>
 
-      <!-- Service Category -->
+      <!-- Ops (public) -->
       <div class="row grid-3">
-        <label>Service Category
-          <select id="svcCategory" name="svcCategory">
-            <option value="cleaning" selected>Cleaning</option>
-            <option value="holiday">Holiday (Indoor)</option>
-          </select>
-        </label>
         <label>Contractors Needed
           <select name="contractorsNeeded">
-            <option value="1" selected>1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="1" selected>1</option><option value="2">2</option><option value="3">3</option>
           </select>
         </label>
         <label>Your Cut (%)<input name="companyCut" type="number" min="0" max="50" value="30" required></label>
+        <label>Client-ID (optional)<input name="clientId" placeholder="paste UID if known"></label>
       </div>
 
-      <!-- Cleaning block (default visible) -->
+      <!-- CLEANING block -->
       <div id="cleaningBlock" class="row grid-2">
         <label>Service
           <select name="service">
@@ -103,18 +111,14 @@
           </select>
         </label>
         <label>Frequency
-          <select name="frequency">
-            <option>one-time</option><option>weekly</option>
-            <option>biweekly</option><option>monthly</option>
-          </select>
+          <select name="frequency"><option>one-time</option><option>weekly</option><option>biweekly</option><option>monthly</option></select>
         </label>
         <label>Bedrooms<input name="beds" type="number" min="0" value="3" required></label>
         <label>Bathrooms<input name="baths" type="number" min="0" value="2" required></label>
         <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
         <label>Square Footage
           <select name="sqft">
-            <option>&lt;1000</option><option>1000–2000</option>
-            <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
+            <option>&lt;1000</option><option selected>1000–2000</option><option>2000–3000</option><option>3000–4000</option><option>4000+</option>
           </select>
         </label>
         <label>Stories
@@ -125,28 +129,62 @@
         <label>Notes for summary<input name="notes" placeholder="e.g., initial deep clean"></label>
       </div>
 
-      <!-- Holiday block (hidden until selected) -->
-      <div id="holidayBlock" class="row grid-3" style="display:none">
-        <label># Trees <input name="h_trees" type="number" min="0" value="1"></label>
-        <label>Tallest Tree
-          <select name="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
+      <!-- HOLIDAY / EVENT block -->
+      <div id="holidayBlock" class="row grid-2 hidden">
+        <label>Holiday / Event
+          <select name="h_holiday" id="h_holiday">
+            <option value="newyear">New Year’s</option>
+            <option value="valentines">Valentine’s / Galentines</option>
+            <option value="stpatricks">St. Patrick’s Day</option>
+            <option value="easter">Easter</option>
+            <option value="graduation">Graduation</option>
+            <option value="july4">July 4th</option>
+            <option value="gameday">Game Day / Sports</option>
+            <option value="halloween">Halloween</option>
+            <option value="thanksgiving">Thanksgiving</option>
+            <option value="hanukkah">Hanukkah</option>
+            <option value="christmas" selected>Christmas</option>
+            <option value="birthday">Birthday</option>
+            <option value="other">Other (indoor)</option>
+          </select>
         </label>
-        <label>Tree Style
-          <select name="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
+        <label>Vibe / Style
+          <select name="h_vibe">
+            <option>Classic & cozy</option><option>Modern & minimal</option><option>Bold & colorful</option><option>Neutral & natural</option>
+          </select>
         </label>
-        <label>Ribbon? <select name="h_ribbon"><option>No</option><option>Yes</option></select></label>
+
+        <!-- Christmas-only tree cluster -->
+        <div class="grid-2" id="treeCluster">
+          <label># Trees <input name="h_trees" id="h_trees" type="number" min="0" value="1"></label>
+          <label>Tallest Tree
+            <select name="h_tallest" id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
+          </label>
+          <label>Tree Style
+            <select name="h_tree_style" id="h_tree_style"><option selected>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
+          </label>
+          <label>Ribbon/Mesh?
+            <select name="h_tree_ribbon" id="h_tree_ribbon"><option>No</option><option>Yes</option></select>
+          </label>
+          <div class="mini" style="grid-column:1/-1">Tree fields auto-hide for non-Christmas events.</div>
+        </div>
+
         <label>Wreaths <input name="h_wreaths" type="number" min="0" value="0"></label>
-        <label>Garland Sections <input name="h_garland" type="number" min="0" value="0"></label>
-        <label>Stair Sections <input name="h_stairs" type="number" min="0" value="0"></label>
-        <label>Mantle? <select name="h_mantle"><option>No</option><option>Yes</option></select></label>
-        <label>Tablescapes <input name="h_tables" type="number" min="0" value="0"></label>
-        <label>Storage
+        <label>Garland Sections (mantle/rail/door/backdrop) <input name="h_garland" type="number" min="0" value="0"></label>
+        <label>Stair/Railing Sections <input name="h_stairs" type="number" min="0" value="0"></label>
+        <label>Decorate Mantle? <select name="h_mantle"><option>No</option><option>Yes</option></select></label>
+        <label>Tablescapes / Vignettes (zones) <input name="h_tables" type="number" min="0" value="0"><span class="mini">Snack table, drink station, entry console, photo op = 1 each</span></label>
+        <label>Storage / Access
           <select name="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
         </label>
         <label>Shopping Trips
           <select name="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
         </label>
-        <label>Include Teardown? <select name="h_teardown"><option>Yes</option><option>No</option></select></label>
+        <label>Include Teardown (after event)? <select name="h_teardown"><option>Yes</option><option selected>No</option></select></label>
+
+        <label style="grid-column:1/-1">Notes / Special Requests
+          <input name="h_notes" placeholder="Team, colors, balloon backdrop, photo moment, fragile items, access notes">
+        </label>
       </div>
 
       <!-- Preview + actions -->
@@ -161,240 +199,246 @@
     </form>
   </main>
 
-  <!-- Calculators: uses your public pricing logic -->
+  <!-- Calculators (your public pricing/time logic) -->
   <script src="script.js" defer></script>
 
   <!-- Firebase + logic -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import {
-      collection, addDoc, serverTimestamp, setDoc, doc, Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { collection, addDoc, setDoc, doc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // Top-right smart auth button
+    // Auth button
     const authBtn = document.getElementById('authBtn');
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        authBtn.textContent = 'Sign out';
-        authBtn.href = '#';
+        authBtn.textContent = 'Sign out'; authBtn.href = '#';
         authBtn.onclick = async (e) => { e.preventDefault(); await signOut(auth); location.reload(); };
       } else {
-        authBtn.textContent = 'Sign in';
-        authBtn.href = 'login.html?next=admin-manual.html';
+        authBtn.textContent = 'Sign in'; authBtn.href = 'login.html?next=admin-manual.html';
       }
     });
 
-    // --- UI refs
+    // UI refs
+    const svcCategory = document.getElementById('svcCategory');
+    const cleaningBlock = document.getElementById('cleaningBlock');
+    const holidayBlock  = document.getElementById('holidayBlock');
+    const treeCluster   = document.getElementById('treeCluster');
+    const hHolidaySel   = document.getElementById('h_holiday');
+
     const form = document.getElementById('manualForm');
     const btnPreview = document.getElementById('btnPreview');
     const btnCreate  = document.getElementById('btnCreate');
     const calcCard   = document.getElementById('calcCard');
     const statusEl   = document.getElementById('status');
 
-    const svcCategory = document.getElementById('svcCategory');
-    const cleaningBlock = document.getElementById('cleaningBlock');
-    const holidayBlock  = document.getElementById('holidayBlock');
+    const pillClient = document.querySelector('#pillClient .est');
+    const pillHint   = document.querySelector('#pillHint span');
 
-    // Toggle service blocks
-    svcCategory.addEventListener('change', () => {
-      const isHoliday = svcCategory.value === 'holiday';
-      cleaningBlock.style.display = isHoliday ? 'none' : '';
-      holidayBlock.style.display  = isHoliday ? '' : 'none';
-      calcCard.style.display = 'none';
-      statusEl.textContent = '';
+    function showBlocks(){
+      const isHoliday = (svcCategory.value==='holiday');
+      cleaningBlock.classList.toggle('hidden', isHoliday);
+      holidayBlock.classList.toggle('hidden', !isHoliday);
+      updateTreeVisibility();
+      pillClient.textContent = '—'; pillHint.textContent = '—';
+      calcCard.style.display = 'none'; statusEl.textContent = '';
       btnCreate.disabled = true;
-    });
+    }
+    svcCategory.addEventListener('change', showBlocks);
 
-    // Helpers
-    const USD = (n) => `$${Math.round(Number(n||0))}`;
-    function prettyTime(hhmm){
-      if(!hhmm) return '';
-      let [h,m]=hhmm.split(':').map(Number);
-      const ampm = h>=12?'PM':'AM'; h = (h%12)||12;
-      return `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+    function updateTreeVisibility(){
+      const h = (hHolidaySel.value||'christmas').toLowerCase();
+      if (h==='christmas'){ treeCluster.classList.remove('hidden'); }
+      else { treeCluster.classList.add('hidden'); const t=document.getElementById('h_trees'); if (t) t.value = 0; }
+    }
+    hHolidaySel.addEventListener('change', updateTreeVisibility);
+
+    const USD = n => '$' + Math.round(Number(n||0)).toLocaleString();
+    function prettyTime(hhmm){ if(!hhmm) return ''; let [h,m]=hhmm.split(':').map(Number); const ampm=h>=12?'PM':'AM'; h=(h%12)||12; return `${h}:${String(m).padStart(2,'0')} ${ampm}`; }
+    const labelHoliday = code => ({
+      newyear:"New Year’s", valentines:"Valentine’s/Galentines", stpatricks:"St. Patrick’s Day",
+      easter:"Easter", graduation:"Graduation", july4:"July 4th", gameday:"Game Day",
+      halloween:"Halloween", thanksgiving:"Thanksgiving", hanukkah:"Hanukkah",
+      christmas:"Christmas", birthday:"Birthday", other:"Other"
+    }[code] || 'Holiday');
+
+    function ensureCalcsReady(){
+      return new Promise(res=>{
+        const t=setInterval(()=>{
+          if (window.calcCleaning && window.estimateHoursCleaning && window.calcHoliday && window.holidayHint){ clearInterval(t); res(true); }
+        }, 25);
+        setTimeout(()=>res(true),700);
+      });
     }
 
     let lastPreview = null;
 
-    // PREVIEW
-    btnPreview.addEventListener('click', () => {
-      statusEl.textContent = '';
+    btnPreview.addEventListener('click', async ()=>{
+      statusEl.textContent=''; await ensureCalcsReady();
       const d = Object.fromEntries(new FormData(form).entries());
-      const isHoliday = (svcCategory.value === 'holiday');
+      const isHoliday = (svcCategory.value==='holiday');
 
-      if (isHoliday) {
-        // Holiday calculation via script.js
-        const data = {
-          trees: d.h_trees, tallest: d.h_tallest, tree_style: d.h_style, tree_ribbon: d.h_ribbon,
+      if (isHoliday){
+        const hData = {
+          trees: d.h_trees, tallest: d.h_tallest, tree_style: d.h_tree_style, tree_ribbon: d.h_tree_ribbon,
           wreaths: d.h_wreaths, garland_sections: d.h_garland, stair_sections: d.h_stairs,
           mantle: d.h_mantle, tablescapes: d.h_tables, storage: d.h_storage,
           shopping_trips: d.h_trips, teardown: d.h_teardown
         };
-        const res = (window.calcHoliday ? window.calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
-        const hint = (window.holidayHint ? window.holidayHint(data, res.teamHours) : '');
+        const res  = calcHoliday ? calcHoliday(hData) : {price:0,teamHours:0,teardownHours:0,teardownPrice:0};
+        const hint = holidayHint ? holidayHint(hData, res.teamHours) : 'Holiday — time block';
 
         const cutPct = Math.min(50, Math.max(0, Number(d.companyCut||30)));
         const keep = Math.round(res.price * (cutPct/100));
         const toContractors = res.price - keep;
         const n = Math.max(1, Math.min(3, Number(d.contractorsNeeded||1)));
-        const base = Math.floor(toContractors / n);
-        const remainder = toContractors % n;
+        const base = Math.floor(toContractors / n), remainder = toContractors % n;
         const per = Array.from({length:n}, (_,i)=> base + (i<remainder?1:0));
 
         const windowLbl = `${prettyTime(d.start)}–${prettyTime(d.end)}`;
 
-        calcCard.style.display = 'block';
-        calcCard.innerHTML = `
-          <div><strong>Client price (install):</strong> ${USD(res.price)}</div>
-          ${res.teardownPrice ? `<div><strong>Teardown (optional):</strong> ${USD(res.teardownPrice)}</div>` : ``}
-          <div><strong>Your cut (${cutPct}%):</strong> ${USD(keep)}</div>
-          <div><strong>To contractors (total):</strong> ${USD(toContractors)} (${n} needed)</div>
-          <div><strong>Per contractor:</strong> ${per.map(p=>USD(p)).join(' · ')}</div>
-          <div class="muted" style="margin-top:6px">
-            ${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br>
-            Est team time ≈ <strong>${res.teamHours}</strong> hr · ${hint}
-          </div>
-        `;
-        btnCreate.disabled = false;
+        // Build a nice summary for the job card
+        const parts=[];
+        if (d.h_mantle==='Yes') parts.push('mantle');
+        const g=+d.h_garland||0; if(g) parts.push(`${g} garland`);
+        const w=+d.h_wreaths||0; if(w) parts.push(`${w} wreath${w>1?'s':''}`);
+        const s=+d.h_stairs||0; if(s) parts.push(`${s} stairs`);
+        const t=+d.h_tables||0; if(t) parts.push(`${t} tablescape${t>1?'s':''}`);
+        if ((d.h_holiday||'')==='christmas'){ const tr=+d.h_trees||0; if(tr) parts.push(`${tr} tree${tr>1?'s':''}`); }
+        const summary = `${labelHoliday(d.h_holiday)} — ${parts.length?parts.join(', '):'accent décor'}.`;
 
-        lastPreview = {
-          holiday:true,
-          price: res.price,
-          teamHours: res.teamHours,
-          teardownHours: res.teardownHours,
-          teardownPrice: res.teardownPrice,
-          cutPct, toContractors, n, per,
-          windowLbl
-        };
+        pillClient.textContent = USD(res.price);
+        pillHint.textContent   = hint;
+
+        const lines = [
+          `<div><strong>Client price (install):</strong> ${USD(res.price)} &nbsp; • &nbsp; <strong>Your cut:</strong> ${USD(keep)} &nbsp; • &nbsp; <strong>To contractors:</strong> ${USD(toContractors)}</div>`,
+          `<div><strong>Per contractor (${n}):</strong> ${per.map(p=>USD(p)).join(' · ')}</div>`,
+          `<div class="muted" style="margin-top:6px">${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br> ${summary} · Est team time ≈ <strong>${res.teamHours}</strong> hr</div>`
+        ];
+        if (res.teardownHours){ lines.push(`<div class="muted">Teardown: ~${res.teardownHours} hrs • ≈ ${USD(res.teardownPrice)}</div>`); }
+        calcCard.style.display='block'; calcCard.innerHTML = lines.join('');
+
+        btnCreate.disabled=false;
+        lastPreview = { svc:'holiday', price:res.price, teamHours:res.teamHours, teardownHours:res.teardownHours, teardownPrice:res.teardownPrice, per, n, windowLbl, summary };
         return;
       }
 
-      // Cleaning preview (uses script.js)
-      const price = (window.calcCleaning ? calcCleaning(d) : 0);
-      const hours = (window.estimateHoursCleaning ? estimateHoursCleaning(d) : {teamHours:0});
+      // Cleaning
+      const price = calcCleaning ? calcCleaning(d) : 0;
+      const { teamHours } = estimateHoursCleaning ? estimateHoursCleaning(d) : {teamHours:0};
+      const hint = cleaningHint ? cleaningHint(d, teamHours) : 'Cleaning — time block';
+
       const cutPct = Math.min(50, Math.max(0, Number(d.companyCut||30)));
       const keep = Math.round(price * (cutPct/100));
       const toContractors = price - keep;
       const n = Math.max(1, Math.min(3, Number(d.contractorsNeeded||1)));
-      const base = Math.floor(toContractors / n);
-      const remainder = toContractors % n;
+      const base = Math.floor(toContractors / n), remainder = toContractors % n;
       const per = Array.from({length:n}, (_,i)=> base + (i<remainder?1:0));
 
       const summary = `${Number(d.beds||0)} bed / ${Number(d.baths||0)} bath — ${(d.notes||d.service||'cleaning')}.`;
       const windowLbl = `${prettyTime(d.start)}–${prettyTime(d.end)}`;
 
-      calcCard.style.display = 'block';
-      calcCard.innerHTML = `
-        <div><strong>Client price:</strong> ${USD(price)}</div>
-        <div><strong>Your cut (${cutPct}%):</strong> ${USD(keep)}</div>
-        <div><strong>To contractors (total):</strong> ${USD(toContractors)} (${n} needed)</div>
-        <div><strong>Per contractor:</strong> ${per.map(p=>USD(p)).join(' · ')}</div>
-        <div class="muted" style="margin-top:6px">
-          ${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br>
-          ${summary} · Est team time ≈ <strong>${hours.teamHours}</strong> hr
-        </div>
-      `;
-      btnCreate.disabled = false;
+      pillClient.textContent = USD(price);
+      pillHint.textContent   = hint;
 
-      lastPreview = {
-        holiday:false,
-        price,
-        teamHours: hours.teamHours || 0,
-        cutPct, toContractors, n, per,
-        summary, windowLbl
-      };
+      calcCard.style.display='block';
+      calcCard.innerHTML = `
+        <div><strong>Client price:</strong> ${USD(price)} &nbsp; • &nbsp; <strong>Your cut:</strong> ${USD(keep)} &nbsp; • &nbsp; <strong>To contractors:</strong> ${USD(toContractors)}</div>
+        <div><strong>Per contractor (${n}):</strong> ${per.map(p=>USD(p)).join(' · ')}</div>
+        <div class="muted" style="margin-top:6px">${d.city || d.area || ''} · ${d.zip || ''} · ${new Date(d.date).toLocaleDateString()} ${windowLbl}<br>
+        ${summary} · Est team time ≈ <strong>${teamHours}</strong> hr</div>
+      `;
+      btnCreate.disabled=false;
+      lastPreview = { svc:'cleaning', price, teamHours, per, n, windowLbl, summary };
     });
 
-    // SUBMIT (Create Job)
-    form.addEventListener('submit', async (e) => {
+    // Create Job
+    form.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      statusEl.textContent = '';
-      if (!lastPreview) { statusEl.innerHTML = '<span class="err">Click “Preview calculation” first.</span>'; return; }
+      statusEl.textContent=''; calcCard.style.display='none';
+      if (!lastPreview){ statusEl.innerHTML='<span class="err">Click “Preview calculation” first.</span>'; return; }
 
       const d = Object.fromEntries(new FormData(form).entries());
-      btnCreate.disabled = true;
+      btnCreate.disabled=true;
 
-      const serviceType = (svcCategory.value === 'holiday') ? 'holiday' : 'cleaning';
-      const {
-        price, teamHours, teardownPrice, n, per, summary, windowLbl, holiday
-      } = lastPreview;
+      const startDate = d.date ? new Date(d.date+'T'+(d.start||'09:00')+':00') : null;
 
-      const startDate = d.date ? new Date(d.date + 'T' + (d.start || '09:00') + ':00') : null;
-
-      const publicJob = {
-        serviceType,
-        status: "open",
-        area: d.area || d.city || "",
-        zip: d.zip || "",
-        whenDate: d.date || "",
-        whenStart: d.start || "",
-        whenEnd: d.end || "",
-        whenWindow: windowLbl || "",
+      const job = {
+        serviceType: lastPreview.svc==='holiday' ? 'holiday' : 'cleaning',
+        status: 'open',
+        area: d.area || d.city || '',
+        zip: d.zip || '',
+        whenDate: d.date || '',
+        whenStart: d.start || '',
+        whenEnd: d.end || '',
+        whenWindow: lastPreview.windowLbl || '',
         whenAt: startDate ? Timestamp.fromDate(startDate) : serverTimestamp(),
-        summary: holiday ? "Holiday (indoor) install" : (summary || "Cleaning"),
-        estHoursTeam: Number(teamHours || 0),
+        summary: lastPreview.summary || (lastPreview.svc==='holiday' ? 'Holiday (indoor) install' : 'Cleaning'),
+        estimatedTeamHours: Number(lastPreview.teamHours||0),
         contractorsNeeded: Math.max(1, Number(d.contractorsNeeded||1)),
-        contractorPayEach: per ? per[0] : null,
-        flatRate: Number(price || 0), // client-facing estimate for reference
-        createdAt: serverTimestamp()
+        contractorPayEach: lastPreview.per ? lastPreview.per[0] : null,
+        flatRate: Number(lastPreview.price||0),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       };
-      if (publicJob.contractorPayEach == null) delete publicJob.contractorPayEach;
+      if (job.contractorPayEach==null) delete job.contractorPayEach;
+      if (d.clientId) job.clientId = d.clientId.trim();
 
-      try {
-        // 1) Create job doc
-        const ref = await addDoc(collection(db, 'jobs'), publicJob);
+      try{
+        const ref = await addDoc(collection(db,'jobs'), job);
 
-        // 2) Create slots with per-contractor pay
+        // slots
         const need = Math.max(1, Number(d.contractorsNeeded||1));
-        for (let i=0; i<need; i++){
-          await setDoc(doc(db, 'jobs', ref.id, 'slots', `slot_${i+1}`), {
-            slotNumber: i+1,
-            status: 'open',
-            contractorId: '',
-            pay: per ? per[i] : null
+        for (let i=0;i<need;i++){
+          await setDoc(doc(db,'jobs',ref.id,'slots',`slot_${i+1}`), {
+            slotNumber:i+1, status:'open', contractorId:'', pay: lastPreview.per ? lastPreview.per[i] : null
           });
         }
 
-        // 3) Private PII doc
-        await setDoc(doc(db, 'jobs', ref.id, 'private', 'pii'), {
-          name: d.name, email: d.email, phone: d.phone,
-          address: `${d.street}, ${d.city}, ${d.state} ${d.zip}`,
-          clientPrice: Number(price||0),
-          notes: (d.notes||"")
+        // PII
+        await setDoc(doc(db,'jobs',ref.id,'private','pii'), {
+          name:d.name, email:d.email, phone:d.phone,
+          address:`${d.street}, ${d.city}, ${d.state} ${d.zip}`,
+          clientPrice:Number(lastPreview.price||0)
         });
 
-        // 4) Optional: email Formspree trail (same endpoint)
-        try {
+        // (Optional) billing snapshot
+        await setDoc(doc(db,'jobs',ref.id,'private','billing'), {
+          contractorSplit: lastPreview.per || [],
+          teamHours: lastPreview.teamHours,
+          teardown: lastPreview.teardownHours ? { hours:lastPreview.teardownHours, price:lastPreview.teardownPrice } : null
+        });
+
+        // Formspree trail
+        try{
           const fd = new FormData();
-          fd.append('_subject', holiday ? 'Manual Intake (Admin) — Holiday' : 'Manual Intake (Admin) — Cleaning');
-          fd.append('service_type', serviceType);
+          fd.append('_subject', lastPreview.svc==='holiday' ? 'Manual Intake (Admin) — Holiday' : 'Manual Intake (Admin) — Cleaning');
+          fd.append('service_type', job.serviceType);
           fd.append('client_name', d.name||'');
           fd.append('client_email', d.email||'');
           fd.append('client_phone', d.phone||'');
           fd.append('client_address', `${d.street}, ${d.city}, ${d.state} ${d.zip}`);
-          fd.append('public_area', publicJob.area);
-          fd.append('public_zip', publicJob.zip);
-          fd.append('window', publicJob.whenWindow || '');
-          fd.append('estimate_client_total', USD(price||0));
-          if (holiday && teardownPrice) fd.append('estimate_teardown', USD(teardownPrice));
+          fd.append('public_area', job.area);
+          fd.append('public_zip', job.zip);
+          fd.append('window', job.whenWindow || '');
+          fd.append('summary', job.summary || '');
+          fd.append('estimate_client_total', USD(lastPreview.price||0));
           fd.append('contractors_needed', String(need));
-          if (per) fd.append('contractor_pay_each', per.join(', '));
-          fd.append('job_public_id', ref.id);
-          await fetch('https://formspree.io/f/mzzaogbv', { method:'POST', body: fd, headers:{'Accept':'application/json'} });
-        } catch(_) {}
+          if (lastPreview.per) fd.append('contractor_pay_each', lastPreview.per.join(', '));
+          await fetch('https://formspree.io/f/mzzaogbv', { method:'POST', body:fd, headers:{'Accept':'application/json'} });
+        }catch(_){}
 
         statusEl.innerHTML = `<span class="ok">Job created.</span> <a href="admin.html">Admin</a> · <a href="contractor.html">Contractor board</a>`;
-        calcCard.style.display = 'none';
-        lastPreview = null;
-      } catch (e) {
-        console.warn(e);
+      }catch(err){
+        console.warn(err);
         statusEl.innerHTML = `<span class="err">Couldn’t create job (permissions or network?).</span>`;
-      } finally {
-        btnCreate.disabled = false;
+      }finally{
+        btnCreate.disabled=false;
       }
     });
+
+    // init
+    showBlocks();
   </script>
 </body>
 </html>
-
