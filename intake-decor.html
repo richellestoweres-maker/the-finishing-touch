@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
+  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -23,7 +23,8 @@
     .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
     .hint{font-size:.92rem;opacity:.9}
-    /* Minimal dropdown styles in case your global CSS doesn't include them */
+
+    /* Minimal dropdown */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -38,20 +39,17 @@
   </style>
 </head>
 <body>
-  <!-- Header with working dropdown -->
+  <!-- Header (routes to CLIENT portal) -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <a href="index.html" class="brand-link">
+        <a href="client.html" class="brand-link">
           <span class="vase-logo" aria-hidden="true"></span>
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
       <nav class="main-nav">
-        <a href="index.html">Home</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="client.html">Client Portal</a>
 
         <!-- Quote Dropdown -->
         <div class="quote-dropdown" id="quoteDropdown">
@@ -62,25 +60,25 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-            <!-- Optional: <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a> -->
+            <a role="menuitem" href="intake-holiday.html">Holiday & Event (Indoor)</a>
           </div>
         </div>
       </nav>
     </div>
   </header>
 
-  <!-- simple back-to-home button (extra clear) -->
+  <!-- Back to portal -->
   <div class="mini-bar">
-    <a class="btn btn-outline" href="index.html">← Back to Home</a>
+    <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
   </div>
 
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Interior Decorating Intake</div>
-    <p class="intake-note">Complete this brief form for an instant ballpark estimate (shown below). When ready, click Book Now to open our calendar in a new tab.</p>
+    <p class="intake-note">Complete this brief form for an instant ballpark estimate. When ready, click <strong>Book Now</strong> to open our calendar in a new tab.</p>
 
     <form id="intakeFormDecor" class="grid-1" novalidate>
-      <!-- 1. Contact Info -->
+      <!-- 1) Contact -->
       <div class="grid-2">
         <label>Full Name<input name="name" autocomplete="name" required></label>
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
@@ -88,7 +86,7 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- 2. Project + Scope -->
+      <!-- 2) Project + Scope -->
       <div class="fieldset grid-2">
         <label>Primary Goal
           <select name="goal">
@@ -163,7 +161,7 @@
         </label>
       </div>
 
-      <!-- 3. Style & Notes -->
+      <!-- 3) Style & Notes -->
       <div class="fieldset grid-2">
         <label>Style / Feel Desired
           <input name="style" placeholder="e.g., modern, cozy, coastal, luxury">
@@ -179,7 +177,7 @@
         </label>
       </div>
 
-      <!-- 4. Add-ons (optional) -->
+      <!-- 4) Add-ons -->
       <div class="fieldset grid-2">
         <label>Add-ons
           <input name="addons" placeholder="moodboard, sourcing, shopping, install, window treatments, art hanging">
@@ -189,25 +187,21 @@
         </label>
       </div>
 
-      <!-- CONSENTS (unchanged questions; link points to terms page) -->
+      <!-- CONSENTS -->
       <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_work_photos" required>
           <span>I allow The Finishing Touch to take before/after photos for job verification and quality control. These will not be used for marketing unless I also consent below.</span>
         </label>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_marketing_photos">
           <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. I can revoke this in writing.</span>
         </label>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_terms" required>
           <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
         </label>
-
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_updates">
           <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
@@ -224,11 +218,7 @@
     </form>
   </main>
 
-  <!-- EmailJS (optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
-
-  <!-- Local dropdown behavior -->
+  <!-- Dropdown behavior -->
   <script>
     (function(){
       const dd = document.getElementById('quoteDropdown');
@@ -242,43 +232,58 @@
     })();
   </script>
 
-  <!-- Your site JS (pricing, etc.) -->
-  <script src="script.js?v=6" defer></script>
+  <!-- Gate: require login -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        const next = encodeURIComponent('intake-decor.html');
+        location.href = `login.html?next=${next}`;
+      }
+    });
+  </script>
 
-  <!-- OVERRIDE: Estimate + Book button (NO redirect to home) -->
+  <!-- Your site JS (pricing etc.) -->
+  <script src="script.js?v=8" defer></script>
+  <!-- Optional helper exposing FTAuto.createJobFromIntake(...) -->
+  <script src="ft-auto.js" defer></script>
+
+  <!-- OVERRIDE: Estimate + Book button + Firestore job (if available) + Formspree -->
   <script>
     (function(){
-      // If you have specific Square service links for decorating, put them here.
-      // Otherwise we’ll open the main location calendar and show a recommended option.
       const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
-
       function roundHalf(n){ return Math.round(n*2)/2; }
 
-      // Fallback hours estimator if the global one isn’t ready for any reason
+      // Fallback estimator
       function estimateHoursDecorLocal(data){
         try { if (typeof estimateHoursDecor === 'function') return estimateHoursDecor(data); } catch(_){}
-        const type = data.decor_type || "Interior Decorating (refresh)";
-        const scope = data.decor_scope || "Light refresh (styling)";
         const room = data.decor_room || "Living Room";
         const count = Math.max(1, Number(data.count||1));
-        const basePerRoom = {"Living Room":3,"Bedroom":2.5,"Dining Room":2.5,"Home Office":2.5,"Kitchen / Nook":2.5,"Entryway":1.5,"Multiple Rooms":3};
-        let solo = (basePerRoom[room] ?? 2.5) * count;
-        if (scope === "Refresh + small sourcing") solo *= 1.3;
-        if (scope === "Full room redesign" || scope === "Full design (sourcing + install)") solo *= 1.8;
-        if ((data.decor_furniture||"No") === "Yes — a few pieces") solo += 1.0;
-        if ((data.decor_furniture||"No") === "Yes — multiple pieces") solo += 2.0;
+        const scope = data.decor_scope || "Light refresh (styling only)";
+        const furniture = data.decor_furniture || "No";
         const install = data.decor_install || "Light (art, textiles)";
+        const access = data.decor_access || "Easy";
+
+        const basePerRoom = {"Living Room":3,"Bedroom":2.5,"Dining Room":2.5,"Home Office":2.5,"Kitchen / Nook":2.5,"Entryway":1.5,"Multiple Rooms":3,"Whole Home":4,"Outdoor Space":2};
+        let solo = (basePerRoom[room] ?? 2.5) * count;
+
+        if (scope === "Refresh + small sourcing") solo *= 1.3;
+        if (scope === "Full room redesign") solo *= 1.8;
+        if (furniture === "Yes — a few pieces") solo += 1.0;
+        if (furniture === "Yes — multiple pieces") solo += 2.0;
         if (install === "Moderate (art + small furniture)") solo += 1.0;
         if (install === "Heavy (multiple furniture + window treatments)") solo += 2.0;
-        if ((data.decor_access||"Easy") === "Stairs / elevator") solo += 0.5;
-        if ((data.decor_access||"Easy") === "HOA / tight timing") solo += 0.75;
+        if (access === "Stairs / elevator") solo += 0.5;
+        if (access === "HOA / tight timing") solo += 0.75;
+
         solo = roundHalf(solo);
         const teamHours = roundHalf(solo/2);
         return { soloHours: solo, teamHours };
       }
 
       function decorHintLocal(data, teamHours){
-        const room = data.decor_room || data.room || "Room";
+        const room = data.decor_room || "Room";
         const scope = data.decor_scope || "Refresh";
         if (teamHours <= 2.5) return `${room} — ${scope} (Small, ≈2–2.5 hr)`;
         if (teamHours <= 4)   return `${room} — ${scope} (Medium, ≈3–4 hr)`;
@@ -290,58 +295,98 @@
         const form = document.getElementById('intakeFormDecor');
         if (!form) return;
 
-        // Capture phase so we cancel any site-wide handler that redirects to the embedded calendar
-        form.addEventListener('submit', (e)=>{
+        form.addEventListener('submit', async (e)=>{
           e.preventDefault();
           e.stopImmediatePropagation();
 
           const data = Object.fromEntries(new FormData(form).entries());
+          const estEl = document.getElementById('estimateDecor');
 
-          // Show estimate using your global calcDecor if present
+          // 1) Instant estimate via your calcDecor (if present)
+          let price = null;
           try {
             if (typeof calcDecor === 'function') {
-              const price = calcDecor(data);
-              const estEl = document.getElementById('estimateDecor');
+              price = calcDecor(data);
               if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
+            } else {
+              if (estEl) estEl.textContent = "Ballpark estimate ready.";
             }
-          } catch(err){ console.warn(err); }
+          } catch(err){ console.warn("Decor estimate error:", err); }
 
-          // Compute recommended service duration for guidance text
-          const { teamHours } = estimateHoursDecorLocal(data);
+          // 2) Recommend a time block
+          const { teamHours, soloHours } = estimateHoursDecorLocal(data);
           const hint = decorHintLocal(data, teamHours);
 
-          // Add/refresh a Book button that opens Square in a new tab
-          const estEl = document.getElementById('estimateDecor');
-          if (estEl){
-            let btn = document.getElementById('scheduleOnSquareDecor');
-            if (!btn){
-              btn = document.createElement('a');
-              btn.id = 'scheduleOnSquareDecor';
-              btn.className = 'btn btn-solid';
-              btn.style.marginTop = '10px';
-              btn.textContent = 'Book Now';
-              estEl.parentNode.insertBefore(btn, estEl.nextSibling);
-            }
-            btn.href = SQUARE_BOOKING_BASE;
-            btn.target = '_blank';
-            btn.rel = 'noopener';
+          // 3) Inject/refresh Book button
+          let btn = document.getElementById('scheduleOnSquareDecor');
+          if (!btn){
+            btn = document.createElement('a');
+            btn.id = 'scheduleOnSquareDecor';
+            btn.className = 'btn btn-solid';
+            btn.style.marginTop = '10px';
+            btn.textContent = 'Book Now';
+            estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          }
+          btn.href = SQUARE_BOOKING_BASE;
+          btn.target = '_blank';
+          btn.rel = 'noopener';
 
-            // Guidance line under the Book button
-            let hintEl = document.getElementById('decorHint');
-            if (!hintEl){
-              hintEl = document.createElement('p');
-              hintEl.id = 'decorHint';
-              hintEl.className = 'hint';
-              btn.parentNode.insertBefore(hintEl, btn.nextSibling);
+          let hintEl = document.getElementById('decorHint');
+          if (!hintEl){
+            hintEl = document.createElement('p');
+            hintEl.id = 'decorHint';
+            hintEl.className = 'hint';
+            btn.parentNode.insertBefore(hintEl, btn.nextSibling);
+          }
+          hintEl.textContent = `Recommended: ${hint}. Square opens in a new tab—choose the closest matching time block.`;
+
+          // 4) Try to create a Firestore job via helper (non-blocking)
+          try {
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === 'function'){
+              const summary = `${data.decor_room || 'Room'} — ${data.decor_scope || 'Decor'}`.trim();
+              await FTAuto.createJobFromIntake({
+                serviceType: 'decor',
+                summary,
+                estTeamHours: teamHours,
+                flatRate: (price!=null? Number(price) : null),
+                intake: data
+              });
             }
-            hintEl.textContent = `Recommended: ${hint}. This opens our Square calendar in a new tab—choose the closest matching time block.`;
+          } catch (err) {
+            console.warn('Could not create job from intake (ok to ignore):', err);
+          }
+
+          // 5) Send to Formspree (FYI trail)
+          const statusEl = document.getElementById('emailStatusDecor');
+          try {
+            const fsData = new FormData(form);
+            const estText = estEl?.textContent?.trim() || '';
+            fsData.append('_subject','Decor Intake');
+            fsData.append('form_name','Decor Intake');
+            fsData.append('page', location.href);
+            if (estText) fsData.append('estimate', estText);
+            fsData.append('team_hours', String(teamHours));
+            fsData.append('solo_hours', String(soloHours));
+            if (price!=null) fsData.append('price', `$${Math.round(Number(price))}`);
+
+            const resp = await fetch('https://formspree.io/f/mzzaogbv', {
+              method: 'POST',
+              body: fsData,
+              headers: { 'Accept': 'application/json' }
+            });
+
+            if (resp.ok) statusEl.textContent = 'Thanks! Your intake was sent.';
+            else statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
+          } catch (err){
+            statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
+            console.warn(err);
           }
         }, true);
       });
     })();
   </script>
 
-  <!-- === Finishing Touch — AI Concierge Chat (added to appear on this page) === -->
+  <!-- === Finishing Touch — AI Concierge Chat === -->
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
 
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
@@ -371,7 +416,7 @@
   </div>
 
   <script>
-    // Self-contained chat (same UX as Home). Namespaced to avoid conflicts.
+    // Self-contained chat (same UX as other pages).
     (function(){
       const FTT_CFG = {
         timezone: "America/Chicago",
@@ -385,32 +430,11 @@
         launcher: document.getElementById("ftt-chat-launcher"),
         panel: document.getElementById("ftt-chat"),
         thread: document.getElementById("ftt-thread"),
-        input: null, form: null, quick: null, close: null,
       };
-      function isWithinBusinessHours(){
-        try{
-          const now = new Date();
-          const locale = "en-US";
-          const opt = { timeZone: FTT_CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
-          const parts = new Intl.DateTimeFormat(locale,opt).formatToParts(now);
-          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
-          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
-          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
-          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-          const wd = dayMap[dayShort] ?? now.getDay();
-          const [oH,oM]=FTT_CFG.hours.open.split(":").map(Number);
-          const [cH,cM]=FTT_CFG.hours.close.split(":").map(Number);
-          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
-          return FTT_CFG.hours.days.includes(wd) && after && before;
-        } catch { return false; }
-      }
       function addMsg(html, who="bot"){
         const b=document.createElement("div");
         b.className=`ftt-bubble ${who}`; b.innerHTML=html;
         el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
-      }
-      function greet(){
-        addMsg("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
       }
       function detectIntent(text){
         const t=text.toLowerCase();
@@ -423,31 +447,25 @@
         return "fallback";
       }
       function answer(intent){
-        const hoursNote = isWithinBusinessHours()
-          ? "We’re online now—ask me anything or say “human” to chat with a person."
-          : "We’re offline at the moment, but I can still help or route your message to a person.";
         const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
         const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
         switch(intent){
           case "pricing":
             return [
               "Decor refreshes typically start near $450–$500 per room and scale with scope/sourcing.",
-              "You’ll see a tailored ballpark after this intake. " + intakeLink + " or " + bookLink + ".",
-              hoursNote
+              "You’ll see a tailored ballpark after this intake. " + intakeLink + " or " + bookLink + "."
             ].join("<br>");
           case "availability":
-            return ["Availability is live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.", hoursNote].join("<br>");
+            return ["Availability is live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
           case "services":
             return [
-              "We offer interior decorating & light staging, including sourcing, styling, and install.",
+              "Interior decorating & light staging, including sourcing, styling, and install.",
               "Options range from styling-only to full-room redesign.",
               "Start here: " + intakeLink + " • Or jump to " + bookLink + "."
             ].join("<br>");
           case "book": return "Perfect—" + bookLink + " (Square opens in a new tab), or " + intakeLink + " first for a tailored estimate.";
           case "human":
-            return isWithinBusinessHours()
-              ? `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
-              : `We’re offline. You can still <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
+            return `You can <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
@@ -461,38 +479,21 @@
         }
       }
       function init(){
-        el.close = document.querySelector(".ftt-close");
-        el.input = document.getElementById("ftt-input");
-        el.form  = document.getElementById("ftt-inputbar");
-        el.quick = document.querySelector(".ftt-quick");
-        el.launcher.addEventListener("click", () => {
-          el.panel.hidden = false;
-          if (!el.thread.dataset.greeted) { greet(); el.thread.dataset.greeted = "1"; }
-          el.input.focus();
-        });
-        el.close.addEventListener("click", () => { el.panel.hidden = true; });
-        el.form.addEventListener("submit", (e)=>{
-          e.preventDefault();
-          const text = el.input.value.trim(); if (!text) return;
-          const bubble = document.createElement("div"); bubble.className="ftt-bubble me"; bubble.textContent=text; el.thread.appendChild(bubble);
-          el.input.value=""; el.thread.scrollTop=el.thread.scrollHeight;
-          setTimeout(()=> {
-            const intent = detectIntent(text);
-            addMsg(answer(intent), "bot");
-          }, 200);
-        });
-        el.quick.addEventListener("click", (e)=>{
-          if (e.target.matches("button[data-q]")){
-            const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
-            const intent = map[e.target.getAttribute("data-q")] || "fallback";
-            addMsg(e.target.textContent,"me"); setTimeout(()=> addMsg(answer(intent),"bot"),200);
-          }
-        });
+        const launcher = document.getElementById("ftt-chat-launcher");
+        const panel = document.getElementById("ftt-chat");
+        const thread = document.getElementById("ftt-thread");
+        const closeBtn = document.querySelector(".ftt-close");
+        const form = document.getElementById("ftt-inputbar");
+        const input = document.getElementById("ftt-input");
+        const quick = document.querySelector(".ftt-quick");
+        function add(html, who="bot"){ const b=document.createElement("div"); b.className=`ftt-bubble ${who}`; b.innerHTML=html; thread.appendChild(b); thread.scrollTop=thread.scrollHeight; }
+        launcher.addEventListener("click", ()=>{ panel.hidden=false; if (!thread.dataset.greeted){ add("Hi! I’m your AI concierge. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); thread.dataset.greeted="1"; } input.focus(); });
+        closeBtn.addEventListener("click", ()=>{ panel.hidden=true; });
+        form.addEventListener("submit",(e)=>{ e.preventDefault(); const text=input.value.trim(); if(!text) return; add(text,"me"); input.value=""; setTimeout(()=> add(answer(detectIntent(text))),200); });
+        quick.addEventListener("click",(e)=>{ if(e.target.matches("button[data-q]")){ const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; add(e.target.textContent,"me"); setTimeout(()=> add(answer(intent)),200); } });
       }
       document.addEventListener("DOMContentLoaded", init);
     })();
   </script>
 </body>
 </html>
-
-
