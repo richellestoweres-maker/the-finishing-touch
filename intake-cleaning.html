@@ -37,20 +37,17 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header (routes back to CLIENT portal, not public home) -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <a href="index.html" class="brand-link">
+        <a href="client.html" class="brand-link">
           <span class="vase-logo" aria-hidden="true"></span>
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
       <nav class="main-nav">
-        <a href="index.html">Home</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="client.html">Client Portal</a>
 
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
@@ -60,6 +57,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+            <a role="menuitem" href="intake-holiday.html">Holiday & Event (Indoor)</a>
           </div>
         </div>
       </nav>
@@ -67,7 +65,7 @@
   </header>
 
   <div class="mini-bar">
-    <a class="btn btn-outline" href="index.html">← Back to Home</a>
+    <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
   </div>
 
   <!-- Main -->
@@ -76,12 +74,12 @@
     <div class="intake-script">Cleaning Intake Form</div>
     <p class="intake-note">Complete this brief form for an instant ballpark estimate.</p>
 
-    <form id="intakeFormCleaning" class="grid-1">
+    <form id="intakeFormCleaning" class="grid-1" novalidate>
       <div class="grid-2">
-        <label>Full Name<input name="name" required></label>
-        <label>Email<input name="email" type="email" required></label>
-        <label>Service Address<input name="address"></label>
-        <label>Phone<input name="phone"></label>
+        <label>Full Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Service Address<input name="address" autocomplete="street-address"></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
       <div class="fieldset grid-2">
@@ -180,12 +178,27 @@
     })();
   </script>
 
+  <!-- Gate: require login for intake pages -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        const next = encodeURIComponent('intake-cleaning.html');
+        location.href = `login.html?next=${next}`;
+      }
+    });
+  </script>
+
   <!-- Your site JS (bumped cache so the fixed file loads) -->
   <script src="script.js?v=8" defer></script>
+  <!-- Optional helper that exposes FTAuto.createJobFromIntake(...) -->
+  <script src="ft-auto.js" defer></script>
 
-  <!-- OVERRIDE: Estimate on-page + “Book Now” + Formspree (NO redirect) -->
+  <!-- OVERRIDE: Estimate on-page + “Book Now” + create Firestore job (if ft-auto.js present) + Formspree -->
   <script>
     (function(){
+      // Square service URLs by team-hours bucket
       const SQUARE_CLEAN_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
       const SQUARE_CLEAN_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
       const SQUARE_CLEAN_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV";
@@ -193,7 +206,7 @@
 
       function roundHalf(n){ return Math.round(n*2)/2; }
 
-      // Fallback hours estimator if global one isn't loaded yet
+      // Fallback hours estimator if the global one isn't loaded yet
       function estimateHoursCleaningLocal(data){
         try { if (typeof estimateHoursCleaning === 'function') return estimateHoursCleaning(data); } catch(_){}
         const sqft = data.sqft || "1000–2000";
@@ -268,10 +281,10 @@
 
           const data = Object.fromEntries(new FormData(form).entries());
 
-          // Show price estimate
+          // 1) Show price estimate
           const estEl = document.getElementById('estimateCleaning');
+          let price = null;
           try {
-            let price = null;
             if (typeof calcCleaning === 'function') price = calcCleaning(data);
             if (estEl){
               if (price != null) {
@@ -282,13 +295,13 @@
             }
           } catch (err){ console.warn(err); }
 
-          // Choose Square service page (new tab)
-          const { teamHours } = estimateHoursCleaningLocal(data);
+          // 2) Pick Square URL based on estimated team hours
+          const { teamHours, soloHours } = estimateHoursCleaningLocal(data);
           const url = (typeof squareUrlForCleaning === 'function')
             ? squareUrlForCleaning(teamHours)
             : squareUrlForCleaningLocal(teamHours);
 
-          // Add/refresh the “Book Now” button under the estimate
+          // Inject/refresh the “Book Now” button under the estimate
           let btn = document.getElementById('scheduleOnSquareCleaning');
           if (!btn){
             btn = document.createElement('a');
@@ -313,7 +326,23 @@
           }
           hintEl.textContent = `Recommended service: ${hint}. This opens our Square calendar in a new tab.`;
 
-          // --- Send to Formspree in the background ---
+          // 3) Try to create a Firestore job via helper (non-blocking)
+          try {
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === 'function'){
+              const summary = `${Number(data.beds||0)} bed / ${Number(data.baths||0)} bath — ${data.service||'Cleaning'}`.trim();
+              await FTAuto.createJobFromIntake({
+                serviceType: 'cleaning',
+                summary,
+                estTeamHours: teamHours,
+                flatRate: (price!=null? Number(price) : null),
+                intake: data
+              });
+            }
+          } catch (err) {
+            console.warn('Could not create job from intake (ok to ignore):', err);
+          }
+
+          // 4) Send to Formspree in the background (FYI trail)
           const statusEl = document.getElementById('formspreeStatusCleaning');
           try {
             const estText = estEl?.textContent?.trim() || '';
@@ -322,6 +351,9 @@
             fsData.append('form_name', 'Cleaning Intake');
             fsData.append('page', location.href);
             if (estText) fsData.append('estimate', estText);
+            fsData.append('team_hours', String(teamHours));
+            fsData.append('solo_hours', String(soloHours));
+            if (price!=null) fsData.append('price', `$${Math.round(Number(price))}`);
 
             const resp = await fetch('https://formspree.io/f/mzzaogbv', {
               method: 'POST',
@@ -343,7 +375,7 @@
     })();
   </script>
 
-  <!-- Chat (kept as you had it) -->
+  <!-- Chat (same UX as other pages) -->
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
     <div class="ftt-chat-header">
@@ -369,7 +401,7 @@
   </div>
 
   <script>
-    // Self-contained chat (same UX as Home).
+    // Self-contained chat (same tone as Home).
     (function(){
       const FTT_CFG = {
         timezone: "America/Chicago",
@@ -383,25 +415,7 @@
         launcher: document.getElementById("ftt-chat-launcher"),
         panel: document.getElementById("ftt-chat"),
         thread: document.getElementById("ftt-thread"),
-        input: null, form: null, quick: null, close: null,
       };
-      function isWithinBusinessHours(){
-        try{
-          const now = new Date();
-          const locale = "en-US";
-          const opt = { timeZone: FTT_CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
-          const parts = new Intl.DateTimeFormat(locale,opt).formatToParts(now);
-          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
-          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
-          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
-          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-          const wd = dayMap[dayShort] ?? now.getDay();
-          const [oH,oM]=FTT_CFG.hours.open.split(":").map(Number);
-          const [cH,cM]=FTT_CFG.hours.close.split(":").map(Number);
-          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
-          return FTT_CFG.hours.days.includes(wd) && after && before;
-        } catch { return false; }
-      }
       function addMsg(html, who="bot"){
         const b=document.createElement("div");
         b.className=`ftt-bubble ${who}`; b.innerHTML=html;
@@ -440,7 +454,7 @@
             ].join("<br>");
           case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
           case "human":
-            return `You can <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:contact.thefinishingtouch.tx@gmail.com">contact.thefinishingtouch.tx@gmail.com</a> and we’ll reply ASAP.`;
+            return `You can <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
@@ -472,5 +486,3 @@
   </script>
 </body>
 </html>
-
-
