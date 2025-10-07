@@ -44,16 +44,17 @@
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <a href="index.html" class="brand-link">
+        <a href="client.html" class="brand-link">
           <span class="vase-logo" aria-hidden="true"></span>
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
       <nav class="main-nav">
-        <a href="index.html">Home</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="client.html">Client Portal</a>
+        <a href="intake-cleaning.html">Cleaning</a>
+        <a href="intake-organizing.html">Organizing</a>
+        <a href="intake-decor.html">Interior Decorating</a>
+        <a href="intake-holiday.html" class="active">Holiday & Event (Indoor)</a>
 
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
@@ -71,7 +72,7 @@
   </header>
 
   <div class="mini-bar">
-    <a class="btn btn-outline" href="index.html">← Back to Home</a>
+    <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
   </div>
 
   <main class="intake-wrap">
@@ -79,7 +80,8 @@
     <div class="intake-script">Holiday & Event Decorating Intake (Indoor)</div>
     <p class="intake-note">
       Tell us what you’re celebrating! We’ll show an instant ballpark <strong>install</strong> estimate below
-      (teardown optional). When ready, hit <strong>Book Now</strong> to open our calendar.
+      (teardown optional). When ready, hit <strong>Create & Book</strong>—we’ll post the job for our pros and
+      send you to the calendar.
     </p>
 
     <form id="intakeFormHoliday" class="grid-1" novalidate>
@@ -211,8 +213,7 @@
 
         <label>Shopping Trips Needed
           <select name="shopping_trips">
-            <option>0</option><option>1</option><option>2</option><option>3+</option>
-          </select>
+            <option>0</option><option>1</option><option>2</option><option>3+</option></select>
         </label>
         <label>Include Teardown?
           <select name="teardown"><option>Yes</option><option selected>No</option></select>
@@ -250,7 +251,7 @@
 
       <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Get Holiday/Event Estimate</button>
+        <button class="btn btn-solid" type="submit">Create & Book</button>
         <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
       </div>
     </form>
@@ -275,10 +276,15 @@
   </script>
 
   <!-- Your site JS (pricing/time calculators) -->
-  <script src="script.js?v=7" defer></script>
+  <script src="script.js?v=8" defer></script>
 
-  <!-- In-page glue: occasion logic, show/hide tree fields, inline estimate + Book Now -->
-  <script>
+  <!-- === AUTO-CREATE JOBS (Thumbtack mode) === -->
+  <script type="module" src="ft-auto.js"></script>
+
+  <!-- In-page glue: occasion logic + estimate + auto-create + Square handoff -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+
     (function(){
       const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
 
@@ -304,6 +310,7 @@
       }
       function updateTreeVisibility(){
         const occ = currentOccasion().toLowerCase();
+        // Only Christmas uses trees; Game Day / Birthday / etc. do not.
         showTrees(occ.includes('christmas'));
       }
       function toggleOccasionCustom(){
@@ -313,7 +320,6 @@
         updateTreeVisibility();
       }
 
-      // Lightweight label helper that includes the occasion
       function labelFromHours(teamHours, occasionLabel){
         const occ = occasionLabel ? ` — ${occasionLabel}` : "";
         if (teamHours <= 2.5) return `Holiday & Event (indoor${occ}) — Small (≈2–2.5 hr)`;
@@ -324,68 +330,68 @@
 
       document.addEventListener('DOMContentLoaded', () => {
         toggleOccasionCustom();
-
-        if (occasionSel){
-          occasionSel.addEventListener('change', toggleOccasionCustom);
-        }
-        if (occCustom){
-          occCustom.addEventListener('input', updateTreeVisibility);
-        }
+        occasionSel?.addEventListener('change', toggleOccasionCustom);
+        occCustom?.addEventListener('input', updateTreeVisibility);
 
         const formHol = document.getElementById('intakeFormHoliday');
         if (!formHol) return;
 
-        // Keep this page’s inline estimate + open Square in new tab
-        formHol.addEventListener('submit', (e)=>{
+        formHol.addEventListener('submit', async (e)=>{
           e.preventDefault();
-          e.stopImmediatePropagation(); // keep the global handler from taking over
+          e.stopImmediatePropagation();
 
           const data = Object.fromEntries(new FormData(formHol).entries());
-
-          // Ensure occasion fields are included in data object consumed by calcHoliday/holidayHint (harmless if unused)
           data.occasion = currentOccasion();
           data.occasion_custom = occCustom?.value || "";
 
+          // Run your public calculator
+          let res = { price:0, soloHours:0, teamHours:0, teardownHours:0, teardownPrice:0 };
           try {
             if (typeof calcHoliday === 'function') {
-              const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
-
-              const estEl = document.getElementById('estimateHoliday');
-              const parts = [
-                `Install (ballpark): <strong>$${price}</strong>`,
-                `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with 2 stylists)`
-              ];
-              if (teardownHours){
-                parts.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
-              }
-              parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
-              estEl.innerHTML = parts.join("<br>");
-
-              // Inject/refresh Book button (opens Square in a new tab)
-              let btn = document.getElementById('scheduleOnSquareHoliday');
-              if (!btn){
-                btn = document.createElement('a');
-                btn.id = 'scheduleOnSquareHoliday';
-                btn.className = 'btn btn-solid';
-                btn.style.marginTop = '10px';
-                btn.textContent = 'Book Now';
-                estEl.parentNode.insertBefore(btn, estEl.nextSibling);
-              }
-              btn.href = SQUARE_BOOKING_BASE;
-              btn.target = '_blank';
-              btn.rel = 'noopener';
-
-              // Guidance line under the Book button with occasion included
-              let hintEl = document.getElementById('holidayHint');
-              if (!hintEl){
-                hintEl = document.createElement('p');
-                hintEl.id = 'holidayHint';
-                hintEl.className = 'hint';
-                btn.parentNode.insertBefore(hintEl, btn.nextSibling);
-              }
-              hintEl.textContent = `Recommended: ${labelFromHours(teamHours, data.occasion)}. Square opens in a new tab—choose the closest matching time block.`;
+              res = calcHoliday(data);
             }
           } catch(err){ console.warn("Holiday estimate error:", err); }
+
+          // Show estimate inline for transparency
+          const estEl = document.getElementById('estimateHoliday');
+          const parts = [
+            `Install (ballpark): <strong>$${res.price}</strong>`,
+            `Estimated time: ${res.soloHours} solo hrs (~${res.teamHours} hrs with 2 stylists)`
+          ];
+          if (res.teardownHours){
+            parts.push(`Teardown (optional): ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
+          }
+          parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
+          estEl.innerHTML = parts.join("<br>");
+
+          // Require login → bounce to auth then back here
+          if (!auth.currentUser){
+            const next = encodeURIComponent(location.pathname);
+            location.href = `login.html?next=${next}`;
+            return;
+          }
+
+          // Post job automatically (Thumbtack style)
+          try{
+            const jobId = await window.FTAuto.createJobFromIntake({
+              type: "holiday",
+              intakeData: data,
+              estimate: {
+                price: res.price,
+                teamHours: res.teamHours,
+                teardownPrice: res.teardownPrice,
+                teardownHours: res.teardownHours
+              },
+              windowHint: "This week (flexible)"
+            });
+            if (!jobId) return;
+
+            // Send client to Square to pick a slot
+            location.href = SQUARE_BOOKING_BASE;
+          } catch (eCreate){
+            console.warn(eCreate);
+            estEl.innerHTML += `<br><span class="hint" style="color:#7f1d1d">We couldn't create your job automatically. Please try again in a moment.</span>`;
+          }
         }, true);
       });
     })();
@@ -423,9 +429,10 @@
       function greet(){add("Hi! I’m your AI concierge. Ask me about holiday decorating, pricing, or availability. Say “human” anytime.","bot");}
       function intent(t){t=t.toLowerCase();if(/human|person|agent|representative|someone|call|talk/.test(t))return"human";if(/price|pricing|cost|rate|how much/.test(t))return"pricing";if(/avail|slot|appointment|when|schedule|open/.test(t))return"availability";if(/service|decor|holiday/.test(t))return"services";if(/book|booking/.test(t))return"book";if(/which|help choose|recommend|not sure|what should i (pick|choose)|suggest/.test(t))return"recommend";return"fallback";}
       function ans(i){const intake=`<a href="${C.intakeAnchor}">Start Intake</a>`,book=`<a href="${C.bookUrl}" target="_blank" rel="noopener">Book now</a>`;switch(i){case"pricing":return["Indoor holiday installs are billed by time; your intake shows a tailored ballpark with optional teardown.",intake+" • or "+book].join("<br>");case"availability":return["Availability is live in Square.",book+" to see openings, or "+intake+" first."].join("<br>");case"services":return["Indoor trees (when Christmas), mantles, stairs, wreaths, garlands, tablescapes. Outdoor installs currently unavailable.","Start here: "+intake+" • Or jump to "+book+"."].join("<br>");case"book":return"Perfect—"+book+" (opens in a new tab), or "+intake+" for a tailored estimate first.";case"human":return`Tap <a href="${C.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${C.email}">${C.email}</a>.`;case"recommend":return["<strong>Happy to help!</strong> Small: single tree or accent set. Medium: tree + mantle/rail. Large: multiple areas or extra sourcing.",`Ready to book? ${book} (new tab). Or ${intake} first.`].join("<br>");default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” to talk to a person."].join("<br>");}}
-      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i)),"bot",200);}});}
+      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i),"bot"),200);}});}
       document.addEventListener("DOMContentLoaded",init);
     })();
   </script>
 </body>
 </html>
+
