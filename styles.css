@@ -262,3 +262,32 @@ iframe{max-width:100%}
 /* Footer */
 .site-footer{background:#efe6db;border-top:1px solid #e2d6c9}
 .site-footer p{margin:0;padding:16px 0;text-align:center;color:var(--taupe-900);font-weight:600}
+
+/* === Home > Services: 2x2 on mobile, 4 in a row on desktop === */
+.page-home .services .cards{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr)); /* phones: 2 across */
+  gap:16px;
+  width:min(1200px,95%);
+  margin-inline:auto;
+}
+
+/* tablets: 3 across (optional) */
+@media (min-width: 920px){
+  .page-home .services .cards{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+}
+
+/* desktop: 4 across */
+@media (min-width: 1100px){
+  .page-home .services .cards{ grid-template-columns:repeat(4, 1fr); }
+}
+
+/* neutralize old nth-child placements that were forcing the staggered rows */
+.page-home .services .cards > *{
+  grid-column:auto !important;
+  grid-row:auto !important;
+}
+.page-home .services .cards::after{ content:none !important; }
+
+
+
