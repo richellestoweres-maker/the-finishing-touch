@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers (kept light so you don't have to edit other files) -->
+  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -20,9 +20,8 @@
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
-    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
 
-    /* Minimal dropdown styles in case your global CSS doesn't include them */
+    /* Dropdown (light) */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -35,28 +34,25 @@
     .quote-menu a:hover{background:#f3ece6}
     .quote-dropdown.open .quote-menu{display:block}
 
-    /* Back to home helper */
+    /* Back helper */
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
 
-    /* Small hint style under estimate */
+    /* Hint */
     .hint{font-size:.95rem; opacity:.9}
   </style>
 </head>
 <body>
-  <!-- Header with working dropdown + clear Home path -->
+  <!-- Header (PORTAL-first nav) -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <a href="index.html" class="brand-link">
+        <a href="client.html" class="brand-link">
           <span class="vase-logo" aria-hidden="true"></span>
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
       <nav class="main-nav">
-        <a href="index.html">Home</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="client.html">Client Portal</a>
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
             Get Your Quote ▾
@@ -65,16 +61,16 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-            <!-- Optional later: <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a> -->
+            <a role="menuitem" href="intake-holiday.html">Holiday Decorating (Indoor)</a>
           </div>
         </div>
       </nav>
     </div>
   </header>
 
-  <!-- simple back-to-home button (in addition to brand link) -->
+  <!-- Back to portal -->
   <div class="mini-bar">
-    <a class="btn btn-outline" href="index.html">← Back to Home</a>
+    <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
   </div>
 
   <main class="intake-wrap">
@@ -89,7 +85,7 @@
       <input type="hidden" name="_subject" value="New Organizing Intake · The Finishing Touch" />
       <input type="hidden" name="page" value="intake-organizing.html" />
 
-      <!-- ========== Contact ========== -->
+      <!-- Contact -->
       <div class="grid-2">
         <label>Full Name<input name="name" autocomplete="name" required></label>
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
@@ -97,7 +93,7 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- ========== Scope ========== -->
+      <!-- Scope -->
       <div class="fieldset grid-2">
         <label>Area Type
           <select name="org_area">
@@ -132,7 +128,7 @@
         </label>
       </div>
 
-      <!-- ========== Complexity Drivers ========== -->
+      <!-- Complexity Drivers -->
       <div class="fieldset grid-2">
         <label>Current Clutter Level
           <select name="org_clutter">
@@ -172,7 +168,7 @@
         </label>
       </div>
 
-      <!-- ========== Preferences ========== -->
+      <!-- Preferences -->
       <div class="fieldset grid-2">
         <label>Preferred Days / Times
           <input name="availability" placeholder="e.g., Tue/Thu mornings">
@@ -184,14 +180,14 @@
         </label>
       </div>
 
-      <!-- ========== Very visible donation responsibility note ========== -->
+      <!-- Donation note -->
       <div class="fieldset grid-1" role="note" aria-live="polite">
         <p class="hint" style="margin:0;">
-          <strong>Donations &amp; Discards:</strong> Clients are responsible for removing donations and discards. We’re happy to consolidate into bags/boxes and stage for your preferred pickup or drop-off.
+          <strong>Donations &amp; Discards:</strong> Clients are responsible for removing donations and discards. We can bag/box and stage for your preferred pickup/drop-off.
         </p>
       </div>
 
-      <!-- ========== Client Consent ========== -->
+      <!-- Consents -->
       <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
 
@@ -225,7 +221,7 @@
     </form>
   </main>
 
-  <!-- Local dropdown behavior -->
+  <!-- Dropdown behavior -->
   <script>
     (function(){
       const dd  = document.getElementById('quoteDropdown');
@@ -243,13 +239,25 @@
     })();
   </script>
 
+  <!-- Require login (portal-only access) -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        const next = encodeURIComponent('intake-organizing.html');
+        location.href = `login.html?next=${next}`;
+      }
+    });
+  </script>
+
   <!-- Your site JS (pricing, etc.) -->
   <script src="script.js?v=6" defer></script>
 
-  <!-- OVERRIDE: show estimate + Formspree submit + Book Now (no redirect) -->
+  <!-- Estimate + Formspree + Book Now (no redirect) -->
   <script>
     (function(){
-      // Square service links for ORGANIZING (calendar page)
+      // Square service links for ORGANIZING
       const SQUARE_ORG_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN";
       const SQUARE_ORG_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E";
       const SQUARE_ORG_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC";
@@ -380,7 +388,7 @@
           }
           hintEl.textContent = `Recommended service: ${hintText}. This opens our Square calendar in a new tab.`;
 
-          // 5) Send data to Formspree (AJAX) so you keep the intake
+          // 5) Send to Formspree (AJAX)
           try{
             const statusEl = document.getElementById('emailStatusOrganizing');
             const resp = await fetch(form.action, {
@@ -390,7 +398,6 @@
             });
             if (resp.ok){
               if (statusEl) statusEl.textContent = "Thanks! We’ve received your intake. You can book now below.";
-              // Optional: form.reset();
             } else {
               if (statusEl) statusEl.textContent = "Saved locally. We couldn’t reach the inbox just now—please book below and we’ll follow up.";
             }
@@ -404,7 +411,7 @@
     })();
   </script>
 
-  <!-- Site-wide chat (page-aware): inline, guarded so it won’t double-init -->
+  <!-- Chat (guarded; page-aware) -->
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
 
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
@@ -450,47 +457,24 @@
         launcher: document.getElementById("ftt-chat-launcher"),
         panel: document.getElementById("ftt-chat"),
         thread: document.getElementById("ftt-thread"),
-        input: null, form: null, quick: null, close: null,
       };
-      function isWithinBusinessHours(){
-        try{
-          const now = new Date();
-          const locale = "en-US";
-          const opt = { timeZone: FTT_CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
-          const parts = new Intl.DateTimeFormat(locale,opt).formatToParts(now);
-          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
-          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
-          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
-          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-          const wd = dayMap[dayShort] ?? now.getDay();
-          const [oH,oM]=FTT_CFG.hours.open.split(":").map(Number);
-          const [cH,cM]=FTT_CFG.hours.close.split(":").map(Number);
-          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
-          return FTT_CFG.hours.days.includes(wd) && after && before;
-        } catch { return false; }
-      }
       function addMsg(html, who="bot"){
         const b=document.createElement("div");
         b.className=`ftt-bubble ${who}`; b.innerHTML=html;
         el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
       }
-      function greet(){
-        addMsg("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
-      }
+      function greet(){ addMsg("Hi! I’m your AI concierge. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); }
       function detectIntent(text){
         const t=text.toLowerCase();
         if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
         if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
         if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
+        if (/(service|organize|staging|what do you do)/.test(t)) return "services";
         if (/(book|booking|schedule now)/.test(t)) return "book";
         if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
         return "fallback";
       }
       function answer(intent){
-        const hoursNote = isWithinBusinessHours()
-          ? "We’re online now—ask me anything or say “human” to chat with a person."
-          : "We’re offline at the moment, but I can still help or route your message to a person.";
         const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
         const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
         switch(intent){
@@ -498,11 +482,10 @@
             return [
               "Organizing is billed by the project scope and time.",
               "Small sessions are often 2–3 hrs, larger multi-area projects 4–6+ hrs.",
-              "Fill the intake for a tailored ballpark. " + intakeLink + " or " + bookLink + ".",
-              hoursNote
+              "Fill the intake for a tailored ballpark. " + intakeLink + " or " + bookLink + "."
             ].join("<br>");
           case "availability":
-            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you.", hoursNote].join("<br>");
+            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
           case "services":
             return [
               "We declutter, sort, and set up practical systems (closets, kitchens, pantries, garages, kids’ spaces, offices).",
@@ -511,9 +494,7 @@
             ].join("<br>");
           case "book": return "Perfect—" + bookLink + " (opens in a new tab), or " + intakeLink + " for a quick tailored estimate first.";
           case "human":
-            return isWithinBusinessHours()
-              ? `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> for fastest response.`
-              : `We’re offline. You can still <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
+            return `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a>.`;
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
@@ -523,7 +504,7 @@
               `Ready to book? ${bookLink} (Square opens in a new tab). Or ${intakeLink} for a tailored estimate first.`
             ].join("<br>");
           default:
-            return ["I can help with pricing, availability, and services.", "Try asking “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
+            return ["I can help with pricing, availability, and services.", "Try “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
         }
       }
       function init(){
@@ -557,9 +538,7 @@
     })();
   </script>
 
-  <!-- (Optional: if you later add a shared chat file, this guard prevents double-init) -->
+  <!-- Optional shared chat guard (won’t double-init if you add it later) -->
   <script src="ftt-chat.js" defer></script>
 </body>
 </html>
-
-
