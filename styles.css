@@ -218,6 +218,22 @@ iframe{max-width:100%}
 .intake-wrap input,.intake-wrap select,.intake-wrap textarea{
   appearance:none;width:100%;padding:.85rem .9rem;border:1px solid #e3d9ce;border-radius:12px;background:#fffdfb;font-size:16px
 }
+
+/* === Consent checkbox fixes === */
+.intake-wrap input[type="checkbox"]{
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  width: 1.15rem; height: 1.15rem; min-width: 1.15rem;
+  padding: 0; margin: .2rem .6rem 0 0;
+  border: 0; border-radius: 4px; background: transparent; box-shadow: none;
+  display: inline-block; vertical-align: top;
+  accent-color: #bfa893;
+}
+.intake-wrap fieldset label span{ line-height: 1.35; }
+.intake-wrap input[type="checkbox"]:focus-visible{
+  outline: 2px solid #bfa893; outline-offset: 2px;
+}
+
 .submit-row{display:grid;gap:10px}
 #estimateCleaning,#estimateOrganizing,#estimateDecor,#estimateHoliday{font-size:1rem}
 
@@ -246,6 +262,3 @@ iframe{max-width:100%}
 /* Footer */
 .site-footer{background:#efe6db;border-top:1px solid #e2d6c9}
 .site-footer p{margin:0;padding:16px 0;text-align:center;color:var(--taupe-900);font-weight:600}
-
-
-
