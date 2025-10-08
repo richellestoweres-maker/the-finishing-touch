@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Holiday & Event (Indoor) Intake – The Finishing Touch</title>
+  <title>Holiday Decorating (Indoor) Intake – The Finishing Touch</title>
 
-  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
@@ -21,9 +20,7 @@
     .submit-row{text-align:center;margin-top:16px}
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
     .hint{font-size:.92rem;opacity:.9}
-    .muted{opacity:.85}
 
-    /* Dropdown bits (light) */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -40,7 +37,7 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header routes to client portal -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -51,11 +48,6 @@
       </div>
       <nav class="main-nav">
         <a href="client.html">Client Portal</a>
-        <a href="intake-cleaning.html">Cleaning</a>
-        <a href="intake-organizing.html">Organizing</a>
-        <a href="intake-decor.html">Interior Decorating</a>
-        <a href="intake-holiday.html" class="active">Holiday & Event (Indoor)</a>
-
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
             Get Your Quote ▾
@@ -64,7 +56,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-            <a role="menuitem" href="intake-holiday.html">Holiday & Event (Indoor)</a>
+            <a role="menuitem" href="intake-holiday.html">Holiday Decorating (Indoor)</a>
           </div>
         </div>
       </nav>
@@ -77,11 +69,10 @@
 
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
-    <div class="intake-script">Holiday & Event Decorating Intake (Indoor)</div>
+    <div class="intake-script">Holiday Decorating (Indoor) Intake</div>
     <p class="intake-note">
-      Tell us what you’re celebrating! We’ll show an instant ballpark <strong>install</strong> estimate below
-      (teardown optional). When ready, hit <strong>Create & Book</strong>—we’ll post the job for our pros and
-      send you to the calendar.
+      Tell us your holiday vibe! We’ll show an instant ballpark <strong>install</strong> estimate below
+      (optional teardown after the season). When ready, hit <strong>Book Now</strong> to open our calendar.
     </p>
 
     <form id="intakeFormHoliday" class="grid-1" novalidate>
@@ -93,32 +84,11 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Occasion -->
+      <!-- Holiday (NO events) -->
       <div class="fieldset grid-2">
-        <label>Occasion / Holiday
+        <label>Holiday
           <select name="occasion" id="occasionSelect" required>
-            <option value="">Select an occasion</option>
-
-            <optgroup label="Winter">
-              <option>New Year’s Day</option>
-              <option>Valentine’s Day</option>
-              <option>Galentine’s Party</option>
-            </optgroup>
-
-            <optgroup label="Spring">
-              <option>St. Patrick’s Day</option>
-              <option>Easter</option>
-              <option>Mother’s Day</option>
-              <option>Graduation</option>
-            </optgroup>
-
-            <optgroup label="Summer">
-              <option>Memorial Day</option>
-              <option>Juneteenth</option>
-              <option>4th of July</option>
-              <option>Back to School</option>
-              <option>Labor Day</option>
-            </optgroup>
+            <option value="">Select a holiday</option>
 
             <optgroup label="Fall">
               <option>Halloween</option>
@@ -128,24 +98,21 @@
             <optgroup label="Winter Holidays">
               <option>Hanukkah</option>
               <option>Christmas</option>
-              <option>New Year’s Eve</option>
+              <option>New Year’s</option>
             </optgroup>
 
-            <optgroup label="Events & Parties">
-              <option>Birthday</option>
-              <option>Baby Shower</option>
-              <option>Bridal Shower</option>
-              <option>Engagement</option>
-              <option>Anniversary</option>
-              <option>Retirement</option>
-              <option>Game Day / Super Bowl</option>
-              <option value="Custom">Other / Custom…</option>
+            <optgroup label="Other Seasonal">
+              <option>Winter (non-holiday)</option>
+              <option>Spring</option>
+              <option>Summer</option>
             </optgroup>
+
+            <option value="Custom">Other (home holiday only)…</option>
           </select>
         </label>
 
-        <label id="occasionCustomWrap" style="display:none">What’s the occasion?
-          <input name="occasion_custom" id="occasionCustom" placeholder="e.g., Quinceañera, Diwali, Mardi Gras">
+        <label id="occasionCustomWrap" style="display:none">What’s the holiday?
+          <input name="occasion_custom" id="occasionCustom" placeholder="e.g., Diwali (indoor), Lunar New Year">
         </label>
 
         <label>Decor style vibe
@@ -160,7 +127,7 @@
 
       <!-- Scope -->
       <div class="fieldset grid-2">
-        <!-- Tree cluster (auto hidden unless Christmas) -->
+        <!-- Tree cluster (visible for Christmas only) -->
         <div class="grid-2" id="treeCluster">
           <label>Number of Trees
             <input name="trees" id="trees" type="number" min="0" value="1">
@@ -182,27 +149,16 @@
             <select name="tree_ribbon" id="tree_ribbon"><option>No</option><option>Yes</option></select>
           </label>
           <div class="grid-1" style="grid-column:1/-1">
-            <span class="muted">Tree fields are hidden for non-Christmas occasions.</span>
+            <span class="hint">Tree fields are hidden unless you select Christmas.</span>
           </div>
         </div>
 
-        <label>Wreaths (count)
-          <input name="wreaths" type="number" min="0" value="0">
-        </label>
-        <label>Garland Sections (mantle/rail/doorways)
-          <input name="garland_sections" type="number" min="0" value="0">
-        </label>
+        <label>Wreaths (count)<input name="wreaths" type="number" min="0" value="0"></label>
+        <label>Garland Sections (mantle/rail/doorways)<input name="garland_sections" type="number" min="0" value="0"></label>
+        <label>Stair/Railing Sections<input name="stair_sections" type="number" min="0" value="0"></label>
+        <label>Decorate Mantle?<select name="mantle"><option>No</option><option>Yes</option></select></label>
 
-        <label>Stair/Railing Sections
-          <input name="stair_sections" type="number" min="0" value="0">
-        </label>
-        <label>Decorate Mantle?
-          <select name="mantle"><option>No</option><option>Yes</option></select>
-        </label>
-
-        <label>Tablescapes / Vignettes (count)
-          <input name="tablescapes" type="number" min="0" value="0">
-        </label>
+        <label>Tablescapes / Vignettes (count)<input name="tablescapes" type="number" min="0" value="0"></label>
         <label>Storage Access
           <select name="storage">
             <option>Garage/closet (easy)</option>
@@ -212,8 +168,7 @@
         </label>
 
         <label>Shopping Trips Needed
-          <select name="shopping_trips">
-            <option>0</option><option>1</option><option>2</option><option>3+</option></select>
+          <select name="shopping_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
         </label>
         <label>Include Teardown?
           <select name="teardown"><option>Yes</option><option selected>No</option></select>
@@ -251,17 +206,13 @@
 
       <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Create & Book</button>
+        <button class="btn btn-solid" type="submit">Get Holiday Estimate</button>
         <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
       </div>
     </form>
   </main>
 
-  <!-- EmailJS (optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
-
-  <!-- Local dropdown behavior -->
+  <!-- Dropdown behavior -->
   <script>
     (function(){
       const dd = document.getElementById('quoteDropdown');
@@ -275,16 +226,23 @@
     })();
   </script>
 
-  <!-- Your site JS (pricing/time calculators) -->
-  <script src="script.js?v=8" defer></script>
-
-  <!-- === AUTO-CREATE JOBS (Thumbtack mode) === -->
-  <script type="module" src="ft-auto.js"></script>
-
-  <!-- In-page glue: occasion logic + estimate + auto-create + Square handoff -->
+  <!-- Gate: require login -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        const next = encodeURIComponent('intake-holiday.html');
+        location.href = `login.html?next=${next}`;
+      }
+    });
+  </script>
 
+  <!-- Your site JS (pricing/time calculators) -->
+  <script src="script.js?v=9" defer></script>
+
+  <!-- In-page estimate + Book Now (Square) -->
+  <script>
     (function(){
       const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
 
@@ -300,17 +258,12 @@
         if (val === "Custom") return (occCustom?.value || "").trim();
         return val;
       }
-
       function showTrees(yes){
         if (yes){ treeCluster.classList.remove('hidden'); }
-        else {
-          treeCluster.classList.add('hidden');
-          if (treesInput) treesInput.value = 0;
-        }
+        else { treeCluster.classList.add('hidden'); if (treesInput) treesInput.value = 0; }
       }
       function updateTreeVisibility(){
         const occ = currentOccasion().toLowerCase();
-        // Only Christmas uses trees; Game Day / Birthday / etc. do not.
         showTrees(occ.includes('christmas'));
       }
       function toggleOccasionCustom(){
@@ -322,10 +275,10 @@
 
       function labelFromHours(teamHours, occasionLabel){
         const occ = occasionLabel ? ` — ${occasionLabel}` : "";
-        if (teamHours <= 2.5) return `Holiday & Event (indoor${occ}) — Small (≈2–2.5 hr)`;
-        if (teamHours <= 4)   return `Holiday & Event (indoor${occ}) — Medium (≈3–4 hr)`;
-        if (teamHours <= 6)   return `Holiday & Event (indoor${occ}) — Large (≈5–6 hr)`;
-        return `Holiday & Event (indoor${occ}) — XL (6.5+ hr)`;
+        if (teamHours <= 2.5) return `Holiday Decorating${occ} — Small (≈2–2.5 hr)`;
+        if (teamHours <= 4)   return `Holiday Decorating${occ} — Medium (≈3–4 hr)`;
+        if (teamHours <= 6)   return `Holiday Decorating${occ} — Large (≈5–6 hr)`;
+        return `Holiday Decorating${occ} — XL (6.5+ hr)`;
       }
 
       document.addEventListener('DOMContentLoaded', () => {
@@ -336,7 +289,7 @@
         const formHol = document.getElementById('intakeFormHoliday');
         if (!formHol) return;
 
-        formHol.addEventListener('submit', async (e)=>{
+        formHol.addEventListener('submit', (e)=>{
           e.preventDefault();
           e.stopImmediatePropagation();
 
@@ -344,54 +297,46 @@
           data.occasion = currentOccasion();
           data.occasion_custom = occCustom?.value || "";
 
-          // Run your public calculator
-          let res = { price:0, soloHours:0, teamHours:0, teardownHours:0, teardownPrice:0 };
           try {
             if (typeof calcHoliday === 'function') {
-              res = calcHoliday(data);
+              const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
+
+              const estEl = document.getElementById('estimateHoliday');
+              const parts = [
+                `Install (ballpark): <strong>$${price}</strong>`,
+                `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with 2 stylists)`
+              ];
+              if (teardownHours){
+                parts.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
+              }
+              parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
+              estEl.innerHTML = parts.join("<br>");
+
+              // Book button
+              let btn = document.getElementById('scheduleOnSquareHoliday');
+              if (!btn){
+                btn = document.createElement('a');
+                btn.id = 'scheduleOnSquareHoliday';
+                btn.className = 'btn btn-solid';
+                btn.style.marginTop = '10px';
+                btn.textContent = 'Book Now';
+                estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+              }
+              btn.href = SQUARE_BOOKING_BASE;
+              btn.target = '_blank';
+              btn.rel = 'noopener';
+
+              // Guidance
+              let hintEl = document.getElementById('holidayHint');
+              if (!hintEl){
+                hintEl = document.createElement('p');
+                hintEl.id = 'holidayHint';
+                hintEl.className = 'hint';
+                btn.parentNode.insertBefore(hintEl, btn.nextSibling);
+              }
+              hintEl.textContent = `Recommended: ${labelFromHours(teamHours, data.occasion)}. Square opens in a new tab—choose the closest matching time block.`;
             }
           } catch(err){ console.warn("Holiday estimate error:", err); }
-
-          // Show estimate inline for transparency
-          const estEl = document.getElementById('estimateHoliday');
-          const parts = [
-            `Install (ballpark): <strong>$${res.price}</strong>`,
-            `Estimated time: ${res.soloHours} solo hrs (~${res.teamHours} hrs with 2 stylists)`
-          ];
-          if (res.teardownHours){
-            parts.push(`Teardown (optional): ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
-          }
-          parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
-          estEl.innerHTML = parts.join("<br>");
-
-          // Require login → bounce to auth then back here
-          if (!auth.currentUser){
-            const next = encodeURIComponent(location.pathname);
-            location.href = `login.html?next=${next}`;
-            return;
-          }
-
-          // Post job automatically (Thumbtack style)
-          try{
-            const jobId = await window.FTAuto.createJobFromIntake({
-              type: "holiday",
-              intakeData: data,
-              estimate: {
-                price: res.price,
-                teamHours: res.teamHours,
-                teardownPrice: res.teardownPrice,
-                teardownHours: res.teardownHours
-              },
-              windowHint: "This week (flexible)"
-            });
-            if (!jobId) return;
-
-            // Send client to Square to pick a slot
-            location.href = SQUARE_BOOKING_BASE;
-          } catch (eCreate){
-            console.warn(eCreate);
-            estEl.innerHTML += `<br><span class="hint" style="color:#7f1d1d">We couldn't create your job automatically. Please try again in a moment.</span>`;
-          }
         }, true);
       });
     })();
@@ -428,11 +373,12 @@
       function add(html,who="bot"){const b=document.createElement("div");b.className=`ftt-bubble ${who}`;b.innerHTML=html;el.thread.appendChild(b);el.thread.scrollTop=el.thread.scrollHeight;}
       function greet(){add("Hi! I’m your AI concierge. Ask me about holiday decorating, pricing, or availability. Say “human” anytime.","bot");}
       function intent(t){t=t.toLowerCase();if(/human|person|agent|representative|someone|call|talk/.test(t))return"human";if(/price|pricing|cost|rate|how much/.test(t))return"pricing";if(/avail|slot|appointment|when|schedule|open/.test(t))return"availability";if(/service|decor|holiday/.test(t))return"services";if(/book|booking/.test(t))return"book";if(/which|help choose|recommend|not sure|what should i (pick|choose)|suggest/.test(t))return"recommend";return"fallback";}
-      function ans(i){const intake=`<a href="${C.intakeAnchor}">Start Intake</a>`,book=`<a href="${C.bookUrl}" target="_blank" rel="noopener">Book now</a>`;switch(i){case"pricing":return["Indoor holiday installs are billed by time; your intake shows a tailored ballpark with optional teardown.",intake+" • or "+book].join("<br>");case"availability":return["Availability is live in Square.",book+" to see openings, or "+intake+" first."].join("<br>");case"services":return["Indoor trees (when Christmas), mantles, stairs, wreaths, garlands, tablescapes. Outdoor installs currently unavailable.","Start here: "+intake+" • Or jump to "+book+"."].join("<br>");case"book":return"Perfect—"+book+" (opens in a new tab), or "+intake+" for a tailored estimate first.";case"human":return`Tap <a href="${C.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${C.email}">${C.email}</a>.`;case"recommend":return["<strong>Happy to help!</strong> Small: single tree or accent set. Medium: tree + mantle/rail. Large: multiple areas or extra sourcing.",`Ready to book? ${book} (new tab). Or ${intake} first.`].join("<br>");default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” to talk to a person."].join("<br>");}}
-      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i),"bot"),200);}});}
+      function ans(i){const intake=`<a href="${C.intakeAnchor}">Start Intake</a>`,book=`<a href="${C.bookUrl}" target="_blank" rel="noopener">Book now</a>`;switch(i){case"pricing":return["Indoor holiday installs are billed by time; your intake shows a tailored ballpark with optional teardown.",intake+" • or "+book].join("<br>");case"availability":return["Availability is live in Square.",book+" to see openings, or "+intake+" first."].join("<br>");case"services":return["Christmas trees, mantles, stairs, wreaths, garlands, tablescapes. (We don’t do event decor like balloon garlands.)","Start here: "+intake+" • Or jump to "+book+"."].join("<br>");case"book":return"Perfect—"+book+" (opens in a new tab), or "+intake+" for a tailored estimate first.";case"human":return`Tap <a href="${C.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${C.email}">${C.email}</a>.`;case"recommend":return["<strong>Happy to help!</strong> Small: single tree or accent set. Medium: tree + mantle/rail. Large: multiple areas or extra sourcing.",`Ready to book? ${book} (new tab). Or ${intake} first.`].join("<br>");default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” to talk to a person."].join("<br>");}}
+      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i)),"bot",200);}});}
       document.addEventListener("DOMContentLoaded",init);
     })();
   </script>
 </body>
 </html>
+
 
