@@ -6,6 +6,12 @@ import {
   collection, addDoc, setDoc, doc, serverTimestamp, Timestamp
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
+// === PRIVACY / EMAIL TRAIL ===
+// If true -> Formspree email will include address & phone (PII).
+// If false -> Formspree email excludes address & phone (safer).
+const SEND_PII_TO_FORMSPREE = true; // <-- set true for admin emails, false for privacy-first
+
+
 // ---- CONFIG ----
 const CFG = {
   squareBookingUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
