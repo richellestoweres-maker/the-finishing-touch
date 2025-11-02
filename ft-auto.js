@@ -71,7 +71,7 @@ async function createJobFromIntake(opts){
     serviceType: type,
     status: "open",
 
-    // NEW: exact scheduled time for reminders & sorting
+    // Exact scheduled time for reminders & sorting
     serviceDate: serviceDateTs,                 // Firestore Timestamp or null
     arriveEarlyMinutes: 15,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago",
@@ -79,7 +79,7 @@ async function createJobFromIntake(opts){
 
     zip: (intakeData.zip || intakeData.postal || intakeData.area || "").toString().trim(),
     area: (intakeData.area || intakeData.city || "").toString().trim(),
-    // Keep the human-friendly window text for emails/UI if you want
+    // Human-friendly window text for UI/email (optional)
     window: windowHint || todayWindowLabel(),
 
     summary: summary || defaultSummary(type, intakeData, estimate),
@@ -94,7 +94,7 @@ async function createJobFromIntake(opts){
     updatedAt: serverTimestamp()
   };
 
-  // Keep legacy fields if your intake captured them (optional/back-compat)
+  // Legacy/back-compat fields (optional)
   if (whenAt) job.whenAt = serviceDateTs;
   if (intakeData.date)  job.whenDate  = intakeData.date;
   if (intakeData.start) job.whenStart = intakeData.start;
@@ -102,7 +102,7 @@ async function createJobFromIntake(opts){
   // 1) Create the job
   const ref = await addDoc(collection(db, "jobs"), job);
 
-  // 2) Create contractor slots (split the client-facing price – your board shows per-slot pay)
+  // 2) Create contractor slots (split the client-facing price – board shows per-slot pay)
   const keep = Math.round(job.flatRate * (CFG.defaultCompanyCutPct / 100));
   const toContractors = Math.max(0, job.flatRate - keep);
   const base = Math.floor(toContractors / contractorsNeeded);
@@ -187,5 +187,3 @@ function defaultSummary(type, d, est){
 
 // Expose on window so intake pages can call it without re-import boilerplate
 window.FTAuto = { createJobFromIntake };
-
-</script>
