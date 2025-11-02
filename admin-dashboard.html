@@ -158,7 +158,11 @@
           <label>Contractors Needed <input name="contractorsNeeded" type="number" min="1" value="1" required /></label>
           <label>Flat Rate (shown to client) <input name="flatRate" type="number" min="0" step="1" placeholder="275" /></label>
           <label>Team Hours (est) <input name="estimatedTeamHours" type="number" min="0" step=".5" placeholder="3.5" /></label>
-          <label>Window / When <input name="window" placeholder="This Week, Fri 9–12, etc." /></label>
+
+          <!-- 🔁 REPLACED: Window/When ➜ date + time -->
+          <label>Service Date <input name="serviceDate" type="date" required /></label>
+          <label>Start Time <input name="startTime" type="time" required /></label>
+
           <label>Summary <input name="summary" placeholder="3 bed / 2 bath - initial deep clean." /></label>
           <label style="grid-column:1/-1">Notes (internal)
             <textarea name="notes" rows="3" placeholder="entry codes, parking notes — keep PII out of top-level doc"></textarea>
@@ -412,7 +416,7 @@
     import {
       collection, query, where, orderBy, onSnapshot, limit,
       doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
-      serverTimestamp, runTransaction
+      serverTimestamp, runTransaction, Timestamp
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
     const whoami = document.getElementById('whoami');
@@ -491,7 +495,7 @@
       );
 
       unsubCons = onSnapshot(
-        query(collection(db,"users"), where("role","in",["contractor","admin"])),
+        query(collection(db,"users"), where("role","in",["contractor","admin"])) ,
         snap => { drawPeople(elCons, snap.docs.map(d=>({id:d.id, ...d.data()})), "contractor"); }
       );
       unsubClients = onSnapshot(
@@ -510,6 +514,16 @@
 
     function cap(s){ return s ? (s[0].toUpperCase()+s.slice(1)) : ""; }
     function fmt(n){ return (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : ""; }
+
+    function formatServiceDate(ts){
+      try{
+        const d = ts?.toDate ? ts.toDate() : (ts?.seconds ? new Date(ts.seconds*1000) : null);
+        if (!d) return "";
+        // Example: Fri, Nov 7, 11:15 AM
+        return d.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+      }catch{ return ""; }
+    }
+
     function matchFilters(j){
       const type = (j.serviceType||"").toLowerCase();
       const okType = (activeType==="all") || (type===activeType);
@@ -527,7 +541,7 @@
 
     function jobCard(j){
       const {need, have, left} = slots(j);
-      const when = j.window || "";
+      const whenTxt = j.serviceDate ? formatServiceDate(j.serviceDate) : (j.window || "");
       const hours = j.estimatedTeamHours || j.teamHours || "";
       const zip = j.zip || j.area || j.city || "";
       const title = cap(j.serviceType||"job");
@@ -542,7 +556,7 @@
           </div>
           <div class="meta">
             ${zip?`<span>📍 ${zip}</span>`:""}
-            ${when?`<span>🗓️ ${when}</span>`:""}
+            ${whenTxt?`<span>🗓️ ${whenTxt}</span>`:""}
             ${hours?`<span>⏱️ ${hours} hrs</span>`:""}
             ${leftTxt}
             ${payLine}
@@ -741,6 +755,14 @@
       }catch(e){ alert("Could not save private note."); console.warn(e); }
     }
 
+    function parseDateTimeToTimestamp(dateStr, timeStr){
+      if (!dateStr) return null;
+      const [y,m,d] = dateStr.split("-").map(Number);
+      const [hh,mm] = (timeStr || "09:00").split(":").map(Number);
+      const dt = new Date(y,(m||1)-1,d,hh||9,mm||0,0,0);
+      return Timestamp.fromDate(dt);
+    }
+
     function wireCreateForm(){
       const form = document.getElementById('createForm');
       const msg  = document.getElementById('createMsg');
@@ -752,30 +774,39 @@
         const fd = new FormData(form);
         const data = Object.fromEntries(fd.entries());
 
+        // Build Timestamp from date + time
+        const serviceDateTs = parseDateTimeToTimestamp(data.serviceDate, data.startTime);
+
         const job = {
           serviceType: (data.serviceType||"").toLowerCase(),
           status: (data.status||"open"),
           zip: (data.zip||"").trim(),
           area: (data.area||"").trim(),
-          window: (data.window||"").trim(),
+          // window REMOVED — we use exact serviceDate
+          serviceDate: serviceDateTs,                    // Firestore Timestamp
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago",
+          arriveEarlyMinutes: 15,
+          reminderFlags: { dayBefore: false, dayOf: false },
+
           summary: (data.summary||"").trim(),
           notes: (data.notes||"").trim(),
           flatRate: data.flatRate? Number(data.flatRate) : null,
           estimatedTeamHours: data.estimatedTeamHours? Number(data.estimatedTeamHours) : null,
           contractorsNeeded: Math.max(1, Number(data.contractorsNeeded||1)),
           contractorIds: [],
-          clientId: (data.clientId||"").trim(),
+          // To satisfy strict create rules, default clientId to admin if left blank
+          clientId: (data.clientId || (auth.currentUser?.uid || "")).trim(),
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         };
         if (!job.zip) delete job.zip;
         if (!job.area) delete job.area;
-        if (!job.window) delete job.window;
         if (!job.summary) delete job.summary;
         if (!job.notes) delete job.notes;
         if (!job.clientId) delete job.clientId;
         if (job.flatRate==null) delete job.flatRate;
         if (job.estimatedTeamHours==null) delete job.estimatedTeamHours;
+        if (!job.serviceDate) delete job.serviceDate; // allow creating without if needed
 
         try{
           await addDoc(collection(db,"jobs"), job);
@@ -1034,9 +1065,12 @@
         if (!thread.dataset.greeted){ greet(); thread.dataset.greeted="1"; }
         input.focus();
       });
+      const close = document.querySelector('#admin-help .ah-close');
       close.addEventListener('click', ()=> panel.style.display='none');
+      const send = document.getElementById('ah-send');
       send.addEventListener('click', ()=>{ sendText(input.value); input.value=""; });
       input.addEventListener('keydown', (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendText(input.value); input.value=""; }});
+      const quick = document.querySelector('#admin-help .ah-quick');
       quick.addEventListener('click', (e)=>{
         if (!e.target.matches('button[data-q]')) return;
         const q = e.target.getAttribute('data-q');
@@ -1047,5 +1081,6 @@
   </script>
 </body>
 </html>
+
 
 
