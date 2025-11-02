@@ -66,12 +66,16 @@ async function createJobFromIntake(opts){
 
   // Build top-level job payload (public)
   const contractorsNeeded = Math.max(1, Number(slots ?? CFG.slotsByType[type] ?? 1));
-  const job = {
-    serviceType: type,
-    status: "open",
-    zip: (intakeData.zip || intakeData.postal || intakeData.area || "").toString().trim(),
-    area: (intakeData.area || intakeData.city || "").toString().trim(),
-    window: windowHint || todayWindowLabel(),
+    const job = {
+     serviceType: type,
+     status: "open",
++    // NEW: actual scheduled time (Timestamp) used for reminders/sorting
++    serviceDate: whenAt ? Timestamp.fromDate(whenAt) : null,
++    arriveEarlyMinutes: 15,
+     zip: (intakeData.zip || intakeData.postal || intakeData.area || "").toString().trim(),
+     area: (intakeData.area || intakeData.city || "").toString().trim(),
+     window: windowHint || todayWindowLabel(),
+
     summary: summary || defaultSummary(type, intakeData, estimate),
     notes: "",
     flatRate: Number(estimate.price || 0),
