@@ -1,4 +1,3 @@
-<script type="module">
 // === The Finishing Touch — Auto-create Jobs from Intakes (Thumbtack mode) ===
 // Requires: ft-firebase.js (auth + db), Firestore rules that allow clients to create jobs.
 
