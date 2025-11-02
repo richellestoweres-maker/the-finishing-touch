@@ -190,14 +190,18 @@
     });
   </script>
 
-  <!-- Your site JS (bumped cache so the fixed file loads) -->
+  <!-- Your site JS (kept; e.g., calcCleaning/estimateHoursCleaning may live here) -->
   <script src="script.js?v=8" defer></script>
-  <!-- Optional helper that exposes FTAuto.createJobFromIntake(...) -->
+  <!-- Helper that exposes FTAuto.createJobFromIntake(...) -->
   <script src="ft-auto.js" defer></script>
 
-  <!-- OVERRIDE: Estimate on-page + “Book Now” + create Firestore job (if ft-auto.js present) + Formspree -->
+  <!-- OVERRIDE: Estimate + “Book Now” + Firestore job (FTAuto) + Formspree email -->
   <script>
     (function(){
+      // ---- TOGGLE EMAIL TRAIL ----
+      const USE_FORMSPREE = true;          // keep both Firestore + Formspree
+      const SEND_PII_TO_FORMSPREE = false; // keep address/phone out of email by default
+
       // Square service URLs by team-hours bucket
       const SQUARE_CLEAN_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
       const SQUARE_CLEAN_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
@@ -206,7 +210,7 @@
 
       function roundHalf(n){ return Math.round(n*2)/2; }
 
-      // Fallback hours estimator if the global one isn't loaded yet
+      // Fallback hours estimator if shared one isn't loaded yet
       function estimateHoursCleaningLocal(data){
         try { if (typeof estimateHoursCleaning === 'function') return estimateHoursCleaning(data); } catch(_){}
         const sqft = data.sqft || "1000–2000";
@@ -274,7 +278,6 @@
         const form = document.getElementById('intakeFormCleaning');
         if (!form) return;
 
-        // Capture phase so we cancel any site-wide handler that redirects
         form.addEventListener('submit', async function(e){
           e.preventDefault();
           e.stopImmediatePropagation();
@@ -287,11 +290,8 @@
           try {
             if (typeof calcCleaning === 'function') price = calcCleaning(data);
             if (estEl){
-              if (price != null) {
-                estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-              } else {
-                estEl.textContent = "Ballpark estimate ready.";
-              }
+              if (price != null) estEl.innerHTML = `Ballpark Estimate: <strong>$${Math.round(Number(price))}</strong>`;
+              else estEl.textContent = "Ballpark estimate ready.";
             }
           } catch (err){ console.warn(err); }
 
@@ -301,7 +301,7 @@
             ? squareUrlForCleaning(teamHours)
             : squareUrlForCleaningLocal(teamHours);
 
-          // Inject/refresh the “Book Now” button under the estimate
+          // Inject/refresh the “Book Now” button
           let btn = document.getElementById('scheduleOnSquareCleaning');
           if (!btn){
             btn = document.createElement('a');
@@ -311,11 +311,9 @@
             btn.textContent = 'Book Now';
             estEl.parentNode.insertBefore(btn, estEl.nextSibling);
           }
-          btn.href = url;
-          btn.target = '_blank';
-          btn.rel = 'noopener';
+          btn.href = url; btn.target = '_blank'; btn.rel = 'noopener';
 
-          // Optional guidance line (recommended option)
+          // Guidance line
           const hint = cleaningHintLocal(data, teamHours);
           let hintEl = document.getElementById('cleaningHint');
           if (!hintEl){
@@ -326,49 +324,72 @@
           }
           hintEl.textContent = `Recommended service: ${hint}. This opens our Square calendar in a new tab.`;
 
-          // 3) Try to create a Firestore job via helper (non-blocking)
+          // 3) Create Firestore job via FTAuto (corrected argument names)
           try {
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === 'function'){
               const summary = `${Number(data.beds||0)} bed / ${Number(data.baths||0)} bath — ${data.service||'Cleaning'}`.trim();
               await FTAuto.createJobFromIntake({
-                serviceType: 'cleaning',
-                summary,
-                estTeamHours: teamHours,
-                flatRate: (price!=null? Number(price) : null),
-                intake: data
+                type: 'cleaning',
+                intakeData: data,
+                estimate: { price: price != null ? Number(price) : 0, teamHours },
+                summary
               });
             }
           } catch (err) {
             console.warn('Could not create job from intake (ok to ignore):', err);
           }
 
-          // 4) Send to Formspree in the background (FYI trail)
+          // 4) Send to Formspree in the background (optional email trail)
           const statusEl = document.getElementById('formspreeStatusCleaning');
-          try {
-            const estText = estEl?.textContent?.trim() || '';
-            const fsData = new FormData(form);
-            fsData.append('_subject', 'Cleaning Intake');
-            fsData.append('form_name', 'Cleaning Intake');
-            fsData.append('page', location.href);
-            if (estText) fsData.append('estimate', estText);
-            fsData.append('team_hours', String(teamHours));
-            fsData.append('solo_hours', String(soloHours));
-            if (price!=null) fsData.append('price', `$${Math.round(Number(price))}`);
+          if (USE_FORMSPREE){
+            try {
+              const estText = estEl?.textContent?.trim() || '';
+              const fsData = new FormData();
+              fsData.append('_subject', 'Cleaning Intake');
+              fsData.append('form_name', 'Cleaning Intake');
+              fsData.append('page', location.href);
+              if (estText) fsData.append('estimate', estText);
+              fsData.append('team_hours', String(teamHours));
+              fsData.append('solo_hours', String(soloHours));
+              if (price!=null) fsData.append('price', `$${Math.round(Number(price))}`);
 
-            const resp = await fetch('https://formspree.io/f/mzzaogbv', {
-              method: 'POST',
-              body: fsData,
-              headers: { 'Accept': 'application/json' }
-            });
+              // Include only non-PII by default
+              const safe = {
+                name: data.name || '',
+                email: data.email || '',
+                service: data.service || '',
+                frequency: data.frequency || '',
+                beds: data.beds || '',
+                baths: data.baths || '',
+                sqft: data.sqft || '',
+                stories: data.stories || '',
+                pets: data.pets || '',
+                addons: data.addons || '',
+                notes: data.notes || ''
+              };
+              if (SEND_PII_TO_FORMSPREE){
+                safe.address = data.address || '';
+                safe.phone = data.phone || '';
+              }
+              fsData.append('intake_json', JSON.stringify(safe));
 
-            if (resp.ok) {
-              if (statusEl) statusEl.textContent = 'Thanks! Your intake was sent.';
-            } else {
-              if (statusEl) statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
+              const resp = await fetch('https://formspree.io/f/mzzaogbv', {
+                method: 'POST',
+                body: fsData,
+                headers: { 'Accept': 'application/json' }
+              });
+
+              if (statusEl){
+                statusEl.textContent = resp.ok
+                  ? 'Thanks! Your intake was sent.'
+                  : 'Estimate shown above. We couldn’t send the email copy right now.';
+              }
+            } catch (err) {
+              if (statusEl) statusEl.textContent = 'Estimate shown above. We couldn’t send the email copy right now.';
+              console.warn(err);
             }
-          } catch (err) {
-            if (statusEl) statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
-            console.warn(err);
+          } else {
+            if (statusEl) statusEl.textContent = ''; // silent if not using Formspree
           }
         }, true);
       });
