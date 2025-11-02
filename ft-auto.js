@@ -1,5 +1,6 @@
 // === The Finishing Touch — Auto-create Jobs from Intakes (Thumbtack mode) ===
-// Requires: ft-firebase.js (auth + db), Firestore rules that allow clients to create jobs.
+// Requires: ft-firebase.js (auth + db), Firestore rules that restrict /jobs/{id}/private/**
+// Include with: <script type="module" src="ft-auto.js"></script>
 
 import { auth, db } from "./ft-firebase.js";
 import {
@@ -9,16 +10,15 @@ import {
 // === PRIVACY / EMAIL TRAIL ===
 // If true -> Formspree email will include address & phone (PII).
 // If false -> Formspree email excludes address & phone (safer).
-const SEND_PII_TO_FORMSPREE = true; // <-- set true for admin emails, false for privacy-first
-
+const SEND_PII_TO_FORMSPREE = true; // <-- flip to false if you want email without PII
 
 // ---- CONFIG ----
 const CFG = {
   squareBookingUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
   formspreeEndpoint: "https://formspree.io/f/mzzaogbv",
-  // Default company cut for holiday/decor when using client-facing price calc for reference
+  // Default company cut used only to split client-facing price into slot pay
   defaultCompanyCutPct: 30,
-  // Slots needed by service type (you can tweak)
+  // Default slots by service type
   slotsByType: { cleaning: 1, organizing: 2, decor: 2, holiday: 2 },
 };
 
@@ -45,15 +45,17 @@ function cap(s){ return s ? (s[0].toUpperCase() + s.slice(1)) : ""; }
 
 // ---- PUBLIC API ----
 /**
- * createJobFromIntake
+ * createJobFromIntake(opts)
+ * Accepts both the new field names and some alternates used elsewhere.
  * @param {Object} opts
- *  - type: "cleaning" | "organizing" | "decor" | "holiday"
- *  - intakeData: raw FormData entries (Object)
- *  - estimate: { price, teamHours, teardownPrice?, teardownHours? } from your calc
- *  - windowHint?: optional string; else auto label
- *  - summary?: optional client-friendly summary
+ *  - type: "cleaning" | "organizing" | "decor" | "holiday"   (alt: serviceType)
+ *  - intakeData: raw FormData object/entries (alt: intake)
+ *  - estimate: { price, teamHours, teardownPrice?, teardownHours? }
+ *      (alts supported: flatRate -> price, estTeamHours -> teamHours)
+ *  - windowHint?: human label for time window
+ *  - summary?: client-facing summary
  *  - slots?: override number of contractor slots
- *  - afterCreate?: (jobId)=>void hook
+ *  - afterCreate?: (jobId)=>void
  */
 async function createJobFromIntake(opts){
   const user = auth.currentUser;
@@ -67,25 +69,24 @@ async function createJobFromIntake(opts){
     type, intakeData, estimate, windowHint, summary, slots, teardownPrice, teardownHours
   } = normalizeInputs(opts);
 
-  // Compute exact datetime (if your intake collected date+time)
+  // Compute exact datetime if your intake captured date+time
   const whenAt = whenAtFromOptional(intakeData.date, intakeData.start);
   const serviceDateTs = whenAt ? Timestamp.fromDate(whenAt) : null;
 
-  // Build top-level job payload (public)
+  // Build top-level public job
   const contractorsNeeded = Math.max(1, Number(slots ?? CFG.slotsByType[type] ?? 1));
   const job = {
     serviceType: type,
     status: "open",
 
-    // Exact scheduled time for reminders & sorting
-    serviceDate: serviceDateTs,                 // Firestore Timestamp or null
+    // Exact scheduled time (helps reminders/sorting)
+    serviceDate: serviceDateTs,
     arriveEarlyMinutes: 15,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago",
     reminderFlags: { dayBefore: false, dayOf: false },
 
     zip: (intakeData.zip || intakeData.postal || intakeData.area || "").toString().trim(),
     area: (intakeData.area || intakeData.city || "").toString().trim(),
-    // Human-friendly window text for UI/email (optional)
     window: windowHint || todayWindowLabel(),
 
     summary: summary || defaultSummary(type, intakeData, estimate),
@@ -108,7 +109,7 @@ async function createJobFromIntake(opts){
   // 1) Create the job
   const ref = await addDoc(collection(db, "jobs"), job);
 
-  // 2) Create contractor slots (split the client-facing price – board shows per-slot pay)
+  // 2) Create contractor slots (split the client price into per-slot pay)
   const keep = Math.round(job.flatRate * (CFG.defaultCompanyCutPct / 100));
   const toContractors = Math.max(0, job.flatRate - keep);
   const base = Math.floor(toContractors / contractorsNeeded);
@@ -121,7 +122,7 @@ async function createJobFromIntake(opts){
     });
   }
 
-  // 3) Private/PII doc — stash structured intake detail for admin reference (kept minimal)
+  // 3) Private/PII doc — structured intake for admin only
   await setDoc(doc(db, "jobs", ref.id, "private", "pii"), {
     clientEmail: user.email || "",
     intake: intakeData,
@@ -130,26 +131,51 @@ async function createJobFromIntake(opts){
     createdAt: serverTimestamp()
   });
 
-  // 4) Fire-and-forget Formspree trail so you see the intake immediately in email
+  // 4) Fire-and-forget Formspree admin trail (conditional PII)
   try {
     const fd = new FormData();
-    fd.append("_subject", `New ${cap(type)} Intake → Job Created`);
+    fd.append("_subject", `New ${cap(type)} Intake → Job Created — ${ref.id}`);
+    // Searchable metadata
     fd.append("service_type", type);
     fd.append("job_id", ref.id);
-    fd.append("client_uid", auth.currentUser.uid);
-    fd.append("window", job.window);
-    if (serviceDateTs) {
-      fd.append("service_date", serviceDateTs.toDate().toString());
-    }
+    fd.append("client_uid", auth.currentUser?.uid || "");
+    fd.append("window", job.window || "");
+    if (serviceDateTs) fd.append("service_date", serviceDateTs.toDate().toString());
     fd.append("price", USD(job.flatRate));
-    fd.append("team_hours", String(job.estimatedTeamHours));
-    if (estimate.teardownPrice || teardownPrice) {
-      fd.append("teardown", USD(estimate.teardownPrice || teardownPrice));
-    }
+    fd.append("team_hours", String(job.estimatedTeamHours || ""));
     fd.append("slots_needed", String(contractorsNeeded));
-    fd.append("intake_json", JSON.stringify(intakeData));
-    await fetch(CFG.formspreeEndpoint, { method: "POST", body: fd, headers: { Accept: "application/json" } });
-  } catch { /* no-op */ }
+
+    // Compact non-PII summary for email search
+    fd.append("intake_summary", JSON.stringify({
+      name: intakeData.name || "",
+      email: intakeData.email || "",
+      service: intakeData.service || "",
+      beds: intakeData.beds || "",
+      baths: intakeData.baths || "",
+      sqft: intakeData.sqft || "",
+      notes: intakeData.notes || "",
+      addons: intakeData.addons || ""
+    }));
+
+    // Conditionally include PII for admin mailbox convenience
+    if (SEND_PII_TO_FORMSPREE) {
+      fd.append("address", intakeData.address || "");
+      fd.append("phone", intakeData.phone || "");
+      fd.append("pii_quick", `${intakeData.name||""} • ${intakeData.phone||""} • ${intakeData.address||""}`);
+    }
+
+    // Full raw intake for record (email), regardless of PII toggle
+    fd.append("intake_json", JSON.stringify(intakeData || {}));
+
+    await fetch(CFG.formspreeEndpoint, {
+      method: "POST",
+      body: fd,
+      headers: { Accept: "application/json" }
+    });
+  } catch (err) {
+    console.warn("Formspree notification failed:", err);
+    // no-op: do not block job creation on email
+  }
 
   // Optional hook
   if (typeof opts.afterCreate === "function") {
@@ -162,10 +188,19 @@ async function createJobFromIntake(opts){
 // ---- HELPERS ----
 function normalizeInputs(opts){
   const o = { ...opts };
-  if (!o.type) throw new Error("Missing type");
-  o.type = String(o.type).toLowerCase();
-  o.intakeData = o.intakeData || {};
-  o.estimate = o.estimate || { price: 0, teamHours: 0 };
+
+  // Map common alternates to the canonical names
+  o.type       = (o.type || o.serviceType || "cleaning").toString().toLowerCase();
+  o.intakeData = o.intakeData || o.intake || {};
+  o.estimate   = o.estimate || {};
+  if (o.flatRate != null && o.estimate.price == null) o.estimate.price = Number(o.flatRate);
+  if (o.estTeamHours != null && o.estimate.teamHours == null) o.estimate.teamHours = Number(o.estTeamHours);
+
+  // Defaults
+  if (!o.estimate || typeof o.estimate !== "object") o.estimate = { price: 0, teamHours: 0 };
+  if (o.estimate.price == null) o.estimate.price = 0;
+  if (o.estimate.teamHours == null) o.estimate.teamHours = 0;
+
   return o;
 }
 
@@ -193,3 +228,4 @@ function defaultSummary(type, d, est){
 
 // Expose on window so intake pages can call it without re-import boilerplate
 window.FTAuto = { createJobFromIntake };
+
