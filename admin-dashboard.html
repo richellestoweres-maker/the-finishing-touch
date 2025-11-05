@@ -427,7 +427,7 @@
     const elApps = document.getElementById('listApps');
 
     let unsubOpen=null, unsubAll=null, unsubCons=null, unsubClients=null, unsubApps=null;
-    
+    let lastOpen=[], lastAll=[];
 
     function cap(s){ return s ? (s[0].toUpperCase()+s.slice(1)) : ""; }
     function fmt(n){ return (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : ""; }
@@ -1008,10 +1008,11 @@
       wireAdminHelp();
     }
 
-    let lastOpen=[], lastAll=[];
+   
   </script>
 </body>
 </html>
+
 
 
 
