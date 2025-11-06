@@ -78,7 +78,8 @@
       <div class="right">
         <span id="whoami" class="small"></span>
         <a class="btn btn-outline" href="index.html">Home</a>
-        <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden>Manual Intake</a>
+        <!-- stays hidden unless admin; inline style prevents any flash -->
+        <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden style="display:none">Manual Intake</a>
         <a id="signOutBtn" class="btn btn-outline" href="#" aria-label="Sign out">Sign out</a>
       </div>
     </div>
@@ -141,6 +142,7 @@
     const adminBtn   = document.getElementById('adminIntakeBtn');
 
     const tabOpen    = document.getElementById('tabOpen');
+    theTabListeners();
     const tabMine    = document.getElementById('tabMine');
     const panelOpen  = document.getElementById('panelOpen');
     const panelMine  = document.getElementById('panelMine');
@@ -215,8 +217,13 @@
       panelOpen.hidden = !open;
       panelMine.hidden = open;
     }
-    tabOpen.addEventListener('click', () => setTab('open'));
-    tabMine.addEventListener('click', () => setTab('mine'));
+    function theTabListeners(){
+      // keep function hoisted in top, attach after DOM refs exist
+      document.addEventListener('click', (e)=>{
+        if (e.target?.id === 'tabOpen') setTab('open');
+        if (e.target?.id === 'tabMine') setTab('mine');
+      });
+    }
 
     function renderChips(){
       const allowed = (meServices && meServices.length)
@@ -248,7 +255,9 @@
       if (!user) {
         whoami.textContent = '';
         rolePill.textContent = 'Signed out';
+        // admin button stays hidden
         adminBtn.hidden = true;
+        adminBtn.style.display = 'none';
         showGate('signedout');
         return;
       }
@@ -256,7 +265,9 @@
       me = user;
       whoami.textContent = user.email || user.uid;
       rolePill.textContent = 'Checking role…';
+      // default hidden (prevents flash)
       adminBtn.hidden = true;
+      adminBtn.style.display = 'none';
 
       // Get the user doc to determine role
       const uref = doc(db, 'users', user.uid);
@@ -275,13 +286,21 @@
         meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes.map(s=>String(s).toLowerCase()) : [];
         rolePill.textContent = meRole ? cap(meRole) : 'No role yet';
 
+        // Only admins see Manual Intake (no flicker)
+        if (meRole === 'admin') {
+          adminBtn.hidden = false;
+          adminBtn.style.display = '';
+        } else {
+          adminBtn.hidden = true;
+          adminBtn.style.display = 'none';
+        }
+
         if (meRole === 'pending') {
           showGate('pending');
           return;
         }
 
         if (meRole === 'contractor' || meRole === 'admin') {
-          adminBtn.hidden = (meRole !== 'admin');
           showGate('portal');
           renderChips();
           startListeners();     // <-- only start now (prevents permission-denied)
@@ -399,6 +418,44 @@
       list.forEach(j => injectMineActions(j));
     }
 
+    /* ---------- new helpers for compliance & private address ---------- */
+    async function getMyUserDoc() {
+      if (!me) return null;
+      const snap = await getDoc(doc(db, 'users', me.uid));
+      return snap.exists() ? snap.data() : null;
+    }
+
+    function isCompliant(u) {
+      const c = u?.compliance || {};
+      const bgClear = (c.background?.status === 'clear');       // e.g., {status:'clear'}
+      const insVerified = (c.insurance?.status === 'verified');  // e.g., {status:'verified'}
+      return !!(bgClear && insVerified);
+    }
+
+    async function ensureCompliantOrExplain() {
+      const u = await getMyUserDoc();
+      if (isCompliant(u)) return true;
+      alert(
+        "Almost there!\n\n" +
+        "• Complete your Checkr background check (status must be Clear).\n" +
+        "• Upload insurance and list us as Certificate Holder (status must be Verified).\n\n" +
+        "Once both are verified, you can claim jobs."
+      );
+      return false;
+    }
+
+    async function fetchPrivateFullAddress(jobId) {
+      try {
+        const ref = doc(db, 'jobs', jobId, 'private', 'main');
+        const snap = await getDoc(ref);
+        const full = snap.exists() ? (snap.data().fullAddress || '') : '';
+        return (full || '').trim();
+      } catch {
+        return '';
+      }
+    }
+    /* ------------------------------------------------------------------ */
+
     function injectOpenActions(j){
       const card = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
       if (!card) return;
@@ -421,10 +478,25 @@
       actions.appendChild(msg);
     }
 
-    function injectMineActions(j){
+    async function injectMineActions(j){
       const card = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
       if (!card) return;
       const actions = card.querySelector('.actions');
+
+      // If I’m on this job, reveal full address from private subdoc (but never client name)
+      const iAmOnThis = Array.isArray(j.contractorIds) ? j.contractorIds.includes(me?.uid) : (j.contractorId === me?.uid);
+      if (iAmOnThis) {
+        const full = await fetchPrivateFullAddress(j.id);
+        if (full) {
+          const meta = card.querySelector('.meta');
+          if (meta && !meta.querySelector('.fulladdr')) {
+            const span = document.createElement('span');
+            span.className = 'fulladdr';
+            span.innerHTML = `📍 <span>${full}</span>`;
+            meta.appendChild(span);
+          }
+        }
+      }
 
       const msg = document.createElement('a');
       msg.className = 'btn btn-outline';
@@ -454,6 +526,11 @@
 
     async function claimJob(jobId, buttonEl){
       if (!me) return;
+
+      // NEW: block claim if not compliant
+      const ok = await ensureCompliantOrExplain();
+      if (!ok) return;
+
       if (buttonEl) { buttonEl.disabled = true; buttonEl.textContent = 'Claiming…'; }
 
       try {
