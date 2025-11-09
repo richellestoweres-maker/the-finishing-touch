@@ -179,164 +179,133 @@
         <div id="listApps" class="grid"></div>
       </section>
 
-      <!-- Quick Estimate -->
-      <section id="panel-estimate" class="panel">
-        <div class="card" style="padding:16px">
-          <div class="row" style="margin-bottom:10px;gap:10px;align-items:flex-end;flex-wrap:wrap">
-            <label>Service
-              <select id="estService">
-                <option value="cleaning">Cleaning</option>
-                <option value="organizing">Organizing</option>
-                <option value="decor">Decor</option>
-                <option value="holiday">Holiday</option>
-              </select>
-            </label>
-            <button id="estCalcBtn" class="btn btn-solid" type="button">Calculate</button>
-            <span class="hint">Basic inputs only—perfect for phone quotes.</span>
-          </div>
+     <!-- Quick Estimate (REPLACE THIS WHOLE SECTION) -->
+<section id="panel-estimate" class="panel">
+  <div class="card" style="padding:16px">
+    <div class="row" style="margin-bottom:10px;gap:10px;align-items:flex-end;flex-wrap:wrap">
+      <label>Category
+        <select id="estCategory">
+          <option value="residential" selected>Residential</option>
+          <option value="airbnb">Airbnb Turnover (Hybrid)</option>
+          <option value="commercial">Commercial (Office / Medical / Vet)</option>
+        </select>
+      </label>
 
-          <!-- CLEANING -->
-          <div id="estCleaning" class="form-grid" style="margin-top:8px">
-            <label>Home Size
-              <select id="c_sqft">
-                <option>&lt;1000</option>
-                <option selected>1000–2000</option>
-                <option>2000–3000</option>
-                <option>3000–4000</option>
-                <option>4000+</option>
-              </select>
-            </label>
-            <label>Service
-              <select id="c_service">
-                <option>Initial Clean</option>
-                <option>Deep Clean</option>
-                <option>Move-In / Move-Out Clean</option>
-                <option>Airbnb Turnover</option>
-                <option>Standard Clean</option>
-              </select>
-            </label>
-            <label>Beds <input id="c_beds" type="number" min="0" value="3"></label>
-            <label>Baths <input id="c_baths" type="number" min="0" value="2"></label>
-            <label>Other Rooms <input id="c_other" type="number" min="0" value="0"></label>
-            <label>Stories
-              <select id="c_stories"><option>1</option><option>2</option></select>
-            </label>
-            <label>Frequency (only affects Standard)
-              <select id="c_freq">
-                <option value="one-time">one-time</option>
-                <option value="weekly">weekly</option>
-                <option value="biweekly">biweekly</option>
-                <option value="monthly">monthly</option>
-              </select>
-            </label>
-            <label>Add-ons (keywords: oven, fridge, windows, baseboards, laundry)
-              <input id="c_addons" placeholder="e.g., oven, windows">
-            </label>
-          </div>
+      <!-- Residential service -->
+      <label id="resServiceWrap">Service
+        <select id="resService">
+          <option value="standard" selected>Standard Clean</option>
+          <option value="initial">Initial Clean</option>
+          <option value="deep">Deep Clean</option>
+          <option value="move">Move-In / Move-Out</option>
+        </select>
+      </label>
 
-          <!-- ORGANIZING -->
-          <div id="estOrganizing" class="form-grid" style="display:none;margin-top:8px">
-            <label>Area
-              <select id="o_area">
-                <option>Closet</option><option>Kitchen</option><option>Pantry</option>
-                <option>Bedroom</option><option>Bathroom</option><option>Garage</option>
-                <option>Laundry Room</option><option>Office</option><option>Playroom</option>
-                <option>Whole Home (multi-area)</option>
-              </select>
-            </label>
-            <label>Size
-              <select id="o_size"><option>Small</option><option selected>Medium</option><option>Large</option></select>
-            </label>
-            <label># Spaces <input id="o_spaces" type="number" min="1" value="1"></label>
-            <label>Complexity
-              <select id="o_complex"><option>Light</option><option selected>Moderate</option><option>Heavy</option></select>
-            </label>
-            <label>Clutter
-              <select id="o_clutter"><option>Light</option><option selected>Moderate</option><option>Heavy</option></select>
-            </label>
-            <label>Decision Speed
-              <select id="o_decision"><option>Fast</option><option selected>Average</option><option>Slow</option></select>
-            </label>
-            <label>Volume
-              <select id="o_volume"><option>Low</option><option selected>Medium</option><option>High</option></select>
-            </label>
-            <label>Containers
-              <select id="o_cont"><option>None</option><option>Some (up to 10)</option><option>Many (10+)</option></select>
-            </label>
-            <label>Add-ons (bins, labels, bins/labels)
-              <input id="o_addons" placeholder="e.g., bins/labels">
-            </label>
-          </div>
+      <!-- Commercial sub-type -->
+      <label id="comTypeWrap" style="display:none">Type
+        <select id="comType">
+          <option value="office" selected>Office</option>
+          <option value="medical">Medical / Clinic</option>
+          <option value="vet">Veterinary</option>
+        </select>
+      </label>
 
-          <!-- DECOR -->
-          <div id="estDecor" class="form-grid" style="display:none;margin-top:8px">
-            <label>Room
-              <select id="d_room">
-                <option>Living Room</option><option>Bedroom</option><option>Dining Room</option><option>Home Office</option>
-                <option>Kitchen / Nook</option><option>Entryway</option><option>Multiple Rooms</option>
-              </select>
-            </label>
-            <label># Rooms <input id="d_count" type="number" min="1" value="1"></label>
-            <label>Scope
-              <select id="d_scope">
-                <option>Light refresh (styling)</option>
-                <option>Refresh + small sourcing</option>
-                <option>Full design (sourcing + install)</option>
-              </select>
-            </label>
-            <label>Type
-              <select id="d_type">
-                <option>Interior Decorating (refresh)</option>
-                <option>Staging — Occupied</option>
-                <option>Staging — Vacant</option>
-              </select>
-            </label>
-            <label>Add-ons (moodboard, sourcing, shopping, install, window treatments, art hanging)
-              <input id="d_addons" placeholder="e.g., install, shopping">
-            </label>
-          </div>
+      <button id="estCalcBtn" class="btn btn-solid" type="button">Calculate</button>
+      <span class="hint">Soil level + common areas + pet impact are supported.</span>
+    </div>
 
-          <!-- HOLIDAY -->
-          <div id="estHoliday" class="form-grid" style="display:none;margin-top:8px">
-            <label>Occasion / Holiday
-              <input id="h_occasion" list="occasionOptions" placeholder="e.g., Christmas, Birthday, Thanksgiving">
-              <datalist id="occasionOptions">
-                <option value="New Year’s Day"></option><option value="Valentine’s Day"></option><option value="Galentine’s Party"></option>
-                <option value="St. Patrick’s Day"></option><option value="Easter"></option><option value="Mother’s Day"></option><option value="Graduation"></option>
-                <option value="Memorial Day"></option><option value="Juneteenth"></option><option value="4th of July"></option><option value="Back to School"></option><option value="Labor Day"></option>
-                <option value="Halloween"></option><option value="Thanksgiving"></option><option value="Hanukkah"></option><option value="Christmas"></option><option value="New Year’s Eve"></option>
-                <option value="Birthday"></option><option value="Baby Shower"></option><option value="Bridal Shower"></option><option value="Engagement"></option><option value="Anniversary"></option><option value="Retirement"></option><option value="Game Day / Super Bowl"></option><option value="Custom"></option>
-              </datalist>
-            </label>
-            <label># Trees <input id="h_trees" type="number" min="0" value="1"></label>
-            <label>Tallest Tree
-              <select id="h_tallest"><option>≤6 ft</option><option selected>7–8 ft</option><option>9–10 ft</option><option>11–12+ ft</option></select>
-            </label>
-            <label>Tree Style
-              <select id="h_style"><option>Ready: ornaments & lights on hand</option><option>Needs ribbon/theme refresh</option><option>Full design + sourcing</option></select>
-            </label>
-            <label>Ribbon? <select id="h_ribbon"><option>No</option><option>Yes</option></select></label>
-            <label>Wreaths <input id="h_wreaths" type="number" min="0" value="0"></label>
-            <label>Garland Sections <input id="h_garland" type="number" min="0" value="0"></label>
-            <label>Stair Sections <input id="h_stairs" type="number" min="0" value="0"></label>
-            <label>Mantle? <select id="h_mantle"><option>No</option><option>Yes</option></select></label>
-            <label>Tablescapes <input id="h_tables" type="number" min="0" value="0"></label>
-            <label>Storage
-              <select id="h_storage"><option>Garage/closet (easy)</option><option>Attic (ladder)</option><option>Offsite pickup</option></select>
-            </label>
-            <label>Shopping Trips
-              <select id="h_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
-            </label>
-            <label>Include Teardown? <select id="h_teardown"><option>Yes</option><option>No</option></select></label>
-          </div>
+    <!-- Shared size + options -->
+    <div class="form-grid" style="margin-top:8px">
+      <label>Home / Site Size (sq ft)
+        <input id="sqft" type="number" min="200" step="10" value="1600">
+      </label>
 
-          <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
-            <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
-          </div>
-        </div>
-      </section>
+      <label id="bedsWrap">Beds
+        <input id="beds" type="number" min="0" value="3">
+      </label>
+
+      <label id="bathsWrap">Baths
+        <input id="baths" type="number" min="0" value="2">
+      </label>
+
+      <!-- Residential soil names (your choice: C) -->
+      <label id="soilResWrap">Soil Level (Residential)
+        <select id="soilRes">
+          <option value="standard" selected>Standard</option>
+          <option value="lived">Lived-In</option>
+          <option value="dirty">Dirty</option>
+          <option value="major">Major Impact</option>
+        </select>
+      </label>
+
+      <!-- Commercial soil names (your choice: A) -->
+      <label id="soilComWrap" style="display:none">Soil Level (Commercial)
+        <select id="soilCom">
+          <option value="light" selected>Light</option>
+          <option value="moderate">Moderate</option>
+          <option value="heavy">Heavy</option>
+          <option value="severe">Severe</option>
+        </select>
+      </label>
+
+      <!-- Airbnb hybrid bits -->
+      <label id="airLaundryWrap" style="display:none">Laundry Bundles (sets)
+        <input id="airLaundry" type="number" min="0" value="2">
+      </label>
+      <label id="airTurnsWrap" style="display:none">Bedrooms in Listing
+        <input id="airBeds" type="number" min="0" value="2">
+      </label>
+
+      <label>Stories
+        <select id="stories"><option>1</option><option selected>2</option></select>
+      </label>
+
+      <label>Common Areas Only?
+        <select id="commonOnly">
+          <option value="no" selected>No</option>
+          <option value="yes">Yes (Living/Kitchen/Halls/Baths)</option>
+        </select>
+      </label>
+
+      <!-- Pet Impact quick picker (hidden in total per your choice B) -->
+      <label>Pet Impact
+        <select id="petImpact">
+          <option value="none" selected>None</option>
+          <option value="light">Light</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+          <option value="foster">Foster / Rescue</option>
+        </select>
+      </label>
+
+      <!-- Add-ons (per-item, your “Premium” tier) -->
+      <label>Ceiling Fans (count)
+        <input id="addFans" type="number" min="0" value="0">
+      </label>
+      <label>Blinds (count)
+        <input id="addBlinds" type="number" min="0" value="0">
+      </label>
+      <label>Windows (interior panes)
+        <input id="addWindows" type="number" min="0" value="0">
+      </label>
+      <label>Ovens (count)
+        <input id="addOvens" type="number" min="0" value="0">
+      </label>
+      <label>Fridges (count)
+        <input id="addFridges" type="number" min="0" value="0">
+      </label>
+
+      <label style="grid-column:1/-1">Notes (optional)
+        <input id="estNotes" placeholder="Entry, parking, special requests (admin only)">
+      </label>
+    </div>
+
+    <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
+      <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
     </div>
   </div>
+</section>
+
 
   <!-- Admin Helper Chat (UI) -->
   <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
@@ -1018,3 +987,4 @@
   </script>
 </body>
 </html>
+
