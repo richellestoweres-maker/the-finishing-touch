@@ -13,34 +13,174 @@
   <link rel="stylesheet" href="styles.css?v=7" />
 
   <style>
-    /* Page-specific light layout */
-    .page-hero { padding: 36px 18px 12px; text-align: center; }
-    .page-hero h1 { font-family: "Playfair Display", serif; margin: 0; }
-
-    .contact-page { padding: 24px 18px 48px; }
-    .contact-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
-    @media (min-width: 900px) { .contact-grid { grid-template-columns: 1.1fr .9fr; } }
-
-    .contact-card, .details-card {
-      background:#fff; border-radius:16px; box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08));
-      padding: 24px;
+    /* Page-specific layout */
+    .page-hero {
+      padding: 52px 18px 26px;
+      text-align: center;
     }
-    .contact-card h3, .details-card h3 { margin: 0 0 10px; }
+    .page-hero h1 {
+      font-family: "Playfair Display", serif;
+      margin: 0 0 8px;
+      color: var(--taupe-900, #2e2a27);
+      font-size: 2.1rem;
+    }
+    .page-hero p {
+      max-width: 540px;
+      margin: 0 auto;
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: .95rem;
+      color: rgba(0,0,0,.6);
+    }
+    .page-hero .hero-sub {
+      margin-top: 6px;
+      font-size: .9rem;
+      color: rgba(0,0,0,.55);
+    }
 
-    .contact-form { display:grid; gap:14px; }
-    .contact-form label { display:grid; gap:6px; font-weight:600; }
-    .contact-form input, .contact-form textarea {
-      border:1px solid #e3d9ce; border-radius:12px; padding:.8rem .9rem; background:#fffdfb; font-size:16px;
+    .hero-call-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      padding: 10px 26px;
+      border-radius: 999px;
+      border: 1px solid var(--taupe-900, #2e2a27);
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: .92rem;
+      text-decoration: none;
+      color: var(--taupe-900, #2e2a27);
+      background: #fffdfb;
+      transition: background .14s ease, color .14s ease, box-shadow .14s ease, transform .12s ease;
+    }
+    .hero-call-btn i {
+      margin-right: 8px;
+      font-size: .95rem;
+    }
+    .hero-call-btn:hover {
+      background: var(--taupe-900, #2e2a27);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(0,0,0,.16);
+      transform: translateY(-1px);
+    }
+
+    .contact-page {
+      padding: 10px 18px 48px;
+    }
+    .contact-page .container {
+      width: min(1180px, 94%);
+      margin-inline: auto;
+    }
+
+    /* Main card with form */
+    .contact-card {
+      background:#fff;
+      border-radius:16px;
+      box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08));
+      padding: 24px 24px 26px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .contact-card h3 {
+      margin: 0 0 12px;
+      font-family: "Playfair Display", serif;
+      font-size: 1.2rem;
       color: var(--taupe-900, #2e2a27);
     }
-    .status { text-align:center; font-weight:700; }
-    .status.ok { color:#0a7d33; } .status.err { color:#b00020; }
 
-    .link-list { list-style:none; padding:0; margin:0; }
-    .link-list li { margin: 10px 0; }
-    .link-list a { text-decoration:none; color:inherit; }
+    .contact-form {
+      display:grid;
+      gap:14px;
+    }
+    .contact-form label {
+      display:grid;
+      gap:6px;
+      font-weight:600;
+      font-size:.9rem;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      border:1px solid #e3d9ce;
+      border-radius:12px;
+      padding:.8rem .9rem;
+      background:#fffdfb;
+      font-size:16px;
+      color: var(--taupe-900, #2e2a27);
+      outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: var(--accent, #d2bda9);
+      box-shadow:0 0 0 1px rgba(210,189,169,.35);
+    }
 
-    .cta-stack { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .status {
+      text-align:center;
+      font-weight:700;
+      font-size:.9rem;
+    }
+    .status.ok { color:#0a7d33; }
+    .status.err { color:#b00020; }
+
+    /* “Other ways to reach us” strip */
+    .contact-quick {
+      max-width: 720px;
+      margin: 18px auto 0;
+      padding: 16px 20px 18px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: var(--shadow, 0 10px 26px rgba(0,0,0,.06));
+    }
+
+    .contact-quick-title {
+      margin: 0 0 8px;
+      font-family: "Playfair Display", serif;
+      font-size: 1.05rem;
+      color: var(--taupe-900, #2e2a27);
+    }
+
+    .quick-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 22px;
+      align-items: center;
+      font-size: .92rem;
+    }
+
+    .quick-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quick-item i {
+      font-size: .9rem;
+      color: var(--taupe-900, #2e2a27);
+    }
+    .quick-item a {
+      text-decoration: none;
+      color: var(--taupe-900, #2e2a27);
+    }
+    .quick-item a:hover {
+      text-decoration: underline;
+    }
+
+    .quick-intake {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 720px) {
+      .quick-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .quick-intake {
+        margin-left: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -63,15 +203,21 @@
 
   <!-- Hero -->
   <section class="page-hero">
-    <h1>Contact</h1>
+    <h1>Ready for a cleaning?</h1>
+    <p>Fill out some info and we’ll be in touch shortly. We can’t wait to hear from you.</p>
+    <a class="hero-call-btn" href="tel:12816203963">
+      <i class="fas fa-phone"></i>
+      Call or text (281) 620-3963
+    </a>
+    <p class="hero-sub">Prefer email or the form? Whatever works best for you.</p>
   </section>
 
   <!-- Content -->
   <main class="contact-page">
-    <div class="container contact-grid">
+    <div class="container">
       <!-- Contact form -->
       <section class="contact-card">
-        <h3>Send a message</h3>
+        <h3>Send us a message</h3>
 
         <!-- Your real Formspree endpoint -->
         <form id="contactForm" class="contact-form" action="https://formspree.io/f/mzzaogbv" method="POST" novalidate>
@@ -94,36 +240,39 @@
         </form>
       </section>
 
-      <!-- Details -->
-      <aside class="details-card">
-        <h3>Connect</h3>
-        <ul class="link-list">
-          <li>
+      <!-- Other ways to reach you -->
+      <section class="contact-quick">
+        <h3 class="contact-quick-title">Other ways to reach us</h3>
+        <div class="quick-row">
+          <div class="quick-item">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
             <a href="mailto:contact.thefinishingtouch.tx@gmail.com">
-              <i class="fas fa-envelope" aria-hidden="true"></i>
               contact.thefinishingtouch.tx@gmail.com
             </a>
-          </li>
-          <li>
+          </div>
+
+          <div class="quick-item">
+            <i class="fab fa-facebook" aria-hidden="true"></i>
             <a href="https://facebook.com/thefinishingtouch.tx" target="_blank" rel="noopener">
-              <i class="fab fa-facebook" aria-hidden="true"></i>
               facebook.com/thefinishingtouch.tx
             </a>
-          </li>
-          <li>
+          </div>
+
+          <div class="quick-item">
+            <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
             <a href="https://m.me/thefinishingtouch.tx" target="_blank" rel="noopener">
-              <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
               Message us on Facebook
             </a>
-          </li>
-        </ul>
+          </div>
 
-        <div class="cta-stack">
-          <a class="btn btn-primary" href="intake-cleaning.html">
-            <i class="fas fa-clipboard-list" aria-hidden="true"></i> Start Intake
-          </a>
+          <div class="quick-item quick-intake">
+            <a class="btn btn-primary" href="intake-cleaning.html">
+              <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+              Start Intake
+            </a>
+          </div>
         </div>
-      </aside>
+      </section>
     </div>
   </main>
 
@@ -198,3 +347,4 @@
   <script src="script.js?v=7"></script>
 </body>
 </html>
+
