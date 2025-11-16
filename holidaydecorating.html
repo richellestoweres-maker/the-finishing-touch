@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Holiday Decorating – The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body.page-holiday .container { width:min(1180px,94%); margin-inline:auto; }
+
+    .page-holiday .header-inner{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 0;
+    }
+    .page-holiday .main-nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn-cream{
+      background:#d2bda9; color:#2a2624; border:0; border-radius:999px; padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
+    }
+
+    /* HERO */
+    .holiday-hero{
+      position:relative; color:#fff;
+    }
+    .holiday-hero-media img{
+      width:100%; height:clamp(340px, 50vw, 520px);
+      object-fit:cover; object-position:center;
+      display:block;
+    }
+    .holiday-hero-scrim{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
+    }
+    .holiday-hero-content{
+      position:absolute; inset:0;
+      display:grid; align-content:center;
+    }
+    .holiday-hero-inner{
+      max-width:min(780px,94%);
+      color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,.3);
+    }
+    .holiday-hero-kicker{
+      font-family:"Allura", cursive;
+      font-size:1.9rem;
+      margin:0 0 .3rem;
+    }
+    .holiday-hero-title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2.2rem, 4vw, 3rem);
+      margin:0 0 .4rem;
+    }
+    .holiday-hero-sub{
+      font-size:1.05rem;
+      max-width:32rem;
+      margin:0 0 1.1rem;
+    }
+    .btn-primary{
+      background:#f5eadf; color:#2a2624;
+      border-radius:999px; padding:.7rem 1.25rem;
+      border:0; font-weight:700; text-decoration:none;
+      display:inline-block;
+    }
+
+    /* Sections */
+    .section{ padding:40px 0; }
+    .section h2{
+      font-family:"Playfair Display", serif;
+      margin:0 0 .75rem;
+      font-size:1.7rem;
+    }
+    .section p{ line-height:1.6; }
+
+    .two-col{
+      display:grid; grid-template-columns:1.1fr .9fr; gap:22px; align-items:flex-start;
+    }
+    @media (max-width:880px){
+      .two-col{ grid-template-columns:1fr; }
+    }
+
+    .holiday-gallery{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    }
+    .holiday-gallery img{
+      width:100%; height:180px; object-fit:cover;
+      border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.12);
+    }
+    @media (max-width:640px){
+      .holiday-gallery{ grid-template-columns:1fr; }
+      .holiday-gallery img{ height:210px; }
+    }
+
+    /* Tables / grids */
+    .tree-grid, .service-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
+      gap:16px;
+      margin-top:12px;
+    }
+    .tree-card, .service-card{
+      background:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+    .tree-card h3, .service-card h3{
+      margin:.1rem 0 .35rem;
+      font-size:1.05rem;
+    }
+    .pill{
+      display:inline-block;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      background:#f3ebe2;
+      font-size:.8rem;
+      font-weight:600;
+      margin-bottom:.35rem;
+    }
+    .meta-line{
+      font-size:.9rem;
+      opacity:.85;
+      margin-bottom:.3rem;
+    }
+
+    .callout{
+      background:#fbf5ee;
+      border-radius:16px;
+      padding:16px 18px;
+      border:1px solid #ecdccc;
+      margin-top:14px;
+      font-size:.95rem;
+    }
+
+    .holiday-cta{
+      text-align:center;
+    }
+    .holiday-cta p{
+      max-width:540px;
+      margin:0 auto 1rem;
+    }
+
+    /* Footer tweak */
+    .site-footer{ margin-top:10px; }
+  </style>
+
+  <!-- Chat z-index safety -->
+  <style>
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
+</head>
+
+<body class="page-holiday">
+
+  <!-- Header (same as index) -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Holiday Hero -->
+  <section class="holiday-hero">
+    <div class="holiday-hero-media">
+      <!-- swap this image with a cozy holiday photo when you have one -->
+      <img src="holiday-hero.jpg" alt="Holiday styled living room with Christmas tree">
+      <div class="holiday-hero-scrim"></div>
+    </div>
+
+    <div class="container holiday-hero-content">
+      <div class="holiday-hero-inner">
+        <p class="holiday-hero-kicker">Seasonal Styling</p>
+        <h1 class="holiday-hero-title">Holiday Decorating by The Finishing Touch</h1>
+        <p class="holiday-hero-sub">
+          Luxury tree installs, cozy mantles, and lobby-ready displays —
+          designed, styled, and installed so you can simply plug in the lights and enjoy.
+        </p>
+        <a href="intake-holiday.html" class="btn-primary">Request Holiday Consultation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Holiday Services -->
+  <section class="section">
+    <div class="container two-col">
+      <div>
+        <h2>About Our Holiday Decorating</h2>
+        <p>
+          Holiday decorating is more than hanging garland and placing ornaments. At The Finishing Touch,
+          we create layered, luxury holiday scenes that feel warm, inviting, and tailored to your home or business.
+        </p>
+        <p>
+          We work in two simple ways:
+        </p>
+        <ul>
+          <li><strong>Client Provided Décor</strong> – We use what you already own and elevate it with professional styling.</li>
+          <li><strong>Finishing Touch Sourced Décor</strong> – We design the look, source the décor, and install everything for a fully curated, high-end experience.</li>
+        </ul>
+        <p>
+          Every project starts with a <strong>holiday consultation</strong> so we can review your tree height, staircase length,
+          décor inventory, and overall vision before install day.
+        </p>
+      </div>
+      <div>
+        <div class="holiday-gallery">
+          <!-- replace these with your own photos -->
+          <img src="holiday-tree-1.jpg" alt="Styled Christmas tree">
+          <img src="holiday-mantle-1.jpg" alt="Holiday mantle with garland">
+          <img src="holiday-staircase-1.jpg" alt="Staircase garland with ribbon">
+          <img src="holiday-tablescape-1.jpg" alt="Holiday tablescape">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="container">
+      <h2>How It Works</h2>
+      <ol>
+        <li><strong>Book a Holiday Consultation.</strong> We review your space, measurements, décor preferences, and whether décor will be client-provided or sourced.</li>
+        <li><strong>Choose Your Services.</strong> Trees, staircases, mantles, full-home decorating, commercial installs, or takedown.</li>
+        <li><strong>Install Day.</strong> Our stylists arrive with everything they need, install and style each area, and leave your space photo-ready.</li>
+        <li><strong>Optional Takedown.</strong> After the season, we can return to carefully pack, label, and organize your décor.</li>
+      </ol>
+      <div class="callout">
+        Looking for something custom, like a photo-op backdrop or themed party setup?
+        Mention it in your consultation and we’ll tailor a design just for you.
+      </div>
+    </div>
+  </section>
+
+  <!-- Residential Trees -->
+  <section class="section">
+    <div class="container">
+      <h2>Residential Christmas Tree Decorating</h2>
+      <p>
+        Choose between <strong>Client Provided Décor</strong> or
+        <strong>Finishing Touch Sourced Décor</strong> for your home tree.
+        Below is a general guide to how long each size typically takes and how many stylists are assigned.
+      </p>
+
+      <div class="tree-grid">
+        <div class="tree-card">
+          <span class="pill">6–7.5 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 2 hours • Usually 1–2 stylists</p>
+          <p>Luxury installation using your décor. Includes full shaping, layered ribbon techniques, ornament placement, and detailed designer styling for a polished, cohesive holiday look.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">6–7.5 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 2 hours • Usually 1–2 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">9 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 3 hours • Usually 2 stylists</p>
+          <p>Luxury installation for a 9 ft tree using your décor with full shaping, layered ribbon work, intentional ornament groupings, and elevated holiday styling.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">9 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 3 hours • Usually 2 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">12 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 5 hours • Usually 2–3 stylists</p>
+          <p>Professional installation for tall statement trees using your décor, with multi-level styling, ribbon techniques, and ornament depth for a dramatic finish.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">12 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 5 hours • Usually 2–3 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">14–16 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 6 hours • Usually 2–3 stylists</p>
+          <p>High-end installation for grand foyer trees with extensive shaping, ribbon detailing, ornament artistry, and multi-height styling.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">14–16 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 6 hours • Usually 3 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">18–20 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 9–10 hours • Usually 3–4 stylists</p>
+          <p>Full-scale luxury installation for estate-size trees with complex multi-level styling, advanced ribbon work, and dramatic ornament layering from top to bottom.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">18–20 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 10 hours • Usually 4 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        Final pricing is based on the size of the tree, décor complexity, and whether décor is client-provided or sourced.
+        We’ll walk through all of this during your consultation before you commit to an install date.
+      </div>
+    </div>
+  </section>
+
+  <!-- Commercial Trees -->
+  <section class="section">
+    <div class="container">
+      <h2>Commercial & Office Holiday Trees</h2>
+      <p>
+        We also offer holiday decorating for offices, lobbies, medical practices, boutiques, and other commercial spaces.
+        These installs are designed to align with your brand colors and create a welcoming, professional atmosphere.
+      </p>
+
+      <div class="tree-grid">
+        <div class="tree-card">
+          <span class="pill">Up to 10 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 4 hours • 2 stylists</p>
+          <p>Professional commercial-grade installation using your décor, ideal for offices, waiting rooms, and small lobbies.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">Up to 10 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 4 hours • 2 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">12–15 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 7 hours • 3 stylists</p>
+          <p>Large-format commercial tree installation using your décor, perfect for lobbies and high-visibility public spaces.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">12–15 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 7 hours • 3–4 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">16–20 ft Tree</span>
+          <h3>Client Provided Décor</h3>
+          <p class="meta-line">Approx. 12 hours • 4 stylists</p>
+          <p>Dramatic multi-level installation for oversized lobby trees, with safety-managed ladder work and full professional styling.</p>
+        </div>
+
+        <div class="tree-card">
+          <span class="pill">16–20 ft Tree</span>
+          <h3>Finishing Touch Sourced Décor</h3>
+          <p class="meta-line">Approx. 12 hours • 4–5 stylists</p>
+          <p>A fully personalized, high-end holiday tree experience. Includes custom design planning, curated décor sourcing, luxury ribbon layering, dimensional ornament placement, and full installation for a high-impact, photo-ready tree.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Other Holiday Services -->
+  <section class="section">
+    <div class="container">
+      <h2>More Holiday Styling Options</h2>
+      <div class="service-grid">
+        <div class="service-card">
+          <h3>Staircase Garlands</h3>
+          <p class="meta-line">Styled by railing length (10–15 ft, 20–30 ft, 30–40+ ft)</p>
+          <p>Full, layered garlands with ribbon, accents, and texture to create a dramatic entry or focal point.</p>
+        </div>
+        <div class="service-card">
+          <h3>Mantle Styling</h3>
+          <p>Cozy, statement mantles featuring garlands, stockings, candles, and seasonal accents styled to match your home.</p>
+        </div>
+        <div class="service-card">
+          <h3>Full-Home Holiday Decorating</h3>
+          <p>Coordinated decorating across trees, mantles, railings, entryways, shelves, and more for a fully cohesive holiday home.</p>
+        </div>
+        <div class="service-card">
+          <h3>Holiday Tablescapes</h3>
+          <p>Styled dining tables with layered place settings, centerpieces, and seasonal details perfect for hosting.</p>
+        </div>
+        <div class="service-card">
+          <h3>Holiday Takedown & Storage Reset</h3>
+          <p>Careful takedown, packing, and labeled storage so your décor is protected and easy to use again next year.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container holiday-cta">
+      <h2>Ready to Reserve Your Holiday Install?</h2>
+      <p>
+        Holiday dates are limited and tend to book quickly. Start with a short consultation so we can
+        learn about your space, décor, and vision, then we’ll match you with the right service and install window.
+      </p>
+      <a href="intake-holiday.html" class="btn-primary">Start Holiday Consultation</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
+  </footer>
+
+  <!-- Chat widget (same as index) -->
+  <style>
+    #ftt-chat-launcher{
+      position:fixed; right:18px; bottom:18px;
+      width:54px; height:54px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.18);
+    }
+    #ftt-chat{
+      position:fixed; right:18px; bottom:84px;
+      width:340px; max-width:calc(100vw - 36px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
+    .ftt-title{ font-weight:800; color:#2e2a27 }
+    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
+    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
+    .ftt-thread{ height:300px; overflow:auto; padding:12px }
+    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
+    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
+    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
+    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
+    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
+    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
+    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
+    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
+    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+  </style>
+
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="help">Help me choose</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-holiday.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messenger: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+
+      const panel   = document.getElementById("ftt-chat");
+      const thread  = document.getElementById("ftt-thread");
+      const form    = document.getElementById("ftt-inputbar");
+      const input   = document.getElementById("ftt-input");
+      const quick   = document.querySelector(".ftt-quick");
+      const closeBtn= document.querySelector(".ftt-close");
+      const launcher= document.getElementById("ftt-chat-launcher");
+
+      function add(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|deep|standard|move|organize|staging|decor|holiday)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
+        return "fallback";
+      }
+      function answer(intent){
+        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Holiday Intake</a>`;
+        const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book in Square</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Holiday decorating is quoted based on tree height, décor complexity, and whether décor is client-provided or sourced.",
+              "Start with a quick intake and we’ll build a custom quote:",
+              intakeLink
+            ].join("<br>");
+          case "availability":
+            return [
+              "Holiday spots are limited and update in real time.",
+              bookLink + " to see openings, or " + intakeLink + " if you’d like us to review your details first."
+            ].join("<br>");
+          case "services":
+            return [
+              "We offer residential and commercial holiday decorating:",
+              "• Tree installs (6 ft up to 20 ft).",
+              "• Staircase garlands, mantles, and full-home styling.",
+              "• Lobby and office displays, plus optional takedown.",
+              "You can start with a consultation here: " + intakeLink
+            ].join("<br>");
+          case "book": return "Perfect—" + bookLink + ". If you’re unsure which service fits, start here first: " + intakeLink;
+          case "human":
+            return isWithinBusinessHours()
+              ? `Absolutely. Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`
+              : `We’re currently offline, but you can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply as soon as we’re back.`;
+          case "recommend":
+            return [
+              "<strong>Not sure which holiday service you need?</strong>",
+              "If you know your tree height and whether you’d like décor sourced or provided, we can match you quickly.",
+              "Start with a short intake and we’ll recommend the right option:",
+              intakeLink
+            ].join("<br>");
+          default:
+            return [
+              "Hi! I can help with holiday pricing, availability, and services.",
+              "Try asking “What holiday services do you offer?” or “Do you have availability before Christmas?”",
+              "Say “human” anytime to talk to a person."
+            ].join("<br>");
+        }
+      }
+
+      launcher.addEventListener("click", ()=>{
+        const open = panel.style.display !== "block";
+        panel.style.display = open ? "block" : "none";
+        if (open && !thread.dataset.greeted){
+          add("Hi! I’m your holiday concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+          thread.dataset.greeted = "1";
+        }
+        if (open) input.focus();
+      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
+      form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        add(text, "me"); input.value = "";
+        setTimeout(()=> add(answer(detectIntent(text))), 120);
+      });
+      quick.addEventListener("click",(e)=>{
+        if (e.target.matches("button[data-q]")){
+          const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+          const intent = map[e.target.getAttribute("data-q")] || "fallback";
+          add(e.target.textContent, "me");
+          setTimeout(()=> add(answer(intent)), 80);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Gate intake links if not signed in -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
+    let isAuthed = false;
+    onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
+
+    function gateClick(e) {
+      if (isAuthed) return;
+      e.preventDefault();
+      const target = e.currentTarget.getAttribute('href');
+      const next = encodeURIComponent(target);
+      window.location.href = `login.html?next=${next}`;
+    }
+    intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
+  </script>
+
+  <!-- Smart auth button -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
+
+  <!-- Base Firebase import -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+  </script>
+</body>
+</html>
