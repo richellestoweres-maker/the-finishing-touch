@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About – The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <!-- Page-specific styles -->
+  <style>
+    .page-about .container{
+      width:min(1180px,94%);
+      margin-inline:auto;
+    }
+
+    /* Hero */
+    .about-hero{
+      padding:40px 18px 24px;
+      background:var(--paper,#fbf8f4);
+    }
+    .about-hero-inner{
+      max-width:780px;
+      margin:0 auto;
+      text-align:center;
+    }
+    .about-hero-kicker{
+      font-family:"Allura",cursive;
+      font-size:1.7rem;
+      color:var(--taupe-800,#5b524e);
+      margin:0 0 .25rem;
+    }
+    .about-hero h1{
+      font-family:"Playfair Display",serif;
+      font-size:2.1rem;
+      margin:.2rem 0 .4rem;
+      color:var(--taupe-900,#524a46);
+    }
+    .about-hero p{
+      margin:0;
+      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:rgba(0,0,0,.72);
+      line-height:1.7;
+      font-size:.98rem;
+    }
+
+    /* Story section */
+    .about-section{
+      padding:36px 18px 12px;
+    }
+    .about-grid{
+      display:grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap:28px;
+      align-items:center;
+    }
+    @media (max-width: 880px){
+      .about-grid{
+        grid-template-columns:1fr;
+      }
+    }
+    .about-photo{
+      position:relative;
+    }
+    .about-photo img{
+      width:100%;
+      border-radius:18px;
+      display:block;
+      box-shadow:0 16px 40px rgba(0,0,0,.12);
+      object-fit:cover;
+    }
+    .about-photo-tag{
+      position:absolute;
+      left:16px;
+      bottom:16px;
+      background:rgba(251,248,244,.96);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.82rem;
+      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--taupe-900,#524a46);
+      box-shadow:0 8px 22px rgba(0,0,0,.16);
+    }
+    .about-copy h2{
+      font-family:"Playfair Display",serif;
+      font-size:1.6rem;
+      margin:0 0 .6rem;
+      color:var(--taupe-900,#524a46);
+    }
+    .about-copy p{
+      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-size:.98rem;
+      line-height:1.75;
+      color:rgba(0,0,0,.8);
+      margin:0 0 .9rem;
+    }
+    .about-signoff{
+      margin-top:.6rem;
+      font-size:.94rem;
+      color:rgba(0,0,0,.75);
+    }
+    .about-signoff span{
+      display:block;
+    }
+    .about-signature{
+      font-family:"Allura",cursive;
+      font-size:1.5rem;
+      margin-top:.15rem;
+    }
+
+    /* Values */
+    .values-section{
+      padding:12px 18px 36px;
+    }
+    .values-section h2{
+      text-align:center;
+      font-family:"Playfair Display",serif;
+      font-size:1.5rem;
+      margin:0 0 1.2rem;
+      color:var(--taupe-900,#524a46);
+    }
+    .values-grid{
+      display:grid;
+      gap:18px;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+    }
+    @media (max-width: 980px){
+      .values-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+    }
+    @media (max-width: 640px){
+      .values-grid{
+        grid-template-columns:1fr;
+      }
+    }
+    .value-card{
+      background:#fff;
+      border-radius:16px;
+      padding:16px 16px 18px;
+      box-shadow:var(--shadow,0 10px 26px rgba(0,0,0,.06));
+      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    .value-icon{
+      font-size:1.2rem;
+      margin-bottom:6px;
+    }
+    .value-card h3{
+      margin:0 0 .3rem;
+      font-size:.98rem;
+      font-weight:700;
+      color:var(--taupe-900,#524a46);
+    }
+    .value-card p{
+      margin:0;
+      font-size:.9rem;
+      line-height:1.6;
+      color:rgba(0,0,0,.75);
+    }
+
+    /* FAQ */
+    .faq-section{
+      padding:36px 18px 48px;
+      background:#f4ede5;
+    }
+    .faq-inner{
+      max-width:880px;
+      margin:0 auto;
+      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    .faq-header{
+      text-align:center;
+      margin-bottom:20px;
+    }
+    .faq-header h2{
+      font-family:"Playfair Display",serif;
+      margin:0 0 .3rem;
+      font-size:1.5rem;
+      color:var(--taupe-900,#524a46);
+    }
+    .faq-header p{
+      margin:0;
+      font-size:.95rem;
+      color:rgba(0,0,0,.7);
+    }
+    .faq-group-title{
+      font-size:.9rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin:18px 0 8px;
+      color:rgba(0,0,0,.55);
+    }
+    details.faq-item{
+      background:#fff;
+      border-radius:14px;
+      margin-bottom:8px;
+      padding:10px 14px;
+      box-shadow:0 8px 20px rgba(0,0,0,.05);
+    }
+    details.faq-item[open]{
+      box-shadow:0 10px 26px rgba(0,0,0,.1);
+    }
+    .faq-item summary{
+      list-style:none;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size:.95rem;
+      color:var(--taupe-900,#524a46);
+      font-weight:600;
+    }
+    .faq-item summary::-webkit-details-marker{
+      display:none;
+    }
+    .faq-question{
+      flex:1;
+    }
+    .faq-toggle{
+      font-size:1.1rem;
+      opacity:.7;
+    }
+    .faq-item[open] .faq-toggle{
+      transform:rotate(45deg);
+    }
+    .faq-item div{
+      margin-top:8px;
+      font-size:.9rem;
+      color:rgba(0,0,0,.78);
+      line-height:1.6;
+    }
+
+    /* CTA row at bottom */
+    .about-cta-row{
+      margin-top:24px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      font-size:.93rem;
+    }
+    .about-cta-row a.btn-solid{
+      border-radius:999px;
+      padding:.55rem 1.1rem;
+    }
+    .about-cta-row a.link-soft{
+      text-decoration:none;
+      color:var(--taupe-900,#524a46);
+    }
+  </style>
+</head>
+
+<body class="page-about">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a class="active" href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
+        <a class="btn btn-outline" href="intake-cleaning.html">Request a quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="about-hero">
+    <div class="container about-hero-inner">
+      <p class="about-hero-kicker">Behind every polished space is a thoughtful plan.</p>
+      <h1>About The Finishing Touch</h1>
+      <p>
+        A luxury cleaning and interior services company rooted in care, calm, and attention to detail —
+        serving Galveston, Harris, and Brazoria County.
+      </p>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <main class="about-section">
+    <div class="container about-grid">
+      <div class="about-photo">
+        <!-- Replace owner-headshot.jpg with your actual file name -->
+        <img src="owner-headshot.jpg" alt="Richelle, owner of The Finishing Touch">
+        <div class="about-photo-tag">Richelle • Owner & Lead Stylist</div>
+      </div>
+
+      <div class="about-copy">
+        <h2>Why I started The Finishing Touch</h2>
+        <p>
+          The Finishing Touch was born from a simple but important belief: your home should feel like an exhale,
+          not another item on your to-do list. I started this business after seeing how often busy families,
+          professionals, and caregivers were trying to carry it all — careers, kids, pets, life — and still somehow
+          keep their home feeling peaceful, presentable, and pulled together.
+        </p>
+        <p>
+          I’ve always been drawn to the quiet details: the way a freshly made bed changes a room, how styled surfaces
+          make a space feel intentional, how a truly clean home lets you breathe a little deeper. What began as helping
+          friends and family quickly grew into a trusted local service, and over time The Finishing Touch expanded into
+          full home care: luxury cleaning, organizing, staging, interior decorating, and seasonal styling.
+        </p>
+        <p>
+          Today, my team and I treat every home as if it were our own — respecting your privacy, honoring your routines,
+          and paying attention to the small details that most people overlook. Whether we’re preparing a home for showings,
+          getting a family ready for the holidays, or maintaining a recurring clean, my goal is the same: to create
+          calm, elevated spaces that actually support the life you’re living inside them.
+        </p>
+        <div class="about-signoff">
+          <span>With care,</span>
+          <span class="about-signature">Richelle</span>
+          <span>Owner, The Finishing Touch</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Values -->
+  <section class="values-section">
+    <div class="container">
+      <h2>How we care for your home</h2>
+      <div class="values-grid">
+        <article class="value-card">
+          <div class="value-icon"><i class="fa-solid fa-sparkles" aria-hidden="true"></i></div>
+          <h3>Detail-Driven Cleaning</h3>
+          <p>
+            We don’t rush a checklist. We focus on thoughtful, consistent detail — from baseboards to
+            high-touch areas — so your home feels truly refreshed, not just quickly wiped down.
+          </p>
+        </article>
+        <article class="value-card">
+          <div class="value-icon"><i class="fa-solid fa-couch" aria-hidden="true"></i></div>
+          <h3>Elevated Styling</h3>
+          <p>
+            From everyday styling to staging and holiday décor, we create spaces that feel cozy, curated,
+            and livable — not overly staged or impersonal.
+          </p>
+        </article>
+        <article class="value-card">
+          <div class="value-icon"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i></div>
+          <h3>Trust & Professionalism</h3>
+          <p>
+            We respect your home, your privacy, and your time. Clear communication, reliable scheduling,
+            and vetted contractors are non-negotiables for us.
+          </p>
+        </article>
+        <article class="value-card">
+          <div class="value-icon"><i class="fa-solid fa-people-roof" aria-hidden="true"></i></div>
+          <h3>Tailored to Real Life</h3>
+          <p>
+            Every home and family is different. We ask questions, listen to your priorities, and recommend
+            services that make sense for your lifestyle and budget.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="faq-inner">
+      <div class="faq-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Answers to some of the most common questions about our services, pricing, and process.</p>
+      </div>
+
+      <div class="faq-group">
+        <div class="faq-group-title">Services & Process</div>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">What areas do you serve?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            We currently serve parts of Galveston, Harris, and Brazoria County and surrounding areas.
+            If you’re unsure whether your home is within our service area, feel free to reach out with
+            your ZIP code and we’ll let you know.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">What’s included in an initial clean?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            An initial clean is a deeper, more detailed visit designed to reset your home. We focus on
+            high-touch areas, bathrooms, kitchen surfaces, floors, and dusting throughout, along with
+            extra attention in spaces that have more buildup. Once we’ve completed the initial clean,
+            we can move you into a standard recurring maintenance schedule.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">Do you offer organizing, staging, or decorating as stand-alone services?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            Yes. In addition to cleaning, we offer organizing, staging & styling, and seasonal or holiday
+            decorating. These can be booked as stand-alone services or layered on top of a cleaning visit
+            depending on your goals.
+          </div>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <div class="faq-group-title">Pricing & Booking</div>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">How do you price your services?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            Pricing is based on a combination of home size, condition, number of baths, lifestyle factors
+            (like pets), and the type of clean you’re requesting. We start with a ballpark range from your
+            intake form, then confirm your final quote after reviewing details, photos, or a walkthrough if needed.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">Why is the initial clean more than a standard maintenance clean?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            The initial visit allows us to catch up on buildup, detail areas that may have been overlooked,
+            and set your home up for easier upkeep moving forward. Once that baseline is established, recurring
+            visits are typically less time-intensive and priced accordingly.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">How do I request a quote or get on your schedule?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            The best first step is to complete our quick intake form so we can learn more about your home
+            and goals. From there, we’ll follow up with a tailored estimate and next steps to either schedule
+            your initial clean or set up a walkthrough.
+          </div>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <div class="faq-group-title">Policies & Home Care</div>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">Do I need to be home during the clean?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            You’re welcome to be home, but it’s not required. Many clients provide access via lockbox,
+            code, or key. We’ll review access instructions, pets, and any special requests before your
+            visit so everything feels seamless and secure.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">What is your cancellation policy?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            Because we reserve a dedicated block of time for your home, we do require advance notice for
+            cancellations or reschedules. Details of our current cancellation policy are shared during booking,
+            and we’re happy to clarify anything before your first visit.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">Are your cleaners insured or background checked?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            Yes. We take safety seriously. Our independent contractors are carefully vetted, required to carry
+            appropriate insurance, and held to The Finishing Touch standards for professionalism, confidentiality,
+            and respect in client homes.
+          </div>
+        </details>
+      </div>
+
+      <div class="about-cta-row">
+        <a href="intake-cleaning.html" class="btn btn-solid">
+          Start your intake
+        </a>
+        <a href="tel:+12816203963" class="link-soft">
+          Or call/text us at (281) 620-3963
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
+  </footer>
+
+  <!-- Site JS (if you have shared behaviors) -->
+  <script src="script.js?v=8"></script>
+</body>
+</html>
