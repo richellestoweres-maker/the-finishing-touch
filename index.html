@@ -499,26 +499,7 @@ We take pride in our attention to detail and the care we bring into every space,
     })();
   </script>
 
-  <!-- Gate intake links if not signed in -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-
-    const intakeLinks = Array.from(document.querySelectorAll('a[href^="intake-"]'));
-    let isAuthed = false;
-    onAuthStateChanged(auth, (user) => { isAuthed = !!user; });
-
-    function gateClick(e) {
-      if (isAuthed) return;
-      e.preventDefault();
-      const target = e.currentTarget.getAttribute('href');
-      const next = encodeURIComponent(target);
-      window.location.href = `login.html?next=${next}`;
-    }
-    intakeLinks.forEach((a) => a.addEventListener('click', gateClick));
-  </script>
-
-  <!-- Smart auth button -->
+   <!-- Smart auth button -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
