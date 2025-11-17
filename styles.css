@@ -289,5 +289,119 @@ iframe{max-width:100%}
 }
 .page-home .services .cards::after{ content:none !important; }
 
+/* =========================================
+   MOBILE LUXURY FIXES – under 780px
+   ========================================= */
+
+@media (max-width: 780px) {
+
+  /* Header cleanup */
+  .site-header .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 0;
+  }
+
+  .main-nav {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 0.95rem;
+  }
+
+  /* Reduce giant buttons wrapping */
+  .btn-cream,
+  .btn,
+  .btn-auth {
+    font-size: 0.9rem !important;
+    padding: .5rem .9rem !important;
+    white-space: nowrap;
+  }
+
+  /* HERO adjustments */
+  .hero-content .script-kicker {
+    font-size: 1.1rem;
+  }
+  .hero-content .hero-title {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  .hero-content .hero-sub {
+    font-size: 1rem;
+  }
+
+  /* Services grid – single column for elegance */
+  .services .cards {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  .services .card {
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+
+  /* About section refinement */
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 22px;
+  }
+
+  .about-photo img {
+    border-radius: 20px;
+  }
+
+  .about-copy p {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  /* Social proof section scaling */
+  .social-inner {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .social-text h2 {
+    font-size: 1.3rem;
+  }
+
+  /* General spacing */
+  section {
+    padding: 40px 18px;
+  }
+
+  /* Buttons and dropdown */
+  .quote-dropdown button {
+    font-size: 1rem;
+    padding: 12px 18px;
+  }
+
+  /* Cards on the holiday page */
+  .decor-option-card,
+  .holiday-card,
+  .card {
+    padding: 20px !important;
+    border-radius: 18px !important;
+  }
+
+  /* Fix over-wide radius on photos */
+  img {
+    border-radius: 16px;
+  }
+
+  /* Fix chat bubble size on mobile */
+  #ftt-chat-launcher {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+}
+
+
+
 
 
