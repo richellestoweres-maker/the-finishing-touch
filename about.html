@@ -161,6 +161,25 @@
       color:rgba(0,0,0,.75);
     }
 
+    /* --- MOBILE TWEAK so 2x2 cards aren’t skinny --- */
+    @media (max-width: 640px){
+      .page-about .values-section{
+        padding-left:0;
+        padding-right:0;
+      }
+      .page-about .values-section .container{
+        width:100%;
+        padding-left:10px;
+        padding-right:10px;
+      }
+      .page-about .values-grid{
+        gap:12px;              /* a bit tighter so each card gets more width */
+      }
+      .page-about .value-card{
+        padding:14px 10px 16px; /* slimmer side padding, makes them feel wider */
+      }
+    }
+
     /* FAQ */
     .faq-section{
       padding:36px 18px 48px;
@@ -517,3 +536,4 @@
   <script src="script.js?v=8"></script>
 </body>
 </html>
+
