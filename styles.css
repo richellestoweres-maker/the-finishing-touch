@@ -52,7 +52,12 @@ h1,h2,h3{font-family:"Playfair Display",Georgia,serif; color:var(--taupe-900); m
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:999px;font-weight:700;cursor:pointer;text-decoration:none}
 .btn-outline{border:1.5px solid var(--taupe-900);color:var(--taupe-900);background:transparent}
 .btn-solid{background:var(--accent);color:#2a2624;border:0}
-@media (max-width:640px){.btn{width:100%}}
+@media (max-width:640px){
+  .btn{
+    width:auto;          /* let buttons size to their content */
+  }
+}
+
 
 /* Top-right auth button */
 .btn-auth{
@@ -394,3 +399,4 @@ iframe{max-width:100%}
     font-size: 20px;
   }
 }
+
