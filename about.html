@@ -124,21 +124,19 @@
       margin:0 0 1.2rem;
       color:var(--taupe-900,#524a46);
     }
+
+    /* >>> 2 x 2 layout here <<< */
     .values-grid{
       display:grid;
       gap:18px;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-    }
-    @media (max-width: 980px){
-      .values-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
+      grid-template-columns:repeat(2,minmax(0,1fr)); /* 2 and 2 on desktop/tablet */
     }
     @media (max-width: 640px){
       .values-grid{
-        grid-template-columns:1fr;
+        grid-template-columns:1fr; /* stack on small phones */
       }
     }
+
     .value-card{
       background:#fff;
       border-radius:16px;
@@ -520,3 +518,4 @@
   <script src="script.js?v=8"></script>
 </body>
 </html>
+
