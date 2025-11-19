@@ -72,7 +72,10 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Cleaning Intake Form</div>
-    <p class="intake-note">Complete this brief form for an instant ballpark estimate.</p>
+    <p class="intake-note">
+      Complete this brief form and we’ll review your details, send a tailored ballpark estimate,
+      and follow up to schedule a walkthrough if you’d like one.
+    </p>
 
     <form id="intakeFormCleaning" class="grid-1" novalidate>
       <div class="grid-2">
@@ -106,11 +109,8 @@
         <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
         <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
         <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
-        <label>Square Footage
-          <select name="sqft">
-            <option>&lt;1000</option><option>1000–2000</option>
-            <option>2000–3000</option><option>3000–4000</option><option>4000+</option>
-          </select>
+        <label>Square Footage (approx.)
+          <input name="sqft" type="number" min="0" step="1" placeholder="e.g., 1750">
         </label>
         <label>Stories
           <select name="stories"><option>1</option><option>2</option></select>
@@ -152,10 +152,8 @@
       </fieldset>
 
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Get Instant Estimate</button>
-        <p id="estimateCleaning" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
-        <!-- Book button is injected here after estimate -->
-        <p id="formspreeStatusCleaning" style="opacity:.9"></p>
+        <button class="btn btn-solid" type="submit">Submit Intake</button>
+        <p id="formspreeStatusCleaning" style="opacity:.9;margin-top:10px;"></p>
       </div>
     </form>
   </main>
@@ -178,7 +176,7 @@
     })();
   </script>
 
-  <!-- Gate: require login for intake pages -->
+  <!-- Gate: require login for intake pages (keep as-is if you still want this) -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
@@ -190,50 +188,62 @@
     });
   </script>
 
-  <!-- Your site JS (kept; e.g., calcCleaning/estimateHoursCleaning may live here) -->
+  <!-- Your site JS (e.g., calcCleaning/estimateHoursCleaning may live here) -->
   <script src="script.js?v=8" defer></script>
   <!-- Helper that exposes FTAuto.createJobFromIntake(...) -->
   <script src="ft-auto.js" defer></script>
 
-  <!-- OVERRIDE: Estimate + “Book Now” + Firestore job (FTAuto) + Formspree email -->
+  <!-- OVERRIDE: Firestore job (FTAuto) + Formspree email + internal estimate + cleaner/pay suggestion -->
   <script>
     (function(){
-      // ---- TOGGLE EMAIL TRAIL ----
-      const USE_FORMSPREE = true;          // keep both Firestore + Formspree
-      const SEND_PII_TO_FORMSPREE = false; // keep address/phone out of email by default
+      const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mzzaogbv';
 
-      // Square service URLs by team-hours bucket
-      const SQUARE_CLEAN_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/B7HOTUU7R3PZTXU3KDWVTUGN";
-      const SQUARE_CLEAN_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/7DCTTLC4L6RT5ITF2NXHC2UJ";
-      const SQUARE_CLEAN_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/54JN4EKJXG6FU5G7PWWNHSAV";
-      const SQUARE_CLEAN_XL     ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/TJ25PH72FBCZ246QF27JR2RK";
+      function roundHalf(n){ return Math.round(n * 2) / 2; }
 
-      function roundHalf(n){ return Math.round(n*2)/2; }
+      // Fallback price calculator if global calcCleaning isn't available
+      function calcCleaningLocal(data){
+        const sqft = Number(data.sqft || 0) || 0;
+        const service = data.service || 'Initial Clean';
+        const frequency = data.frequency || 'one-time';
 
-      // Fallback hours estimator if shared one isn't loaded yet
-      function estimateHoursCleaningLocal(data){
-        try { if (typeof estimateHoursCleaning === 'function') return estimateHoursCleaning(data); } catch(_){}
-        const sqft = data.sqft || "1000–2000";
-        const service = data.service || "Initial Clean";
-        const beds = Number(data.beds||0);
-        const baths = Number(data.baths||0);
-        const otherRooms = Number(data.other_rooms||0);
-        const stories = String(data.stories||"1");
+        if (!sqft) return null;
 
-        let solo = 2;
-        if (sqft === "<1000") solo = 2;
-        else if (sqft === "1000–2000") solo = 3;
-        else if (sqft === "2000–3000") solo = 4;
-        else if (sqft === "3000–4000") solo = 5;
-        else solo = 6;
+        let rate = 0.20; // default around mid Initial Clean
 
-        if (service === "Airbnb Turnover"){
-          if (beds <= 1) solo = 2;
-          else if (beds === 2) solo = 2.5;
-          else if (beds === 3) solo = 3;
-          else if (beds === 4) solo = 3.5;
-          else solo = 4;
+        if (service === 'Standard Clean'){
+          if (frequency === 'weekly') rate = 0.14;
+          else if (frequency === 'biweekly') rate = 0.16;
+          else if (frequency === 'monthly') rate = 0.18;
+          else rate = 0.18; // one-time standard behaves like heavier maintenance
+        } else if (service === 'Deep Clean'){
+          rate = 0.25;
+        } else if (service === 'Move-In / Move-Out Clean'){
+          rate = 0.30;
+        } else if (service === 'Airbnb Turnover'){
+          rate = 0.25;
+        } else if (service === 'Initial Clean'){
+          rate = 0.20;
         }
+
+        return sqft * rate;
+      }
+
+      // Fallback hours estimator using numeric sqft
+      function estimateHoursCleaningLocal(data){
+        const sqftNum = Number(data.sqft || 0) || 0;
+        const beds = Number(data.beds || 0);
+        const baths = Number(data.baths || 0);
+        const otherRooms = Number(data.other_rooms || 0);
+        const stories = String(data.stories || "1");
+        const service = data.service || 'Initial Clean';
+
+        let solo = 3;
+        if (sqftNum > 0){
+          solo = 1 + Math.ceil(sqftNum / 1000);
+          if (solo < 2) solo = 2;
+          if (solo > 6) solo = 6;
+        }
+
         solo += Math.max(0, beds - 3) * 0.5;
         solo += Math.max(0, baths - 2) * 0.75;
         solo += Math.max(0, otherRooms) * 0.25;
@@ -242,96 +252,76 @@
         if (service === "Deep Clean") solo *= 1.5;
         if (service === "Move-In / Move-Out Clean") solo *= 2;
         if (service === "Initial Clean") solo *= 1.2;
+        if (service === "Airbnb Turnover") solo *= 1.1;
 
         solo = roundHalf(solo);
         const team = roundHalf(solo / 2);
         return { soloHours: solo, teamHours: team };
       }
 
-      function squareUrlForCleaningLocal(teamHours){
-        if (teamHours <= 2.5) return SQUARE_CLEAN_SMALL;
-        if (teamHours <= 3.5) return SQUARE_CLEAN_MEDIUM;
-        if (teamHours <= 5)   return SQUARE_CLEAN_LARGE;
-        return SQUARE_CLEAN_XL;
-      }
-
-      function cleaningHintLocal(data, teamHours){
-        const service = data.service || "Initial Clean";
-        if (service === "Standard Clean"){
-          const sqft = data.sqft || "1000–2000";
-          const label = {"<1000":"Small (≤1,000 sq ft)","1000–2000":"Medium (1,000–2,000)","2000–3000":"Large (2,000–3,000)","3000–4000":"XL (3,000–4,000)","4000+":"Estate (4,000+)"}[sqft] || "Sized by intake";
-          return `Standard Clean — ${label}`;
-        }
-        if (service === "Airbnb Turnover"){
-          if (teamHours <= 2.5) return "Airbnb Turnover — Quick (~2 hr)";
-          if (teamHours <= 3.5) return "Airbnb Turnover — Standard (~3 hr)";
-          if (teamHours <= 5)   return "Airbnb Turnover — Extended (~4–5 hr)";
-          return "Airbnb Turnover — Extended XL (5.5+ hr)";
-        }
-        if (teamHours <= 2.5) return `${service} — Small (~2–2.5 hr)`;
-        if (teamHours <= 3.5) return `${service} — Medium (~3–3.5 hr)`;
-        if (teamHours <= 5)   return `${service} — Large (~4–5 hr)`;
-        return `${service} — XL (5.5+ hr)`;
+      function suggestCleanerCount(soloHours){
+        if (soloHours <= 3) return 1;
+        if (soloHours <= 6) return 2;
+        if (soloHours <= 9) return 3;
+        return 4;
       }
 
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('intakeFormCleaning');
         if (!form) return;
 
+        const statusEl = document.getElementById('formspreeStatusCleaning');
+
         form.addEventListener('submit', async function(e){
           e.preventDefault();
           e.stopImmediatePropagation();
 
           const data = Object.fromEntries(new FormData(form).entries());
+          data.sqft = (data.sqft || '').trim();
 
-          // 1) Show price estimate
-          const estEl = document.getElementById('estimateCleaning');
+          // 1) Price estimate (internal only)
           let price = null;
           try {
-            if (typeof calcCleaning === 'function') price = calcCleaning(data);
-            if (estEl){
-              if (price != null) estEl.innerHTML = `Ballpark Estimate: <strong>$${Math.round(Number(price))}</strong>`;
-              else estEl.textContent = "Ballpark estimate ready.";
+            if (typeof calcCleaning === 'function') {
+              price = calcCleaning(data);
+            } else {
+              price = calcCleaningLocal(data);
             }
-          } catch (err){ console.warn(err); }
-
-          // 2) Pick Square URL based on estimated team hours
-          const { teamHours, soloHours } = estimateHoursCleaningLocal(data);
-          const url = (typeof squareUrlForCleaning === 'function')
-            ? squareUrlForCleaning(teamHours)
-            : squareUrlForCleaningLocal(teamHours);
-
-          // Inject/refresh the “Book Now” button
-          let btn = document.getElementById('scheduleOnSquareCleaning');
-          if (!btn){
-            btn = document.createElement('a');
-            btn.id = 'scheduleOnSquareCleaning';
-            btn.className = 'btn btn-solid';
-            btn.style.marginTop = '10px';
-            btn.textContent = 'Book Now';
-            estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          } catch (err){
+            console.warn(err);
           }
-          btn.href = url; btn.target = '_blank'; btn.rel = 'noopener';
+          const totalPrice = price != null ? Number(price) : 0;
 
-          // Guidance line
-          const hint = cleaningHintLocal(data, teamHours);
-          let hintEl = document.getElementById('cleaningHint');
-          if (!hintEl){
-            hintEl = document.createElement('p');
-            hintEl.id = 'cleaningHint';
-            hintEl.className = 'hint';
-            btn.parentNode.insertBefore(hintEl, btn.nextSibling);
-          }
-          hintEl.textContent = `Recommended service: ${hint}. This opens our Square calendar in a new tab.`;
+          // 2) Hours + cleaner suggestion
+          const hours = estimateHoursCleaningLocal(data);
+          const soloHours = hours.soloHours;
+          const teamHours = hours.teamHours;
+          const cleanerCount = suggestCleanerCount(soloHours);
 
-          // 3) Create Firestore job via FTAuto (corrected argument names)
+          // Double 70/30 split
+          const businessTop = totalPrice * 0.30;          // first 30%
+          const laborPool   = totalPrice * 0.70;          // 70% to labor side
+          const ownerFromLabor = laborPool * 0.30;        // 30% of labor side back to you
+          const cleanersPool   = laborPool * 0.70;        // 70% of labor side to cleaners
+          const cleanerTakeHomeEach = cleanerCount > 0 ? (cleanersPool / cleanerCount) : 0;
+          const ownerShareTotal = businessTop + ownerFromLabor;
+
+          // 3) Create Firestore job via FTAuto
           try {
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === 'function'){
               const summary = `${Number(data.beds||0)} bed / ${Number(data.baths||0)} bath — ${data.service||'Cleaning'}`.trim();
               await FTAuto.createJobFromIntake({
                 type: 'cleaning',
                 intakeData: data,
-                estimate: { price: price != null ? Number(price) : 0, teamHours },
+                estimate: {
+                  price: totalPrice,
+                  soloHours,
+                  teamHours,
+                  cleanerCount,
+                  cleanerTakeHomeEach,
+                  cleanersPool,
+                  ownerShare: ownerShareTotal
+                },
                 summary
               });
             }
@@ -339,57 +329,71 @@
             console.warn('Could not create job from intake (ok to ignore):', err);
           }
 
-          // 4) Send to Formspree in the background (optional email trail)
-          const statusEl = document.getElementById('formspreeStatusCleaning');
-          if (USE_FORMSPREE){
-            try {
-              const estText = estEl?.textContent?.trim() || '';
-              const fsData = new FormData();
-              fsData.append('_subject', 'Cleaning Intake');
-              fsData.append('form_name', 'Cleaning Intake');
-              fsData.append('page', location.href);
-              if (estText) fsData.append('estimate', estText);
-              fsData.append('team_hours', String(teamHours));
-              fsData.append('solo_hours', String(soloHours));
-              if (price!=null) fsData.append('price', `$${Math.round(Number(price))}`);
+          // 4) Send to Formspree with detailed fields
+          try {
+            const fsData = new FormData();
+            fsData.append('_subject', 'Cleaning Intake');
+            fsData.append('form_name', 'Cleaning Intake');
+            fsData.append('page', location.href);
 
-              // Include only non-PII by default
-              const safe = {
-                name: data.name || '',
-                email: data.email || '',
-                service: data.service || '',
-                frequency: data.frequency || '',
-                beds: data.beds || '',
-                baths: data.baths || '',
-                sqft: data.sqft || '',
-                stories: data.stories || '',
-                pets: data.pets || '',
-                addons: data.addons || '',
-                notes: data.notes || ''
-              };
-              if (SEND_PII_TO_FORMSPREE){
-                safe.address = data.address || '';
-                safe.phone = data.phone || '';
-              }
-              fsData.append('intake_json', JSON.stringify(safe));
+            // Contact
+            fsData.append('name', data.name || '');
+            fsData.append('email', data.email || '');
+            fsData.append('phone', data.phone || '');
+            fsData.append('address', data.address || '');
 
-              const resp = await fetch('https://formspree.io/f/mzzaogbv', {
-                method: 'POST',
-                body: fsData,
-                headers: { 'Accept': 'application/json' }
-              });
+            // Service details
+            fsData.append('service', data.service || '');
+            fsData.append('frequency', data.frequency || '');
+            fsData.append('availability', data.availability || '');
+            fsData.append('last_cleaned', data.last_cleaned || '');
 
-              if (statusEl){
-                statusEl.textContent = resp.ok
-                  ? 'Thanks! Your intake was sent.'
-                  : 'Estimate shown above. We couldn’t send the email copy right now.';
-              }
-            } catch (err) {
-              if (statusEl) statusEl.textContent = 'Estimate shown above. We couldn’t send the email copy right now.';
-              console.warn(err);
+            // Home details
+            fsData.append('beds', data.beds || '');
+            fsData.append('baths', data.baths || '');
+            fsData.append('other_rooms', data.other_rooms || '');
+            fsData.append('sqft', data.sqft || '');
+            fsData.append('stories', data.stories || '');
+            fsData.append('pets', data.pets || '');
+            fsData.append('areas_of_focus', data.notes || '');
+            fsData.append('addons', data.addons || '');
+            fsData.append('payment_method', data.pay || '');
+
+            // Consents
+            fsData.append('consent_work_photos', data.consent_work_photos ? 'on' : 'off');
+            fsData.append('consent_marketing_photos', data.consent_marketing_photos ? 'on' : 'off');
+            fsData.append('consent_terms', data.consent_terms ? 'on' : 'off');
+            fsData.append('consent_updates', data.consent_updates ? 'on' : 'off');
+
+            // Internal estimate helpers (for you in Formspree)
+            if (totalPrice){
+              fsData.append('price', `$${Math.round(totalPrice)}`);
             }
-          } else {
-            if (statusEl) statusEl.textContent = ''; // silent if not using Formspree
+            fsData.append('solo_hours', String(soloHours));
+            fsData.append('team_hours', String(teamHours));
+            fsData.append('cleaner_count', String(cleanerCount));
+            if (cleanerTakeHomeEach){
+              fsData.append('cleaner_take_home_each', `$${Math.round(cleanerTakeHomeEach)}`);
+            }
+            fsData.append('cleaners_pool_total', cleanersPool.toFixed(2));
+            fsData.append('owner_share_estimate', ownerShareTotal.toFixed(2));
+
+            const resp = await fetch(FORMSPREE_ENDPOINT, {
+              method: 'POST',
+              body: fsData,
+              headers: { 'Accept': 'application/json' }
+            });
+
+            if (statusEl){
+              statusEl.textContent = resp.ok
+                ? "Thank you! We're reviewing your intake details and will email you a tailored ballpark estimate and next steps."
+                : "Your form was received on our side, but we couldn't send the email copy right now.";
+            }
+          } catch (err) {
+            console.warn(err);
+            if (statusEl){
+              statusEl.textContent = "Thank you! We'll review your intake and follow up shortly.";
+            }
           }
         }, true);
       });
@@ -508,5 +512,5 @@
 </body>
 </html>
 
-</html>
+
 
