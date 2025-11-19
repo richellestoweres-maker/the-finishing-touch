@@ -129,20 +129,13 @@
       .holiday-gallery img{ height:210px; }
     }
 
-    /* ================= TREE + SERVICE GRIDS – in 2s ================= */
+    /* ================= TREE + SERVICE GRIDS ================= */
     .tree-grid,
     .service-grid{
       display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));  /* always 2 across on main breakpoints */
+      grid-template-columns:repeat(2, minmax(0,1fr));  /* 2 across on desktop + mobile */
       gap:16px;
       margin-top:12px;
-    }
-
-    @media (max-width:700px){
-      .tree-grid,
-      .service-grid{
-        grid-template-columns:1fr; /* stack on narrow phones so text isn't squished */
-      }
     }
 
     .tree-card, .service-card{
@@ -189,6 +182,23 @@
 
     /* Footer tweak */
     .site-footer{ margin-top:10px; }
+
+    /* ===== MOBILE TWEAK SO 2x2 CARDS AREN'T LONG + SKINNY ===== */
+    @media (max-width:640px){
+      .page-holiday .section .container{
+        width:100%;
+        padding-left:10px;
+        padding-right:10px;
+      }
+      .page-holiday .tree-grid,
+      .page-holiday .service-grid{
+        gap:12px;
+      }
+      .page-holiday .tree-card,
+      .page-holiday .service-card{
+        padding:14px 10px 16px;
+      }
+    }
   </style>
 
   <!-- Chat z-index safety -->
@@ -261,7 +271,6 @@
       </div>
       <div>
         <div class="holiday-gallery">
-          <!-- replace these with your own photos -->
           <img src="styled christmas tree.png" alt="Styled Christmas tree">
           <img src="holiday mantle with garland.png" alt="Holiday mantle with garland">
           <img src="staircase garland with ribbon.png" alt="Staircase garland with ribbon">
@@ -714,4 +723,5 @@
   </script>
 </body>
 </html>
+
 
