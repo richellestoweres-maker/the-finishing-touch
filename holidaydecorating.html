@@ -24,43 +24,59 @@
       background:#d2bda9; color:#2a2624; border:0; border-radius:999px; padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
     }
 
-    /* HERO */
+    /* ================= HOLIDAY HERO ================= */
     .holiday-hero{
-      position:relative; color:#fff;
+      position:relative;
+      color:#fff;
+    }
+    .holiday-hero-media{
+      position:relative;
+      overflow:hidden;
     }
     .holiday-hero-media img{
-      width:100%; height:clamp(340px, 50vw, 520px);
-      object-fit:cover; object-position:center;
+      width:100%;
+      height:clamp(360px, 55vh, 520px);
+      object-fit:cover;
+      object-position:center;
       display:block;
     }
     .holiday-hero-scrim{
       position:absolute; inset:0;
       background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
     }
+
+    /* Center like home hero */
     .holiday-hero-content{
-      position:absolute; inset:0;
-      display:grid; align-content:center;
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;          /* centers horizontal + vertical */
+      text-align:center;
+      padding:0 20px;
     }
     .holiday-hero-inner{
       max-width:min(780px,94%);
+      margin-inline:auto;
+      text-align:center;
       color:#fff;
       text-shadow:0 2px 12px rgba(0,0,0,.3);
     }
-.holiday-hero-kicker{
+
+    .holiday-hero-kicker{
       font-family:"Allura", cursive;
       font-size:1.9rem;
       margin:0 0 .3rem;
     }
-   .holiday-hero-title{
-  font-family:"Playfair Display", serif;
-  font-size:clamp(2.2rem, 4vw, 3rem);
-  margin:0 0 .4rem;
-  color:#ffffff !important;
-}
+    .holiday-hero-title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2.2rem, 4vw, 3rem);
+      margin:0 0 .4rem;
+      color:#ffffff !important;
+    }
     .holiday-hero-sub{
       font-size:1.05rem;
       max-width:32rem;
-      margin:0 0 1.1rem;
+      margin:0 auto 1.1rem;
     }
     .btn-primary{
       background:#f5eadf; color:#2a2624;
@@ -69,7 +85,21 @@
       display:inline-block;
     }
 
-    /* Sections */
+    @media (max-width:780px){
+      .holiday-hero-kicker{
+        font-size:1.6rem;
+      }
+      .holiday-hero-title{
+        font-size:2.1rem;
+        line-height:1.2;
+      }
+      .holiday-hero-sub{
+        font-size:.98rem;
+        max-width:90%;
+      }
+    }
+
+    /* ================= SECTIONS ================= */
     .section{ padding:40px 0; }
     .section h2{
       font-family:"Playfair Display", serif;
@@ -85,25 +115,36 @@
       .two-col{ grid-template-columns:1fr; }
     }
 
+    /* ================= GALLERY – 2 x 2 ================= */
     .holiday-gallery{
-      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr)); /* 2 and 2 */
+      gap:10px;
     }
     .holiday-gallery img{
       width:100%; height:180px; object-fit:cover;
       border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.12);
     }
     @media (max-width:640px){
-      .holiday-gallery{ grid-template-columns:1fr; }
       .holiday-gallery img{ height:210px; }
     }
 
-    /* Tables / grids */
-    .tree-grid, .service-grid{
+    /* ================= TREE + SERVICE GRIDS – in 2s ================= */
+    .tree-grid,
+    .service-grid{
       display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
+      grid-template-columns:repeat(2, minmax(0,1fr));  /* always 2 across on main breakpoints */
       gap:16px;
       margin-top:12px;
     }
+
+    @media (max-width:700px){
+      .tree-grid,
+      .service-grid{
+        grid-template-columns:1fr; /* stack on narrow phones so text isn't squished */
+      }
+    }
+
     .tree-card, .service-card{
       background:#fff;
       border-radius:16px;
@@ -180,7 +221,6 @@
   <!-- Holiday Hero -->
   <section class="holiday-hero">
     <div class="holiday-hero-media">
-      <!-- swap this image with a cozy holiday photo when you have one -->
       <img src="Christmas Magic.png" alt="Holiday styled living room with Christmas tree">
       <div class="holiday-hero-scrim"></div>
     </div>
@@ -674,3 +714,4 @@
   </script>
 </body>
 </html>
+
