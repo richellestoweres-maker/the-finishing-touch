@@ -232,17 +232,6 @@
     })();
   </script>
 
-  <!-- Gate: require login -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        const next = encodeURIComponent('intake-decor.html');
-        location.href = `login.html?next=${next}`;
-      }
-    });
-  </script>
 
   <!-- Your site JS (pricing etc.) -->
   <script src="script.js?v=8" defer></script>
