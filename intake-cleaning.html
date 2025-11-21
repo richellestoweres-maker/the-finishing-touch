@@ -176,17 +176,6 @@
     })();
   </script>
 
-  <!-- Gate: require login for intake pages (keep as-is if you still want this) -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        const next = encodeURIComponent('intake-cleaning.html');
-        location.href = `login.html?next=${next}`;
-      }
-    });
-  </script>
 
   <!-- Your site JS (e.g., calcCleaning/estimateHoursCleaning may live here) -->
   <script src="script.js?v=8" defer></script>
@@ -511,6 +500,7 @@
   </script>
 </body>
 </html>
+
 
 
 
