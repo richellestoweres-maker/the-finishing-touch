@@ -239,17 +239,6 @@
     })();
   </script>
 
-  <!-- Require login (portal-only access) -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        const next = encodeURIComponent('intake-organizing.html');
-        location.href = `login.html?next=${next}`;
-      }
-    });
-  </script>
 
   <!-- Your site JS (pricing, etc.) -->
   <script src="script.js?v=6" defer></script>
