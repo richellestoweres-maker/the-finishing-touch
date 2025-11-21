@@ -226,17 +226,7 @@
     })();
   </script>
 
-  <!-- Gate: require login -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        const next = encodeURIComponent('intake-holiday.html');
-        location.href = `login.html?next=${next}`;
-      }
-    });
-  </script>
+ 
 
   <!-- Your site JS (pricing/time calculators) -->
   <script src="script.js?v=9" defer></script>
