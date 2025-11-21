@@ -1,12 +1,8 @@
-/* =========================================
-   The Finishing Touch — script.js (DROP-IN)
-   Intake → Quote → Book (embedded calendar)
-   ========================================= */
 "use strict";
 
 /* ---------- Config ---------- */
 const BOOKING_SECTION_HASH = "#book";
-const FORMSPREE_ENDPOINT   = "https://formspree.io/f/mzzaogbv"; // ← your Formspree form ID
+const FORMSPREE_ENDPOINT   = "https://formspree.io/f/mzzaogbv";
 const INTAKE_UNLOCK_KEY    = "ftt_intake_ok";
 const INTAKE_HINT_KEY      = "ftt_booking_hint";
 
@@ -79,7 +75,7 @@ function showBookingHelper(hint){
 }
 
 /* ---------- Post to Formspree (AJAX) ---------- */
-async function postToFormspree(formEl, extraFields = {}, statusElId){
+async function postToFormspree(formEl, extraFields = {}, statusElId, successMessage){
   try{
     const fd = new FormData(formEl);
     fd.append("_subject", "New Intake — The Finishing Touch");
@@ -95,145 +91,147 @@ async function postToFormspree(formEl, extraFields = {}, statusElId){
     const ok = res.ok;
     const statusEl = statusElId ? document.getElementById(statusElId) : null;
     if (statusEl){
-      statusEl.textContent = ok ? "Saved. Check your email for confirmation." : "We couldn’t save your form just now, but your quote is above — please try submitting again later.";
+      statusEl.textContent = ok
+        ? (successMessage || "Thanks! Your form was received. We’ll review it and follow up shortly.")
+        : "We couldn’t save your form just now, but your info is still on-screen.";
     }
     return ok;
   }catch(err){
     console.error("Formspree error:", err);
     const statusEl = statusElId ? document.getElementById(statusElId) : null;
-    if (statusEl) statusEl.textContent = "We couldn’t save your form just now. Your quote is above — please try again.";
+    if (statusEl) statusEl.textContent = "We couldn’t save your form just now. Please try again later.";
     return false;
   }
 }
 
 /* =========================================
-   CLEANING — PRICING & TIME
+   CLEANING — PRICING & TIME (per-sq-ft)
    ========================================= */
-const initialBySqft  = {"<1000":250,"1000–2000":300,"2000–3000":375,"3000–4000":450,"4000+":520};
-const standardBySqft = {"<1000":170,"1000–2000":200,"2000–3000":250,"3000–4000":300,"4000+":360};
 
-const serviceMult = {
-  "Initial Clean": 1.00,
-  "Deep Clean": 1.20,
-  "Move-In / Move-Out Clean": 1.35,
-  "Airbnb Turnover": 0.55
-};
-const freqDisc = { "weekly":0.85, "biweekly":0.90, "monthly":0.95, "one-time":1 };
-const perExtraBathroom = 20, perExtraBedroom=12, perOtherRoom=10, twoStoryFee=20, petFee=12;
+// Interpret sqft either as a typed number (“2300”) or old select range (“2000–3000”)
+function normalizeSqft(value){
+  const raw = (value || "").trim();
+  if (!raw) return 0;
+  if (/^\d+$/.test(raw)) return Number(raw); // plain number
 
-const addonPricesCleaning = {
-  "oven":35,"fridge":30,"refrigerator":30,
-  "windows":80,"window":80,"baseboards":60,"laundry":18
-};
-const addonHoursCleaning = {
-  "oven":0.25, "fridge":0.25, "refrigerator":0.25,
-  "windows":1.5, "window":1.5, "baseboards":1.0, "laundry":0.5
-};
-
-function airbnbByBedrooms(beds){
-  const b = Number(beds) || 0;
-  if (b <= 1) return 120;
-  if (b === 2) return 140;
-  if (b === 3) return 160;
-  if (b === 4) return 180;
-  return 200;
+  // Fallback: approximate midpoints for old dropdown ranges
+  const ranges = {
+    "<1000": 800,
+    "1000–2000": 1500,
+    "1000-2000": 1500,
+    "2000–3000": 2500,
+    "2000-3000": 2500,
+    "3000–4000": 3500,
+    "3000-4000": 3500,
+    "4000+": 4200
+  };
+  return ranges[raw] || 1500;
 }
 
-function calcCleaning(data){
-  const sqft = data.sqft || "1000–2000";
-  const service = data.service || "Initial Clean";
-  const frequency = data.frequency || "one-time";
-  const beds = Number(data.beds||0);
-  const baths = Number(data.baths||0);
-  const otherRooms = Number(data.other_rooms||0);
-  const stories = String(data.stories||"1");
-  const pets = String(data.pets||"");
+// Main price calculator using your per-sq-ft rates
+function calcCleaning(data) {
+  const sqft = normalizeSqft(data.sqft);
+  const service = (data.service || "").toLowerCase();
+  const frequency = (data.frequency || "").toLowerCase();
 
-  let base = 0;
-  if (service === "Standard Clean"){
-    base = standardBySqft[sqft] ?? 200;
-  } else if (service === "Airbnb Turnover"){
-    base = airbnbByBedrooms(beds);
-  } else {
-    const initial = initialBySqft[sqft] ?? 300;
-    base = initial * (serviceMult[service] ?? 1);
+  if (!sqft || sqft <= 0) return 0;
+
+  // Base rates (you can tweak these anytime)
+  let rate = 0.20; // default to initial-style if we somehow don't match anything
+
+  // Standard recurring cleaning
+  if (service.includes("standard")) {
+    if (frequency.includes("weekly"))        rate = 0.14;
+    else if (frequency.includes("biweekly")) rate = 0.16;
+    else if (frequency.includes("monthly"))  rate = 0.18;
+    else                                     rate = 0.20; // one-time standard → similar to initial
+  }
+  // Initial
+  else if (service.includes("initial")) {
+    rate = 0.20;
+  }
+  // Deep clean (use middle of 0.22–0.28)
+  else if (service.includes("deep")) {
+    rate = 0.24;
+  }
+  // Move-in / move-out (0.28–0.35)
+  else if (service.includes("move")) {
+    rate = 0.32;
+  }
+  // Airbnb turnover
+  else if (service.includes("airbnb")) {
+    rate = 0.25;
   }
 
-  const extraBaths = Math.max(0, baths-2) * perExtraBathroom;
-  const extraBeds  = Math.max(0, beds-3) * perExtraBedroom;
-  const extraRooms = Math.max(0, otherRooms) * perOtherRoom;
-  const storyFee   = (stories === "2") ? twoStoryFee : 0;
-  const petsFee    = pets.trim() ? petFee : 0;
-  const addonsFee  = parseAddonsList(data.addons, addonPricesCleaning);
-
-  let est = base + extraBaths + extraBeds + extraRooms + storyFee + petsFee + addonsFee;
-  if (service === "Standard Clean"){ est *= (freqDisc[frequency] || 1); }
+  const est = sqft * rate;
   return Math.round(est);
 }
 
+// Time estimate + suggested cleaners
 function estimateHoursCleaning(data){
-  const sqft = data.sqft || "1000–2000";
-  const service = data.service || "Initial Clean";
-  const beds = Number(data.beds||0);
-  const baths = Number(data.baths||0);
-  const otherRooms = Number(data.other_rooms||0);
-  const stories = String(data.stories||"1");
+  const sqft = normalizeSqft(data.sqft);
+  const service = (data.service || "").toLowerCase();
+  const beds = Number(data.beds || 0);
+  const baths = Number(data.baths || 0);
+  const stories = String(data.stories || "1");
+  const addonsText = data.addons || "";
 
-  let solo = 2;
-  if (sqft === "<1000") solo = 2;
-  else if (sqft === "1000–2000") solo = 3;
-  else if (sqft === "2000–3000") solo = 4;
-  else if (sqft === "3000–4000") solo = 5;
-  else solo = 6;
-
-  if (service === "Airbnb Turnover"){
-    if (beds <= 1) solo = 2;
-    else if (beds === 2) solo = 2.5;
-    else if (beds === 3) solo = 3;
-    else if (beds === 4) solo = 3.5;
-    else solo = 4;
+  if (!sqft || sqft <= 0){
+    return { soloHours: 0, teamHours: 0, cleaners: 1 };
   }
 
-  solo += Math.max(0, beds - 3)  * 0.5;
-  solo += Math.max(0, baths - 2) * 0.75;
-  solo += Math.max(0, otherRooms) * 0.25;
+  // Base solo speed: ~700 sq ft per hour for a detailed clean
+  let solo = sqft / 700;
+
+  // More beds/baths = more time
+  solo += Math.max(0, beds - 3) * 0.25;
+  solo += Math.max(0, baths - 2) * 0.40;
+
+  // 2-story bump
   if (stories === "2") solo += 0.25;
-  solo += parseAddonsHours(data.addons, addonHoursCleaning);
 
-  if (service === "Deep Clean") solo *= 1.5;
-  if (service === "Move-In / Move-Out Clean") solo *= 2;
-  if (service === "Initial Clean") solo *= 1.2;
+  // Addons bumps (quick/rough)
+  const addonBumps = {
+    "oven": 0.5,
+    "fridge": 0.5,
+    "refrigerator": 0.5,
+    "windows": 1.0,
+    "window": 1.0,
+    "baseboards": 1.0,
+    "laundry": 0.75
+  };
+  const addonsLower = addonsText.toLowerCase();
+  for (const key of Object.keys(addonBumps)){
+    if (addonsLower.includes(key)) solo += addonBumps[key];
+  }
 
+  // Service intensity
+  if (service.includes("initial")) solo *= 1.15;
+  if (service.includes("deep"))    solo *= 1.35;
+  if (service.includes("move"))    solo *= 1.6;
+  if (service.includes("airbnb"))  solo *= 0.9; // usually lighter than full deep
+
+  // Round solo to nearest 0.5
   solo = roundHalf(solo);
-  const team = roundHalf(solo / 2);
-  return { soloHours: solo, teamHours: team };
+
+  // Suggest cleaners so nobody is there all day
+  let cleaners = 1;
+  if (solo > 4 && solo <= 7) cleaners = 2;
+  else if (solo > 7 && solo <= 10) cleaners = 3;
+  else if (solo > 10) cleaners = 4;
+
+  const teamHours = cleaners > 0 ? roundHalf(solo / cleaners) : 0;
+
+  return { soloHours: solo, teamHours, cleaners };
 }
 
+// Just a simple label — no dollars mentioned
 function cleaningHint(data, teamHours){
-  const service = data.service || "Initial Clean";
-  const sqft = data.sqft || "1000–2000";
-
-  const sqftLabel = {
-    "<1000":"Small (≤1,000 sq ft)",
-    "1000–2000":"Medium (1,000–2,000 sq ft)",
-    "2000–3000":"Large (2,000–3,000 sq ft)",
-    "3000–4000":"XL (3,000–4,000 sq ft)",
-    "4000+":"Estate (4,000+ sq ft)"
-  }[sqft] || "Sized by intake";
-
-  if (service === "Standard Clean"){
-    return `Standard Clean — ${sqftLabel}`;
-  }
-  if (service === "Airbnb Turnover"){
-    if (teamHours <= 2.5) return "Airbnb Turnover — Quick (≈2 hr)";
-    if (teamHours <= 3.5) return "Airbnb Turnover — Standard (≈3 hr)";
-    if (teamHours <= 5)   return "Airbnb Turnover — Extended (≈4 hr)";
-    return "Airbnb Turnover — Extended XL (4.5+ hr)";
-  }
+  const service = data.service || "Cleaning";
   if (teamHours <= 2.5) return `${service} — Small (≈2–2.5 hr)`;
-  if (teamHours <= 3.5) return `${service} — Medium (≈3–3.5 hr)`;
-  if (teamHours <= 5)   return `${service} — Large (≈4–5 hr)`;
-  return `${service} — XL (5.5+ hr)`;
+  if (teamHours <= 4)   return `${service} — Medium (≈3–4 hr)`;
+  if (teamHours <= 6)   return `${service} — Large (≈4–6 hr)`;
+  return `${service} — XL (6+ hr)`;
 }
 
 /* =========================================
@@ -370,8 +368,8 @@ function decorHint(data, teamHours){
 /* =========================================
    HOLIDAY DECORATING — INDOOR ONLY (multi-holiday)
    ========================================= */
-const HOLI_HOURLY = 85;   // solo hourly
-const HOLI_MIN_HOURS = 3; // minimum chargeable install
+const HOLI_HOURLY = 85;
+const HOLI_MIN_HOURS = 3;
 
 // Per-tree hours based on tallest size + style/ribbon
 function hoursForTrees(count, tallest, style, ribbon){
@@ -388,12 +386,10 @@ function hoursForTrees(count, tallest, style, ribbon){
 
   let hours = m.base + Math.max(0, t - 1) * m.addl;
 
-  // Style bumps
   const s = String(style || "").toLowerCase();
-  if (s.includes("full design")) hours += 1.4;     // sourcing & design
-  else if (s.includes("refresh")) hours += 0.6;    // ribbon/theme refresh
+  if (s.includes("full design")) hours += 1.4;
+  else if (s.includes("refresh")) hours += 0.6;
 
-  // Ribbon add
   if (String(ribbon || "No") === "Yes") hours += 0.4 * t;
 
   return hours;
@@ -420,14 +416,12 @@ function estimateHoursHoliday(data){
 
   const teardownWanted = String(data.teardown || "No") === "Yes";
 
-  // Base unit times (hours per item/section)
   const PER_WREATH      = 0.30;
   const PER_GARLAND     = 0.50;
   const PER_STAIRS      = 0.75;
   const PER_MANTLE      = 0.60;
   const PER_TABLESCAPE  = 0.40;
 
-  // Holiday multipliers (small nudges)
   let holMult = 1.0;
   let wreathMult = 1.0, garlandMult = 1.0, tablesMult = 1.0, mantleMult = 1.0, stairsMult = 1.0;
 
@@ -453,39 +447,30 @@ function estimateHoursHoliday(data){
       holMult = 1.05;
       break;
     default:
-      // christmas = defaults
       break;
   }
 
-  // Start with trees (mostly Christmas; harmless if 0 for others)
   let solo = 0;
   solo += hoursForTrees(trees, tallest, style, ribbon);
 
-  // Add indoor décor pieces
   solo += wreaths * PER_WREATH * wreathMult;
   solo += garland * PER_GARLAND * garlandMult;
   solo += stairs  * PER_STAIRS  * stairsMult;
   if (mantle) solo += PER_MANTLE * mantleMult;
   solo += tables * PER_TABLESCAPE * tablesMult;
 
-  // Storage / logistics
   if (/attic/i.test(storage))         solo += 0.5;
   else if (/offsite/i.test(storage))  solo += 1.0;
 
-  // Shopping trips
   solo += trips * 1.0;
 
-  // Apply overall holiday multiplier
   solo *= holMult;
 
-  // Overhead + minimum, quarter-hour rounding
   const roundQ = x => Math.max(0, Math.round(x * 4) / 4);
   solo = roundQ(Math.max(HOLI_MIN_HOURS, solo + 0.5));
 
-  // Split to team hours (assume 2 stylists)
   const teamHours = roundQ(solo / 2);
 
-  // Teardown ≈ 60% of install
   const teardownHours = teardownWanted ? roundQ(Math.max(1, solo * 0.6)) : 0;
 
   return { soloHours: solo, teamHours, teardownHours };
@@ -511,7 +496,6 @@ function holidayHint(data, teamHours){
    WIRE EVERYTHING AFTER DOM PARSE
    ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-  /* Force any external Square links to keep you on-page */
   try {
     document.querySelectorAll('a[href*="book.squareup.com/appointments"]').forEach(a => {
       a.setAttribute('href', BOOKING_SECTION_HASH);
@@ -519,7 +503,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   } catch (e) { console.warn(e); }
 
-  /* Unlock message on homepage if already completed an intake */
   const bookingSec = document.querySelector('.booking-embed[data-locked]');
   if (bookingSec && isUnlocked()){
     bookingSec.removeAttribute('data-locked');
@@ -527,14 +510,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hint) showBookingHelper(`Recommended: ${hint}`);
   }
 
-  /* Smooth scroll to #book if hash present (also re-run after Square loads) */
   const scrollToBook = () => {
     const el = document.getElementById('book');
     if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
   };
   if (location.hash === BOOKING_SECTION_HASH){ scrollToBook(); setTimeout(scrollToBook, 400); }
 
-  /* Hero dropdown (homepage) */
   const dd  = document.getElementById('quoteDropdownHero');
   const btn = document.getElementById('quoteBtnHero');
   const menu= document.getElementById('quoteMenuHero');
@@ -549,8 +530,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
   }
 
-  /* ===== INTAKE FORMS — show estimate, save to Formspree, unlock booking, show Book button ===== */
-
   /* CLEANING intake */
   try {
     const form = document.getElementById('intakeFormCleaning');
@@ -558,24 +537,43 @@ document.addEventListener('DOMContentLoaded', () => {
       form.addEventListener('submit', async (e)=>{
         e.preventDefault();
         const data = Object.fromEntries(new FormData(form).entries());
+
         const price = calcCleaning(data);
-        const { teamHours } = estimateHoursCleaning(data);
+        const { soloHours, teamHours, cleaners } = estimateHoursCleaning(data);
         const hint = cleaningHint(data, teamHours);
 
-        // Show estimate + booking button
-        const estEl = document.getElementById('estimateCleaning');
-        if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
-        ensureScheduleButton('estimateCleaning', BOOKING_SECTION_HASH, 'goBookCleaning');
+        // 70/30 split, then 70/30 of the 70% again
+        const total = price || 0;
+        const poolLabourAdmin   = total * 0.70;
+        const poolBusinessBase  = total * 0.30;
+        const poolCleaners      = poolLabourAdmin * 0.70;    // 49% of total
+        const poolRichelleAdmin = poolLabourAdmin * 0.30;    // 21% of total
 
-        // Unlock booking + remember hint
-        saveBookingUnlock(hint);
+        const perCleaner = cleaners > 0 ? poolCleaners / cleaners : 0;
 
-        // Post to Formspree (background)
-        await postToFormspree(form, {
-          service_type: "Cleaning",
-          estimate_price: `$${price}`,
-          estimate_hint: hint
-        }, "emailStatusCleaning");
+        // Save unlock hint for booking page (no dollar amounts shown to client)
+        if (hint) saveBookingUnlock(hint);
+
+        await postToFormspree(
+          form,
+          {
+            service_type: "Cleaning",
+            estimate_price: price ? `$${price}` : "",
+            estimate_hint: hint,
+            est_solo_hours: soloHours ? String(soloHours) : "",
+            est_team_hours: teamHours ? String(teamHours) : "",
+            est_cleaners_recommended: cleaners ? String(cleaners) : "",
+            pay_total: total ? `$${Math.round(total)}` : "",
+            pay_business_base_30: total ? `$${Math.round(poolBusinessBase)}` : "",
+            pay_cleaners_pool_49: total ? `$${Math.round(poolCleaners)}` : "",
+            pay_per_cleaner: total && cleaners ? `$${Math.round(perCleaner)}` : "",
+            pay_admin_richelle_21: total ? `$${Math.round(poolRichelleAdmin)}` : ""
+          },
+          "formspreeStatusCleaning",
+          "Thank you! Your intake was received. We’ll review everything and follow up with a ballpark quote and next steps."
+        );
+
+        try { form.reset(); } catch(e){}
       });
     }
   } catch (err){ console.error("Cleaning handler error:", err); }
@@ -597,11 +595,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveBookingUnlock(hint);
 
-        await postToFormspree(form, {
-          service_type: "Organizing",
-          estimate_price: `$${estPrice}`,
-          estimate_hint: hint
-        }, "emailStatusOrganizing");
+        await postToFormspree(
+          form,
+          {
+            service_type: "Organizing",
+            estimate_price: `$${estPrice}`,
+            estimate_hint: hint
+          },
+          "emailStatusOrganizing"
+        );
       });
     }
   } catch (err){ console.error("Organizing handler error:", err); }
@@ -623,16 +625,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveBookingUnlock(hint);
 
-        await postToFormspree(form, {
-          service_type: "Interior Decorating",
-          estimate_price: `$${price}`,
-          estimate_hint: hint
-        }, "emailStatusDecor");
+        await postToFormspree(
+          form,
+          {
+            service_type: "Interior Decorating",
+            estimate_price: `$${price}`,
+            estimate_hint: hint
+          },
+          "emailStatusDecor"
+        );
       });
     }
   } catch (err){ console.error("Decor handler error:", err); }
 
-  /* HOLIDAY (INDOOR) intake — now multi-holiday */
+  /* HOLIDAY (INDOOR) intake */
   try {
     const form = document.getElementById('intakeFormHoliday');
     if (form){
@@ -643,43 +649,54 @@ document.addEventListener('DOMContentLoaded', () => {
         const hint = holidayHint(data, teamHours);
 
         const estEl = document.getElementById('estimateHoliday');
-        const lines = [
-          `Install (ballpark): <strong>$${price}</strong>`,
-          `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with 2 stylists)`,
-        ];
-        if (teardownHours){
-          lines.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
+        if (estEl){
+          const lines = [
+            `Install (ballpark): <strong>$${price}</strong>`,
+            `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with 2 stylists)`,
+          ];
+          if (teardownHours){
+            lines.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
+          }
+          lines.push(`<span class="hint">${hint}</span>`);
+          estEl.innerHTML = lines.join("<br>");
         }
-        lines.push(`<span class="hint">${hint}</span>`);
-        if (estEl) estEl.innerHTML = lines.join("<br>");
 
         ensureScheduleButton('estimateHoliday', BOOKING_SECTION_HASH, 'goBookHoliday');
 
         saveBookingUnlock(hint);
 
-        await postToFormspree(form, {
-          service_type: "Holiday Decorating (indoor)",
-          estimate_price: `$${price}`,
-          estimate_hint: hint,
-          estimate_hours: `${soloHours} solo (~${teamHours} with team)`,
-          teardown_price: teardownHours ? `$${teardownPrice}` : "n/a",
-        }, "emailStatusHoliday");
+        await postToFormspree(
+          form,
+          {
+            service_type: "Holiday Decorating (indoor)",
+            estimate_price: `$${price}`,
+            estimate_hint: hint,
+            estimate_hours: `${soloHours} solo (~${teamHours} with team)`,
+            teardown_price: teardownHours ? `$${teardownPrice}` : "n/a"
+          },
+          "emailStatusHoliday"
+        );
       });
     }
   } catch (err){ console.error("Holiday handler error:", err); }
 
-  /* CONTACT form (homepage/contact page) */
+  /* CONTACT form */
   try {
     const contactForm = document.getElementById('contactForm');
     if (contactForm){
       contactForm.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const ok = await postToFormspree(contactForm, { service_type: "Contact" }, "contactStatus");
+        const ok = await postToFormspree(
+          contactForm,
+          { service_type: "Contact" },
+          "contactStatus",
+          "Thank you for reaching out! We’ll respond as soon as we can."
+        );
         if (ok) contactForm.reset();
       });
     }
   } catch (err){ console.error("Contact handler error:", err); }
-}); // ← closes DOMContentLoaded only; nothing else after this
+});
 
 /* AUTH FORMS: Login + Signup (placeholder) */
 try {
@@ -705,3 +722,5 @@ try {
 } catch (err) {
   console.error("Auth handler error:", err);
 }
+
+
