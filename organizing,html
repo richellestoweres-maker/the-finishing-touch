@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home Organizing – The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body.page-organizing .container { width:min(1180px,94%); margin-inline:auto; }
+
+    .page-organizing .header-inner{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 0;
+    }
+    .page-organizing .main-nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn-cream{
+      background:#d2bda9; color:#2a2624; border:0; border-radius:999px; padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
+    }
+
+    /* ============= HERO ============= */
+    .org-hero{
+      position:relative;
+      color:#fff;
+    }
+    .org-hero-media{
+      position:relative;
+      overflow:hidden;
+    }
+    .org-hero-media img{
+      width:100%;
+      height:clamp(360px, 55vh, 520px);
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .org-hero-scrim{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
+    }
+
+    .org-hero-content{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:0 20px;
+    }
+    .org-hero-inner{
+      max-width:min(780px,94%);
+      margin-inline:auto;
+      text-align:center;
+      color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,.3);
+    }
+
+    .org-hero-kicker{
+      font-family:"Allura", cursive;
+      font-size:1.9rem;
+      margin:0 0 .3rem;
+    }
+    .org-hero-title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2.2rem, 4vw, 3rem);
+      margin:0 0 .4rem;
+      color:#ffffff !important;
+    }
+    .org-hero-sub{
+      font-size:1.05rem;
+      max-width:32rem;
+      margin:0 auto 1.1rem;
+    }
+    .btn-primary{
+      background:#f5eadf; color:#2a2624;
+      border-radius:999px; padding:.7rem 1.25rem;
+      border:0; font-weight:700; text-decoration:none;
+      display:inline-block;
+    }
+
+    @media (max-width:780px){
+      .org-hero-kicker{ font-size:1.6rem; }
+      .org-hero-title{ font-size:2.1rem; line-height:1.2; }
+      .org-hero-sub{ font-size:.98rem; max-width:90%; }
+    }
+
+    /* ============= SECTIONS ============= */
+    .section{ padding:40px 0; }
+    .section h2{
+      font-family:"Playfair Display", serif;
+      margin:0 0 .75rem;
+      font-size:1.7rem;
+    }
+    .section p{ line-height:1.6; }
+
+    .two-col{
+      display:grid; grid-template-columns:1.1fr .9fr; gap:22px; align-items:flex-start;
+    }
+    @media (max-width:880px){
+      .two-col{ grid-template-columns:1fr; }
+    }
+
+    /* ============= GALLERY ============= */
+    .org-gallery{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .org-gallery img{
+      width:100%; height:180px; object-fit:cover;
+      border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.12);
+    }
+    @media (max-width:640px){
+      .org-gallery img{ height:210px; }
+    }
+
+    /* ============= CARD GRIDS (2 ACROSS) ============= */
+    .org-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));  /* pills in 2s */
+      gap:16px;
+      margin-top:12px;
+    }
+    @media (max-width:700px){
+      .org-grid{
+        grid-template-columns:1fr; /* stack on narrow phones */
+      }
+    }
+
+    .org-card{
+      background:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+    .org-card h3{
+      margin:.1rem 0 .35rem;
+      font-size:1.05rem;
+    }
+    .pill{
+      display:inline-block;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      background:#f3ebe2;
+      font-size:.8rem;
+      font-weight:600;
+      margin-bottom:.35rem;
+    }
+    .meta-line{
+      font-size:.9rem;
+      opacity:.85;
+      margin-bottom:.3rem;
+    }
+
+    .callout{
+      background:#fbf5ee;
+      border-radius:16px;
+      padding:16px 18px;
+      border:1px solid #ecdccc;
+      margin-top:14px;
+      font-size:.95rem;
+    }
+
+    .org-cta{
+      text-align:center;
+    }
+    .org-cta p{
+      max-width:540px;
+      margin:0 auto 1rem;
+    }
+
+    .site-footer{ margin-top:10px; }
+  </style>
+
+  <!-- Chat z-index safety -->
+  <style>
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
+</head>
+
+<body class="page-organizing">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="org-hero">
+    <div class="org-hero-media">
+      <img src="organized-pantry.png" alt="Neatly organized pantry with labeled bins and baskets">
+      <div class="org-hero-scrim"></div>
+    </div>
+
+    <div class="container org-hero-content">
+      <div class="org-hero-inner">
+        <p class="org-hero-kicker">Space, Simplified</p>
+        <h1 class="org-hero-title">Home Organizing by The Finishing Touch</h1>
+        <p class="org-hero-sub">
+          Calm, practical systems for pantries, closets, playrooms, and whole homes — styled to feel beautiful, but built for real life.
+        </p>
+        <a href="intake-organizing.html" class="btn-primary">Start Organizing Intake</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Organizing -->
+  <section class="section">
+    <div class="container two-col">
+      <div>
+        <h2>About Our Organizing Services</h2>
+        <p>
+          We blend function and aesthetics so your home feels lighter, easier to maintain, and tailored to your daily routines —
+          not just pretty in photos.
+        </p>
+        <p>
+          Every project starts with a quick intake, then we follow up with a ballpark estimate and recommended approach:
+        </p>
+        <ul>
+          <li><strong>Small-Space Packages</strong> – perfect for pantries, linen closets, fridges, and entry closets.</li>
+          <li><strong>Larger Projects & Whole-Home</strong> – kitchens, playrooms, primary suites, garages, and multi-space resets.</li>
+        </ul>
+        <p>
+          Most small-space projects start around <strong>$250</strong>, and larger projects are billed hourly per organizer with a
+          three-hour minimum. We’ll recommend a path and pricing after reviewing your intake and photos.
+        </p>
+      </div>
+      <div>
+        <div class="org-gallery">
+          <img src="organized-pantry-2.png" alt="Organized pantry with baskets and labels">
+          <img src="organized-closet.png" alt="Organized closet with color-coordinated clothing">
+          <img src="organized-playroom.png" alt="Labeled toy bins and shelves in a playroom">
+          <img src="organized-linen-closet.png" alt="Neatly folded towels and labeled bins in a linen closet">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Small-Space Packages -->
+  <section class="section">
+    <div class="container">
+      <h2>Small-Space Organizing Packages</h2>
+      <p>
+        Ideal for single spaces that need a full reset and system — including light decluttering, product recommendations,
+        and styling. Most of these fall into our <strong>starting at $250</strong> range, depending on size and volume.
+      </p>
+
+      <div class="org-grid">
+        <div class="org-card">
+          <span class="pill">Pantry Reset</span>
+          <h3>Small–Medium Pantry</h3>
+          <p class="meta-line">Perfect for everyday family pantries.</p>
+          <p>
+            Decluttering, zoning, and styling using your existing containers when possible. We can also recommend or source
+            bins, turntables, and labels for a more custom look.
+          </p>
+        </div>
+
+        <div class="org-card">
+          <span class="pill">Fridge & Freezer</span>
+          <h3>Cold Storage Reset</h3>
+          <p class="meta-line">Ideal before a grocery refresh or new season.</p>
+          <p>
+            Edit, clean-out, and re-categorize shelves and drawers with easy systems for snacks, grab-and-go items, and
+            family favorites.
+          </p>
+        </div>
+
+        <div class="org-card">
+          <span class="pill">Linen Closet</span>
+          <h3>Towels, Sheets & Extras</h3>
+          <p class="meta-line">Great for families and guest-ready homes.</p>
+          <p>
+            Folded, labeled, and grouped so you can quickly see what you have — and what needs to be refreshed or donated.
+          </p>
+        </div>
+
+        <div class="org-card">
+          <span class="pill">Coat / Entry Closet</span>
+          <h3>Drop-Zone Reset</h3>
+          <p class="meta-line">For busy doorways and “dumping spots.”</p>
+          <p>
+            Hooks, baskets, and categories for shoes, bags, jackets, and grab-and-go items so the chaos has a proper home.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        Small-space projects are usually handled by <strong>one organizer</strong> and can often be completed in a single session.
+        Your intake helps us confirm timing and whether product sourcing is needed.
+      </div>
+    </div>
+  </section>
+
+  <!-- Larger Projects -->
+  <section class="section">
+    <div class="container">
+      <h2>Larger Projects & Whole-Home Resets</h2>
+      <p>
+        For full kitchens, playrooms, primary suites, garages, and multi-space projects, we typically work
+        <strong>hourly per organizer</strong> with a three-hour minimum. We’ll recommend the number of organizers and
+        a rough time frame after reviewing your details.
+      </p>
+
+      <div class="org-grid">
+        <div class="org-card">
+          <span class="pill">Kitchen & Cabinets</span>
+          <h3>Cabinets, Drawers & Counters</h3>
+          <p class="meta-line">Often 2 organizers • 3–6+ hours</p>
+          <p>
+            Full edit and reset of cabinets, drawers, and key surfaces so cooking, packing lunches, and unloading groceries
+            feels smoother and less cluttered.
+          </p>
+        </div>
+
+        <div class="org-card">
+          <span class="pill">Playroom / Kids’ Spaces</span>
+          <h3>Toys, Crafts & Zones</h3>
+          <p class="meta-line">Often 2 organizers • 3–6+ hours</p>
+          <p>
+            Create kid-friendly zones with labeled bins, rotated toys, and systems that help children (and adults) clean up
+            quickly and independently.
+          </p>
+        </div>
+
+        <div class="org-card">
+          <span class="pill">Closets & Bedrooms</span>
+          <h3>Primary or Shared Rooms</h3>
+          <p class="meta-line">1–2 organizers • 3–5+ hours</p>
+          <p>
+            Clothing edits, drawer systems, and closet zoning so getting dressed in the morning feels simple instead of
+            overwhelming.
+          </p>
+        </div>
+
+        <div class="org-card">
+          <span class="pill">Garage & Multi-Space</span>
+          <h3>Bigger Project Days</h3>
+          <p class="meta-line">2+ organizers • project-based</p>
+          <p>
+            Larger edits broken into phases with clear priorities, donation loads, and container planning for a more
+            functional whole-home flow.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        Larger projects are quoted after intake and photos. We’ll suggest the number of organizers, estimated hours,
+        and whether it makes sense to phase the project over multiple sessions or tackle it in a single, focused day.
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="container">
+      <h2>How Organizing With Us Works</h2>
+      <ol>
+        <li><strong>Submit a quick organizing intake.</strong> Tell us your space, clutter level, and goals. You can also share photos or video.</li>
+        <li><strong>We review and send a ballpark estimate.</strong> You’ll get a rough range, recommended number of organizers, and suggested session length.</li>
+        <li><strong>We schedule your session.</strong> You can choose to be hands-on or let us do most of the decision-making with guidelines.</li>
+        <li><strong>Install & reveal.</strong> We sort, edit, categorize, and style your space, then walk you through how to maintain the system.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container org-cta">
+      <h2>Ready to Simplify Your Space?</h2>
+      <p>
+        Share a few details about your space and goals, and we’ll review your intake, build a ballpark estimate,
+        and follow up with next steps and scheduling options.
+      </p>
+      <a href="intake-organizing.html" class="btn-primary">Start Organizing Intake</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
+  </footer>
+
+  <!-- Chat widget -->
+  <style>
+    #ftt-chat-launcher{
+      position:fixed; right:18px; bottom:18px;
+      width:54px; height:54px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.18);
+    }
+    #ftt-chat{
+      position:fixed; right:18px; bottom:84px;
+      width:340px; max-width:calc(100vw - 36px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
+    .ftt-title{ font-weight:800; color:#2e2a27 }
+    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
+    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
+    .ftt-thread{ height:300px; overflow:auto; padding:12px }
+    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
+    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
+    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
+    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
+    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
+    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
+    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
+    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
+    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+  </style>
+
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="help">Help me choose</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-organizing.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messenger: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+
+      const panel   = document.getElementById("ftt-chat");
+      const thread  = document.getElementById("ftt-thread");
+      const form    = document.getElementById("ftt-inputbar");
+      const input   = document.getElementById("ftt-input");
+      const quick   = document.querySelector(".ftt-quick");
+      const closeBtn= document.querySelector(".ftt-close");
+      const launcher= document.getElementById("ftt-chat-launcher");
+
+      function add(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|organize|organizing|staging|decor)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
+        return "fallback";
+      }
+      function answer(intent){
+        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Organizing Intake</a>`;
+        const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book in Square</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Organizing is priced by project:",
+              "• Small spaces (like pantries + closets) usually start around $250.",
+              "• Larger projects are billed hourly per organizer with a 3-hour minimum.",
+              "Start with intake and we’ll send a tailored ballpark: ",
+              intakeLink
+            ].join("<br>");
+          case "availability":
+            return [
+              "Availability changes week to week.",
+              bookLink + " shows current openings, or " + intakeLink + " if you’d like us to review your space before booking."
+            ].join("<br>");
+          case "services":
+            return [
+              "We organize pantries, fridges, closets, playrooms, bedrooms, offices, garages, and more.",
+              "We can also help with sourcing bins, labels, and containers.",
+              "Share details here: " + intakeLink
+            ].join("<br>");
+          case "book": return "Perfect—" + bookLink + ". If you’re unsure what you need, start here first: " + intakeLink;
+          case "human":
+            return isWithinBusinessHours()
+              ? `You can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> for the fastest reply.`
+              : `We’re currently offline, but you can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply as soon as we’re back.`;
+          case "recommend":
+            return [
+              "<strong>Not sure where to start?</strong>",
+              "Tell us which space stresses you out the most (pantry, closet, playroom, etc.) and we’ll start there.",
+              "Use the intake form and we’ll send a suggested plan: " + intakeLink
+            ].join("<br>");
+          default:
+            return [
+              "Hi! I can help with organizing pricing, availability, and services.",
+              "Try asking “What do you charge for organizing?” or “Can you organize a pantry and playroom?”",
+              "Say “human” anytime to talk to a person."
+            ].join("<br>");
+        }
+      }
+
+      launcher.addEventListener("click", ()=>{
+        const open = panel.style.display !== "block";
+        panel.style.display = open ? "block" : "none";
+        if (open && !thread.dataset.greeted){
+          add("Hi! I’m your organizing concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+          thread.dataset.greeted = "1";
+        }
+        if (open) input.focus();
+      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
+      form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        add(text, "me"); input.value = "";
+        setTimeout(()=> add(answer(detectIntent(text))), 120);
+      });
+      quick.addEventListener("click",(e)=>{
+        if (e.target.matches("button[data-q]")){
+          const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+          const intent = map[e.target.getAttribute("data-q")] || "fallback";
+          add(e.target.textContent, "me");
+          setTimeout(()=> add(answer(intent)), 80);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Smart auth button -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
+
+  <!-- Base Firebase import -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+  </script>
+</body>
+</html>
