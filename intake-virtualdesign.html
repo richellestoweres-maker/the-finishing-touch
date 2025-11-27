@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Virtual Interior Design – The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body.page-virtualdesign .container { width:min(1180px,94%); margin-inline:auto; }
+
+    .page-virtualdesign .header-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; padding:10px 0;
+    }
+    .page-virtualdesign .main-nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn-cream{
+      background:#d2bda9; color:#2a2624; border:0; border-radius:999px;
+      padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
+    }
+
+    /* ============= HERO ============= */
+    .vd-hero{
+      position:relative;
+      color:#fff;
+    }
+    .vd-hero-media{
+      position:relative;
+      overflow:hidden;
+    }
+    .vd-hero-media img{
+      width:100%;
+      height:clamp(360px, 55vh, 520px);
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .vd-hero-scrim{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.6));
+    }
+
+    .vd-hero-content{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:0 20px;
+    }
+    .vd-hero-inner{
+      max-width:min(780px,94%);
+      margin-inline:auto;
+      text-align:center;
+      color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,.3);
+    }
+
+    .vd-hero-kicker{
+      font-family:"Allura", cursive;
+      font-size:1.9rem;
+      margin:0 0 .3rem;
+    }
+    .vd-hero-title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2.2rem, 4vw, 3rem);
+      margin:0 0 .4rem;
+      color:#ffffff !important;
+    }
+    .vd-hero-sub{
+      font-size:1.05rem;
+      max-width:34rem;
+      margin:0 auto 1.1rem;
+    }
+    .vd-hero-tags{
+      font-size:.9rem;
+      opacity:.9;
+      margin-bottom:1rem;
+    }
+    .vd-hero-tags strong{ font-weight:700; }
+
+    .btn-primary{
+      background:#f5eadf; color:#2a2624;
+      border-radius:999px; padding:.7rem 1.25rem;
+      border:0; font-weight:700; text-decoration:none;
+      display:inline-block;
+    }
+
+    @media (max-width:780px){
+      .vd-hero-kicker{ font-size:1.6rem; }
+      .vd-hero-title{ font-size:2.1rem; line-height:1.2; }
+      .vd-hero-sub{ font-size:.98rem; max-width:90%; }
+    }
+
+    /* ============= SECTIONS ============= */
+    .section{ padding:40px 0; }
+    .section h2{
+      font-family:"Playfair Display", serif;
+      margin:0 0 .75rem;
+      font-size:1.7rem;
+    }
+    .section p{ line-height:1.6; }
+
+    .two-col{
+      display:grid; grid-template-columns:1.1fr .9fr; gap:22px; align-items:flex-start;
+    }
+    @media (max-width:880px){
+      .two-col{ grid-template-columns:1fr; }
+    }
+
+    /* ============= GALLERY ============= */
+    .vd-gallery{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .vd-gallery img{
+      width:100%; height:180px; object-fit:cover;
+      border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.12);
+    }
+    @media (max-width:640px){
+      .vd-gallery img{ height:210px; }
+    }
+
+    /* ============= CARD GRIDS ============= */
+    .vd-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:12px;
+    }
+    @media (max-width:700px){
+      .vd-grid{ grid-template-columns:1fr; }
+    }
+
+    .vd-card{
+      background:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+    .vd-card h3{
+      margin:.1rem 0 .35rem;
+      font-size:1.05rem;
+    }
+    .pill{
+      display:inline-block;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      background:#f3ebe2;
+      font-size:.8rem;
+      font-weight:600;
+      margin-bottom:.35rem;
+    }
+    .meta-line{
+      font-size:.9rem;
+      opacity:.85;
+      margin-bottom:.3rem;
+    }
+
+    .callout{
+      background:#fbf5ee;
+      border-radius:16px;
+      padding:16px 18px;
+      border:1px solid #ecdccc;
+      margin-top:14px;
+      font-size:.95rem;
+    }
+
+    .vd-cta{
+      text-align:center;
+    }
+    .vd-cta p{
+      max-width:540px;
+      margin:0 auto 1rem;
+    }
+
+    .site-footer{ margin-top:10px; }
+  </style>
+
+  <!-- Chat z-index safety -->
+  <style>
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
+</head>
+
+<body class="page-virtualdesign">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="vd-hero">
+    <div class="vd-hero-media">
+      <!-- swap this image name for your virtual design hero -->
+      <img src="virtualdesignbanner.png" alt="Laptop on coffee table showing interior design moodboard next to styled living room">
+      <div class="vd-hero-scrim"></div>
+    </div>
+
+    <div class="container vd-hero-content">
+      <div class="vd-hero-inner">
+        <p class="vd-hero-kicker">Design, Delivered</p>
+        <h1 class="vd-hero-title">Virtual Interior Design by The Finishing Touch</h1>
+        <p class="vd-hero-sub">
+          Send us your photos, measurements, and inspiration — we’ll send back a custom design plan, moodboard,
+          layout, and shopping list so you can bring it to life on your own timeline.
+        </p>
+        <p class="vd-hero-tags">
+          <strong>Available anywhere</strong> • perfect for homeowners, renters, and Airbnb hosts
+        </p>
+        <a href="intake-virtualdesign.html" class="btn-primary">Start Virtual Design Intake</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Virtual Design -->
+  <section class="section">
+    <div class="container two-col">
+      <div>
+        <h2>What Is Virtual Interior Design?</h2>
+        <p>
+          Virtual design (or e-design) gives you a designer’s eye without needing an in-home visit.
+          You share photos, a quick video, and measurements — plus any Pinterest boards, color palettes,
+          or “I love this” screenshots you already have.
+        </p>
+        <p>
+          In return, you get a clear plan for your space:
+        </p>
+        <ul>
+          <li>A cohesive moodboard and color direction</li>
+          <li>Layout ideas and furniture placement suggestions</li>
+          <li>Clickable shopping list for furniture and decor</li>
+          <li>Styling notes so you know exactly how to set it all up</li>
+        </ul>
+        <p>
+          It’s perfect if you know what you like when you see it, but have a hard time pulling it together
+          or committing to decisions on your own.
+        </p>
+      </div>
+      <div>
+        <div class="vd-gallery">
+          <img src="virtual-moodboard.png" alt="Interior design moodboard with colors and textures">
+          <img src="virtual-layout.png" alt="Room layout sketch for living room">
+          <img src="virtual-shoppinglist.png" alt="Example shopping list with product images">
+          <img src="virtual-beforeafter.png" alt="Before and after virtual design result">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Package Types -->
+  <section class="section">
+    <div class="container">
+      <h2>Virtual Design Packages</h2>
+      <p>
+        Every package is delivered by email and designed so you can install everything at your own pace,
+        in your own budget, wherever you live.
+      </p>
+
+      <div class="vd-grid">
+        <!-- Single Room Refresh -->
+        <div class="vd-card">
+          <span class="pill">Single Room</span>
+          <h3>Room Refresh E-Design</h3>
+          <p class="meta-line">Ideal for living rooms, bedrooms, nurseries, or offices.</p>
+          <p>
+            We take your existing room and reimagine it. This package is great if you have some furniture that
+            needs better styling and a few new pieces to feel “finished.”
+          </p>
+          <ul>
+            <li>Moodboard with colors, textures, and overall vibe</li>
+            <li>Layout suggestion and furniture placement</li>
+            <li>Shopping list for key decor and a few anchor pieces</li>
+            <li>Styling notes &amp; simple step-by-step setup</li>
+          </ul>
+        </div>
+
+        <!-- Full Room -->
+        <div class="vd-card">
+          <span class="pill">Full Room</span>
+          <h3>Full Room E-Design</h3>
+          <p class="meta-line">For near-blank spaces or bigger overhauls.</p>
+          <p>
+            Perfect if you’re starting fresh or want a more dramatic change. We plan the room from
+            the big pieces down to the finishing touches.
+          </p>
+          <ul>
+            <li>Concept moodboard and color story</li>
+            <li>Furniture layout with suggested sizes</li>
+            <li>Shopping list for furniture, lighting, textiles, and decor</li>
+            <li>Optional alternates for key pieces (so you can pick your favorite)</li>
+          </ul>
+        </div>
+
+        <!-- Airbnb -->
+        <div class="vd-card">
+          <span class="pill">Airbnb &amp; STR</span>
+          <h3>Guest-Ready Virtual Design</h3>
+          <p class="meta-line">For short-term rentals that need to look special online.</p>
+          <p>
+            We design your Airbnb to stand out in photos and feel cozy in person — while still being
+            durable and easy to maintain between guests.
+          </p>
+          <ul>
+            <li>Overall listing vibe and guest experience plan</li>
+            <li>Layouts for main living, dining, and sleeping areas</li>
+            <li>Shopping list for bedding, art, lighting, and decor</li>
+            <li>Checklist for guest-ready details (entry, coffee station, bathrooms)</li>
+          </ul>
+        </div>
+
+        <!-- Add-Ons -->
+        <div class="vd-card">
+          <span class="pill">Add-Ons</span>
+          <h3>Optional Support</h3>
+          <p class="meta-line">Extra help when you want a little more hand-holding.</p>
+          <p>
+            You can add on support as needed:
+          </p>
+          <ul>
+            <li>One round of revisions after you review the first plan</li>
+            <li>Follow-up Q&amp;A via email to tweak details</li>
+            <li>Additional small areas (entry, hallway, reading nook)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        Pricing for virtual design is based on the number of rooms, the amount of sourcing involved,
+        and whether you need add-ons like revisions or extra spaces. After you complete the
+        <strong>virtual design intake</strong>, we’ll send a tailored ballpark before you commit.
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section">
+    <div class="container">
+      <h2>How Virtual Design Works</h2>
+      <ol>
+        <li>
+          <strong>Start the virtual design intake.</strong>
+          Tell us which rooms you want help with, your budget range, and whether you’re keeping any existing furniture.
+        </li>
+        <li>
+          <strong>Upload photos, measurements &amp; inspiration.</strong>
+          You can share:
+          phone photos, a quick video walkthrough, rough measurements,
+          Pinterest boards, screenshots, and color palettes you love.
+        </li>
+        <li>
+          <strong>We design your space.</strong>
+          We build a custom moodboard, layout suggestions, and a curated shopping list
+          that fits your style and budget range.
+        </li>
+        <li>
+          <strong>Design is delivered to your inbox.</strong>
+          You’ll receive everything by email, with clear notes so you can order and style
+          on your schedule. Optional add-on: one round of revisions if you want to tweak.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container vd-cta">
+      <h2>Ready to See Your Room on Paper First?</h2>
+      <p>
+        Share your space, your inspo, and your budget range — we’ll take it from there and send back a design plan
+        that feels like you, just more finished.
+      </p>
+      <a href="intake-virtualdesign.html" class="btn-primary">Start Virtual Design Intake</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Virtual design available anywhere</p>
+    </div>
+  </footer>
+
+  <!-- Chat widget -->
+  <style>
+    #ftt-chat-launcher{
+      position:fixed; right:18px; bottom:18px;
+      width:54px; height:54px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.18);
+    }
+    #ftt-chat{
+      position:fixed; right:18px; bottom:84px;
+      width:340px; max-width:calc(100vw - 36px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
+    .ftt-title{ font-weight:800; color:#2e2a27 }
+    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
+    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
+    .ftt-thread{ height:300px; overflow:auto; padding:12px }
+    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
+    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
+    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
+    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
+    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
+    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
+    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
+    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
+    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+  </style>
+
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">Virtual Design Concierge</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about virtual design, pricing, or how it works…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="services">What’s included</button>
+      <button data-q="process">How it works</button>
+      <button data-q="book">Start intake</button>
+      <button data-q="human">Talk to a person</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-virtualdesign.html",
+        bookUrl: "intake-virtualdesign.html",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messenger: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+
+      const panel   = document.getElementById("ftt-chat");
+      const thread  = document.getElementById("ftt-thread");
+      const form    = document.getElementById("ftt-inputbar");
+      const input   = document.getElementById("ftt-input");
+      const quick   = document.querySelector(".ftt-quick");
+      const closeBtn= document.querySelector(".ftt-close");
+      const launcher= document.getElementById("ftt-chat-launcher");
+
+      function add(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(service|package|included|what do i get|what's included)/.test(t)) return "services";
+        if (/(how.*work|process|steps|what happens)/.test(t)) return "process";
+        if (/(book|start|intake|ready)/.test(t)) return "book";
+        return "fallback";
+      }
+      function answer(intent){
+        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Virtual Design Intake</a>`;
+        const bookLink = `<a href="${CFG.bookUrl}">Start Virtual Design Intake</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Virtual design is priced by room and package (single room, full room, or Airbnb package), plus any add-ons you choose.",
+              "Once you complete the intake with your room count and goals, we’ll send a tailored ballpark before you commit.",
+              "You can start here: " + intakeLink
+            ].join("<br>");
+          case "services":
+            return [
+              "Virtual design includes: a moodboard, layout suggestions, a curated shopping list, and styling notes you can follow at home.",
+              "You can choose a simple room refresh or a full room e-design, and we also offer Airbnb-focused packages.",
+              "See package details on this page, or start intake so we can recommend the best fit: " + intakeLink
+            ].join("<br>");
+          case "process":
+            return [
+              "<strong>How it works:</strong>",
+              "1) You fill out the intake and upload photos, measurements, and inspo.",
+              "2) We design your space and build your plan.",
+              "3) You receive everything by email and implement at your own pace.",
+              "If you’d like, you can add a round of revisions after you see the first draft."
+            ].join("<br>");
+          case "book":
+            return "Ready when you are — " + bookLink + " to share your space, inspo, and budget range.";
+          case "human":
+            return isWithinBusinessHours()
+              ? `You can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> for the fastest reply, or email <a href="mailto:${CFG.email}">${CFG.email}</a>.`
+              : `We’re currently offline, but you can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply as soon as we’re back.`;
+          default:
+            return [
+              "Hi! I can help with questions about virtual interior design.",
+              "Try asking “What’s included in virtual design?” or “How does the process work?”",
+              "Say “human” anytime to talk to a person."
+            ].join("<br>");
+        }
+      }
+
+      launcher.addEventListener("click", ()=>{
+        const open = panel.style.display !== "block";
+        panel.style.display = open ? "block" : "none";
+        if (open && !thread.dataset.greeted){
+          add("Hi! I’m your virtual design concierge for The Finishing Touch. Ask me about packages, pricing, or how it works. Say “human” anytime.","bot");
+          thread.dataset.greeted = "1";
+        }
+        if (open) input.focus();
+      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
+      form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        add(text, "me"); input.value = "";
+        setTimeout(()=> add(answer(detectIntent(text))), 120);
+      });
+      quick.addEventListener("click",(e)=>{
+        if (e.target.matches("button[data-q]")){
+          const map={pricing:"pricing",services:"services",process:"process",book:"book",human:"human"};
+          const intent = map[e.target.getAttribute("data-q")] || "fallback";
+          add(e.target.textContent, "me");
+          setTimeout(()=> add(answer(intent)), 80);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Smart auth button -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
+
+  <!-- Base Firebase import -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+  </script>
+</body>
+</html>
