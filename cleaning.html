@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cleaning Services – The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=9" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body.page-cleaning .container { width:min(1180px,94%); margin-inline:auto; }
+
+    .page-cleaning .header-inner{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 0;
+    }
+    .page-cleaning .main-nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn-cream{
+      background:#d2bda9; color:#2a2624; border:0; border-radius:999px; padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
+    }
+
+    /* ============= HERO ============= */
+    .clean-hero{
+      position:relative;
+      color:#fff;
+    }
+    .clean-hero-media{
+      position:relative;
+      overflow:hidden;
+    }
+    .clean-hero-media img{
+      width:100%;
+      height:clamp(360px, 55vh, 520px);
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .clean-hero-scrim{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
+    }
+
+    .clean-hero-content{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:0 20px;
+    }
+    .clean-hero-inner{
+      max-width:min(780px,94%);
+      margin-inline:auto;
+      text-align:center;
+      color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,.3);
+    }
+
+    .clean-hero-kicker{
+      font-family:"Allura", cursive;
+      font-size:1.9rem;
+      margin:0 0 .3rem;
+    }
+    .clean-hero-title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2.2rem, 4vw, 3rem);
+      margin:0 0 .4rem;
+      color:#ffffff !important;
+    }
+    .clean-hero-sub{
+      font-size:1.05rem;
+      max-width:32rem;
+      margin:0 auto 1.1rem;
+    }
+    .btn-primary{
+      background:#f5eadf; color:#2a2624;
+      border-radius:999px; padding:.7rem 1.25rem;
+      border:0; font-weight:700; text-decoration:none;
+      display:inline-block;
+    }
+
+    @media (max-width:780px){
+      .clean-hero-kicker{ font-size:1.6rem; }
+      .clean-hero-title{ font-size:2.1rem; line-height:1.2; }
+      .clean-hero-sub{ font-size:.98rem; max-width:90%; }
+    }
+
+    /* ============= SECTIONS ============= */
+    .section{ padding:40px 0; }
+    .section h2{
+      font-family:"Playfair Display", serif;
+      margin:0 0 .75rem;
+      font-size:1.7rem;
+    }
+    .section p{ line-height:1.6; }
+
+    .two-col{
+      display:grid; grid-template-columns:1.1fr .9fr; gap:22px; align-items:flex-start;
+    }
+    @media (max-width:880px){
+      .two-col{ grid-template-columns:1fr; }
+    }
+
+    /* ============= GALLERY PLACEHOLDER (IF NEEDED LATER) ============= */
+    .clean-gallery{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .clean-gallery img{
+      width:100%; height:180px; object-fit:cover;
+      border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.12);
+    }
+    @media (max-width:640px){
+      .clean-gallery img{ height:210px; }
+    }
+
+    /* ============= CARD GRIDS (2 ACROSS) ============= */
+    .clean-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:12px;
+    }
+    @media (max-width:700px){
+      .clean-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .clean-card{
+      background:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+    .clean-card h3{
+      margin:.1rem 0 .35rem;
+      font-size:1.05rem;
+    }
+    .pill{
+      display:inline-block;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      background:#f3ebe2;
+      font-size:.8rem;
+      font-weight:600;
+      margin-bottom:.35rem;
+    }
+    .meta-line{
+      font-size:.9rem;
+      opacity:.85;
+      margin-bottom:.3rem;
+    }
+
+    .callout{
+      background:#fbf5ee;
+      border-radius:16px;
+      padding:16px 18px;
+      border:1px solid #ecdccc;
+      margin-top:14px;
+      font-size:.95rem;
+    }
+
+    .clean-cta{
+      text-align:center;
+    }
+    .clean-cta p{
+      max-width:540px;
+      margin:0 auto 1rem;
+    }
+
+    .site-footer{ margin-top:10px; }
+  </style>
+
+  <!-- Chat z-index safety -->
+  <style>
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
+</head>
+
+<body class="page-cleaning">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="clean-hero">
+    <div class="clean-hero-media">
+      <img src="cleaningheader.png" alt="High-end neutral kitchen with clean counters and soft styling">
+      <div class="clean-hero-scrim"></div>
+    </div>
+
+    <div class="container clean-hero-content">
+      <div class="clean-hero-inner">
+        <p class="clean-hero-kicker">Because every detail matters</p>
+        <h1 class="clean-hero-title">Signature Cleaning by The Finishing Touch</h1>
+        <p class="clean-hero-sub">
+          From first-time reset to weekly upkeep, move-in readiness, and Airbnb turnovers — we care for your home like it’s our own.
+        </p>
+        <a href="intake-cleaning.html" class="btn-primary">Start Cleaning Intake</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Cleaning -->
+  <section class="section">
+    <div class="container two-col">
+      <div>
+        <h2>About Our Cleaning Services</h2>
+        <p>
+          Every home and schedule is different. We combine professional standards with a warm, human touch so your space
+          feels both deeply cleaned <em>and</em> easy to maintain.
+        </p>
+        <p>
+          All new residential clients begin with an <strong>Initial Clean</strong>. This allows us to remove buildup, reset
+          surfaces, and bring the home up to our standard. From there, we can transition into:
+        </p>
+        <ul>
+          <li><strong>Weekly or Biweekly Upkeep</strong> – perfect for busy households and families.</li>
+          <li><strong>Monthly Maintenance</strong> – ideal for smaller homes or lighter-traffic spaces.</li>
+          <li><strong>One-Time Deep Cleans</strong> – for seasonal refreshes, life transitions, or special occasions.</li>
+        </ul>
+        <p>
+          Pricing is based on square footage, layout, and condition upon arrival. Your intake gives us what we need to
+          create a personalized ballpark estimate before scheduling.
+        </p>
+      </div>
+      <div>
+        <div class="callout">
+          <strong>Service Areas:</strong> Galveston, Harris, and Brazoria County.<br>
+          Homes, rentals, and small commercial spaces are all welcome — we’ll tailor a plan to your property and priorities.
+        </div>
+        <p style="margin-top:1rem;">
+          We also offer cleaning plans that pair beautifully with
+          <a href="stagingandstyling.html">Staging &amp; Styling</a> for homes hitting the market or being photographed.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Residential Cleaning Tiers -->
+  <section class="section">
+    <div class="container">
+      <h2>Residential Cleaning Tiers</h2>
+      <p>
+        Whether you’re resetting a well-loved home or keeping a tidy space on track, we’ll recommend the tier that fits
+        your square footage, lifestyle, and budget.
+      </p>
+
+      <div class="clean-grid">
+        <div class="clean-card">
+          <span class="pill">Step One</span>
+          <h3>Initial Clean</h3>
+          <p class="meta-line">Required for all new recurring clients</p>
+          <p>
+            A thorough top-to-bottom reset focused on removing dust, buildup, and grime that regular cleanings don’t always reach.
+            We detail high-touch areas, baseboards, surfaces, and key traffic zones so future visits can be efficient and consistent.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">Weekly / Biweekly</span>
+          <h3>Standard Upkeep</h3>
+          <p class="meta-line">After your Initial Clean is complete</p>
+          <p>
+            Routine maintenance cleans that keep your home feeling fresh — kitchen, bathrooms, main living areas, and frequently
+            used bedrooms. We follow a consistent checklist and can tailor focus areas (like kids’ spaces or pet zones).
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">Monthly / Seasonal</span>
+          <h3>Deep Clean &amp; Refresh</h3>
+          <p class="meta-line">Great before holidays, guests, or busy seasons</p>
+          <p>
+            A deeper reset addressing overlooked spots: extra attention to bathrooms and kitchen, baseboards, doors, light switches,
+            vents, and buildup-prone zones. Ideal for homes that don’t need weekly care but still want a polished feel.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">One-Time</span>
+          <h3>Special Occasion &amp; Life Events</h3>
+          <p class="meta-line">Perfect for parties, new babies, or post-project</p>
+          <p>
+            A custom one-time clean built around your priority list — whether that’s getting the house guest-ready, catching up
+            after a hectic season, or resetting after a small renovation.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        All estimates are <strong>ballpark ranges</strong> and may adjust based on condition upon arrival or any additional
+        requests discussed during your walkthrough. We’ll always communicate changes clearly before moving forward.
+      </div>
+    </div>
+  </section>
+
+  <!-- Move-In / Move-Out & For Sale -->
+  <section class="section">
+    <div class="container">
+      <h2>Move-In, Move-Out &amp; Homes for Sale</h2>
+      <p>
+        We specialize in <strong>Move-In / Move-Out cleans</strong> and homes preparing for photos, showings, or closing.
+        These projects are more detailed than standard residential upkeep and often align closely with staging and styling.
+      </p>
+
+      <div class="clean-grid">
+        <div class="clean-card">
+          <span class="pill">Move-Out Clean</span>
+          <h3>Leave on the Right Note</h3>
+          <p class="meta-line">Ideal for renters, homeowners, and property managers</p>
+          <p>
+            A detailed clean focused on presenting the home at its best: inside appliances (as requested), bathrooms, kitchens,
+            baseboards, doors, high-touch surfaces, and floors. We aim for “ready for walkthrough” level whenever possible.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">Move-In Ready</span>
+          <h3>Start Fresh in Your New Home</h3>
+          <p class="meta-line">Before the boxes and furniture arrive</p>
+          <p>
+            We get into the nooks and surfaces you want cleaned <em>before</em> you unpack: shelves, drawers, cabinet interiors,
+            bathrooms, and main living areas — so you can move into a space that already feels like yours.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">For Realtors &amp; Sellers</span>
+          <h3>Pre-Photo &amp; Pre-Showing Clean</h3>
+          <p class="meta-line">Pairs perfectly with staging</p>
+          <p>
+            Focused on what shows in photos and first impressions: sparkling kitchens and baths, clean floors, dust-free surfaces,
+            and tidy entryways. Many of our realtor partners pair this with
+            <a href="stagingandstyling.html">Staging &amp; Styling</a> for maximum impact.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">Styled &amp; Clean</span>
+          <h3>Cleaning + Staging Support</h3>
+          <p class="meta-line">Light styling to help homes feel move-in ready</p>
+          <p>
+            For select projects, we can coordinate with your interior designer or provide light styling touches — making sure
+            the home is not only clean, but thoughtfully presented for buyers or guests.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Airbnb / Short-Term Rentals -->
+  <section class="section">
+    <div class="container">
+      <h2>Airbnb &amp; Short-Term Rental Turnovers</h2>
+      <p>
+        Short-term rentals require a different rhythm than standard residential cleaning. We offer tailored turnover services
+        to help keep your guests happy and your calendar full.
+      </p>
+
+      <div class="clean-grid">
+        <div class="clean-card">
+          <span class="pill">Turnover Cleaning</span>
+          <h3>Between-Guest Reset</h3>
+          <p class="meta-line">Designed around your listing and guest expectations</p>
+          <p>
+            Full clean of bathrooms, kitchen, and living areas, plus bed changes and trash removal. We follow your checklist
+            or help you build one, so each stay feels consistent and on-brand.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">Restock &amp; Light Styling</span>
+          <h3>Guest-Ready Details</h3>
+          <p class="meta-line">Optional add-ons</p>
+          <p>
+            Folding blankets, fluffing pillows, resetting decor, and light restocking of essentials you provide (like paper
+            goods or amenities). For more design-forward updates, see
+            <a href="stagingandstyling.html">Staging &amp; Styling</a>.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">Owner &amp; Co-Host Friendly</span>
+          <h3>Clear Communication</h3>
+          <p class="meta-line">Photos &amp; notes as needed</p>
+          <p>
+            We can provide simple notes or photos after cleans (as arranged in advance) so you know how guests have left the
+            space and whether anything needs attention.
+          </p>
+        </div>
+
+        <div class="clean-card">
+          <span class="pill">Custom Plans</span>
+          <h3>Single Unit or Multiple Doors</h3>
+          <p class="meta-line">Built around your booking volume</p>
+          <p>
+            Whether you manage one cozy condo or multiple units, we’ll recommend a structure that balances quality, availability,
+            and budget based on your average turnover schedule.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        Airbnb and rental pricing is usually structured per turnover and may vary for heavy-use or high-season dates.
+        We’ll outline your structure clearly after reviewing your intake and any existing systems.
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="container">
+      <h2>How Cleaning With Us Works</h2>
+      <ol>
+        <li><strong>Submit a quick cleaning intake.</strong> Share your square footage, layout, surfaces, pets, and goals. You can also send photos or a walkthrough video.</li>
+        <li><strong>We review and send a ballpark estimate.</strong> You’ll receive a rough range and recommended service type (initial, upkeep, deep, move-in/out, or Airbnb).</li>
+        <li><strong>We schedule your clean.</strong> We’ll confirm timing, access instructions, and any priorities you’d like us to focus on first.</li>
+        <li><strong>We clean, then follow up.</strong> After the first visit, we can fine-tune your plan and discuss weekly, biweekly, monthly, or project-based options.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container clean-cta">
+      <h2>Ready for a Fresh Start?</h2>
+      <p>
+        Share a few details about your home and what you’re hoping for. We’ll review your intake, build a customized
+        ballpark estimate, and follow up with next steps and scheduling options.
+      </p>
+      <a href="intake-cleaning.html" class="btn-primary">Start Cleaning Intake</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
+  </footer>
+
+  <!-- Chat widget -->
+  <style>
+    #ftt-chat-launcher{
+      position:fixed; right:18px; bottom:18px;
+      width:54px; height:54px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.18);
+    }
+    #ftt-chat{
+      position:fixed; right:18px; bottom:84px;
+      width:340px; max-width:calc(100vw - 36px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
+    .ftt-title{ font-weight:800; color:#2e2a27 }
+    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
+    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
+    .ftt-thread{ height:300px; overflow:auto; padding:12px }
+    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
+    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
+    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
+    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
+    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
+    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
+    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
+    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
+    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+  </style>
+
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="help">Help me choose</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-cleaning.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messenger: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+
+      const panel   = document.getElementById("ftt-chat");
+      const thread  = document.getElementById("ftt-thread");
+      const form    = document.getElementById("ftt-inputbar");
+      const input   = document.getElementById("ftt-input");
+      const quick   = document.querySelector(".ftt-quick");
+      const closeBtn= document.querySelector(".ftt-close");
+      const launcher= document.getElementById("ftt-chat-launcher");
+
+      function add(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|clean|cleaning|move out|move-in|airbnb|turnover)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
+        return "fallback";
+      }
+      function answer(intent){
+        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Cleaning Intake</a>`;
+        const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book in Square</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "Residential cleaning is priced by home size, layout, and condition:",
+              "• New clients start with an Initial Clean to remove buildup.",
+              "• Ongoing weekly, biweekly, or monthly upkeep is then priced at a lower recurring rate.",
+              "• Move-in/out and Airbnb turnovers are quoted separately based on scope.",
+              "Start with intake and we’ll send a tailored ballpark: ",
+              intakeLink
+            ].join("<br>");
+          case "availability":
+            return [
+              "Availability changes week to week.",
+              bookLink + " shows current openings, or " + intakeLink + " if you’d like us to review your home before booking."
+            ].join("<br>");
+          case "services":
+            return [
+              "We offer Initial Cleans, recurring upkeep, deep/seasonal cleans, move-in/move-out cleaning, and Airbnb turnovers.",
+              "We can also coordinate with staging and styling for homes going on the market.",
+              "Share details here: " + intakeLink
+            ].join("<br>");
+          case "book": return "Perfect—" + bookLink + ". If you’re unsure what you need, start here first: " + intakeLink;
+          case "human":
+            return isWithinBusinessHours()
+              ? `You can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> for the fastest reply.`
+              : `We’re currently offline, but you can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply as soon as we’re back.`;
+          case "recommend":
+            return [
+              "<strong>Not sure where to start?</strong>",
+              "Tell us your square footage and what stresses you out most (kitchen, bathrooms, whole home), and we’ll recommend an Initial Clean + upkeep plan.",
+              "Use the intake form and we’ll send a suggested path: " + intakeLink
+            ].join("<br>");
+          default:
+            return [
+              "Hi! I can help with cleaning pricing, availability, and services.",
+              "Try asking “What do you charge for cleaning?” or “Can you help with a move-out clean or Airbnb turnover?”",
+              "Say “human” anytime to talk to a person."
+            ].join("<br>");
+        }
+      }
+
+      launcher.addEventListener("click", ()=>{
+        const open = panel.style.display !== "block";
+        panel.style.display = open ? "block" : "none";
+        if (open && !thread.dataset.greeted){
+          add("Hi! I’m your cleaning concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+          thread.dataset.greeted = "1";
+        }
+        if (open) input.focus();
+      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
+      form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        add(text, "me"); input.value = "";
+        setTimeout(()=> add(answer(detectIntent(text))), 120);
+      });
+      quick.addEventListener("click",(e)=>{
+        if (e.target.matches("button[data-q]")){
+          const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+          const intent = map[e.target.getAttribute("data-q")] || "fallback";
+          add(e.target.textContent, "me");
+          setTimeout(()=> add(answer(intent)), 80);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Smart auth button -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
+
+  <!-- Base Firebase import -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+  </script>
+</body>
+</html>
