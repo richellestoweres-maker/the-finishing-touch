@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staging & Styling – The Finishing Touch</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --paper: #fbf8f4;
+      --ink: #1f2933;
+      --ink-soft: #6b7280;
+      --accent: #b79a7f;
+      --accent-soft: #e6d8c7;
+      --line: rgba(15, 23, 42, 0.08);
+      --chip: #f0ebe3;
+      --danger: #b45309;
+      --radius-xl: 24px;
+      --shadow-soft: 0 16px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #f9f3ea 0, var(--paper) 52%);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .page {
+      width: min(1180px, 94%);
+      margin: 20px auto 72px;
+    }
+
+    /* Top nav */
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(251, 248, 244, 0.96);
+      border-radius: 999px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 20% 0, #f9f3ea 0, var(--accent) 52%, #7c5a38 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fdfbf7;
+      font-family: "Playfair Display", serif;
+      font-weight: 600;
+      font-size: 18px;
+      box-shadow: 0 10px 24px rgba(148, 115, 84, 0.52);
+    }
+
+    .brand-text-main {
+      font-family: "Playfair Display", serif;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .brand-text-sub {
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.18s ease-out;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover {
+      border-color: rgba(148, 163, 184, 0.4);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--ink);
+    }
+
+    .nav-links a.is-current {
+      background: #111827;
+      color: #f9fafb;
+      border-color: #111827;
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .nav-cta-pill {
+      border-radius: 999px;
+      padding: 7px 12px;
+      border: 1px dashed rgba(148, 163, 184, 0.9);
+      background: rgba(255, 255, 255, 0.65);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-cta-pill span {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .nav-cta-sub {
+      color: var(--ink-soft);
+    }
+
+    /* Main layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 6.3fr) minmax(0, 5.2fr);
+      gap: 26px;
+      margin-top: 32px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 880px) {
+      .main-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .topbar {
+        border-radius: 18px;
+        flex-wrap: wrap;
+        row-gap: 10px;
+      }
+      .nav-links {
+        order: 3;
+        flex-wrap: wrap;
+      }
+      .nav-cta {
+        margin-left: auto;
+      }
+    }
+
+    /* Left column – copy */
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .hero-heading {
+      font-family: "Playfair Display", serif;
+      font-weight: 600;
+      font-size: clamp(32px, 4vw, 40px);
+      line-height: 1.08;
+      letter-spacing: 0.01em;
+      margin-bottom: 12px;
+    }
+
+    .hero-heading span {
+      background: linear-gradient(120deg, #b79a7f, #7e5a3a);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: var(--ink-soft);
+      max-width: 400px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .hero-bullets {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 11px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 11px;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    .hero-pill-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f9fafb;
+      font-size: 10px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      padding: 10px 18px;
+      background: #111827;
+      color: #f9fafb;
+      border: 1px solid #020617;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
+      cursor: pointer;
+    }
+
+    .btn-primary span.icon {
+      font-size: 14px;
+      transform: translateY(1px);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 9px 15px;
+      border: 1px dashed rgba(148, 163, 184, 0.9);
+      font-size: 12px;
+      color: var(--ink-soft);
+      background: rgba(255, 255, 255, 0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+    }
+
+    .btn-ghost strong {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .hero-footnote {
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    .hero-footnote span {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* Left lower panel – steps + packages */
+    .panel {
+      margin-top: 26px;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 55px rgba(15, 23, 42, 0.16);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.1fr);
+      overflow: hidden;
+    }
+
+    @media (max-width: 900px) {
+      .panel {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel-left {
+      padding: 18px 18px 18px 18px;
+      border-right: 1px solid rgba(226, 232, 240, 0.9);
+    }
+
+    .panel-right {
+      padding: 18px 18px 18px 18px;
+      background: radial-gradient(circle at top left, #f7efe4 0, #f9f5ed 36%, #f0e5d8 100%);
+    }
+
+    .panel-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+    }
+
+    .panel-title {
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .step-item {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 12px;
+    }
+
+    .step-number {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #111827;
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .step-label {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .step-copy {
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    .panel-note {
+      margin-top: 10px;
+      border-radius: 999px;
+      background: #f3f0ea;
+      padding: 7px 10px;
+      font-size: 10px;
+      color: var(--ink-soft);
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .panel-note strong {
+      color: #111827;
+    }
+
+    /* Packages */
+    .package-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      font-size: 11px;
+    }
+
+    .package-chip {
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(255, 255, 255, 0.4);
+      color: var(--ink-soft);
+      cursor: default;
+    }
+
+    .package-chip.is-primary {
+      background: #111827;
+      color: #f9fafb;
+      border-color: #111827;
+    }
+
+    .package-card {
+      border-radius: 16px;
+      padding: 10px 11px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .package-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      gap: 6px;
+    }
+
+    .package-name {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .package-tag {
+      border-radius: 999px;
+      padding: 3px 7px;
+      background: #111827;
+      color: #f9fafb;
+      font-size: 10px;
+    }
+
+    .package-body {
+      color: var(--ink-soft);
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+
+    .package-list {
+      list-style: none;
+      display: grid;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+
+    .package-list li::before {
+      content: "• ";
+      color: #111827;
+      margin-right: 2px;
+    }
+
+    .package-note {
+      font-size: 10px;
+      color: var(--danger);
+    }
+
+    .package-foot {
+      font-size: 10px;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
+    .package-foot span {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* Right column – visuals / before-after / FAQ */
+    .right-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-card {
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at top left, #f8efe3 0, #f9f5ee 40%, #efe0d0 100%);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-tag-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 12px;
+    }
+
+    .hero-tag {
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .hero-tag span.icon {
+      font-size: 11px;
+    }
+
+    .hero-photo-note {
+      font-size: 10px;
+      color: var(--ink-soft);
+      text-align: right;
+    }
+
+    .hero-photo-grid {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: 1.07fr 1.08fr;
+      gap: 10px;
+    }
+
+    .photo-card {
+      border-radius: 16px;
+      background: #111827;
+      padding: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-inner {
+      border-radius: 14px;
+      background-size: cover;
+      background-position: center;
+      min-height: 150px;
+      position: relative;
+    }
+
+    .photo-inner.before {
+      background-image:
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.9)),
+        url("images/staging-before-placeholder.jpg");
+    }
+
+    .photo-inner.after {
+      background-image:
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.05), rgba(15, 23, 42, 0.7)),
+        url("images/staging-after-placeholder.jpg");
+    }
+
+    .photo-label {
+      position: absolute;
+      left: 8px;
+      top: 9px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: rgba(15, 23, 42, 0.85);
+      color: #e5e7eb;
+    }
+
+    .photo-label.is-after {
+      background: #facc15;
+      color: #111827;
+    }
+
+    .photo-caption {
+      position: absolute;
+      left: 9px;
+      bottom: 9px;
+      right: 9px;
+      font-size: 11px;
+      color: #e5e7eb;
+      text-shadow: 0 8px 24px rgba(15, 23, 42, 0.9);
+    }
+
+    .photo-caption strong {
+      display: block;
+    }
+
+    .session-card {
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 14px 16px 13px 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .session-card {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .session-head {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .session-copy {
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .session-list {
+      list-style: none;
+      display: grid;
+      gap: 3px;
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    .session-list li::before {
+      content: "• ";
+      color: #111827;
+      margin-right: 2px;
+    }
+
+    .session-meta {
+      font-size: 11px;
+      color: var(--ink-soft);
+      margin-top: 6px;
+    }
+
+    .session-meta span {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .session-highlight {
+      border-radius: 16px;
+      padding: 10px 11px;
+      background: radial-gradient(circle at top left, #111827 0, #020617 40%, #111827 100%);
+      color: #e5e7eb;
+      font-size: 11px;
+    }
+
+    .session-highlight strong {
+      color: #fefce8;
+    }
+
+    /* FAQ */
+    .faq-card {
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 13px 14px 12px 14px;
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    .faq-title {
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    .faq-grid {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .faq-item {
+      border-radius: 14px;
+      padding: 7px 8px 7px 9px;
+      background: #f9f5ee;
+    }
+
+    .faq-q {
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 2px;
+    }
+
+    .faq-a {
+      line-height: 1.6;
+    }
+
+    /* Footer CTA */
+    .footer-cta {
+      margin-top: 30px;
+      border-radius: 20px;
+      padding: 14px 16px;
+      background: radial-gradient(circle at top left, #111827 0, #020617 45%, #111827 100%);
+      color: #e5e7eb;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .footer-cta strong {
+      color: #fef9c3;
+    }
+
+    .footer-cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-outline-light {
+      border-radius: 999px;
+      padding: 7px 12px;
+      border: 1px solid rgba(248, 250, 252, 0.8);
+      background: transparent;
+      font-size: 11px;
+      color: #f9fafb;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .btn-outline-light span.icon {
+      font-size: 13px;
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--ink-soft);
+      text-align: center;
+    }
+
+    .footer-note span {
+      font-weight: 600;
+      color: #111827;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Top navigation -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">F</div>
+        <div>
+          <div class="brand-text-main">The Finishing Touch</div>
+          <div class="brand-text-sub">Luxury cleaning, staging & styling</div>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="cleaning.html">Cleaning</a>
+        <a href="organizing.html">Organizing</a>
+        <a href="staging-and-styling.html" class="is-current">Staging &amp; Styling</a>
+        <a href="holiday-decor.html">Holiday Décor</a>
+      </nav>
+
+      <div class="nav-cta">
+        <div class="nav-cta-pill">
+          <span>Book a walkthrough</span>
+          <span class="nav-cta-sub">League City &amp; surrounding</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <!-- Left column: copy + flow + packages -->
+      <section>
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          Staging &amp; Styling Services
+        </div>
+
+        <h1 class="hero-heading">
+          Turn &ldquo;just listed&rdquo; into <span>&ldquo;just sold.&rdquo;</span>
+        </h1>
+
+        <p class="hero-sub">
+          From lived-in to listing-ready, we stage and style each space so it photographs beautifully, feels welcoming in person, and highlights the best version of your home.
+        </p>
+
+        <div class="hero-bullets">
+          <div class="hero-pill">
+            <span class="hero-pill-icon">★</span>
+            Photo-ready rooms &amp; vignettes
+          </div>
+          <div class="hero-pill">
+            <span class="hero-pill-icon">✓</span>
+            Occupied &amp; vacant staging options
+          </div>
+          <div class="hero-pill">
+            <span class="hero-pill-icon">🕊</span>
+            Layered textiles, art &amp; styling
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="contact.html" class="btn-primary">
+            <span class="icon">📅</span>
+            Schedule a staging walkthrough
+          </a>
+
+          <a href="#packages" class="btn-ghost">
+            <strong>View staging tiers</strong>
+            <span>See what&rsquo;s included</span>
+          </a>
+        </div>
+
+        <div class="hero-footnote">
+          <span>Best for:</span> listing photos, open houses, model homes, short-term rentals, and &ldquo;we need it to feel finished&rdquo; moments.
+        </div>
+
+        <!-- How it works + Packages panel -->
+        <section class="panel" id="packages">
+          <div class="panel-left">
+            <div class="panel-eyebrow">How staging with us works</div>
+            <div class="panel-title">A simple, three-step process</div>
+
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-number">1</div>
+                <div>
+                  <div class="step-label">On-site walkthrough &amp; staging plan</div>
+                  <div class="step-copy">
+                    We tour the property with you or your agent, talk through priorities, timeline, and budget, and map out each space: what stays, what moves, and what we bring in.
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-number">2</div>
+                <div>
+                  <div class="step-label">Edit, reset &amp; layer the details</div>
+                  <div class="step-copy">
+                    We declutter surfaces, refine furniture placement, style beds and sofas, layer rugs, pillows, throws, art, and décor to create a cohesive story throughout the home.
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-number">3</div>
+                <div>
+                  <div class="step-label">Final polish before photos &amp; showings</div>
+                  <div class="step-copy">
+                    On staging day, we complete the full reset, fluff pillows, steam linens, tidy cords, and give everything a last &ldquo;Finishing Touch&rdquo; before your photographer or open house.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-note">
+              <span>ℹ️</span>
+              <span>
+                <strong>Cleaning + staging:</strong> If your home needs a reset first, we can bundle a detailed clean with your staging service.
+              </span>
+            </div>
+          </div>
+
+          <div class="panel-right">
+            <div class="panel-eyebrow">Staging &amp; styling tiers</div>
+            <div class="package-tabs">
+              <span class="package-chip is-primary">Occupied staging</span>
+              <span class="package-chip">Vacant / partial furnishing</span>
+              <span class="package-chip">Photo-day styling</span>
+            </div>
+
+            <div class="package-card">
+              <div class="package-header">
+                <div class="package-name">Occupied Staging &amp; Styling</div>
+                <div class="package-tag">Most common</div>
+              </div>
+              <div class="package-body">
+                Ideal when you&rsquo;re living in the home but want it to show like a model. We primarily work with what you own and supplement with select styling pieces as needed.
+              </div>
+              <ul class="package-list">
+                <li>Room-by-room layout &amp; declutter plan</li>
+                <li>Editing &amp; rearranging furniture for flow</li>
+                <li>Surface reset: counters, nightstands, built-ins</li>
+                <li>Bed &amp; sofa styling with layered textiles</li>
+                <li>Curated vignettes for listing photos</li>
+              </ul>
+              <div class="package-note">
+                *Pricing is customized based on square footage, number of spaces, and timeline.
+              </div>
+            </div>
+
+            <div class="package-card">
+              <div class="package-header">
+                <div class="package-name">Photo-Day Styling Session</div>
+              </div>
+              <div class="package-body">
+                A focused styling appointment scheduled the same day as photography — we perfect the details while your photographer captures the home.
+              </div>
+              <ul class="package-list">
+                <li>Pre-session call to prioritize rooms</li>
+                <li>Final styling of key spaces (kitchen, living, primary)</li>
+                <li>Micro-adjustments per photographer&rsquo;s angle</li>
+                <li>Speed-friendly tweaks between shots</li>
+              </ul>
+              <div class="package-foot">
+                Ask about bundling <span>cleaning + staging + photo-day styling</span> into one seamless service.
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- Right column: visuals, session, FAQ -->
+      <aside class="right-stack">
+        <section class="hero-card">
+          <div class="hero-tag-row">
+            <div class="hero-tag">
+              <span class="icon">🎞</span>
+              Listing-ready in a day or less
+            </div>
+            <div class="hero-photo-note">
+              Before/after examples shown with client permission.
+            </div>
+          </div>
+
+          <div class="hero-photo-grid">
+            <!-- BEFORE -->
+            <div class="photo-card">
+              <div class="photo-inner before">
+                <div class="photo-label">Before</div>
+                <div class="photo-caption">
+                  <strong>Everyday living</strong>
+                  Toys, cords, and busy surfaces that distract from the square footage and architectural features.
+                </div>
+              </div>
+            </div>
+
+            <!-- AFTER -->
+            <div class="photo-card">
+              <div class="photo-inner after">
+                <div class="photo-label is-after">After</div>
+                <div class="photo-caption">
+                  <strong>Staged &amp; styled</strong>
+                  Softer textiles, balanced furniture placement, intentional décor, and a clean sightline from every doorway.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="session-card">
+          <div>
+            <div class="session-head">Listing Prep &amp; Staging Session</div>
+            <div class="session-copy">
+              Perfect if you&rsquo;re on a tight timeline and need a professional eye to get you over the finish line before photos, showings, or appraisal.
+            </div>
+
+            <ul class="session-list">
+              <li>Walkthrough of priority spaces (kitchen, living, entry, primary)</li>
+              <li>Rapid declutter &amp; edit with &ldquo;keep, store, donate&rdquo; guidance</li>
+              <li>Furniture placement for flow &amp; photo angles</li>
+              <li>Layering pillows, throws, trays, books, and simple styling pieces</li>
+              <li>Recommendations for anything worth updating before listing</li>
+            </ul>
+
+            <div class="session-meta">
+              <span>Session length:</span> typically 2–5 hours depending on the size and condition of the home.
+            </div>
+          </div>
+
+          <div class="session-highlight">
+            <strong>For realtors &amp; investors:</strong><br />
+            Ask about repeat-client pricing and bundled rates for multiple listings, flips, or short-term rentals. We can become your go-to team for &ldquo;make it market-ready&rdquo; projects.
+          </div>
+        </section>
+
+        <section class="faq-card">
+          <div class="faq-title">Staging &amp; styling FAQ</div>
+
+          <div class="faq-grid">
+            <div class="faq-item">
+              <div class="faq-q">Do you bring your own furniture?</div>
+              <div class="faq-a">
+                For most occupied homes, we primarily use your existing furniture and layer decor, textiles, and styling pieces. For vacant or partially furnished homes, we can discuss options and collaborate with trusted partners if full furniture staging is needed.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-q">Can you stage my home if I&rsquo;m still living in it?</div>
+              <div class="faq-a">
+                Absolutely. Occupied staging is one of our most requested services. We&rsquo;ll create a plan that works with your day-to-day life while still presenting the home beautifully for buyers.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-q">What does pricing look like?</div>
+              <div class="faq-a">
+                Every home and timeline is different, so we start with a walkthrough to see the space in person. From there, we provide a detailed quote based on square footage, number of rooms, and the level of styling needed.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-q">Can you coordinate with my photographer or realtor?</div>
+              <div class="faq-a">
+                Yes. We&rsquo;re happy to communicate directly with your agent or photographer about timing, lighting, and any priority shots so staging and photos work seamlessly together.
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <!-- Footer CTA -->
+    <section class="footer-cta">
+      <div>
+        Ready for your home to <strong>feel finished</strong> and show beautifully online?
+      </div>
+      <div class="footer-cta-actions">
+        <a href="contact.html" class="btn-outline-light">
+          <span class="icon">🕰</span>
+          Request a staging walkthrough
+        </a>
+        <a href="tel:12816203963" class="btn-outline-light">
+          <span class="icon">📞</span>
+          Call The Finishing Touch
+        </a>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Currently serving <span>League City, Friendswood, Pearland, Clear Lake,</span> and nearby areas.
+    </div>
+  </div>
+</body>
+</html>
