@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Staging &amp; Styling – The Finishing Touch</title>
+  <title>Staging &amp; Interior Styling – The Finishing Touch</title>
 
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
@@ -76,9 +76,16 @@
     }
     .stage-hero-sub{
       font-size:1.05rem;
-      max-width:32rem;
+      max-width:34rem;
       margin:0 auto 1.1rem;
     }
+    .stage-hero-tags{
+      font-size:.9rem;
+      opacity:.9;
+      margin-bottom:1rem;
+    }
+    .stage-hero-tags strong{ font-weight:700; }
+
     .btn-primary{
       background:#f5eadf; color:#2a2624;
       border-radius:999px; padding:.7rem 1.25rem;
@@ -122,7 +129,7 @@
       .stage-gallery img{ height:210px; }
     }
 
-    /* ============= PACKAGES (2 ACROSS) ============= */
+    /* ============= CARD GRIDS (2 ACROSS) ============= */
     .stage-grid{
       display:grid;
       grid-template-columns:repeat(2, minmax(0,1fr));
@@ -209,18 +216,22 @@
   <section class="stage-hero">
     <div class="stage-hero-media">
       <!-- swap this image name for whatever banner you use -->
-      <img src="stagingbanner.png" alt="Beautifully staged living room with layered textiles and decor">
+      <img src="stagingbanner.png" alt="Beautifully styled living room with layered textiles and decor">
       <div class="stage-hero-scrim"></div>
     </div>
 
     <div class="container stage-hero-content">
       <div class="stage-hero-inner">
-        <p class="stage-hero-kicker">Styled to Sell</p>
-        <h1 class="stage-hero-title">Staging &amp; Styling by The Finishing Touch</h1>
+        <p class="stage-hero-kicker">Finished, Not Fussy</p>
+        <h1 class="stage-hero-title">Staging &amp; Interior Styling by The Finishing Touch</h1>
         <p class="stage-hero-sub">
-          Listing-ready rooms, cozy vignettes, and layered details that help buyers feel at home the moment they walk in — and the second they see your photos online.
+          For people who want their home to feel pulled together — from “I don’t know where to start” to fully styled rooms,
+          listing-ready spaces, and top-to-bottom Airbnb setups.
         </p>
-        <a href="intake-staging.html" class="btn-primary">Request Staging Walkthrough</a>
+        <p class="stage-hero-tags">
+          <strong>Perfect for:</strong> homeowners • realtors &amp; investors • Airbnb &amp; short-term rentals • virtual design clients
+        </p>
+        <a href="intake-staging.html" class="btn-primary">Start Staging &amp; Styling Intake</a>
       </div>
     </div>
   </section>
@@ -229,106 +240,112 @@
   <section class="section">
     <div class="container two-col">
       <div>
-        <h2>About Our Staging &amp; Styling Services</h2>
+        <h2>What We Help With</h2>
         <p>
-          We blend real-life comfort with buyer-focused design so your home feels warm, inviting, and easy for people to imagine as their own.
+          You don’t have to know your design style, understand scale, or have time to scroll Pinterest for hours. That’s our job.
+          We blend comfort, function, and style so your spaces feel finished — on camera and in real life.
         </p>
-        <p>
-          Whether you’re prepping for photos, an open house, or simply want your home to feel more “finished,” we start with what you already own and add thoughtful layers where needed:
-        </p>
+        <p>We work in three main ways:</p>
         <ul>
-          <li><strong>Occupied Staging</strong> – using your existing furniture, edited and styled for better flow and photos.</li>
-          <li><strong>Photo-Day Styling</strong> – a focused session timed with your photographer to dial in all the details.</li>
-          <li><strong>Vacant &amp; Furnished Homes</strong> – light furnishing and decor options for key rooms and vignettes.</li>
+          <li><strong>Homeowners</strong> who want help finishing rooms, choosing decor, and styling what they already own (plus new pieces if needed).</li>
+          <li><strong>Realtors &amp; investors</strong> who need listing prep, photo-day styling, and homes that show beautifully online.</li>
+          <li><strong>Airbnb &amp; short-term rentals</strong> that need cozy, durable, guest-ready styling from top to bottom.</li>
         </ul>
         <p>
-          Pricing is fully customized based on square footage, number of rooms, and how much styling your home needs. We’ll share a tailored ballpark after reviewing your intake and walkthrough.
+          Every project starts with a simple intake. You’ll tell us if you’re local or virtual, your goals, budget, and whether
+          you want us to use mostly what you own, source new pieces, or a mix of both.
         </p>
       </div>
       <div>
         <div class="stage-gallery">
-          <img src="staging-livingroom-before.png" alt="Living room before staging with everyday clutter">
-          <img src="staging-livingroom-after.png" alt="Living room after staging with styled pillows, rug, and decor">
-          <img src="staging-bedroom-after.png" alt="Primary bedroom staged with layered bedding and bedside styling">
-          <img src="staging-entry-after.png" alt="Entryway styled with console table, mirror, and greenery">
+          <img src="styled-livingroom-after.png" alt="Living room styled with layered pillows, rug, and coffee table decor">
+          <img src="styled-bedroom-after.png" alt="Primary bedroom with layered bedding and bedside styling">
+          <img src="styled-entry-after.png" alt="Entryway styled with console table, mirror, and greenery">
+          <img src="styled-shelf-after.png" alt="Shelf decor with books, art, and small objects styled intentionally">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Staging Packages -->
+  <!-- Services by Client Type -->
   <section class="section">
     <div class="container">
-      <h2>Staging &amp; Styling Packages</h2>
+      <h2>Services for Different Needs</h2>
       <p>
-        Every home is different, but these are our most common ways to work together. Final pricing is based on the size of the home, the number of spaces, and timeline.
+        Whether you’re living in the home, listing it, or hosting guests, we’ll tailor the plan to what makes the most sense for you.
       </p>
 
       <div class="stage-grid">
+        <!-- Homeowners / Everyday Clients -->
         <div class="stage-card">
-          <span class="pill">Occupied Staging</span>
-          <h3>Using What You Already Own</h3>
-          <p class="meta-line">Perfect when you’re still living in the home.</p>
+          <span class="pill">Homeowners</span>
+          <h3>Room-by-Room Decorating &amp; Styling</h3>
+          <p class="meta-line">For people who want it to feel finished, but don’t want to figure it out alone.</p>
           <p>
-            We edit, rearrange, and style your existing furniture and decor to highlight the best features of each room. Think clearer sightlines, cozy layers, and surfaces that feel intentional instead of cluttered.
+            We work with your existing furniture, then add layers: rugs, pillows, lamps, art, greenery, and decor.
+            You can choose:
           </p>
           <ul>
-            <li>Room-by-room walkthrough &amp; plan</li>
-            <li>Furniture placement for better flow</li>
-            <li>Surface reset for counters, nightstands, entry tables</li>
-            <li>Layered pillows, throws, and simple decor</li>
+            <li><strong>Style What I Have</strong> – edit, rearrange, and style with mostly existing pieces.</li>
+            <li><strong>Mix of Old &amp; New</strong> – keep what you love, add what’s missing.</li>
+            <li><strong>Full Refresh</strong> – a bigger update with more sourcing and new pieces.</li>
           </ul>
         </div>
 
+        <!-- Realtors & Investors -->
         <div class="stage-card">
-          <span class="pill">Photo-Day Styling</span>
-          <h3>For Listing Photos &amp; Marketing</h3>
-          <p class="meta-line">Scheduled with your photographer.</p>
+          <span class="pill">Realtors &amp; Investors</span>
+          <h3>Listing Prep &amp; Photo-Day Styling</h3>
+          <p class="meta-line">Occupied or lightly furnished homes, flips, and model units.</p>
           <p>
-            A focused styling session timed for the day your photos are taken. We fine-tune each shot as your photographer moves through the home so every angle feels intentional.
+            We make spaces feel inviting, clear, and photo-friendly. Common focus areas:
           </p>
           <ul>
-            <li>Prioritized list of rooms and angles</li>
-            <li>On-site tweaks between shots</li>
-            <li>Bed and sofa styling for key images</li>
-            <li>Kitchen, entry, and primary suite focus</li>
+            <li>Entry, living room, kitchen, and primary suite</li>
+            <li>Editing surfaces &amp; rearranging for better flow</li>
+            <li>Layering textiles and simple decor for photos</li>
+            <li>Optional photo-day styling timed with your photographer</li>
           </ul>
         </div>
 
+        <!-- Airbnb / STR -->
         <div class="stage-card">
-          <span class="pill">Vacant / Furnished Staging</span>
-          <h3>Key Rooms &amp; Vignettes</h3>
-          <p class="meta-line">Ideal for empty or partially furnished homes.</p>
+          <span class="pill">Airbnb &amp; Short-Term Rentals</span>
+          <h3>Guest-Ready, Top-to-Bottom Styling</h3>
+          <p class="meta-line">From “bare minimum” to “this is our favorite stay.”</p>
           <p>
-            We can lightly furnish and style core spaces (like the living room, dining room, and primary bedroom) and create welcoming vignettes in entries, kitchen counters, and bathrooms.
+            We design and style your rental to feel cozy, durable, and easy to maintain, with:
           </p>
           <ul>
-            <li>Space planning for main living areas</li>
-            <li>Furniture &amp; decor recommendations or sourcing</li>
-            <li>Styled “moments” for photos and tours</li>
-            <li>Options for refreshes between showings</li>
+            <li>Bed and sofa styling that photographs well</li>
+            <li>Kitchen &amp; coffee bar setups guests understand instantly</li>
+            <li>Bathroom styling with guest essentials</li>
+            <li>Small touches that help your listing stand out</li>
           </ul>
         </div>
 
+        <!-- Virtual / E-Design -->
         <div class="stage-card">
-          <span class="pill">Short-Term Rentals</span>
-          <h3>Airbnb &amp; Vacation Stays</h3>
-          <p class="meta-line">Great for making your listing stand out.</p>
+          <span class="pill">Virtual Interior Decorating</span>
+          <h3>E-Design Packages</h3>
+          <p class="meta-line">Available anywhere — done completely online.</p>
           <p>
-            We help your rental feel both durable and special — styled beds, cozy living areas, bathroom setups, and small touches that photograph well and feel memorable for guests.
+            You’ll upload photos, room measurements, and inspiration (Pinterest boards, screenshots, mood palettes).
+            We’ll send back:
           </p>
           <ul>
-            <li>Guest-ready layouts and flow</li>
-            <li>Photo-friendly textiles &amp; decor</li>
-            <li>Staging for listing photos</li>
-            <li>Optional refresh &amp; styling add-ons over time</li>
+            <li>A custom mood board and color direction</li>
+            <li>Layout suggestions / furniture placement</li>
+            <li>Clickable shopping list for decor and furniture</li>
+            <li>Styling notes so you can install everything at your own pace</li>
           </ul>
         </div>
       </div>
 
       <div class="callout">
-        Most staging projects begin with a <strongwalkthrough>walkthrough</strongwalkthrough> so we can see the home, talk through your goals, and build a quote that makes sense for your timeline and budget.
-        You’ll receive a written staging plan and ballpark estimate before we book a date.
+        Local projects in our service area can include <strong>full install days</strong> where we come in, style everything,
+        and reveal the finished space. Virtual projects are delivered by email with clear, step-by-step guidance.
+        On your intake, you’ll let us know which option you’re interested in.
       </div>
     </div>
   </section>
@@ -336,12 +353,24 @@
   <!-- How it works -->
   <section class="section">
     <div class="container">
-      <h2>How Staging With Us Works</h2>
+      <h2>How Staging &amp; Styling With Us Works</h2>
       <ol>
-        <li><strong>Submit a quick staging intake.</strong> Share your listing timeline, address, and a few photos or a video walkthrough.</li>
-        <li><strong>We review and send a ballpark estimate.</strong> You’ll get a rough range, recommended service (occupied, photo-day, or vacant), and suggested session length.</li>
-        <li><strong>On-site walkthrough &amp; staging plan.</strong> We walk the home with you or your agent, refine the plan, and confirm the quote.</li>
-        <li><strong>Staging day &amp; final polish.</strong> We stage, style, and do a final walkthrough so everything is ready for photos and showings.</li>
+        <li>
+          <strong>Submit the staging &amp; styling intake.</strong>
+          Tell us if you’re a homeowner, realtor, investor, or host, whether you’re local or virtual, and what spaces you want help with.
+        </li>
+        <li>
+          <strong>Share photos, video, and inspiration.</strong>
+          You can upload room photos, quick phone video, Pinterest links, and color or mood palettes so we can see what you love.
+        </li>
+        <li>
+          <strong>Receive a tailored plan &amp; ballpark estimate.</strong>
+          We’ll send a rough range based on your home, number of rooms, and whether we’re styling what you own, sourcing new, or both.
+        </li>
+        <li>
+          <strong>In-home install or virtual delivery.</strong>
+          Local clients can book a styling day for full install. Virtual clients receive their design, layout notes, and shopping list by email.
+        </li>
       </ol>
     </div>
   </section>
@@ -349,12 +378,12 @@
   <!-- CTA -->
   <section class="section">
     <div class="container stage-cta">
-      <h2>Ready to Get Listing-Ready?</h2>
+      <h2>Ready for Your Spaces to Feel Finished?</h2>
       <p>
-        Tell us about your property, timeline, and goals. We’ll review your staging intake, share a tailored ballpark estimate,
-        and follow up with next steps and scheduling options.
+        Share a few details about your home, listing, or Airbnb — plus any inspiration you already have — and we’ll review your intake,
+        build a ballpark estimate, and follow up with next steps and scheduling options.
       </p>
-      <a href="intake-staging.html" class="btn-primary">Request Staging Walkthrough</a>
+      <a href="intake-staging.html" class="btn-primary">Start Staging &amp; Styling Intake</a>
     </div>
   </section>
 
@@ -403,7 +432,7 @@
     <div class="ftt-chat-header">
       <div>
         <div class="ftt-title">The Finishing Touch</div>
-        <div class="ftt-subtitle">Staging &amp; Styling Concierge</div>
+        <div class="ftt-subtitle">Staging &amp; Decorating Concierge</div>
       </div>
       <button class="ftt-close" aria-label="Close chat">×</button>
     </div>
@@ -411,7 +440,7 @@
     <div id="ftt-thread" class="ftt-thread"></div>
 
     <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
-      <input id="ftt-input" name="message" type="text" placeholder="Ask about staging, pricing, availability…" aria-label="Type your message" required />
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about decorating, staging, pricing, availability…" aria-label="Type your message" required />
       <button class="ftt-send" type="submit">Send</button>
     </form>
 
@@ -471,34 +500,36 @@
         if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
         if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
         if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(stage|staging|style|styling|decor|listing|photos?)/.test(t)) return "services";
+        if (/(stage|staging|style|styling|decorate|decorating|interior|airbnb|listing)/.test(t)) return "services";
         if (/(book|booking|schedule now)/.test(t)) return "book";
         if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
         return "fallback";
       }
       function answer(intent){
-        const intakeLink = `<a href="${CFG.intakeAnchor}">Request Staging Walkthrough</a>`;
+        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Staging &amp; Styling Intake</a>`;
         const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book in Square</a>`;
         switch(intent){
           case "pricing":
             return [
-              "Staging &amp; styling is priced by project:",
-              "• Occupied and photo-day staging are customized based on rooms and square footage.",
-              "• Vacant / furnished homes and short-term rentals are quoted after we see the space.",
-              "Start with a quick walkthrough request and we’ll send a tailored ballpark: ",
+              "Decorating, staging, and Airbnb styling are priced by project:",
+              "• Homeowners and virtual clients are quoted based on rooms, layout, and how much sourcing is needed.",
+              "• Realtors and hosts are quoted based on square footage, number of rooms, and timeline.",
+              "Start by sharing photos and goals here: ",
               intakeLink
             ].join("<br>");
           case "availability":
             return [
               "Availability changes week to week.",
-              bookLink + " shows current openings for standard services, or " + intakeLink + " if you’d like us to review your property and timeline before booking."
+              bookLink + " shows current openings for standard services, or " + intakeLink + " if you’d like us to review your spaces and timeline before booking."
             ].join("<br>");
           case "services":
             return [
-              "We offer occupied staging, photo-day styling, vacant/furnished staging for key rooms, and short-term rental styling.",
-              "Share your address, timeline, and photos here: " + intakeLink
+              "We help with: everyday decorating, occupied staging, photo-day styling, Airbnb/short-term rentals, and virtual e-design.",
+              "Tell us if you’re a homeowner, realtor, investor, or host and we’ll recommend a plan:",
+              intakeLink
             ].join("<br>");
-          case "book": return "Perfect—" + bookLink + ". If you’re unsure what level of staging you need, start here first: " + intakeLink;
+          case "book": 
+            return "Perfect—" + bookLink + ". If you’re not sure which option you need yet, start here so we can guide you: " + intakeLink;
           case "human":
             return isWithinBusinessHours()
               ? `You can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> for the fastest reply.`
@@ -506,13 +537,13 @@
           case "recommend":
             return [
               "<strong>Not sure where to start?</strong>",
-              "Tell us if the home is occupied or vacant, when photos are scheduled, and which rooms matter most.",
-              "Use the walkthrough request so we can send a recommended plan: " + intakeLink
+              "Tell us if the home is lived-in, about to be listed, or used as an Airbnb, and which rooms are stressing you out the most.",
+              "Use the intake form so we can send a specific recommendation: " + intakeLink
             ].join("<br>");
           default:
             return [
-              "Hi! I can help with staging pricing, availability, and services.",
-              "Try asking “What do you charge for staging?” or “Can you help me get ready for listing photos?”",
+              "Hi! I can help with decorating, staging, and Airbnb styling questions.",
+              "Try asking “Can you help decorate my living room?” or “Can you help with my Airbnb photos?”",
               "Say “human” anytime to talk to a person."
             ].join("<br>");
         }
@@ -522,7 +553,7 @@
         const open = panel.style.display !== "block";
         panel.style.display = open ? "block" : "none";
         if (open && !thread.dataset.greeted){
-          add("Hi! I’m your staging &amp; styling concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+          add("Hi! I’m your staging &amp; decorating concierge for The Finishing Touch. Ask me about services, pricing, or availability. Say “human” anytime.","bot");
           thread.dataset.greeted = "1";
         }
         if (open) input.focus();
@@ -577,4 +608,5 @@
   </script>
 </body>
 </html>
+
 
