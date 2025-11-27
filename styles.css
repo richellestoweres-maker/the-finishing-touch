@@ -97,6 +97,63 @@ h1,h2,h3{
   border-radius:999px;
 }
 
+/* --- Services dropdown in main nav --- */
+
+.nav-dropdown {
+  position: relative;
+}
+
+/* "Services ▾" button styled like a link */
+.nav-link.has-caret {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link.has-caret .caret {
+  font-size: 0.7rem;
+}
+
+/* Dropdown menu */
+.nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 210px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+  padding: 6px 0;
+  display: none;
+  z-index: 999;
+}
+
+.nav-dropdown-menu a {
+  display: block;
+  padding: 7px 14px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #2e2a27;
+  white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover {
+  background: #fbf7f2;
+}
+
+/* Open on hover or keyboard focus */
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu {
+  display: block;
+}
+
+
 /* Buttons */
 .btn{
   display:inline-block;
@@ -827,3 +884,4 @@ iframe{max-width:100%}
     font-size:20px;
   }
 }
+
