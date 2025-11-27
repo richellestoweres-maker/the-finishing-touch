@@ -30,16 +30,47 @@
       background:#d2bda9; color:#2a2624; border:0; border-radius:999px; padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
     }
 
-    /* HERO */
-    .page-home .hero{ position:relative; }
-    .page-home .hero-media img{ width:100%; height:clamp(360px, 48vw, 560px); object-fit:cover; object-position:center; display:block; }
-    .page-home .hero-scrim{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35)); pointer-events:none; }
-    .page-home .hero-content{ position:absolute; inset:0; display:grid; align-content:center; }
-    .page-home .hero-content .script-kicker,
-    .page-home .hero-content .hero-title,
-    .page-home .hero-content .hero-sub,
-    .page-home .hero-content .quote-dropdown{ max-width:min(720px, 90%); color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.25); }
-    .page-home .quote-menu a{ color:#2e2a27; }
+    /* HERO – sit above the service cards so the dropdown isn’t hidden */
+.page-home .hero{
+  position:relative;
+  z-index:2;
+}
+
+.page-home .hero-media img{ 
+  width:100%; 
+  height:clamp(360px, 48vw, 560px); 
+  object-fit:cover; 
+  object-position:center; 
+  display:block; 
+}
+.page-home .hero-scrim{ 
+  position:absolute; 
+  inset:0; 
+  background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35)); 
+  pointer-events:none; 
+}
+.page-home .hero-content{ 
+  position:absolute; 
+  inset:0; 
+  display:grid; 
+  align-content:center; 
+}
+.page-home .hero-content .script-kicker,
+.page-home .hero-content .hero-title,
+.page-home .hero-content .hero-sub,
+.page-home .hero-content .quote-dropdown{
+  max-width:min(720px, 90%); 
+  color:#fff; 
+  text-shadow:0 2px 10px rgba(0,0,0,.25); 
+}
+.page-home .quote-menu a{ color:#2e2a27; }
+
+/* Make services its own layer *under* the hero */
+.page-home .services{
+  position:relative;
+  z-index:1;
+}
+
 
     /* SERVICES grid centered nicely on desktop */
     .page-home .services .cards{
