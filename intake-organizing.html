@@ -77,7 +77,8 @@
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Organizing Intake Form</div>
     <p class="intake-note">
-      Complete this brief form for an instant ballpark estimate (shown below). You’ll then get a <em>Book Now</em> button with the recommended time block.
+      Complete this brief intake so we can review your project and follow up with a ballpark range and recommended approach.
+      Uploading photos/video (optional) helps us quote accurately.
     </p>
 
     <!-- JS-off fallback goes straight to Formspree -->
@@ -168,6 +169,24 @@
         </label>
       </div>
 
+      <!-- Media Uploads (optional) -->
+      <div class="fieldset grid-1">
+        <p class="hint" style="margin:0 0 8px;">
+          <strong>Photos/Video (optional):</strong> Upload 3–10 photos (and an optional short video) to help us quote accurately.
+          Best shots: wide view of the space, inside cabinets/closet, and the main problem zones.
+        </p>
+
+        <label>Upload Photos (optional)
+          <input name="media_photos" id="mediaPhotos" type="file" accept="image/*" multiple>
+        </label>
+
+        <label>Upload Video (optional, short)
+          <input name="media_video" id="mediaVideo" type="file" accept="video/*">
+        </label>
+
+        <p class="hint" id="uploadStatus" style="margin:6px 0 0;"></p>
+      </div>
+
       <!-- Preferences -->
       <div class="fieldset grid-2">
         <label>Preferred Days / Times
@@ -212,10 +231,9 @@
         </label>
       </fieldset>
 
-      <!-- Submit + estimate -->
+      <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Get Organizing Estimate</button>
-        <p id="estimateOrganizing" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <button class="btn btn-solid" type="submit" id="orgSubmitBtn">Submit Organizing Intake</button>
         <p id="emailStatusOrganizing" class="hint"></p>
       </div>
     </form>
@@ -239,85 +257,220 @@
     })();
   </script>
 
+  <!-- Your site JS (keep if other pages use it; this page no longer relies on public pricing) -->
+  <script src="script.js?v=7" defer></script>
 
-  <!-- Your site JS (pricing, etc.) -->
-  <script src="script.js?v=6" defer></script>
+  <!-- Firebase uploads + backend-only internal estimate -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
 
-  <!-- Estimate + Formspree + Book Now (no redirect) -->
+    // ✅ PASTE YOUR FIREBASE CONFIG HERE
+    const firebaseConfig = {
+      // apiKey: "...",
+      // authDomain: "...",
+      // projectId: "...",
+      // storageBucket: "...",
+      // appId: "..."
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+    const functions = getFunctions(app);
+
+    // Cloud Function name (you create this in Firebase Functions)
+    const submitOrganizingIntake = httpsCallable(functions, "submitOrganizingIntake");
+
+    async function uploadMedia(intakeId, photoFiles, videoFile) {
+      const statusEl = document.getElementById("uploadStatus");
+      const photoUrls = [];
+      let videoUrl = "";
+
+      const total = (photoFiles?.length || 0) + (videoFile ? 1 : 0);
+      let done = 0;
+
+      const update = () => {
+        if (!statusEl) return;
+        statusEl.textContent = total ? `Uploading media… ${done}/${total}` : "";
+      };
+
+      update();
+
+      for (const file of (photoFiles || [])) {
+        const path = `organizing-intakes/${intakeId}/photos/${Date.now()}-${file.name}`;
+        const fileRef = ref(storage, path);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        photoUrls.push(url);
+        done++;
+        update();
+      }
+
+      if (videoFile) {
+        const path = `organizing-intakes/${intakeId}/video/${Date.now()}-${videoFile.name}`;
+        const fileRef = ref(storage, path);
+        await uploadBytes(fileRef, videoFile);
+        videoUrl = await getDownloadURL(fileRef);
+        done++;
+        update();
+      }
+
+      if (statusEl) statusEl.textContent = total ? "Media uploaded ✔" : "";
+      return { photoUrls, videoUrl };
+    }
+
+    // expose to window for the non-module chat + page scripts
+    window.__FTT_ORG = { submitOrganizingIntake, uploadMedia };
+  </script>
+
+  <!-- Internal pricing + Formspree submit (NO client pricing, NO booking) -->
   <script>
     (function(){
-      // Square service links for ORGANIZING
-      const SQUARE_ORG_SMALL  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BD7XIHWD3YSDVE76FLUC6TN";
-      const SQUARE_ORG_MEDIUM ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/BMQXJT324IV7SABC3N7N434E";
-      const SQUARE_ORG_LARGE  ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/GCZWD4QHC4EOKWZYYUBOMENC";
-      const SQUARE_ORG_XL     ="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9/services/35VRE245LJFHS7UADNOABFSS";
+      // Boutique internal defaults
+      const HOURLY_PER_ORG = 95;
+      const MIN_HOURS_PER_ORG = 3;
+      const SMALL_SPACE_START = 250;
+      const SMALL_SPACE_CAP = 450; // if "small space" estimate exceeds this, auto-bump to hourly model
 
-      function roundHalf(n){ return Math.round(n*2)/2; }
+      function roundTo(n, step){ return Math.round(n/step)*step; }
+      function normalize(v){ return (v||"").toString().trim(); }
+      function isWholeHome(area){ return /whole home/i.test(area||""); }
 
-      // Fallback calculators if global ones aren’t available yet
-      function calcOrganizingLocal(data){
-        try{ if (typeof calcOrganizing === 'function') return calcOrganizing(data); }catch(_){}
-        const ORG_HOURLY=65, ORG_MIN_HOURS=3;
-        const hoursPerSpace = {"Light":1,"Moderate":2,"Heavy":3};
-        const spaces = Math.max(1, Number(data.spaces||1));
-        const complexity = data.complexity || "Moderate";
-        const team = Math.max(1, Number(data.team||2));
-        const hoursEach = hoursPerSpace[complexity] || 2;
-        const estHours = Math.max(ORG_MIN_HOURS, spaces * hoursEach);
-        return Math.round(estHours * ORG_HOURLY * team);
+      function buildPrepNotes(data){
+        const notes = [];
+        const area = normalize(data.org_area);
+        const clutter = normalize(data.org_clutter);
+        const volume = normalize(data.org_volume);
+        const decision = normalize(data.org_decision_speed);
+        const containers = normalize(data.org_containers);
+        const addons = normalize(data.addons).toLowerCase();
+
+        if (clutter === "Heavy") notes.push("Bring extra donation bags/boxes; expect slower sorting.");
+        if (volume === "High") notes.push("High item volume — plan for staging space + categories.");
+        if (decision === "Slow") notes.push("Decision support likely — build in buffer time.");
+        if (containers !== "None") notes.push("Containers/labels likely — confirm sourcing vs recommendations.");
+        if (/bin|label|container/.test(addons)) notes.push("Client requested bins/labels — clarify budget + sourcing.");
+        if (isWholeHome(area)) notes.push("Whole-home resets often work best phased by priority zones.");
+        return notes;
       }
-      function estimateHoursOrganizingLocal(data){
-        try{ if (typeof estimateHoursOrganizing === 'function') return estimateHoursOrganizing(data); }catch(_){}
-        const area = data.org_area || "Closet";
-        const size = data.org_size || "Medium";
-        const baseMap = {
-          "Closet":{Small:2,Medium:3,Large:4}, "Pantry":{Small:2,Medium:3,Large:4},
-          "Kitchen":{Small:3,Medium:4.5,Large:6}, "Bedroom":{Small:2.5,Medium:3.5,Large:5},
-          "Bathroom":{Small:1.5,Medium:2.5,Large:3.5}, "Garage":{Small:3,Medium:5,Large:7},
-          "Laundry Room":{Small:2,Medium:3,Large:4}, "Office":{Small:2.5,Medium:4,Large:5.5},
-          "Playroom":{Small:2.5,Medium:4,Large:5.5}, "Whole Home (multi-area)":{Small:6,Medium:8,Large:12}
+
+      function computeHourlyModel(data, overrides){
+        const area = normalize(data.org_area);
+        const size = overrides?.forceSize || normalize(data.org_size) || "Medium";
+        const spaces = overrides?.forceSpaces || Math.max(1, parseInt(data.spaces || "1", 10) || 1);
+
+        const complexity = normalize(data.complexity) || "Moderate";
+        const clutter = normalize(data.org_clutter) || "Moderate";
+        const volume = normalize(data.org_volume) || "Medium";
+        const decision = normalize(data.org_decision_speed) || "Average";
+
+        const basePerSpace = (size === "Small") ? 1.5 : (size === "Large") ? 2.5 : 2.0;
+
+        let mult = 1.0;
+        if (complexity === "Heavy") mult *= 1.25;
+        if (clutter === "Heavy") mult *= 1.25;
+        if (volume === "High") mult *= 1.20;
+        if (decision === "Slow") mult *= 1.15;
+
+        let totalLaborHours = spaces * basePerSpace * mult;
+
+        let organizers = 1;
+        if (spaces >= 3 || clutter === "Heavy" || complexity === "Heavy" || isWholeHome(area)) organizers = 2;
+        if (spaces >= 6 && (clutter === "Heavy" || complexity === "Heavy" || isWholeHome(area))) organizers = 3;
+
+        let hoursPerOrg = totalLaborHours / organizers;
+        hoursPerOrg = Math.max(MIN_HOURS_PER_ORG, Math.ceil(hoursPerOrg * 2) / 2);
+
+        const low = roundTo(organizers * hoursPerOrg * HOURLY_PER_ORG * 0.95, 25);
+        const high = roundTo(organizers * hoursPerOrg * HOURLY_PER_ORG * 1.15, 25);
+
+        const phaseSuggested = (isWholeHome(area) || spaces >= 5 || clutter === "Heavy" || complexity === "Heavy");
+
+        return {
+          category: "Larger Project / Whole-Home (Hourly)",
+          model: "hourly",
+          organizers,
+          hoursPerOrganizer: hoursPerOrg,
+          hourlyPerOrganizer: HOURLY_PER_ORG,
+          rangeLow: low,
+          rangeHigh: high,
+          phaseSuggested,
+          prepNotes: buildPrepNotes(data),
         };
-        let solo = (baseMap[area]?.[size] ?? 3.5);
-        const clutter = data.org_clutter || "Moderate";
-        if (clutter === "Light") solo *= 0.9;
-        if (clutter === "Moderate") solo *= 1.0;
-        if (clutter === "Heavy") solo *= 1.35;
-
-        const decision = data.org_decision_speed || "Average";
-        if (decision === "Fast") solo *= 0.9;
-        if (decision === "Average") solo *= 1.0;
-        if (decision === "Slow") solo *= 1.25;
-
-        const volume = data.org_volume || "Medium";
-        if (volume === "Medium") solo += 0.5;
-        if (volume === "High") solo += 1.0;
-
-        const containers = data.org_containers || "None";
-        if (containers === "Some (up to 10)") solo += 0.5;
-        if (containers === "Many (10+)") solo += 1.0;
-
-        const access = data.org_access || "Easy (ground floor)";
-        if (access === "Stairs") solo += 0.5;
-        if (access === "Tight spaces / HOA constraints") solo += 0.75;
-
-        solo = roundHalf(solo);
-        const teamCount = Math.max(1, Number(data.team || 2));
-        const teamHours = roundHalf(solo / teamCount);
-        return { soloHours: solo, teamHours };
       }
-      function squareUrlForOrganizingLocal(teamHours){
-        if (teamHours <= 2.5) return SQUARE_ORG_SMALL;
-        if (teamHours <= 4)   return SQUARE_ORG_MEDIUM;
-        if (teamHours <= 6)   return SQUARE_ORG_LARGE;
-        return SQUARE_ORG_XL;
-      }
-      function organizingHintLocal(data, teamHours){
-        const area = data.org_area || "Space";
-        const size = data.org_size || "Medium";
-        if (teamHours <= 2.5) return `${area} Organizing — Small (${size}, ≈2–2.5 hr)`;
-        if (teamHours <= 4)   return `${area} Organizing — Medium (${size}, ≈3–4 hr)`;
-        if (teamHours <= 6)   return `${area} Organizing — Large (${size}, ≈5–6 hr)`;
-        return `${area} Organizing — XL (${size}, 6.5+ hr)`;
+
+      function computeInternalRecommendation(data){
+        const area = normalize(data.org_area);
+        const size = normalize(data.org_size) || "Medium";
+        const spaces = Math.max(1, parseInt(data.spaces || "1", 10) || 1);
+
+        const complexity = normalize(data.complexity) || "Moderate";
+        const clutter = normalize(data.org_clutter) || "Moderate";
+        const volume = normalize(data.org_volume) || "Medium";
+        const decision = normalize(data.org_decision_speed) || "Average";
+        const containers = normalize(data.org_containers) || "None";
+        const addons = normalize(data.addons).toLowerCase();
+
+        const smallAreaList = ["pantry","linen","fridge","freezer","entry","coat","closet","laundry"];
+        const looksSmall = smallAreaList.some(k => area.toLowerCase().includes(k));
+        const smallCandidate = looksSmall && spaces === 1 && !isWholeHome(area);
+
+        const wantsBins = /bin|bins|label|labels|container|containers/.test(addons);
+
+        if (smallCandidate) {
+          let price = SMALL_SPACE_START;
+
+          if (size === "Small") price += 0;
+          if (size === "Medium") price += 25;
+          if (size === "Large") price += 60;
+
+          if (complexity === "Light") price += 0;
+          if (complexity === "Moderate") price += 20;
+          if (complexity === "Heavy") price += 55;
+
+          if (clutter === "Light") price += 0;
+          if (clutter === "Moderate") price += 25;
+          if (clutter === "Heavy") price += 70;
+
+          if (volume === "Low") price += 0;
+          if (volume === "Medium") price += 15;
+          if (volume === "High") price += 45;
+
+          if (decision === "Fast") price += 0;
+          if (decision === "Average") price += 10;
+          if (decision === "Slow") price += 35;
+
+          if (containers === "Some (up to 10)") price += 25;
+          if (containers === "Many (10+)") price += 50;
+
+          if (wantsBins) price += 15;
+
+          let hours = 3;
+          if (clutter === "Heavy" || volume === "High" || complexity === "Heavy") hours = 4;
+          if (size === "Large" && (clutter === "Heavy" || volume === "High")) hours = 4.5;
+
+          if (price > SMALL_SPACE_CAP) {
+            return computeHourlyModel(data, { forceSpaces: spaces, forceSize: size });
+          }
+
+          const low = roundTo(price * 0.95, 10);
+          const high = roundTo(price * 1.10, 10);
+
+          return {
+            category: "Small-Space Package",
+            model: "small_space",
+            organizers: 1,
+            hoursPerOrganizer: hours,
+            hourlyPerOrganizer: HOURLY_PER_ORG,
+            rangeLow: low,
+            rangeHigh: high,
+            phaseSuggested: false,
+            prepNotes: buildPrepNotes(data),
+          };
+        }
+
+        return computeHourlyModel(data);
       }
 
       document.addEventListener('DOMContentLoaded', () => {
@@ -328,72 +481,106 @@
           e.preventDefault();
           e.stopImmediatePropagation();
 
-          const data = Object.fromEntries(new FormData(form).entries());
+          const statusEl = document.getElementById('emailStatusOrganizing');
+          const submitBtn = document.getElementById('orgSubmitBtn');
+          if (statusEl) statusEl.textContent = "";
+          if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting…"; }
 
-          // 1) Estimate (price)
-          let price = null;
-          try{
-            price = (typeof calcOrganizing === 'function') ? calcOrganizing(data) : calcOrganizingLocal(data);
-          }catch(_){}
-          const estEl = document.getElementById('estimateOrganizing');
-          if (estEl){
-            if (price != null) {
-              estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-            } else {
-              estEl.textContent = "Ballpark estimate ready.";
+          const fd = new FormData(form);
+
+          // Extract file inputs (optional)
+          const photoFiles = document.getElementById("mediaPhotos")?.files || [];
+          const videoFile  = document.getElementById("mediaVideo")?.files?.[0] || null;
+
+          // Convert non-file fields to object
+          const data = {};
+          fd.forEach((v, k) => {
+            if (k === "media_photos" || k === "media_video") return;
+            data[k] = v;
+          });
+
+          const intakeId = `org_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
+          // Internal recommendation from intake alone (works even w/o photos)
+          const rec = computeInternalRecommendation(data);
+
+          // Upload media if provided
+          let media = { photoUrls: [], videoUrl: "" };
+          try {
+            if (window.__FTT_ORG?.uploadMedia && (photoFiles.length || videoFile)) {
+              media = await window.__FTT_ORG.uploadMedia(intakeId, Array.from(photoFiles), videoFile);
             }
+          } catch (err) {
+            console.warn("Media upload failed:", err);
           }
 
-          // 2) Hours → pick Square service URL
-          const hours = (typeof estimateHoursOrganizing === 'function')
-            ? estimateHoursOrganizing(data)
-            : estimateHoursOrganizingLocal(data);
-          const url = (typeof squareUrlForOrganizing === 'function')
-            ? squareUrlForOrganizing(hours.teamHours)
-            : squareUrlForOrganizingLocal(hours.teamHours);
-
-          // 3) Inject/refresh Book button
-          let btn = document.getElementById('scheduleOnSquareOrganizing');
-          if (!btn){
-            btn = document.createElement('a');
-            btn.id = 'scheduleOnSquareOrganizing';
-            btn.className = 'btn btn-solid';
-            btn.style.marginTop = '10px';
-            btn.textContent = 'Book Now';
-            estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          // Save to backend (private record)
+          try {
+            if (window.__FTT_ORG?.submitOrganizingIntake) {
+              await window.__FTT_ORG.submitOrganizingIntake({
+                intakeId,
+                customerName: data.name || "",
+                email: data.email || "",
+                phone: data.phone || "",
+                address: data.address || "",
+                org_area: data.org_area || "",
+                org_size: data.org_size || "",
+                spaces: parseInt(data.spaces || "1", 10) || 1,
+                complexity: data.complexity || "",
+                org_clutter: data.org_clutter || "",
+                org_decision_speed: data.org_decision_speed || "",
+                org_volume: data.org_volume || "",
+                org_containers: data.org_containers || "",
+                addons: data.addons || "",
+                notes: data.notes || "",
+                availability: data.availability || "",
+                pay: data.pay || "",
+                photoUrls: media.photoUrls || [],
+                videoUrl: media.videoUrl || "",
+                internalRecommendation: rec
+              });
+            }
+          } catch (err) {
+            console.warn("Backend submit failed:", err);
           }
-          btn.href = url;
-          btn.target = '_blank';
-          btn.rel = 'noopener';
 
-          // 4) Show recommended option hint
-          const hintText = organizingHintLocal(data, hours.teamHours);
-          let hintEl = document.getElementById('organizingHint');
-          if (!hintEl){
-            hintEl = document.createElement('p');
-            hintEl.id = 'organizingHint';
-            hintEl.className = 'hint';
-            btn.parentNode.insertBefore(hintEl, btn.nextSibling);
-          }
-          hintEl.textContent = `Recommended service: ${hintText}. This opens our Square calendar in a new tab.`;
+          // Append internal-only fields to your Formspree email
+          fd.append("intake_id", intakeId);
+          fd.append("INTERNAL_category", rec.category);
+          fd.append("INTERNAL_model", rec.model);
+          fd.append("INTERNAL_organizers", String(rec.organizers));
+          fd.append("INTERNAL_hours_per_organizer", String(rec.hoursPerOrganizer));
+          fd.append("INTERNAL_hourly_per_organizer", "$" + String(rec.hourlyPerOrganizer));
+          fd.append("INTERNAL_ballpark_range", `$${rec.rangeLow} – $${rec.rangeHigh}`);
+          fd.append("INTERNAL_phase_suggested", rec.phaseSuggested ? "Yes" : "No");
+          fd.append("INTERNAL_prep_notes", (rec.prepNotes || []).join(" | "));
+          fd.append("photo_urls", (media.photoUrls || []).join("\n"));
+          fd.append("video_url", media.videoUrl || "");
 
-          // 5) Send to Formspree (AJAX)
+          // Send to Formspree (AJAX)
           try{
-            const statusEl = document.getElementById('emailStatusOrganizing');
             const resp = await fetch(form.action, {
               method: 'POST',
               headers: { 'Accept': 'application/json' },
-              body: new FormData(form)
+              body: fd
             });
+
             if (resp.ok){
-              if (statusEl) statusEl.textContent = "Thanks! We’ve received your intake. You can book now below.";
+              if (statusEl) statusEl.textContent =
+                "Thanks! We’ve received your intake. We’ll review your details and follow up with a ballpark range and recommended approach.";
+              form.reset();
+              const up = document.getElementById("uploadStatus");
+              if (up) up.textContent = "";
             } else {
-              if (statusEl) statusEl.textContent = "Saved locally. We couldn’t reach the inbox just now—please book below and we’ll follow up.";
+              if (statusEl) statusEl.textContent =
+                "We received your intake, but couldn’t reach our inbox right now. If needed, please email us and reference your submission.";
             }
           }catch(err){
-            const statusEl = document.getElementById('emailStatusOrganizing');
-            if (statusEl) statusEl.textContent = "Saved locally. If your internet is unstable, you can still book below.";
             console.warn(err);
+            if (statusEl) statusEl.textContent =
+              "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+          } finally {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Submit Organizing Intake"; }
           }
         }, true);
       });
@@ -465,35 +652,34 @@
       }
       function answer(intent){
         const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
-        const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
         switch(intent){
           case "pricing":
             return [
-              "Organizing is billed by the project scope and time.",
-              "Small sessions are often 2–3 hrs, larger multi-area projects 4–6+ hrs.",
-              "Fill the intake for a tailored ballpark. " + intakeLink + " or " + bookLink + "."
+              "Organizing is priced based on scope and time.",
+              "Small-space projects start around $250; larger projects are billed hourly per organizer with a three-hour minimum.",
+              "Submit the intake and we’ll follow up with a tailored ballpark range. " + intakeLink + "."
             ].join("<br>");
           case "availability":
-            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
+            return ["After you submit the intake, we’ll follow up with scheduling options.", "Start here: " + intakeLink + "."].join("<br>");
           case "services":
             return [
               "We declutter, sort, and set up practical systems (closets, kitchens, pantries, garages, kids’ spaces, offices).",
-              "We can label + source containers if desired.",
-              "Want the best pick? " + intakeLink + " and I’ll guide you."
+              "We can label and recommend or source containers if desired.",
+              "Want the best next step? " + intakeLink + "."
             ].join("<br>");
-          case "book": return "Perfect—" + bookLink + " (opens in a new tab), or " + intakeLink + " for a quick tailored estimate first.";
+          case "book":
+            return "We don’t use instant booking for organizing projects — submit the intake and we’ll follow up with the best approach and scheduling options. " + intakeLink + ".";
           case "human":
             return `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a>.`;
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
-              "Small (≈2–2.5 hr): single closet/smaller zone",
-              "Medium (≈3–4 hr): pantry/bedroom/office",
-              "Large (≈5–6 hr): kitchen/garage or multi-area",
-              `Ready to book? ${bookLink} (Square opens in a new tab). Or ${intakeLink} for a tailored estimate first.`
+              "Small-space (starts around $250): pantry, linen, fridge/freezer, entry closet",
+              "Larger projects: kitchens, playrooms, primary suites, garages, multi-space resets (hourly with 3-hour minimum)",
+              "Start here and we’ll recommend the best approach: " + intakeLink + "."
             ].join("<br>");
           default:
-            return ["I can help with pricing, availability, and services.", "Try “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
+            return ["I can help with pricing, availability, and services.", "Try “what’s your pricing?” or “what do you organize?”", "Say “human” any time to talk to a person."].join("<br>");
         }
       }
       function init(){
@@ -527,7 +713,8 @@
     })();
   </script>
 
-  <!-- Optional shared chat guard (won’t double-init if you add it later) -->
+  <!-- Optional shared chat guard -->
   <script src="ftt-chat.js" defer></script>
 </body>
 </html>
+
