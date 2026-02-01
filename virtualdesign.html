@@ -115,31 +115,23 @@
       .two-col{ grid-template-columns:1fr; }
     }
 
-   /* ============= GALLERY ============= */
-.vd-gallery{
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:12px;
-}
+ <div class="vd-gallery">
+  <div class="vd-tile">
+    <img src="mood board.JPG" alt="Interior design moodboard with colors and textures">
+  </div>
 
-.vd-gallery img{
-  width:100%;
-  aspect-ratio: 4 / 5;        /* taller, more premium */
-  height:auto;                /* no forced tiny height */
-  object-fit:cover;
-  border-radius:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,.12);
-  display:block;
-}
+  <div class="vd-tile">
+    <img src="virtual-layout.png" alt="Room layout sketch for living room">
+  </div>
 
-@media (max-width:640px){
-  .vd-gallery{
-    grid-template-columns:1fr;
-  }
-  .vd-gallery img{
-    aspect-ratio: 16 / 10;    /* looks great on mobile */
-  }
-}
+  <div class="vd-tile vd-tile--contain">
+    <img src="virtual-shoppinglist.png" alt="Example shopping list with product images">
+  </div>
+
+  <div class="vd-tile">
+    <img src="virtual-beforeafter.png" alt="Before and after virtual design result">
+  </div>
+</div>
 
 
     /* ============= CARD GRIDS ============= */
