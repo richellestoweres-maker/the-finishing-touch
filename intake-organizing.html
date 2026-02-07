@@ -39,6 +39,19 @@
 
     /* Hint */
     .hint{font-size:.95rem; opacity:.9}
+
+    /* Internal estimate preview (admin-only text shown after submit) */
+    .internal-preview{
+      margin-top:14px;
+      background:#fbf5ee;
+      border:1px solid #ecdccc;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:.95rem;
+      display:none;
+    }
+    .internal-preview strong{font-weight:800}
+    .internal-preview .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:.92rem}
   </style>
 </head>
 <body>
@@ -94,67 +107,95 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Scope -->
+      <!-- Session Type + Goals -->
       <div class="fieldset grid-2">
-        <label>Area Type
-          <select name="org_area">
-            <option>Closet</option>
-            <option>Kitchen</option>
+        <label>Organizing Service Type
+          <select name="org_service_type" required>
+            <option value="Not sure" selected>Not sure (recommend for me)</option>
+            <option value="Light">Light Organizing (small spaces)</option>
+            <option value="WholeHome">Whole-Home Organizing (multi-space / deeper reset)</option>
+          </select>
+        </label>
+
+        <label>Primary Goal
+          <select name="org_goal" required>
+            <option value="Reset" selected>Reset + simple systems</option>
+            <option value="Declutter">Declutter + donate + deep reset</option>
+            <option value="Unpack">Unpack + set up systems</option>
+            <option value="Maintenance">Maintenance / refresh of an existing system</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Scope (Interior Only) -->
+      <div class="fieldset grid-2">
+        <label>Primary Area (Interior Only)
+          <select name="org_area" required>
             <option>Pantry</option>
+            <option>Kitchen</option>
+            <option>Closet</option>
             <option>Bedroom</option>
             <option>Bathroom</option>
-            <option>Garage</option>
             <option>Laundry Room</option>
             <option>Office</option>
             <option>Playroom</option>
-            <option>Whole Home (multi-area)</option>
+            <option>Multiple Areas (interior)</option>
+            <option>Whole Home (interior multi-area)</option>
           </select>
         </label>
+
+        <label>Approx. Home Size (sq ft)
+          <select name="home_sqft">
+            <option value="">Prefer not to say</option>
+            <option>Under 1,500</option>
+            <option>1,500–2,500</option>
+            <option>2,500–3,500</option>
+            <option>3,500–4,500</option>
+            <option>4,500+</option>
+          </select>
+        </label>
+
         <label>Area Size
-          <select name="org_size">
+          <select name="org_size" required>
             <option>Small</option>
             <option selected>Medium</option>
             <option>Large</option>
           </select>
         </label>
+
         <label># of Spaces (rooms/areas)
-          <input name="spaces" type="number" min="1" value="1">
-        </label>
-        <label>Overall Complexity
-          <select name="complexity">
-            <option>Light</option>
-            <option selected>Moderate</option>
-            <option>Heavy</option>
-          </select>
+          <input name="spaces" type="number" min="1" value="1" required>
         </label>
       </div>
 
       <!-- Complexity Drivers -->
       <div class="fieldset grid-2">
-        <label>Current Clutter Level
-          <select name="org_clutter">
+        <label>Clutter Level
+          <select name="org_clutter" required>
             <option>Light</option>
             <option selected>Moderate</option>
             <option>Heavy</option>
           </select>
         </label>
+
         <label>Decision Speed (purge/sort)
-          <select name="org_decision_speed">
+          <select name="org_decision_speed" required>
             <option>Fast</option>
             <option selected>Average</option>
             <option>Slow</option>
           </select>
         </label>
 
-        <label>Estimated Items Volume
-          <select name="org_volume">
+        <label>Estimated Item Volume
+          <select name="org_volume" required>
             <option>Low</option>
             <option selected>Medium</option>
             <option>High</option>
           </select>
         </label>
+
         <label>Containers Needed (bins/labels)
-          <select name="org_containers">
+          <select name="org_containers" required>
             <option selected>None</option>
             <option>Some (up to 10)</option>
             <option>Many (10+)</option>
@@ -164,9 +205,18 @@
         <label>Notes / Focus Areas
           <input name="notes" placeholder="e.g., zones for kids, seasonal storage">
         </label>
-        <label>Add-ons (type keywords: bins, labels, bins/labels)
+
+        <label>Add-ons (type keywords: bins, labels, sourcing)
           <input name="addons" placeholder="e.g., bins/labels">
         </label>
+      </div>
+
+      <!-- Donations Policy -->
+      <div class="fieldset grid-1" role="note" aria-live="polite">
+        <p class="hint" style="margin:0;">
+          <strong>Donations:</strong> We can schedule donation pickup with our preferred donation partner. If you’d like to donate elsewhere, you’ll handle drop-off directly.
+          We can bag/box and stage items for pickup.
+        </p>
       </div>
 
       <!-- Media Uploads (optional) -->
@@ -187,23 +237,33 @@
         <p class="hint" id="uploadStatus" style="margin:6px 0 0;"></p>
       </div>
 
-      <!-- Preferences -->
+      <!-- Scheduling Preferences -->
       <div class="fieldset grid-2">
+        <label>Preferred Session Cadence
+          <select name="org_cadence" required>
+            <option value="Weekly" selected>Weekly (recommended for larger projects)</option>
+            <option value="TwiceWeekly">Twice per week</option>
+            <option value="Flexible">Flexible / as available</option>
+          </select>
+        </label>
+
         <label>Preferred Days / Times
           <input name="availability" placeholder="e.g., Tue/Thu mornings">
         </label>
+
+        <label>Decision Preference During Session
+          <select name="org_style" required>
+            <option value="HandsOn" selected>I can be hands-on and make decisions</option>
+            <option value="Guided">Guided (you lead; I approve as needed)</option>
+            <option value="HandsOff">Mostly hands-off (please follow my guidelines)</option>
+          </select>
+        </label>
+
         <label>Payment Preference
-          <select name="pay">
+          <select name="pay" required>
             <option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option>
           </select>
         </label>
-      </div>
-
-      <!-- Donation note -->
-      <div class="fieldset grid-1" role="note" aria-live="polite">
-        <p class="hint" style="margin:0;">
-          <strong>Donations &amp; Discards:</strong> Clients are responsible for removing donations and discards. We can bag/box and stage for your preferred pickup/drop-off.
-        </p>
       </div>
 
       <!-- Consents -->
@@ -235,6 +295,9 @@
       <div class="submit-row">
         <button class="btn btn-solid" type="submit" id="orgSubmitBtn">Submit Organizing Intake</button>
         <p id="emailStatusOrganizing" class="hint"></p>
+
+        <!-- Optional internal preview block (you can keep hidden if you prefer) -->
+        <div id="internalPreview" class="internal-preview" aria-live="polite"></div>
       </div>
     </form>
   </main>
@@ -257,10 +320,10 @@
     })();
   </script>
 
-  <!-- Your site JS (keep if other pages use it; this page no longer relies on public pricing) -->
+  <!-- Your site JS -->
   <script src="script.js?v=7" defer></script>
 
-  <!-- Firebase uploads + backend-only internal estimate -->
+  <!-- Firebase uploads + backend submission -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
@@ -320,159 +383,232 @@
       return { photoUrls, videoUrl };
     }
 
-    // expose to window for the non-module chat + page scripts
     window.__FTT_ORG = { submitOrganizingIntake, uploadMedia };
   </script>
 
-  <!-- Internal pricing + Formspree submit (NO client pricing, NO booking) -->
+  <!-- Internal recommendation engine (sessions + staffing + subcontractor flat fee) -->
   <script>
     (function(){
-      // Boutique internal defaults
-      const HOURLY_PER_ORG = 95;
-      const MIN_HOURS_PER_ORG = 3;
-      const SMALL_SPACE_START = 250;
-      const SMALL_SPACE_CAP = 450; // if "small space" estimate exceeds this, auto-bump to hourly model
+      // === Pricing model you requested ===
+      // Client-facing session starts:
+      const SESSION_HOURS = 4;
+      const LIGHT_SESSION_START = 380;       // per 4-hr session
+      const WHOLE_SESSION_START = 520;       // per 4-hr session
 
-      function roundTo(n, step){ return Math.round(n/step)*step; }
+      // Sub pay ranges you gave:
+      const SUB_PAY_LIGHT_MIN = 30;          // per hour
+      const SUB_PAY_LIGHT_MAX = 45;          // per hour
+      const SUB_PAY_LARGE_MIN = 45;          // per hour
+      const SUB_PAY_LARGE_MAX = 55;          // per hour
+
+      // For internal recommendation we choose a midpoint by default:
+      const MID = (a,b)=> (a+b)/2;
+
       function normalize(v){ return (v||"").toString().trim(); }
-      function isWholeHome(area){ return /whole home/i.test(area||""); }
+      function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+      function roundTo(n, step){ return Math.round(n/step)*step; }
+      function ceilTo(n, step){ return Math.ceil(n/step)*step; }
 
-      function buildPrepNotes(data){
-        const notes = [];
-        const area = normalize(data.org_area);
+      function isMultiArea(area){
+        return /multiple|whole home/i.test(area||"");
+      }
+
+      // Determine tier (Light vs WholeHome) based on intake
+      function recommendTier(data){
+        const forced = normalize(data.org_service_type);
+        const area = normalize(data.org_area).toLowerCase();
+        const spaces = Math.max(1, parseInt(data.spaces || "1", 10) || 1);
         const clutter = normalize(data.org_clutter);
         const volume = normalize(data.org_volume);
-        const decision = normalize(data.org_decision_speed);
-        const containers = normalize(data.org_containers);
-        const addons = normalize(data.addons).toLowerCase();
+        const goal = normalize(data.org_goal);
 
-        if (clutter === "Heavy") notes.push("Bring extra donation bags/boxes; expect slower sorting.");
-        if (volume === "High") notes.push("High item volume — plan for staging space + categories.");
-        if (decision === "Slow") notes.push("Decision support likely — build in buffer time.");
-        if (containers !== "None") notes.push("Containers/labels likely — confirm sourcing vs recommendations.");
-        if (/bin|label|container/.test(addons)) notes.push("Client requested bins/labels — clarify budget + sourcing.");
-        if (isWholeHome(area)) notes.push("Whole-home resets often work best phased by priority zones.");
-        return notes;
+        if (forced === "Light") return "Light";
+        if (forced === "WholeHome") return "WholeHome";
+
+        // Auto logic
+        if (isMultiArea(area)) return "WholeHome";
+        if (spaces >= 2) return "WholeHome";
+        if (clutter === "Heavy" || volume === "High") return "WholeHome";
+        if (goal === "Declutter" || goal === "Unpack") return "WholeHome";
+        return "Light";
       }
 
-      function computeHourlyModel(data, overrides){
-        const area = normalize(data.org_area);
-        const size = overrides?.forceSize || normalize(data.org_size) || "Medium";
-        const spaces = overrides?.forceSpaces || Math.max(1, parseInt(data.spaces || "1", 10) || 1);
-
-        const complexity = normalize(data.complexity) || "Moderate";
-        const clutter = normalize(data.org_clutter) || "Moderate";
-        const volume = normalize(data.org_volume) || "Medium";
-        const decision = normalize(data.org_decision_speed) || "Average";
-
-        const basePerSpace = (size === "Small") ? 1.5 : (size === "Large") ? 2.5 : 2.0;
-
-        let mult = 1.0;
-        if (complexity === "Heavy") mult *= 1.25;
-        if (clutter === "Heavy") mult *= 1.25;
-        if (volume === "High") mult *= 1.20;
-        if (decision === "Slow") mult *= 1.15;
-
-        let totalLaborHours = spaces * basePerSpace * mult;
-
-        let organizers = 1;
-        if (spaces >= 3 || clutter === "Heavy" || complexity === "Heavy" || isWholeHome(area)) organizers = 2;
-        if (spaces >= 6 && (clutter === "Heavy" || complexity === "Heavy" || isWholeHome(area))) organizers = 3;
-
-        let hoursPerOrg = totalLaborHours / organizers;
-        hoursPerOrg = Math.max(MIN_HOURS_PER_ORG, Math.ceil(hoursPerOrg * 2) / 2);
-
-        const low = roundTo(organizers * hoursPerOrg * HOURLY_PER_ORG * 0.95, 25);
-        const high = roundTo(organizers * hoursPerOrg * HOURLY_PER_ORG * 1.15, 25);
-
-        const phaseSuggested = (isWholeHome(area) || spaces >= 5 || clutter === "Heavy" || complexity === "Heavy");
-
-        return {
-          category: "Larger Project / Whole-Home (Hourly)",
-          model: "hourly",
-          organizers,
-          hoursPerOrganizer: hoursPerOrg,
-          hourlyPerOrganizer: HOURLY_PER_ORG,
-          rangeLow: low,
-          rangeHigh: high,
-          phaseSuggested,
-          prepNotes: buildPrepNotes(data),
-        };
-      }
-
-      function computeInternalRecommendation(data){
-        const area = normalize(data.org_area);
+      // Points system to estimate number of sessions
+      function estimatePoints(data, tier){
+        const area = normalize(data.org_area).toLowerCase();
         const size = normalize(data.org_size) || "Medium";
         const spaces = Math.max(1, parseInt(data.spaces || "1", 10) || 1);
 
-        const complexity = normalize(data.complexity) || "Moderate";
-        const clutter = normalize(data.org_clutter) || "Moderate";
-        const volume = normalize(data.org_volume) || "Medium";
-        const decision = normalize(data.org_decision_speed) || "Average";
-        const containers = normalize(data.org_containers) || "None";
-        const addons = normalize(data.addons).toLowerCase();
+        // base points per space by tier
+        let base = (tier === "Light") ? 1 : 2;
 
-        const smallAreaList = ["pantry","linen","fridge","freezer","entry","coat","closet","laundry"];
-        const looksSmall = smallAreaList.some(k => area.toLowerCase().includes(k));
-        const smallCandidate = looksSmall && spaces === 1 && !isWholeHome(area);
+        // area nudges
+        if (/kitchen/.test(area)) base += (tier === "Light") ? 1 : 2;
+        if (/playroom/.test(area)) base += 1;
+        if (/office/.test(area)) base += 1;
+        if (/bathroom/.test(area)) base += 0.5;
+        if (/bedroom/.test(area)) base += 0.5;
+        if (/closet/.test(area)) base += 0.5;
+        if (/pantry/.test(area)) base += (tier === "Light") ? 0.5 : 1;
 
-        const wantsBins = /bin|bins|label|labels|container|containers/.test(addons);
+        // size multiplier
+        let mult = 1;
+        if (size === "Small") mult *= 0.9;
+        if (size === "Large") mult *= 1.25;
 
-        if (smallCandidate) {
-          let price = SMALL_SPACE_START;
+        // clutter drivers
+        const clutter = normalize(data.org_clutter);
+        const volume = normalize(data.org_volume);
+        const decision = normalize(data.org_decision_speed);
 
-          if (size === "Small") price += 0;
-          if (size === "Medium") price += 25;
-          if (size === "Large") price += 60;
+        if (clutter === "Moderate") mult *= 1.15;
+        if (clutter === "Heavy") mult *= 1.35;
+        if (volume === "High") mult *= 1.20;
+        if (decision === "Slow") mult *= 1.15;
 
-          if (complexity === "Light") price += 0;
-          if (complexity === "Moderate") price += 20;
-          if (complexity === "Heavy") price += 55;
-
-          if (clutter === "Light") price += 0;
-          if (clutter === "Moderate") price += 25;
-          if (clutter === "Heavy") price += 70;
-
-          if (volume === "Low") price += 0;
-          if (volume === "Medium") price += 15;
-          if (volume === "High") price += 45;
-
-          if (decision === "Fast") price += 0;
-          if (decision === "Average") price += 10;
-          if (decision === "Slow") price += 35;
-
-          if (containers === "Some (up to 10)") price += 25;
-          if (containers === "Many (10+)") price += 50;
-
-          if (wantsBins) price += 15;
-
-          let hours = 3;
-          if (clutter === "Heavy" || volume === "High" || complexity === "Heavy") hours = 4;
-          if (size === "Large" && (clutter === "Heavy" || volume === "High")) hours = 4.5;
-
-          if (price > SMALL_SPACE_CAP) {
-            return computeHourlyModel(data, { forceSpaces: spaces, forceSize: size });
-          }
-
-          const low = roundTo(price * 0.95, 10);
-          const high = roundTo(price * 1.10, 10);
-
-          return {
-            category: "Small-Space Package",
-            model: "small_space",
-            organizers: 1,
-            hoursPerOrganizer: hours,
-            hourlyPerOrganizer: HOURLY_PER_ORG,
-            rangeLow: low,
-            rangeHigh: high,
-            phaseSuggested: false,
-            prepNotes: buildPrepNotes(data),
-          };
-        }
-
-        return computeHourlyModel(data);
+        const points = spaces * base * mult;
+        return points;
       }
 
+      function pointsToSessions(points){
+        // tuned to your “4-hour session” world
+        if (points <= 1.5) return 1;
+        if (points <= 3.25) return 2;
+        if (points <= 5.25) return 3;
+        if (points <= 7.5) return 4;
+        if (points <= 10) return 5;
+        if (points <= 13) return 6;
+        if (points <= 16) return 7;
+        return 8;
+      }
+
+      function recommendStaffing(data, tier, sessions){
+        const spaces = Math.max(1, parseInt(data.spaces || "1", 10) || 1);
+        const clutter = normalize(data.org_clutter);
+        const volume = normalize(data.org_volume);
+        const decision = normalize(data.org_decision_speed);
+
+        let organizers = 1;
+        if (tier === "WholeHome") organizers = 2;
+        if (spaces >= 4) organizers = 2;
+        if (spaces >= 6) organizers = 3;
+
+        if (clutter === "Heavy" && volume === "High") organizers = Math.max(organizers, 2);
+        if (decision === "Slow" && spaces >= 3) organizers = Math.max(organizers, 2);
+
+        // Cap: you probably don't want 3 for most residential organizing yet
+        organizers = clamp(organizers, 1, 3);
+
+        // Session cadence suggestion
+        const cadence = normalize(data.org_cadence) || "Weekly";
+        let schedule = "Weekly sessions recommended.";
+        if (cadence === "TwiceWeekly") schedule = "Twice per week can accelerate larger projects.";
+        if (cadence === "Flexible") schedule = "Flexible scheduling based on availability.";
+
+        // If many sessions, encourage weekly cadence
+        if (sessions >= 4) schedule = "Weekly sessions recommended for momentum without burnout (4-hour blocks).";
+
+        return { organizers, schedule };
+      }
+
+      function clientBallpark(tier, sessions){
+        const base = (tier === "Light") ? LIGHT_SESSION_START : WHOLE_SESSION_START;
+
+        const low = base * sessions;
+        // range: add ~15% for variability / reality
+        const high = ceilTo(low * 1.15, 10);
+
+        return { perSession: base, low: roundTo(low, 10), high: roundTo(high, 10) };
+      }
+
+      function subFlatFeePerSession(tier, organizers){
+        // pick midpoint hourly pay based on tier
+        const hourly = (tier === "Light")
+          ? MID(SUB_PAY_LIGHT_MIN, SUB_PAY_LIGHT_MAX)
+          : MID(SUB_PAY_LARGE_MIN, SUB_PAY_LARGE_MAX);
+
+        const perOrganizer = hourly * SESSION_HOURS;
+        const total = perOrganizer * organizers;
+
+        // make “offer” a clean number
+        return {
+          hourlyMid: roundTo(hourly, 0),
+          perOrganizerFlat: roundTo(perOrganizer, 5),
+          totalTeamFlat: roundTo(total, 10)
+        };
+      }
+
+      function buildInternalNotes(data, tier){
+        const notes = [];
+        const containers = normalize(data.org_containers);
+        const addons = normalize(data.addons).toLowerCase();
+        const goal = normalize(data.org_goal);
+
+        notes.push(tier === "Light" ? "Tier: Light Organizing Session" : "Tier: Whole-Home Organizing Session");
+
+        if (goal === "Declutter") notes.push("Goal includes decluttering + donation flow—plan decision support.");
+        if (goal === "Unpack") notes.push("Goal includes unpacking—confirm labels/zones and any product sourcing budget.");
+        if (containers !== "None") notes.push("Containers/labels likely—confirm budget and whether you are sourcing or recommending.");
+        if (/bin|label|source|sourcing/.test(addons)) notes.push("Client requested bins/labels/sourcing—clarify preferences and budget cap.");
+        return notes;
+      }
+
+      function computeRecommendation(data){
+        const tier = recommendTier(data);
+        const points = estimatePoints(data, tier);
+        const sessions = pointsToSessions(points);
+
+        const staffing = recommendStaffing(data, tier, sessions);
+        const ballpark = clientBallpark(tier, sessions);
+        const subPay = subFlatFeePerSession(tier, staffing.organizers);
+
+        // sessions plan text
+        const sessionPlan = `${sessions} session${sessions>1?"s":""} × ${SESSION_HOURS} hours`;
+
+        return {
+          tier,
+          points: roundTo(points, 0.1),
+          sessions,
+          sessionHours: SESSION_HOURS,
+          sessionPlan,
+          organizers: staffing.organizers,
+          scheduleSuggestion: staffing.schedule,
+          clientPerSessionStarting: ballpark.perSession,
+          clientBallparkLow: ballpark.low,
+          clientBallparkHigh: ballpark.high,
+          subHourlyMid: subPay.hourlyMid,
+          subFlatPerOrganizer: subPay.perOrganizerFlat,
+          subFlatTeamPerSession: subPay.totalTeamFlat,
+          internalNotes: buildInternalNotes(data, tier)
+        };
+      }
+
+      function internalPreviewHTML(rec){
+        return `
+          <div><strong>Internal Recommendation</strong></div>
+          <div class="mono" style="margin-top:8px;line-height:1.55;">
+            <div><strong>Recommended Tier:</strong> ${rec.tier === "Light" ? "Light Organizing" : "Whole-Home Organizing"}</div>
+            <div><strong>Sessions:</strong> ${rec.sessionPlan} (based on intake complexity score ${rec.points})</div>
+            <div><strong>Staffing:</strong> ${rec.organizers} organizer${rec.organizers>1?"s":""}</div>
+            <div><strong>Suggested cadence:</strong> ${rec.scheduleSuggestion}</div>
+            <div style="margin-top:8px;"><strong>Client ballpark (starting):</strong> $${rec.clientBallparkLow} – $${rec.clientBallparkHigh} (${rec.sessions} × $${rec.clientPerSessionStarting})</div>
+            <div style="margin-top:8px;"><strong>Subcontractor offer (recommended):</strong></div>
+            <div>• Approx. $${rec.subHourlyMid}/hr midpoint</div>
+            <div>• Flat per organizer per session: $${rec.subFlatPerOrganizer} (4 hours)</div>
+            <div>• Total team flat per session: $${rec.subFlatTeamPerSession}</div>
+            <div style="margin-top:8px;"><strong>Notes:</strong> ${rec.internalNotes.join(" | ")}</div>
+          </div>
+        `;
+      }
+
+      // Make recommendation function available to submission script below
+      window.__FTT_ORG_REC__ = { computeRecommendation, internalPreviewHTML };
+    })();
+  </script>
+
+  <!-- Form submission (uploads + private record + Formspree email with internal ops details) -->
+  <script>
+    (function(){
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('intakeFormOrganizing');
         if (!form) return;
@@ -483,7 +619,11 @@
 
           const statusEl = document.getElementById('emailStatusOrganizing');
           const submitBtn = document.getElementById('orgSubmitBtn');
+          const previewEl = document.getElementById('internalPreview');
+
           if (statusEl) statusEl.textContent = "";
+          if (previewEl) previewEl.style.display = "none";
+
           if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting…"; }
 
           const fd = new FormData(form);
@@ -501,8 +641,10 @@
 
           const intakeId = `org_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
-          // Internal recommendation from intake alone (works even w/o photos)
-          const rec = computeInternalRecommendation(data);
+          // Internal recommendation from intake alone
+          const rec = window.__FTT_ORG_REC__?.computeRecommendation
+            ? window.__FTT_ORG_REC__.computeRecommendation(data)
+            : null;
 
           // Upload media if provided
           let media = { photoUrls: [], videoUrl: "" };
@@ -516,23 +658,27 @@
 
           // Save to backend (private record)
           try {
-            if (window.__FTT_ORG?.submitOrganizingIntake) {
+            if (window.__FTT_ORG?.submitOrganizingIntake && rec) {
               await window.__FTT_ORG.submitOrganizingIntake({
                 intakeId,
                 customerName: data.name || "",
                 email: data.email || "",
                 phone: data.phone || "",
                 address: data.address || "",
+                org_service_type: data.org_service_type || "",
+                org_goal: data.org_goal || "",
                 org_area: data.org_area || "",
+                home_sqft: data.home_sqft || "",
                 org_size: data.org_size || "",
                 spaces: parseInt(data.spaces || "1", 10) || 1,
-                complexity: data.complexity || "",
                 org_clutter: data.org_clutter || "",
                 org_decision_speed: data.org_decision_speed || "",
                 org_volume: data.org_volume || "",
                 org_containers: data.org_containers || "",
                 addons: data.addons || "",
                 notes: data.notes || "",
+                org_cadence: data.org_cadence || "",
+                org_style: data.org_style || "",
                 availability: data.availability || "",
                 pay: data.pay || "",
                 photoUrls: media.photoUrls || [],
@@ -544,16 +690,26 @@
             console.warn("Backend submit failed:", err);
           }
 
-          // Append internal-only fields to your Formspree email
+          // Append internal-only fields to your Formspree email (THIS is what you asked for)
           fd.append("intake_id", intakeId);
-          fd.append("INTERNAL_category", rec.category);
-          fd.append("INTERNAL_model", rec.model);
-          fd.append("INTERNAL_organizers", String(rec.organizers));
-          fd.append("INTERNAL_hours_per_organizer", String(rec.hoursPerOrganizer));
-          fd.append("INTERNAL_hourly_per_organizer", "$" + String(rec.hourlyPerOrganizer));
-          fd.append("INTERNAL_ballpark_range", `$${rec.rangeLow} – $${rec.rangeHigh}`);
-          fd.append("INTERNAL_phase_suggested", rec.phaseSuggested ? "Yes" : "No");
-          fd.append("INTERNAL_prep_notes", (rec.prepNotes || []).join(" | "));
+
+          if (rec){
+            fd.append("INTERNAL_recommended_tier", rec.tier === "Light" ? "Light Organizing (4-hour sessions)" : "Whole-Home Organizing (4-hour sessions)");
+            fd.append("INTERNAL_sessions", `${rec.sessions} session(s) × ${rec.sessionHours} hours`);
+            fd.append("INTERNAL_staffing", `${rec.organizers} organizer(s)`);
+            fd.append("INTERNAL_schedule_suggestion", rec.scheduleSuggestion);
+
+            fd.append("INTERNAL_client_ballpark_range", `$${rec.clientBallparkLow} – $${rec.clientBallparkHigh}`);
+            fd.append("INTERNAL_per_session_starting", `$${rec.clientPerSessionStarting} per 4-hour session`);
+
+            fd.append("INTERNAL_sub_pay_mid_hourly", `$${rec.subHourlyMid}/hr (midpoint)`);
+            fd.append("INTERNAL_sub_flat_per_organizer_per_session", `$${rec.subFlatPerOrganizer} (4 hours)`);
+            fd.append("INTERNAL_sub_flat_team_per_session", `$${rec.subFlatTeamPerSession} total team flat`);
+
+            fd.append("INTERNAL_complexity_score", String(rec.points));
+            fd.append("INTERNAL_notes", (rec.internalNotes || []).join(" | "));
+          }
+
           fd.append("photo_urls", (media.photoUrls || []).join("\n"));
           fd.append("video_url", media.videoUrl || "");
 
@@ -568,6 +724,13 @@
             if (resp.ok){
               if (statusEl) statusEl.textContent =
                 "Thanks! We’ve received your intake. We’ll review your details and follow up with a ballpark range and recommended approach.";
+
+              // Optional internal preview block (for you while testing on your computer)
+              if (previewEl && rec && window.__FTT_ORG_REC__?.internalPreviewHTML){
+                previewEl.innerHTML = window.__FTT_ORG_REC__.internalPreviewHTML(rec);
+                previewEl.style.display = "block";
+              }
+
               form.reset();
               const up = document.getElementById("uploadStatus");
               if (up) up.textContent = "";
@@ -587,7 +750,7 @@
     })();
   </script>
 
-  <!-- Chat (guarded; page-aware) -->
+  <!-- Chat (updated to match new model) -->
   <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
 
   <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
@@ -622,12 +785,9 @@
       window.__FTT_CHAT_READY__ = true;
 
       const FTT_CFG = {
-        timezone: "America/Chicago",
         intakeAnchor: "intake-organizing.html",
-        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
         email: "contact.thefinishingtouch.tx@gmail.com",
-        messengerDeepLink: "https://m.me/thefinishingtouch.tx",
-        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
+        messengerDeepLink: "https://m.me/thefinishingtouch.tx"
       };
       const el = {
         launcher: document.getElementById("ftt-chat-launcher"),
@@ -639,13 +799,13 @@
         b.className=`ftt-bubble ${who}`; b.innerHTML=html;
         el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
       }
-      function greet(){ addMsg("Hi! I’m your AI concierge. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); }
+      function greet(){ addMsg("Hi! I’m your organizing concierge. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); }
       function detectIntent(text){
         const t=text.toLowerCase();
         if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
         if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
         if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(service|organize|staging|what do you do)/.test(t)) return "services";
+        if (/(service|organize|organizing|what do you do)/.test(t)) return "services";
         if (/(book|booking|schedule now)/.test(t)) return "book";
         if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
         return "fallback";
@@ -655,16 +815,17 @@
         switch(intent){
           case "pricing":
             return [
-              "Organizing is priced based on scope and time.",
-              "Small-space projects start around $250; larger projects are billed hourly per organizer with a three-hour minimum.",
+              "Organizing is booked in focused 4-hour sessions.",
+              "Light Organizing Sessions start at $380. Whole-Home Organizing Sessions start at $520 (per 4-hour session).",
               "Submit the intake and we’ll follow up with a tailored ballpark range. " + intakeLink + "."
             ].join("<br>");
           case "availability":
             return ["After you submit the intake, we’ll follow up with scheduling options.", "Start here: " + intakeLink + "."].join("<br>");
           case "services":
             return [
-              "We declutter, sort, and set up practical systems (closets, kitchens, pantries, garages, kids’ spaces, offices).",
+              "We declutter, sort, and set up practical systems for interior spaces (pantries, kitchens, closets, playrooms, bedrooms, offices).",
               "We can label and recommend or source containers if desired.",
+              "<strong>Note:</strong> We currently offer interior organizing only (no garages).",
               "Want the best next step? " + intakeLink + "."
             ].join("<br>");
           case "book":
@@ -674,12 +835,12 @@
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
-              "Small-space (starts around $250): pantry, linen, fridge/freezer, entry closet",
-              "Larger projects: kitchens, playrooms, primary suites, garages, multi-space resets (hourly with 3-hour minimum)",
+              "Light Organizing Sessions (small spaces) start at $380 per 4-hour session.",
+              "Whole-Home Organizing Sessions (multi-space / deeper resets) start at $520 per 4-hour session.",
               "Start here and we’ll recommend the best approach: " + intakeLink + "."
             ].join("<br>");
           default:
-            return ["I can help with pricing, availability, and services.", "Try “what’s your pricing?” or “what do you organize?”", "Say “human” any time to talk to a person."].join("<br>");
+            return ["I can help with pricing, availability, and services.", "Try “what’s your organizing pricing?” or “what spaces do you organize?”", "Say “human” any time to talk to a person."].join("<br>");
         }
       }
       function init(){
@@ -717,4 +878,3 @@
   <script src="ftt-chat.js" defer></script>
 </body>
 </html>
-
