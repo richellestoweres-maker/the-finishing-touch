@@ -74,7 +74,7 @@
     }
     .org-hero-sub{
       font-size:1.05rem;
-      max-width:32rem;
+      max-width:36rem;
       margin:0 auto 1.1rem;
     }
     .btn-primary{
@@ -123,14 +123,12 @@
     /* ============= CARD GRIDS (2 ACROSS) ============= */
     .org-grid{
       display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));  /* pills in 2s */
+      grid-template-columns:repeat(2, minmax(0,1fr));
       gap:16px;
       margin-top:12px;
     }
     @media (max-width:700px){
-      .org-grid{
-        grid-template-columns:1fr; /* stack on narrow phones */
-      }
+      .org-grid{ grid-template-columns:1fr; }
     }
 
     .org-card{
@@ -167,13 +165,8 @@
       font-size:.95rem;
     }
 
-    .org-cta{
-      text-align:center;
-    }
-    .org-cta p{
-      max-width:540px;
-      margin:0 auto 1rem;
-    }
+    .org-cta{ text-align:center; }
+    .org-cta p{ max-width:560px; margin:0 auto 1rem; }
 
     .site-footer{ margin-top:10px; }
   </style>
@@ -234,17 +227,29 @@
           not just pretty in photos.
         </p>
         <p>
-          Every project starts with a quick intake, then we follow up with a ballpark estimate and recommended approach:
+          Every project starts with a quick intake. You can share photos or a short video walkthrough, and we’ll follow up with a
+          recommended plan and a ballpark range.
         </p>
         <ul>
-          <li><strong>Small-Space Packages</strong> – perfect for pantries, linen closets, fridges, and entry closets.</li>
-          <li><strong>Larger Projects & Whole-Home</strong> – kitchens, playrooms, primary suites, garages, and multi-space resets.</li>
+          <li><strong>Light Organizing</strong> – perfect for pantries, linen closets, fridges, entry closets, and single-space resets.</li>
+          <li><strong>Whole-Home Organizing</strong> – kitchens, playrooms, bedrooms, offices, and multi-space interior resets.</li>
         </ul>
+
         <p>
-          Most small-space projects start around <strong>$250</strong>, and larger projects are billed hourly per organizer with a
-          three-hour minimum. We’ll recommend a path and pricing after reviewing your intake and photos.
+          We organize in <strong>focused 4-hour sessions</strong> to maintain quality and avoid decision fatigue.
+          <strong>Light Organizing Sessions start at $380</strong>, and <strong>Whole-Home Organizing Sessions start at $520</strong>
+          per 4-hour session.
         </p>
+
+        <div class="callout">
+          <strong>Ballpark ranges may adjust</strong> after photo/video review or an in-person walkthrough if the scope or condition differs.
+          Bins, labels, and products (if needed) are separate and always approved before purchase.
+          <br><br>
+          <strong>Donations:</strong> We can schedule pickup with our preferred donation partner. If you’d like items donated to a different location,
+          you’ll simply handle drop-off directly.
+        </div>
       </div>
+
       <div>
         <div class="org-gallery">
           <img src="pantry organization.png" alt="Organized pantry with baskets and labels">
@@ -256,13 +261,50 @@
     </div>
   </section>
 
-  <!-- Small-Space Packages -->
+  <!-- Session Pricing -->
   <section class="section">
     <div class="container">
-      <h2>Small-Space Organizing Packages</h2>
+      <h2>Organizing Sessions & Starting Rates</h2>
       <p>
-        Ideal for single spaces that need a full reset and system — including light decluttering, product recommendations,
-        and styling. Most of these fall into our <strong>starting at $250</strong> range, depending on size and volume.
+        Organizing is booked in <strong>4-hour sessions</strong>. Most larger projects are completed across multiple sessions, often scheduled weekly.
+      </p>
+
+      <div class="org-grid">
+        <div class="org-card">
+          <span class="pill">4-Hour Session</span>
+          <h3>Light Organizing Session</h3>
+          <p class="meta-line">Starting at <strong>$380</strong> per 4-hour session</p>
+          <p>
+            Best for smaller interior spaces that need a reset and simple systems — light decluttering, zoning, and styling using
+            what you already have when possible.
+          </p>
+        </div>
+
+        <div class="org-card">
+          <span class="pill">4-Hour Session</span>
+          <h3>Whole-Home Organizing Session</h3>
+          <p class="meta-line">Starting at <strong>$520</strong> per 4-hour session</p>
+          <p>
+            Best for deeper resets and multi-space interior work — more sorting, decision-making, and system-building across one
+            or more rooms.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        We currently offer <strong>interior organizing only</strong> (no garages, sheds, or exterior storage areas).
+      </div>
+    </div>
+  </section>
+
+  <!-- Light Organizing -->
+  <section class="section">
+    <div class="container">
+      <h2>Light Organizing (Small Spaces)</h2>
+      <p>
+        Ideal for single spaces that need a full reset and system — including light decluttering, simple zoning, and styling.
+        Most of these fall into our <strong>Light Organizing Session</strong> starting at <strong>$380 per 4-hour session</strong>,
+        depending on size, volume, and clutter level.
       </p>
 
       <div class="org-grid">
@@ -306,29 +348,29 @@
       </div>
 
       <div class="callout">
-        Small-space projects are usually handled by <strong>one organizer</strong> and can often be completed in a single session.
-        Your intake helps us confirm timing and whether product sourcing is needed.
+        Small-space projects are usually handled by <strong>one organizer</strong> and often fit into a single session.
+        Your intake helps us confirm timing, clutter level, and whether product sourcing is needed.
       </div>
     </div>
   </section>
 
-  <!-- Larger Projects -->
+  <!-- Whole-Home Organizing -->
   <section class="section">
     <div class="container">
-      <h2>Larger Projects & Whole-Home Resets</h2>
+      <h2>Whole-Home Organizing (Interior Projects)</h2>
       <p>
-        For full kitchens, playrooms, primary suites, garages, and multi-space projects, we typically work
-        <strong>hourly per organizer</strong> with a three-hour minimum. We’ll recommend the number of organizers and
-        a rough time frame after reviewing your details.
+        For full kitchens, playrooms, primary suites, bedrooms, offices, and multi-space interior resets, we book
+        <strong>Whole-Home Organizing Sessions</strong> in focused <strong>4-hour blocks</strong>, starting at
+        <strong>$520 per 4-hour session</strong>.
       </p>
 
       <div class="org-grid">
         <div class="org-card">
           <span class="pill">Kitchen & Cabinets</span>
           <h3>Cabinets, Drawers & Counters</h3>
-          <p class="meta-line">Often 2 organizers • 3–6+ hours</p>
+          <p class="meta-line">Often 1–2 organizers • phased sessions</p>
           <p>
-            Full edit and reset of cabinets, drawers, and key surfaces so cooking, packing lunches, and unloading groceries
+            Edit and reset of cabinets, drawers, and key surfaces so cooking, packing lunches, and unloading groceries
             feels smoother and less cluttered.
           </p>
         </div>
@@ -336,7 +378,7 @@
         <div class="org-card">
           <span class="pill">Playroom / Kids’ Spaces</span>
           <h3>Toys, Crafts & Zones</h3>
-          <p class="meta-line">Often 2 organizers • 3–6+ hours</p>
+          <p class="meta-line">Often 1–2 organizers • phased sessions</p>
           <p>
             Create kid-friendly zones with labeled bins, rotated toys, and systems that help children (and adults) clean up
             quickly and independently.
@@ -346,7 +388,7 @@
         <div class="org-card">
           <span class="pill">Closets & Bedrooms</span>
           <h3>Primary or Shared Rooms</h3>
-          <p class="meta-line">1–2 organizers • 3–5+ hours</p>
+          <p class="meta-line">1–2 organizers • phased sessions</p>
           <p>
             Clothing edits, drawer systems, and closet zoning so getting dressed in the morning feels simple instead of
             overwhelming.
@@ -354,19 +396,18 @@
         </div>
 
         <div class="org-card">
-          <span class="pill">Garage & Multi-Space</span>
-          <h3>Bigger Project Days</h3>
-          <p class="meta-line">2+ organizers • project-based</p>
+          <span class="pill">Home Office & Paper Flow</span>
+          <h3>Work Zones & Systems</h3>
+          <p class="meta-line">Often 1 organizer • phased sessions</p>
           <p>
-            Larger edits broken into phases with clear priorities, donation loads, and container planning for a more
-            functional whole-home flow.
+            Clear categories, functional storage, and simple maintenance habits so your office stays usable and calm.
           </p>
         </div>
       </div>
 
       <div class="callout">
-        Larger projects are quoted after intake and photos. We’ll suggest the number of organizers, estimated hours,
-        and whether it makes sense to phase the project over multiple sessions or tackle it in a single, focused day.
+        Whole-home projects are confirmed after intake + photos/video (or an in-person walkthrough). We’ll suggest the recommended number of
+        <strong>4-hour sessions</strong>, whether to phase weekly, and any optional add-ons (donation pickup scheduling, product sourcing, labeling).
       </div>
     </div>
   </section>
@@ -377,8 +418,8 @@
       <h2>How Organizing With Us Works</h2>
       <ol>
         <li><strong>Submit a quick organizing intake.</strong> Tell us your space, clutter level, and goals. You can also share photos or video.</li>
-        <li><strong>We review and send a ballpark estimate.</strong> You’ll get a rough range, recommended number of organizers, and suggested session length.</li>
-        <li><strong>We schedule your session.</strong> You can choose to be hands-on or let us do most of the decision-making with guidelines.</li>
+        <li><strong>We review and send a ballpark estimate.</strong> You’ll get a rough range and a recommended plan (Light vs Whole-Home sessions).</li>
+        <li><strong>We schedule your session(s).</strong> Organizing is completed in focused 4-hour sessions, often phased weekly for larger projects.</li>
         <li><strong>Install & reveal.</strong> We sort, edit, categorize, and style your space, then walk you through how to maintain the system.</li>
       </ol>
     </div>
@@ -399,7 +440,7 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+      <p>© 2026 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
     </div>
   </footer>
 
@@ -520,10 +561,10 @@
         switch(intent){
           case "pricing":
             return [
-              "Organizing is priced by project:",
-              "• Small spaces (like pantries + closets) usually start around $250.",
-              "• Larger projects are billed hourly per organizer with a 3-hour minimum.",
-              "Start with intake and we’ll send a tailored ballpark: ",
+              "Organizing is booked in focused 4-hour sessions:",
+              "• Light Organizing Session (small spaces): starting at $380 per 4-hour session.",
+              "• Whole-Home Organizing Session (multi-space / deeper resets): starting at $520 per 4-hour session.",
+              "Start with intake and we’ll send a tailored ballpark range based on your details and photos/video:",
               intakeLink
             ].join("<br>");
           case "availability":
@@ -533,11 +574,13 @@
             ].join("<br>");
           case "services":
             return [
-              "We organize pantries, fridges, closets, playrooms, bedrooms, offices, garages, and more.",
+              "We offer interior home organizing for pantries, fridges, closets, playrooms, bedrooms, offices, and more.",
               "We can also help with sourcing bins, labels, and containers.",
+              "<strong>Note:</strong> We currently offer interior organizing only (no garages).",
               "Share details here: " + intakeLink
             ].join("<br>");
-          case "book": return "Perfect—" + bookLink + ". If you’re unsure what you need, start here first: " + intakeLink;
+          case "book":
+            return "Perfect—" + bookLink + ". If you’re unsure what you need, start here first: " + intakeLink;
           case "human":
             return isWithinBusinessHours()
               ? `You can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> for the fastest reply.`
