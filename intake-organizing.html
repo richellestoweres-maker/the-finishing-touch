@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -20,8 +19,8 @@
     .grid-1{display:grid;gap:14px}
     .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
     .submit-row{text-align:center;margin-top:16px}
+    .hint{font-size:.95rem; opacity:.9}
 
-    /* Dropdown (light) */
     .quote-dropdown{position:relative;display:inline-block}
     .quote-button, .btn.btn-solid{cursor:pointer}
     .quote-menu{
@@ -34,28 +33,24 @@
     .quote-menu a:hover{background:#f3ece6}
     .quote-dropdown.open .quote-menu{display:block}
 
-    /* Back helper */
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
 
-    /* Hint */
-    .hint{font-size:.95rem; opacity:.9}
-
-    /* Internal estimate preview (admin-only text shown after submit) */
-    .internal-preview{
+    /* Success card */
+    .success-card{
       margin-top:14px;
       background:#fbf5ee;
       border:1px solid #ecdccc;
       border-radius:14px;
       padding:14px 16px;
-      font-size:.95rem;
+      font-size:.98rem;
       display:none;
+      text-align:center;
     }
-    .internal-preview strong{font-weight:800}
-    .internal-preview .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:.92rem}
   </style>
 </head>
+
 <body>
-  <!-- Header (PORTAL-first nav) -->
+  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -81,7 +76,6 @@
     </div>
   </header>
 
-  <!-- Back to portal -->
   <div class="mini-bar">
     <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
   </div>
@@ -89,13 +83,14 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Organizing Intake Form</div>
+
     <p class="intake-note">
       Complete this brief intake so we can review your project and follow up with a ballpark range and recommended approach.
       Uploading photos/video (optional) helps us quote accurately.
     </p>
 
-    <!-- JS-off fallback goes straight to Formspree -->
-    <form id="intakeFormOrganizing" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" novalidate>
+    <!-- Formspree (paid uploads enabled) -->
+    <form id="intakeFormOrganizing" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" enctype="multipart/form-data" novalidate>
       <input type="hidden" name="_subject" value="New Organizing Intake · The Finishing Touch" />
       <input type="hidden" name="page" value="intake-organizing.html" />
 
@@ -219,12 +214,11 @@
         </p>
       </div>
 
-      <!-- Media Uploads (optional) -->
+      <!-- Media Uploads (Formspree handles uploads) -->
       <div class="fieldset grid-1">
         <p class="hint" style="margin:0 0 8px;">
           <strong>Photos/Video (optional):</strong> Upload 3–10 photos (and an optional short video) to help us quote accurately.
           Best shots: wide view of the space, inside cabinets/closet, and the main problem zones.
-          If your video is too large, you can submit photos and text the video to our business line.
         </p>
 
         <label>Upload Photos (optional)
@@ -296,9 +290,7 @@
       <div class="submit-row">
         <button class="btn btn-solid" type="submit" id="orgSubmitBtn">Submit Organizing Intake</button>
         <p id="emailStatusOrganizing" class="hint"></p>
-
-        <!-- Internal preview block (ADMIN ONLY). Hidden unless URL includes ?admin=1 -->
-        <div id="internalPreview" class="internal-preview" aria-live="polite"></div>
+        <div id="successCard" class="success-card" aria-live="polite"></div>
       </div>
     </form>
   </main>
@@ -321,87 +313,25 @@
     })();
   </script>
 
-  <!-- Your site JS -->
   <script src="script.js?v=7" defer></script>
 
-  <!-- Firebase uploads + backend submission -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
-
-    // ✅ PASTE YOUR FIREBASE CONFIG HERE
-    const firebaseConfig = {
-      // apiKey: "...",
-      // authDomain: "...",
-      // projectId: "...",
-      // storageBucket: "...",
-      // appId: "..."
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
-    const functions = getFunctions(app);
-
-    // Cloud Function name (you create this in Firebase Functions)
-    const submitOrganizingIntake = httpsCallable(functions, "submitOrganizingIntake");
-
-    async function uploadMedia(intakeId, photoFiles, videoFile) {
-      const statusEl = document.getElementById("uploadStatus");
-      const photoUrls = [];
-      let videoUrl = "";
-
-      const total = (photoFiles?.length || 0) + (videoFile ? 1 : 0);
-      let done = 0;
-
-      const update = () => {
-        if (!statusEl) return;
-        statusEl.textContent = total ? `Uploading media… ${done}/${total}` : "";
-      };
-
-      update();
-
-      for (const file of (photoFiles || [])) {
-        const path = `organizing-intakes/${intakeId}/photos/${Date.now()}-${file.name}`;
-        const fileRef = ref(storage, path);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-        photoUrls.push(url);
-        done++;
-        update();
-      }
-
-      if (videoFile) {
-        const path = `organizing-intakes/${intakeId}/video/${Date.now()}-${videoFile.name}`;
-        const fileRef = ref(storage, path);
-        await uploadBytes(fileRef, videoFile);
-        videoUrl = await getDownloadURL(fileRef);
-        done++;
-        update();
-      }
-
-      if (statusEl) statusEl.textContent = total ? "Media uploaded ✔" : "";
-      return { photoUrls, videoUrl };
-    }
-
-    window.__FTT_ORG = { submitOrganizingIntake, uploadMedia };
-  </script>
-
-  <!-- Internal recommendation engine (sessions + staffing + subcontractor flat fee) -->
+  <!-- Internal recommendation engine (emails to YOU only; never shown to client) -->
   <script>
     (function(){
-      // === Client session model (4-hour blocks) ===
+      // === 4-hour session model ===
       const SESSION_HOURS = 4;
-      const LIGHT_SESSION_START = 380;   // per 4-hr session
-      const WHOLE_SESSION_START = 520;   // per 4-hr session
 
-      // === Sub pay ranges (your guidance) ===
-      const SUB_PAY_LIGHT_MIN = 30; // per hour
-      const SUB_PAY_LIGHT_MAX = 45; // per hour
-      const SUB_PAY_LARGE_MIN = 45; // per hour
-      const SUB_PAY_LARGE_MAX = 55; // per hour
+      // Client-facing starts (per 4-hour session)
+      const LIGHT_SESSION_START = 380;
+      const WHOLE_SESSION_START = 520;
 
-      const MID = (a,b)=> (a+b)/2;
+      // Sub pay ranges (per hour)
+      const SUB_PAY_LIGHT_MIN = 30;
+      const SUB_PAY_LIGHT_MAX = 45;
+      const SUB_PAY_LARGE_MIN = 45;
+      const SUB_PAY_LARGE_MAX = 55;
+
+      const MID = (a,b)=> (Number(a)+Number(b))/2;
 
       function normalize(v){ return (v||"").toString().trim(); }
       function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
@@ -412,7 +342,6 @@
         return /multiple|whole home/i.test(area||"");
       }
 
-      // Determine tier (Light vs WholeHome) based on intake
       function recommendTier(data){
         const forced = normalize(data.org_service_type);
         const area = normalize(data.org_area).toLowerCase();
@@ -431,7 +360,6 @@
         return "Light";
       }
 
-      // Points system to estimate sessions
       function estimatePoints(data, tier){
         const area = normalize(data.org_area).toLowerCase();
         const size = normalize(data.org_size) || "Medium";
@@ -500,10 +428,10 @@
       }
 
       function clientBallpark(tier, sessions){
-        const base = (tier === "Light") ? LIGHT_SESSION_START : WHOLE_SESSION_START;
-        const low = base * sessions;
+        const perSession = (tier === "Light") ? LIGHT_SESSION_START : WHOLE_SESSION_START;
+        const low = perSession * sessions;
         const high = ceilTo(low * 1.15, 10);
-        return { perSession: base, low: roundTo(low, 10), high: roundTo(high, 10) };
+        return { perSession, low: roundTo(low, 10), high: roundTo(high, 10) };
       }
 
       function subFlatFeePerSession(tier, organizers){
@@ -511,11 +439,12 @@
           ? MID(SUB_PAY_LIGHT_MIN, SUB_PAY_LIGHT_MAX)
           : MID(SUB_PAY_LARGE_MIN, SUB_PAY_LARGE_MAX);
 
-        const perOrganizer = hourly * SESSION_HOURS;
+        const hourlySafe = Number.isFinite(hourly) ? hourly : 0;
+        const perOrganizer = hourlySafe * SESSION_HOURS;
         const total = perOrganizer * organizers;
 
         return {
-          hourlyMid: Math.round(hourly),          // ✅ FIXED (no NaN)
+          hourlyMid: Math.round(hourlySafe),
           perOrganizerFlat: roundTo(perOrganizer, 5),
           totalTeamFlat: roundTo(total, 10)
         };
@@ -528,30 +457,31 @@
         const goal = normalize(data.org_goal);
 
         notes.push(tier === "Light" ? "Tier: Light Organizing Session" : "Tier: Whole-Home Organizing Session");
+        notes.push("Interior organizing only (no garages).");
 
         if (goal === "Declutter") notes.push("Goal includes decluttering + donation flow—plan decision support.");
-        if (goal === "Unpack") notes.push("Goal includes unpacking—confirm labels/zones and any product sourcing budget.");
+        if (goal === "Unpack") notes.push("Goal includes unpacking—confirm zones and any sourcing budget.");
         if (containers !== "None") notes.push("Containers/labels likely—confirm budget and whether you are sourcing or recommending.");
         if (/bin|label|source|sourcing/.test(addons)) notes.push("Client requested bins/labels/sourcing—clarify preferences and budget cap.");
 
-        notes.push("Interior organizing only (no garages).");
-        notes.push("Donations: we can schedule pickup with preferred partner; client handles alternate drop-offs.");
+        notes.push("Donations: pickup scheduled with preferred partner; client handles alternate drop-off locations.");
 
         return notes;
       }
 
       function computeRecommendation(data){
         const tier = recommendTier(data);
-        const points = estimatePoints(data, tier);
-        const sessions = pointsToSessions(points);
+        const pointsRaw = estimatePoints(data, tier);
+        const points = Math.round(pointsRaw * 10) / 10;
 
+        const sessions = pointsToSessions(pointsRaw);
         const staffing = recommendStaffing(data, tier, sessions);
         const ballpark = clientBallpark(tier, sessions);
         const subPay = subFlatFeePerSession(tier, staffing.organizers);
 
         return {
           tier,
-          points: roundTo(points, 0.1),
+          points,
           sessions,
           sessionHours: SESSION_HOURS,
           sessionPlan: `${sessions} session${sessions>1?"s":""} × ${SESSION_HOURS} hours`,
@@ -567,120 +497,60 @@
         };
       }
 
-      function internalPreviewHTML(rec){
-        return `
-          <div><strong>Internal Recommendation</strong></div>
-          <div class="mono" style="margin-top:8px;line-height:1.55;">
-            <div><strong>Recommended Tier:</strong> ${rec.tier === "Light" ? "Light Organizing" : "Whole-Home Organizing"}</div>
-            <div><strong>Sessions:</strong> ${rec.sessionPlan} (based on intake complexity score ${rec.points})</div>
-            <div><strong>Staffing:</strong> ${rec.organizers} organizer${rec.organizers>1?"s":""}</div>
-            <div><strong>Suggested cadence:</strong> ${rec.scheduleSuggestion}</div>
-            <div style="margin-top:8px;"><strong>Client ballpark (starting):</strong> $${rec.clientBallparkLow} – $${rec.clientBallparkHigh} (${rec.sessions} × $${rec.clientPerSessionStarting})</div>
-            <div style="margin-top:8px;"><strong>Subcontractor offer (recommended):</strong></div>
-            <div>• Approx. $${rec.subHourlyMid}/hr midpoint</div>
-            <div>• Flat per organizer per session: $${rec.subFlatPerOrganizer} (4 hours)</div>
-            <div>• Total team flat per session: $${rec.subFlatTeamPerSession}</div>
-            <div style="margin-top:8px;"><strong>Notes:</strong> ${rec.internalNotes.join(" | ")}</div>
-          </div>
-        `;
-      }
-
-      window.__FTT_ORG_REC__ = { computeRecommendation, internalPreviewHTML };
+      window.__FTT_ORG_REC__ = { computeRecommendation };
     })();
   </script>
 
-  <!-- Form submission (uploads + private record + Formspree email with internal ops details) -->
+  <!-- Submit: Formspree upload + email ops details to YOU (client sees only success message) -->
   <script>
     (function(){
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('intakeFormOrganizing');
         if (!form) return;
 
+        const statusEl = document.getElementById('emailStatusOrganizing');
+        const submitBtn = document.getElementById('orgSubmitBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const successCard = document.getElementById('successCard');
+
+        function setUploadHint(){
+          const pCount = document.getElementById("mediaPhotos")?.files?.length || 0;
+          const vCount = document.getElementById("mediaVideo")?.files?.length || 0;
+          if (!uploadStatus) return;
+          if (!pCount && !vCount) { uploadStatus.textContent = ""; return; }
+          uploadStatus.textContent = `Selected: ${pCount} photo(s)${vCount? " + 1 video": ""}.`;
+        }
+
+        document.getElementById("mediaPhotos")?.addEventListener("change", setUploadHint);
+        document.getElementById("mediaVideo")?.addEventListener("change", setUploadHint);
+
         form.addEventListener('submit', async function(e){
           e.preventDefault();
           e.stopImmediatePropagation();
 
-          const statusEl = document.getElementById('emailStatusOrganizing');
-          const submitBtn = document.getElementById('orgSubmitBtn');
-          const previewEl = document.getElementById('internalPreview');
-
           if (statusEl) statusEl.textContent = "";
-
-          // Admin-only preview: only shows if URL contains ?admin=1
-          const isAdminPreview = new URLSearchParams(window.location.search).get("admin") === "1";
-          if (previewEl) previewEl.style.display = "none";
+          if (successCard) { successCard.style.display = "none"; successCard.textContent = ""; }
 
           if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting…"; }
 
-          // IMPORTANT: Build FormData WITHOUT files for Formspree (Firebase holds files)
-          const fd = new FormData();
-          new FormData(form).forEach((v, k) => {
-            if (k === "media_photos" || k === "media_video") return; // keep files OUT of Formspree
-            fd.append(k, v);
+          const fd = new FormData(form);
+
+          // Build data object (non-file fields) for internal ops rec
+          const data = {};
+          fd.forEach((v, k) => {
+            // keep files in FormData for Formspree upload; but ignore them for math
+            if (k === "media_photos" || k === "media_video") return;
+            data[k] = v;
           });
 
-          // Extract file inputs (optional)
-          const photoFiles = document.getElementById("mediaPhotos")?.files || [];
-          const videoFile  = document.getElementById("mediaVideo")?.files?.[0] || null;
-
-          // Convert non-file fields to object
-          const data = {};
-          fd.forEach((v, k) => { data[k] = v; });
-
           const intakeId = `org_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+          fd.append("intake_id", intakeId);
 
-          // Internal recommendation
           const rec = window.__FTT_ORG_REC__?.computeRecommendation
             ? window.__FTT_ORG_REC__.computeRecommendation(data)
             : null;
 
-          // Upload media to Firebase if provided
-          let media = { photoUrls: [], videoUrl: "" };
-          try {
-            if (window.__FTT_ORG?.uploadMedia && (photoFiles.length || videoFile)) {
-              media = await window.__FTT_ORG.uploadMedia(intakeId, Array.from(photoFiles), videoFile);
-            }
-          } catch (err) {
-            console.warn("Media upload failed:", err);
-          }
-
-          // Save to backend (private record)
-          try {
-            if (window.__FTT_ORG?.submitOrganizingIntake && rec) {
-              await window.__FTT_ORG.submitOrganizingIntake({
-                intakeId,
-                customerName: data.name || "",
-                email: data.email || "",
-                phone: data.phone || "",
-                address: data.address || "",
-                org_service_type: data.org_service_type || "",
-                org_goal: data.org_goal || "",
-                org_area: data.org_area || "",
-                home_sqft: data.home_sqft || "",
-                org_size: data.org_size || "",
-                spaces: parseInt(data.spaces || "1", 10) || 1,
-                org_clutter: data.org_clutter || "",
-                org_decision_speed: data.org_decision_speed || "",
-                org_volume: data.org_volume || "",
-                org_containers: data.org_containers || "",
-                addons: data.addons || "",
-                notes: data.notes || "",
-                org_cadence: data.org_cadence || "",
-                org_style: data.org_style || "",
-                availability: data.availability || "",
-                pay: data.pay || "",
-                photoUrls: media.photoUrls || [],
-                videoUrl: media.videoUrl || "",
-                internalRecommendation: rec
-              });
-            }
-          } catch (err) {
-            console.warn("Backend submit failed:", err);
-          }
-
-          // Append internal-only fields to Formspree email
-          fd.append("intake_id", intakeId);
-
+          // Internal-only fields (to your email)
           if (rec){
             fd.append("INTERNAL_recommended_tier", rec.tier === "Light" ? "Light Organizing (4-hour sessions)" : "Whole-Home Organizing (4-hour sessions)");
             fd.append("INTERNAL_sessions", `${rec.sessions} session(s) × ${rec.sessionHours} hours`);
@@ -698,10 +568,7 @@
             fd.append("INTERNAL_notes", (rec.internalNotes || []).join(" | "));
           }
 
-          fd.append("photo_urls", (media.photoUrls || []).join("\n"));
-          fd.append("video_url", media.videoUrl || "");
-
-          // Send to Formspree
+          // Send to Formspree (AJAX). Do NOT set Content-Type manually.
           try{
             const resp = await fetch(form.action, {
               method: 'POST',
@@ -710,157 +577,29 @@
             });
 
             if (resp.ok){
-              if (statusEl) statusEl.textContent =
-                "Thanks! We’ve received your intake. We’ll review your details and follow up with a ballpark range and recommended approach.";
-
-              // Admin-only preview (for you when testing)
-              if (isAdminPreview && previewEl && rec && window.__FTT_ORG_REC__?.internalPreviewHTML){
-                previewEl.innerHTML = window.__FTT_ORG_REC__.internalPreviewHTML(rec);
-                previewEl.style.display = "block";
-              } else if (previewEl) {
-                previewEl.style.display = "none";
+              if (statusEl) statusEl.textContent = "";
+              if (successCard){
+                successCard.textContent =
+                  "Thanks! We’ve received your intake. We’ll review your details and follow up with a ballpark range and recommended approach.";
+                successCard.style.display = "block";
               }
-
               form.reset();
-              const up = document.getElementById("uploadStatus");
-              if (up) up.textContent = "";
+              if (uploadStatus) uploadStatus.textContent = "";
             } else {
-              if (statusEl) statusEl.textContent =
+              const msg =
                 "We received your intake, but couldn’t reach our inbox right now. If needed, please email us and reference your submission.";
+              if (statusEl) statusEl.textContent = msg;
             }
-          }catch(err){
+          } catch (err){
             console.warn(err);
-            if (statusEl) statusEl.textContent =
+            const msg =
               "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+            if (statusEl) statusEl.textContent = msg;
           } finally {
             if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Submit Organizing Intake"; }
           }
         }, true);
       });
-    })();
-  </script>
-
-  <!-- Chat (updated to match new model) -->
-  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-
-  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
-    <div class="ftt-chat-header">
-      <div>
-        <div class="ftt-title">The Finishing Touch</div>
-        <div class="ftt-subtitle">AI Concierge • human on request</div>
-      </div>
-      <button class="ftt-close" aria-label="Close chat">×</button>
-    </div>
-
-    <div id="ftt-thread" class="ftt-thread"></div>
-
-    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
-      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
-      <button class="ftt-send" type="submit">Send</button>
-    </form>
-
-    <div class="ftt-quick">
-      <button data-q="pricing">Pricing</button>
-      <button data-q="availability">Availability</button>
-      <button data-q="services">Services</button>
-      <button data-q="book">Book now</button>
-      <button data-q="human">Talk to a person</button>
-      <button data-q="help">Help me choose</button>
-    </div>
-  </div>
-
-  <script>
-    (function(){
-      if (window.__FTT_CHAT_READY__) return;
-      window.__FTT_CHAT_READY__ = true;
-
-      const FTT_CFG = {
-        intakeAnchor: "intake-organizing.html",
-        email: "contact.thefinishingtouch.tx@gmail.com",
-        messengerDeepLink: "https://m.me/thefinishingtouch.tx"
-      };
-      const el = {
-        launcher: document.getElementById("ftt-chat-launcher"),
-        panel: document.getElementById("ftt-chat"),
-        thread: document.getElementById("ftt-thread"),
-      };
-      function addMsg(html, who="bot"){
-        const b=document.createElement("div");
-        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
-        el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
-      }
-      function greet(){ addMsg("Hi! I’m your organizing concierge. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); }
-      function detectIntent(text){
-        const t=text.toLowerCase();
-        if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
-        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
-        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(service|organize|organizing|what do you do)/.test(t)) return "services";
-        if (/(book|booking|schedule now)/.test(t)) return "book";
-        if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
-        return "fallback";
-      }
-      function answer(intent){
-        const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
-        switch(intent){
-          case "pricing":
-            return [
-              "Organizing is booked in focused 4-hour sessions.",
-              "Light Organizing Sessions start at $380. Whole-Home Organizing Sessions start at $520 (per 4-hour session).",
-              "Submit the intake and we’ll follow up with a tailored ballpark range. " + intakeLink + "."
-            ].join("<br>");
-          case "availability":
-            return ["After you submit the intake, we’ll follow up with scheduling options.", "Start here: " + intakeLink + "."].join("<br>");
-          case "services":
-            return [
-              "We declutter, sort, and set up practical systems for interior spaces (pantries, kitchens, closets, playrooms, bedrooms, offices).",
-              "We can label and recommend or source containers if desired.",
-              "<strong>Note:</strong> We currently offer interior organizing only (no garages).",
-              "Want the best next step? " + intakeLink + "."
-            ].join("<br>");
-          case "book":
-            return "We don’t use instant booking for organizing projects — submit the intake and we’ll follow up with the best approach and scheduling options. " + intakeLink + ".";
-          case "human":
-            return `Absolutely. Tap <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a>.`;
-          case "recommend":
-            return [
-              "<strong>Happy to help you choose!</strong>",
-              "Light Organizing Sessions (small spaces) start at $380 per 4-hour session.",
-              "Whole-Home Organizing Sessions (multi-space / deeper resets) start at $520 per 4-hour session.",
-              "Start here and we’ll recommend the best approach: " + intakeLink + "."
-            ].join("<br>");
-          default:
-            return ["I can help with pricing, availability, and services.", "Try “what’s your organizing pricing?” or “what spaces do you organize?”", "Say “human” any time to talk to a person."].join("<br>");
-        }
-      }
-      function init(){
-        const closeBtn = document.querySelector(".ftt-close");
-        const input = document.getElementById("ftt-input");
-        const form  = document.getElementById("ftt-inputbar");
-        const quick = document.querySelector(".ftt-quick");
-
-        el.launcher.addEventListener("click", () => {
-          el.panel.hidden = false;
-          if (!el.thread.dataset.greeted) { greet(); el.thread.dataset.greeted = "1"; }
-          input.focus();
-        });
-        closeBtn.addEventListener("click", () => { el.panel.hidden = true; });
-        form.addEventListener("submit", (e)=>{
-          e.preventDefault();
-          const text = input.value.trim(); if (!text) return;
-          const bubble = document.createElement("div"); bubble.className="ftt-bubble me"; bubble.textContent=text; el.thread.appendChild(bubble);
-          input.value=""; el.thread.scrollTop=el.thread.scrollHeight;
-          setTimeout(()=> { addMsg(answer(detectIntent(text)),"bot"); }, 200);
-        });
-        quick.addEventListener("click", (e)=>{
-          if (e.target.matches("button[data-q]")){
-            const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
-            const intent = map[e.target.getAttribute("data-q")] || "fallback";
-            addMsg(e.target.textContent,"me"); setTimeout(()=> addMsg(answer(intent),"bot"),200);
-          }
-        });
-      }
-      document.addEventListener("DOMContentLoaded", init);
     })();
   </script>
 
