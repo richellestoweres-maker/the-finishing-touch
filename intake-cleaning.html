@@ -255,9 +255,13 @@
       const MAX_PHOTO_MB_EACH = 12; // optional guard
       const MAX_VIDEO_MB = 60;      // optional guard
 
+      // Default subcontract model
+      const SUBCONTRACT_COMPANY_PCT_DEFAULT = 0.60; // pay subs first (60% of client total)
+      const TAX_PCT_OF_REMAINDER = 0.30;            // after subs
+      const PROFIT_PCT_OF_REMAINDER = 0.20;         // after subs
+
       function bytesToMB(b){ return b / (1024 * 1024); }
       function roundHalf(n){ return Math.round(n * 2) / 2; }
-      function roundTo(n, step){ return Math.round(n/step)*step; }
 
       function validateUploads(photoInput, videoInput){
         const photos = photoInput?.files ? Array.from(photoInput.files) : [];
@@ -295,7 +299,6 @@
       }
 
       // Fallback price calculator if global calcCleaning isn't available
-      // Uses your pricing framework:
       // Standard: weekly 0.14 / biweekly 0.16 / monthly 0.18
       // Initial: 0.18–0.22 midpoint 0.20
       // Deep: 0.22–0.28 midpoint 0.25
@@ -424,22 +427,23 @@
           const teamHours = hours.teamHours;
           const cleanerCount = suggestCleanerCount(soloHours);
 
-          // ===== Guardrails math aligned to your goals =====
-          // Locked: 30% taxes + 20% profit = 50%
-          // Remaining: 50% = MAX labor + owner wage
-          const taxReserve = totalPrice * 0.30;
-          const profitTarget = totalPrice * 0.20;
-          const laborAndOwnerMax = totalPrice * 0.50;
+          // ===== YOUR MODEL: pay subcontractor first, THEN taxes/profit are calculated on remainder =====
+          const subPayAssumed = totalPrice * SUBCONTRACT_COMPANY_PCT_DEFAULT;
+          const remainingAfterSub = Math.max(0, totalPrice - subPayAssumed);
 
-          // Subcontract-to-company target: 40–45% of client total
-          const subCompanyTargetLow = totalPrice * 0.40;
-          const subCompanyTargetHigh = totalPrice * 0.45;
+          const taxReserve = remainingAfterSub * TAX_PCT_OF_REMAINDER;
+          const profitTarget = remainingAfterSub * PROFIT_PCT_OF_REMAINDER;
 
-          // If hiring individuals: suggest owner wage share inside the 50% bucket
-          const OWNER_WAGE_SHARE = 0.35; // tweak anytime (0.30–0.45 typical)
-          const ownerWageSuggested = laborAndOwnerMax * OWNER_WAGE_SHARE;
-          const contractorsPoolSuggested = laborAndOwnerMax - ownerWageSuggested;
-          const contractorPayEachSuggested = cleanerCount ? (contractorsPoolSuggested / cleanerCount) : 0;
+          // This is your salary + overhead buffer from this job
+          const ownerOpsLeftover = remainingAfterSub - taxReserve - profitTarget;
+
+          // Per-cleaner suggestion if you do NOT use the subcontract company (you + 1–2 helpers)
+          // Treat ownerOpsLeftover as YOUR bucket in the subcontract-company scenario.
+          // For individual contractor scenario, you might instead allocate a chosen owner wage and split the rest.
+          const OWNER_WAGE_SHARE_IF_INDIVIDUALS = 0.50; // of the remainderAfterSub conceptually (adjust anytime)
+          const ownerWageSuggested_ifIndividuals = remainingAfterSub * OWNER_WAGE_SHARE_IF_INDIVIDUALS;
+          const contractorsPoolSuggested_ifIndividuals = Math.max(0, remainingAfterSub - (remainingAfterSub * (TAX_PCT_OF_REMAINDER + PROFIT_PCT_OF_REMAINDER)) - ownerWageSuggested_ifIndividuals);
+          const contractorPayEachSuggested_ifIndividuals = cleanerCount ? (contractorsPoolSuggested_ifIndividuals / cleanerCount) : 0;
 
           // Attach internal-only fields to Formspree email (client does not see these)
           if (totalPrice) fd.append("INTERNAL_price_estimate", `$${Math.round(totalPrice)}`);
@@ -447,18 +451,19 @@
           fd.append("INTERNAL_team_hours", String(teamHours));
           fd.append("INTERNAL_cleaner_count_suggested", String(cleanerCount));
 
-          fd.append("INTERNAL_tax_reserve_30pct", taxReserve.toFixed(2));
-          fd.append("INTERNAL_profit_target_20pct", profitTarget.toFixed(2));
-          fd.append("INTERNAL_labor_plus_owner_max_50pct", laborAndOwnerMax.toFixed(2));
+          fd.append("INTERNAL_subcontract_company_pct_assumed", String(Math.round(SUBCONTRACT_COMPANY_PCT_DEFAULT * 100)) + "%");
+          fd.append("INTERNAL_subcontractor_pay_assumed", subPayAssumed.toFixed(2));
+          fd.append("INTERNAL_remaining_after_sub", remainingAfterSub.toFixed(2));
 
-          fd.append("INTERNAL_sub_company_target_range", `$${Math.round(subCompanyTargetLow)} – $${Math.round(subCompanyTargetHigh)}`);
+          fd.append("INTERNAL_tax_reserve_30pct_of_remaining", taxReserve.toFixed(2));
+          fd.append("INTERNAL_profit_target_20pct_of_remaining", profitTarget.toFixed(2));
+          fd.append("INTERNAL_owner_ops_leftover_after_tax_profit", ownerOpsLeftover.toFixed(2));
 
-          fd.append("INTERNAL_owner_wage_suggested", ownerWageSuggested.toFixed(2));
-          fd.append("INTERNAL_contractors_pool_suggested", contractorsPoolSuggested.toFixed(2));
-          fd.append("INTERNAL_contractor_pay_each_suggested", contractorPayEachSuggested.toFixed(2));
+          // Optional internal guidance line to help you quickly decide
+          fd.append("INTERNAL_payout_summary",
+            `Client $${Math.round(totalPrice)} | Sub (60%) $${Math.round(subPayAssumed)} | Remainder $${Math.round(remainingAfterSub)} | Taxes(30%) $${Math.round(taxReserve)} | Profit(20%) $${Math.round(profitTarget)} | Owner/Ops $${Math.round(ownerOpsLeftover)}`
+          );
 
-          // Optional: quick "rate used" note for sanity
-          // (helps you audit if a client picks standard + monthly etc.)
           fd.append("INTERNAL_rate_framework_note",
             "Standard: weekly 0.14 / biweekly 0.16 / monthly 0.18 | Initial: 0.18–0.22 | Deep: 0.22–0.28 | Move: 0.28–0.35"
           );
@@ -475,14 +480,15 @@
                   soloHours,
                   teamHours,
                   cleanerCount,
+                  subcontractPctAssumed: SUBCONTRACT_COMPANY_PCT_DEFAULT,
+                  subPayAssumed,
+                  remainingAfterSub,
                   taxReserve,
                   profitTarget,
-                  laborAndOwnerMax,
-                  ownerWageSuggested,
-                  contractorsPoolSuggested,
-                  contractorPayEachSuggested,
-                  subCompanyTargetLow,
-                  subCompanyTargetHigh
+                  ownerOpsLeftover,
+                  ownerWageSuggested_ifIndividuals,
+                  contractorsPoolSuggested_ifIndividuals,
+                  contractorPayEachSuggested_ifIndividuals
                 },
                 summary
               });
@@ -531,7 +537,6 @@
   <script src="ftt-chat.js" defer></script>
 </body>
 </html>
-
 
 
 
