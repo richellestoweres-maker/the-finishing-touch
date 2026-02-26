@@ -34,8 +34,21 @@
     .quote-dropdown.open .quote-menu{display:block}
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
     .hint{font-size:.92rem;opacity:.9}
+
+    /* Success card */
+    .success-card{
+      margin-top:14px;
+      background:#fbf5ee;
+      border:1px solid #ecdccc;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:.98rem;
+      display:none;
+      text-align:center;
+    }
   </style>
 </head>
+
 <body>
   <!-- Header (routes back to CLIENT portal, not public home) -->
   <header class="site-header">
@@ -73,11 +86,20 @@
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Cleaning Intake Form</div>
     <p class="intake-note">
-      Complete this brief form and we’ll review your details, send a tailored ballpark estimate,
-      and follow up to schedule a walkthrough if you’d like one.
+      Complete this brief form so we can review your home and follow up with a tailored ballpark estimate and recommended next steps.
+      Uploading photos/video (optional) helps us quote accurately.
     </p>
 
-    <form id="intakeFormCleaning" class="grid-1" novalidate>
+    <!-- Formspree (uploads enabled) -->
+    <form id="intakeFormCleaning" class="grid-1"
+          method="POST"
+          action="https://formspree.io/f/mzzaogbv"
+          enctype="multipart/form-data"
+          novalidate>
+      <input type="hidden" name="_subject" value="New Cleaning Intake · The Finishing Touch" />
+      <input type="hidden" name="page" value="intake-cleaning.html" />
+
+      <!-- Contact -->
       <div class="grid-2">
         <label>Full Name<input name="name" autocomplete="name" required></label>
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
@@ -85,9 +107,10 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
+      <!-- Service Details -->
       <div class="fieldset grid-2">
         <label>Service Type
-          <select name="service">
+          <select name="service" required>
             <option>Initial Clean</option>
             <option>Standard Clean</option>
             <option>Deep Clean</option>
@@ -95,35 +118,74 @@
             <option>Airbnb Turnover</option>
           </select>
         </label>
+
         <label>Frequency
-          <select name="frequency">
-            <option>one-time</option><option>weekly</option>
-            <option>biweekly</option><option>monthly</option>
+          <select name="frequency" required>
+            <option value="one-time">one-time</option>
+            <option value="weekly">weekly</option>
+            <option value="biweekly">biweekly</option>
+            <option value="monthly">monthly</option>
           </select>
         </label>
-        <label>Last Pro Clean<input name="last_cleaned" placeholder="e.g., 3 months ago"></label>
-        <label>Availability<input name="availability" placeholder="e.g., Tue/Thu mornings"></label>
+
+        <label>Last Professional Clean (optional)
+          <input name="last_cleaned" placeholder="e.g., within 30 days / 3+ months / not sure">
+        </label>
+
+        <label>Preferred Days / Times
+          <input name="availability" placeholder="e.g., Tue/Thu mornings">
+        </label>
       </div>
 
+      <!-- Home Details -->
       <div class="fieldset grid-2">
         <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
         <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
         <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
+
         <label>Square Footage (approx.)
           <input name="sqft" type="number" min="0" step="1" placeholder="e.g., 1750">
         </label>
+
         <label>Stories
           <select name="stories"><option>1</option><option>2</option></select>
         </label>
-        <label>Pets (type & number)<input name="pets" /></label>
-        <label>Areas of Focus<input name="notes" /></label>
+
+        <label>Pets (type & number)<input name="pets" placeholder="e.g., 1 dog, 2 cats"></label>
+
+        <label>Areas of Focus
+          <input name="notes" placeholder="e.g., bathrooms, baseboards, kitchen detail">
+        </label>
       </div>
 
+      <!-- Add-ons + Pay -->
       <div class="fieldset grid-2">
-        <label>Add-ons<input name="addons" placeholder="oven, fridge, windows, baseboards, laundry"></label>
-        <label>Payment Method
-          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option></select>
+        <label>Add-ons
+          <input name="addons" placeholder="oven, fridge, inside windows, baseboards, laundry">
         </label>
+        <label>Payment Method
+          <select name="pay" required>
+            <option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Media Uploads -->
+      <div class="fieldset grid-1">
+        <p class="hint" style="margin:0 0 8px;">
+          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us quote accurately.
+          Best shots: wide-angle of each room, bathrooms, kitchen, and any heavy buildup areas (baseboards, showers, stovetop, etc.).
+        </p>
+
+        <label>Upload Photos (3–10 max)
+          <input name="media_photos" id="cleanMediaPhotos" type="file" accept="image/*" multiple>
+        </label>
+
+        <label>Upload Video (optional, short)
+          <input name="media_video" id="cleanMediaVideo" type="file" accept="video/*">
+        </label>
+
+        <p class="hint" id="cleanUploadStatus" style="margin:6px 0 0;"></p>
       </div>
 
       <!-- CONSENTS -->
@@ -131,29 +193,31 @@
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_work_photos" required>
+          <input type="checkbox" name="consent_work_photos" value="Yes" required>
           <span>I allow The Finishing Touch to take before/after photos for job verification and quality control. These will not be used for marketing unless I also consent below.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_marketing_photos">
+          <input type="checkbox" name="consent_marketing_photos" value="Yes">
           <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. I can revoke this in writing.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_terms" required>
+          <input type="checkbox" name="consent_terms" value="Yes" required>
           <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_updates">
+          <input type="checkbox" name="consent_updates" value="Yes">
           <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
         </label>
       </fieldset>
 
+      <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Submit Intake</button>
-        <p id="formspreeStatusCleaning" style="opacity:.9;margin-top:10px;"></p>
+        <button class="btn btn-solid" type="submit" id="cleanSubmitBtn">Submit Cleaning Intake</button>
+        <p id="formspreeStatusCleaning" class="hint" style="margin-top:10px;"></p>
+        <div id="successCardCleaning" class="success-card" aria-live="polite"></div>
       </div>
     </form>
   </main>
@@ -176,34 +240,79 @@
     })();
   </script>
 
+  <!-- Your site JS (optional; calcCleaning may live here) -->
+  <script src="script.js?v=9" defer></script>
 
-  <!-- Your site JS (e.g., calcCleaning/estimateHoursCleaning may live here) -->
-  <script src="script.js?v=8" defer></script>
   <!-- Helper that exposes FTAuto.createJobFromIntake(...) -->
   <script src="ft-auto.js" defer></script>
 
-  <!-- OVERRIDE: Firestore job (FTAuto) + Formspree email + internal estimate + cleaner/pay suggestion -->
+  <!-- Cleaning internal pricing + payout engine + Formspree upload submission -->
   <script>
     (function(){
-      const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mzzaogbv';
+      // Upload constraints (adjust any time)
+      const PHOTO_MIN = 3;
+      const PHOTO_MAX = 10;
+      const MAX_PHOTO_MB_EACH = 12; // optional guard
+      const MAX_VIDEO_MB = 60;      // optional guard
 
+      function bytesToMB(b){ return b / (1024 * 1024); }
       function roundHalf(n){ return Math.round(n * 2) / 2; }
+      function roundTo(n, step){ return Math.round(n/step)*step; }
+
+      function validateUploads(photoInput, videoInput){
+        const photos = photoInput?.files ? Array.from(photoInput.files) : [];
+        const video  = videoInput?.files ? Array.from(videoInput.files) : [];
+
+        // photos: allow 0 OR 3–10
+        if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)){
+          return `Please upload ${PHOTO_MIN}–${PHOTO_MAX} photos (or none). You selected ${photos.length}.`;
+        }
+
+        // video: allow 0 or 1
+        if (video.length > 1){
+          return "Please upload only 1 video.";
+        }
+
+        // optional file size checks
+        const tooBigPhoto = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
+        if (tooBigPhoto){
+          return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
+        }
+
+        if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
+          return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+        }
+
+        return null;
+      }
+
+      function setUploadHint(photoInput, videoInput, statusEl){
+        const pCount = photoInput?.files?.length || 0;
+        const vCount = videoInput?.files?.length || 0;
+        if (!statusEl) return;
+        if (!pCount && !vCount) { statusEl.textContent = ""; return; }
+        statusEl.textContent = `Selected: ${pCount} photo(s)${vCount ? " + 1 video" : ""}.`;
+      }
 
       // Fallback price calculator if global calcCleaning isn't available
+      // Uses your pricing framework:
+      // Standard: weekly 0.14 / biweekly 0.16 / monthly 0.18
+      // Initial: 0.18–0.22 midpoint 0.20
+      // Deep: 0.22–0.28 midpoint 0.25
+      // Move-in/out: 0.28–0.35 midpoint 0.30
       function calcCleaningLocal(data){
         const sqft = Number(data.sqft || 0) || 0;
         const service = data.service || 'Initial Clean';
         const frequency = data.frequency || 'one-time';
-
         if (!sqft) return null;
 
-        let rate = 0.20; // default around mid Initial Clean
+        let rate = 0.20; // default midpoint Initial
 
         if (service === 'Standard Clean'){
           if (frequency === 'weekly') rate = 0.14;
           else if (frequency === 'biweekly') rate = 0.16;
           else if (frequency === 'monthly') rate = 0.18;
-          else rate = 0.18; // one-time standard behaves like heavier maintenance
+          else rate = 0.18; // one-time standard behaves like monthly/reset
         } else if (service === 'Deep Clean'){
           rate = 0.25;
         } else if (service === 'Move-In / Move-Out Clean'){
@@ -217,7 +326,7 @@
         return sqft * rate;
       }
 
-      // Fallback hours estimator using numeric sqft
+      // Simple hours estimator
       function estimateHoursCleaningLocal(data){
         const sqftNum = Number(data.sqft || 0) || 0;
         const beds = Number(data.beds || 0);
@@ -229,8 +338,7 @@
         let solo = 3;
         if (sqftNum > 0){
           solo = 1 + Math.ceil(sqftNum / 1000);
-          if (solo < 2) solo = 2;
-          if (solo > 6) solo = 6;
+          solo = Math.min(Math.max(solo, 2), 6);
         }
 
         solo += Math.max(0, beds - 3) * 0.5;
@@ -260,128 +368,158 @@
         if (!form) return;
 
         const statusEl = document.getElementById('formspreeStatusCleaning');
+        const successCard = document.getElementById('successCardCleaning');
+        const submitBtn = document.getElementById('cleanSubmitBtn');
+
+        const photoInput = document.getElementById('cleanMediaPhotos');
+        const videoInput = document.getElementById('cleanMediaVideo');
+        const uploadStatus = document.getElementById('cleanUploadStatus');
+
+        photoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
+        videoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
 
         form.addEventListener('submit', async function(e){
           e.preventDefault();
           e.stopImmediatePropagation();
 
-          const data = Object.fromEntries(new FormData(form).entries());
-          data.sqft = (data.sqft || '').trim();
+          if (statusEl) statusEl.textContent = "";
+          if (successCard){ successCard.style.display="none"; successCard.textContent=""; }
 
-          // 1) Price estimate (internal only)
-          let price = null;
-          try {
-            if (typeof calcCleaning === 'function') {
-              price = calcCleaning(data);
-            } else {
-              price = calcCleaningLocal(data);
-            }
-          } catch (err){
-            console.warn(err);
+          // Validate uploads
+          const uploadErr = validateUploads(photoInput, videoInput);
+          if (uploadErr){
+            if (statusEl) statusEl.textContent = uploadErr;
+            return;
           }
+
+          if (submitBtn){
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting…";
+          }
+
+          // Build FormData FROM THE FORM (includes files)
+          const fd = new FormData(form);
+
+          // Build plain data object for math (ignore file fields)
+          const data = {};
+          fd.forEach((v, k) => {
+            if (k === "media_photos" || k === "media_video") return;
+            data[k] = v;
+          });
+
+          data.sqft = (data.sqft || '').toString().trim();
+
+          // Price estimate (internal only)
+          let price = null;
+          try{
+            if (typeof calcCleaning === "function") price = calcCleaning(data);
+            else price = calcCleaningLocal(data);
+          } catch(err){ console.warn(err); }
+
           const totalPrice = price != null ? Number(price) : 0;
 
-          // 2) Hours + cleaner suggestion
+          // Hours + staffing suggestion
           const hours = estimateHoursCleaningLocal(data);
           const soloHours = hours.soloHours;
           const teamHours = hours.teamHours;
           const cleanerCount = suggestCleanerCount(soloHours);
 
-          // Double 70/30 split
-          const businessTop = totalPrice * 0.30;          // first 30%
-          const laborPool   = totalPrice * 0.70;          // 70% to labor side
-          const ownerFromLabor = laborPool * 0.30;        // 30% of labor side back to you
-          const cleanersPool   = laborPool * 0.70;        // 70% of labor side to cleaners
-          const cleanerTakeHomeEach = cleanerCount > 0 ? (cleanersPool / cleanerCount) : 0;
-          const ownerShareTotal = businessTop + ownerFromLabor;
+          // ===== Guardrails math aligned to your goals =====
+          // Locked: 30% taxes + 20% profit = 50%
+          // Remaining: 50% = MAX labor + owner wage
+          const taxReserve = totalPrice * 0.30;
+          const profitTarget = totalPrice * 0.20;
+          const laborAndOwnerMax = totalPrice * 0.50;
 
-          // 3) Create Firestore job via FTAuto
-          try {
-            if (window.FTAuto && typeof FTAuto.createJobFromIntake === 'function'){
+          // Subcontract-to-company target: 40–45% of client total
+          const subCompanyTargetLow = totalPrice * 0.40;
+          const subCompanyTargetHigh = totalPrice * 0.45;
+
+          // If hiring individuals: suggest owner wage share inside the 50% bucket
+          const OWNER_WAGE_SHARE = 0.35; // tweak anytime (0.30–0.45 typical)
+          const ownerWageSuggested = laborAndOwnerMax * OWNER_WAGE_SHARE;
+          const contractorsPoolSuggested = laborAndOwnerMax - ownerWageSuggested;
+          const contractorPayEachSuggested = cleanerCount ? (contractorsPoolSuggested / cleanerCount) : 0;
+
+          // Attach internal-only fields to Formspree email (client does not see these)
+          if (totalPrice) fd.append("INTERNAL_price_estimate", `$${Math.round(totalPrice)}`);
+          fd.append("INTERNAL_solo_hours", String(soloHours));
+          fd.append("INTERNAL_team_hours", String(teamHours));
+          fd.append("INTERNAL_cleaner_count_suggested", String(cleanerCount));
+
+          fd.append("INTERNAL_tax_reserve_30pct", taxReserve.toFixed(2));
+          fd.append("INTERNAL_profit_target_20pct", profitTarget.toFixed(2));
+          fd.append("INTERNAL_labor_plus_owner_max_50pct", laborAndOwnerMax.toFixed(2));
+
+          fd.append("INTERNAL_sub_company_target_range", `$${Math.round(subCompanyTargetLow)} – $${Math.round(subCompanyTargetHigh)}`);
+
+          fd.append("INTERNAL_owner_wage_suggested", ownerWageSuggested.toFixed(2));
+          fd.append("INTERNAL_contractors_pool_suggested", contractorsPoolSuggested.toFixed(2));
+          fd.append("INTERNAL_contractor_pay_each_suggested", contractorPayEachSuggested.toFixed(2));
+
+          // Optional: quick "rate used" note for sanity
+          // (helps you audit if a client picks standard + monthly etc.)
+          fd.append("INTERNAL_rate_framework_note",
+            "Standard: weekly 0.14 / biweekly 0.16 / monthly 0.18 | Initial: 0.18–0.22 | Deep: 0.22–0.28 | Move: 0.28–0.35"
+          );
+
+          // Create Firestore job (if available)
+          try{
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
               const summary = `${Number(data.beds||0)} bed / ${Number(data.baths||0)} bath — ${data.service||'Cleaning'}`.trim();
               await FTAuto.createJobFromIntake({
-                type: 'cleaning',
+                type: "cleaning",
                 intakeData: data,
                 estimate: {
                   price: totalPrice,
                   soloHours,
                   teamHours,
                   cleanerCount,
-                  cleanerTakeHomeEach,
-                  cleanersPool,
-                  ownerShare: ownerShareTotal
+                  taxReserve,
+                  profitTarget,
+                  laborAndOwnerMax,
+                  ownerWageSuggested,
+                  contractorsPoolSuggested,
+                  contractorPayEachSuggested,
+                  subCompanyTargetLow,
+                  subCompanyTargetHigh
                 },
                 summary
               });
             }
-          } catch (err) {
-            console.warn('Could not create job from intake (ok to ignore):', err);
+          } catch(err){
+            console.warn("Could not create job from intake (ok to ignore):", err);
           }
 
-          // 4) Send to Formspree with detailed fields
-          try {
-            const fsData = new FormData();
-            fsData.append('_subject', 'Cleaning Intake');
-            fsData.append('form_name', 'Cleaning Intake');
-            fsData.append('page', location.href);
-
-            // Contact
-            fsData.append('name', data.name || '');
-            fsData.append('email', data.email || '');
-            fsData.append('phone', data.phone || '');
-            fsData.append('address', data.address || '');
-
-            // Service details
-            fsData.append('service', data.service || '');
-            fsData.append('frequency', data.frequency || '');
-            fsData.append('availability', data.availability || '');
-            fsData.append('last_cleaned', data.last_cleaned || '');
-
-            // Home details
-            fsData.append('beds', data.beds || '');
-            fsData.append('baths', data.baths || '');
-            fsData.append('other_rooms', data.other_rooms || '');
-            fsData.append('sqft', data.sqft || '');
-            fsData.append('stories', data.stories || '');
-            fsData.append('pets', data.pets || '');
-            fsData.append('areas_of_focus', data.notes || '');
-            fsData.append('addons', data.addons || '');
-            fsData.append('payment_method', data.pay || '');
-
-            // Consents
-            fsData.append('consent_work_photos', data.consent_work_photos ? 'on' : 'off');
-            fsData.append('consent_marketing_photos', data.consent_marketing_photos ? 'on' : 'off');
-            fsData.append('consent_terms', data.consent_terms ? 'on' : 'off');
-            fsData.append('consent_updates', data.consent_updates ? 'on' : 'off');
-
-            // Internal estimate helpers (for you in Formspree)
-            if (totalPrice){
-              fsData.append('price', `$${Math.round(totalPrice)}`);
-            }
-            fsData.append('solo_hours', String(soloHours));
-            fsData.append('team_hours', String(teamHours));
-            fsData.append('cleaner_count', String(cleanerCount));
-            if (cleanerTakeHomeEach){
-              fsData.append('cleaner_take_home_each', `$${Math.round(cleanerTakeHomeEach)}`);
-            }
-            fsData.append('cleaners_pool_total', cleanersPool.toFixed(2));
-            fsData.append('owner_share_estimate', ownerShareTotal.toFixed(2));
-
-            const resp = await fetch(FORMSPREE_ENDPOINT, {
-              method: 'POST',
-              body: fsData,
-              headers: { 'Accept': 'application/json' }
+          // Submit to Formspree (includes file uploads)
+          try{
+            const resp = await fetch(form.action, {
+              method: "POST",
+              headers: { "Accept": "application/json" },
+              body: fd
             });
 
-            if (statusEl){
-              statusEl.textContent = resp.ok
-                ? "Thank you! We're reviewing your intake details and will email you a tailored ballpark estimate and next steps."
-                : "Your form was received on our side, but we couldn't send the email copy right now.";
+            if (resp.ok){
+              if (statusEl) statusEl.textContent = "";
+              if (successCard){
+                successCard.textContent =
+                  "Thanks! We’ve received your intake. We’ll review your details and follow up with a tailored ballpark estimate and next steps.";
+                successCard.style.display = "block";
+              }
+              form.reset();
+              if (uploadStatus) uploadStatus.textContent = "";
+            } else {
+              if (statusEl) statusEl.textContent =
+                "We received your intake, but couldn’t send the email copy right now. If needed, please email us directly.";
             }
-          } catch (err) {
+          } catch(err){
             console.warn(err);
-            if (statusEl){
-              statusEl.textContent = "Thank you! We'll review your intake and follow up shortly.";
+            if (statusEl) statusEl.textContent =
+              "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+          } finally {
+            if (submitBtn){
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit Cleaning Intake";
             }
           }
         }, true);
@@ -389,117 +527,12 @@
     })();
   </script>
 
-  <!-- Chat (same UX as other pages) -->
-  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
-    <div class="ftt-chat-header">
-      <div>
-        <div class="ftt-title">The Finishing Touch</div>
-        <div class="ftt-subtitle">AI Concierge • human on request</div>
-      </div>
-      <button class="ftt-close" aria-label="Close chat">×</button>
-    </div>
-    <div id="ftt-thread" class="ftt-thread"></div>
-    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
-      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
-      <button class="ftt-send" type="submit">Send</button>
-    </form>
-    <div class="ftt-quick">
-      <button data-q="pricing">Pricing</button>
-      <button data-q="availability">Availability</button>
-      <button data-q="services">Services</button>
-      <button data-q="book">Book now</button>
-      <button data-q="human">Talk to a person</button>
-      <button data-q="help">Help me choose</button>
-    </div>
-  </div>
-
-  <script>
-    // Self-contained chat (same tone as Home).
-    (function(){
-      const FTT_CFG = {
-        timezone: "America/Chicago",
-        intakeAnchor: "intake-cleaning.html",
-        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
-        email: "contact.thefinishingtouch.tx@gmail.com",
-        messengerDeepLink: "https://m.me/thefinishingtouch.tx",
-        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
-      };
-      const el = {
-        launcher: document.getElementById("ftt-chat-launcher"),
-        panel: document.getElementById("ftt-chat"),
-        thread: document.getElementById("ftt-thread"),
-      };
-      function addMsg(html, who="bot"){
-        const b=document.createElement("div");
-        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
-        el.thread.appendChild(b); el.thread.scrollTop=el.thread.scrollHeight;
-      }
-      function detectIntent(text){
-        const t=text.toLowerCase();
-        if (/(human|person|agent|representative|someone|call|talk to)/.test(t)) return "human";
-        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
-        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(service|deep|standard|move[-\s]?out|organize|staging|what do you do)/.test(t)) return "services";
-        if (/(book|booking|schedule now)/.test(t)) return "book";
-        if (/(which|help choose|recommend|not sure|what should i (pick|choose)|suggest)/.test(t)) return "recommend";
-        return "fallback";
-      }
-      function answer(intent){
-        const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
-        const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
-        switch(intent){
-          case "pricing":
-            return [
-              "Here’s a quick pricing overview (final quote depends on size/condition):",
-              "• Initial/Deep Clean: typically $350–$400 for average homes.",
-              "• Standard Maintenance: commonly $275–$300.",
-              "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + "."
-            ].join("<br>");
-          case "availability":
-            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
-          case "services":
-            return [
-              "We offer luxury cleaning, organizing, staging, and seasonal refresh.",
-              "• Deep/Initial: top-to-bottom detail.",
-              "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
-              "• Move-Out/Make-Ready: includes inside cabinets, fridge, oven (by request).",
-              "Want the full checklist? " + intakeLink + " and I’ll tailor it to your home."
-            ].join("<br>");
-          case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
-          case "human":
-            return `You can <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
-          case "recommend":
-            return [
-              "<strong>Happy to help you choose!</strong>",
-              "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
-              "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
-              "<em>Move-Out:</em> 5 hr ≈ up to ~1,500 sq ft · 7 hr ≈ ~1,500–3,000+ sq ft.",
-              `Ready to book? ${bookLink} (Square opens in a new tab). Or ${intakeLink} for a tailored estimate first.`
-            ].join("<br>");
-          default:
-            return ["I can help with pricing, availability, and services.", "Try asking “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
-        }
-      }
-      function init(){
-        const launcher = document.getElementById("ftt-chat-launcher");
-        const panel = document.getElementById("ftt-chat");
-        const thread = document.getElementById("ftt-thread");
-        const closeBtn = document.querySelector(".ftt-close");
-        const form = document.getElementById("ftt-inputbar");
-        const input = document.getElementById("ftt-input");
-        const quick = document.querySelector(".ftt-quick");
-        function add(html, who="bot"){ const b=document.createElement("div"); b.className=`ftt-bubble ${who}`; b.innerHTML=html; thread.appendChild(b); thread.scrollTop=thread.scrollHeight; }
-        launcher.addEventListener("click", ()=>{ panel.hidden=false; if (!thread.dataset.greeted){ add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); thread.dataset.greeted="1"; } input.focus(); });
-        closeBtn.addEventListener("click", ()=>{ panel.hidden=true; });
-        form.addEventListener("submit",(e)=>{ e.preventDefault(); const text=input.value.trim(); if(!text) return; add(text,"me"); input.value=""; setTimeout(()=> add(answer((text||"").toLowerCase())),200); });
-        quick.addEventListener("click",(e)=>{ if(e.target.matches("button[data-q]")){ const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; add(e.target.textContent,"me"); setTimeout(()=> add(answer(intent)),200); } });
-      }
-      document.addEventListener("DOMContentLoaded", init);
-    })();
-  </script>
+  <!-- Optional shared chat guard (if you use it elsewhere) -->
+  <script src="ftt-chat.js" defer></script>
 </body>
 </html>
+
+
 
 
 
