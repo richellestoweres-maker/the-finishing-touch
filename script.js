@@ -492,6 +492,80 @@ function holidayHint(data, teamHours){
   return `${h} — XL (6.5+ hr)`;
 }
 
+/* =========================================
+   VIRTUAL DESIGN — PRICING & TIME
+   ========================================= */
+
+// Base per-room pricing (ballpark) — adjust any time.
+const vdBasePerRoom = {
+  "Room Refresh E-Design": 175,
+  "Full Room E-Design": 275,
+  "Airbnb / STR Virtual Design": 325
+};
+
+function normalizeRoomsCount(val){
+  const raw = String(val || "").trim();
+  if (!raw) return 1;
+  if (raw === "8+") return 8;
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
+function calcVirtualDesign(data){
+  const pkg = data.vd_package || "Room Refresh E-Design";
+  const rooms = normalizeRoomsCount(data.vd_rooms);
+
+  const base = (vdBasePerRoom[pkg] ?? 175) * rooms;
+
+  // Small complexity bump for heavier sourcing
+  const sourcing = String(data.vd_sourcing || "").toLowerCase();
+  let mult = 1.0;
+  if (sourcing.includes("mostly new")) mult = 1.15;
+  else if (sourcing.includes("mix")) mult = 1.08;
+
+  // Optional inferred add-ons from notes/painpoints (kept conservative)
+  const addonPricesVD = {
+    "revision": 75,
+    "revisions": 75,
+    "rush": 100,
+    "priority": 100,
+    "entry": 125,
+    "hallway": 125,
+    "nook": 125,
+    "extra area": 125
+  };
+  const addonText = (data.notes || "") + " " + (data.vd_painpoints || "");
+  const addons = parseAddonsList(addonText, addonPricesVD);
+
+  return Math.round((base * mult) + addons);
+}
+
+function estimateHoursVirtualDesign(data){
+  const pkg = data.vd_package || "Room Refresh E-Design";
+  const rooms = normalizeRoomsCount(data.vd_rooms);
+
+  let hrsPerRoom = 2.0;
+  if (pkg.includes("Refresh")) hrsPerRoom = 1.75;
+  if (pkg.includes("Full Room")) hrsPerRoom = 2.5;
+  if (pkg.includes("Airbnb")) hrsPerRoom = 3.0;
+
+  const sourcing = String(data.vd_sourcing || "").toLowerCase();
+  if (sourcing.includes("mostly new")) hrsPerRoom += 0.5;
+  else if (sourcing.includes("mix")) hrsPerRoom += 0.25;
+
+  const solo = roundHalf(rooms * hrsPerRoom);
+  return { soloHours: solo };
+}
+
+function virtualDesignHint(data){
+  const pkg = data.vd_package || "Virtual Design";
+  const rooms = normalizeRoomsCount(data.vd_rooms);
+  if (rooms === 1) return `${pkg} — 1 space`;
+  if (rooms === 2) return `${pkg} — 2 spaces`;
+  if (rooms <= 4) return `${pkg} — ${rooms} spaces`;
+  return `${pkg} — ${rooms}+ spaces`;
+}
+
 /* ==========================================================
    WIRE EVERYTHING AFTER DOM PARSE
    ========================================================== */
@@ -680,6 +754,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (err){ console.error("Holiday handler error:", err); }
 
+  /* VIRTUAL DESIGN intake */
+  try {
+    const form = document.getElementById('intakeFormVirtualDesign');
+    if (form){
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form).entries());
+
+        const price = calcVirtualDesign(data);
+        const { soloHours } = estimateHoursVirtualDesign(data);
+        const hint = virtualDesignHint(data);
+
+        const estEl = document.getElementById('estimateVirtualDesign');
+        if (estEl){
+          estEl.innerHTML =
+            `Ballpark Estimate: <strong>$${price}</strong>` +
+            `<br><span class="hint">${hint} • Estimated design time: ~${soloHours} hrs</span>`;
+        }
+
+        // Optional: if you ever want a "Book" button under VD estimate, you can enable this:
+        // ensureScheduleButton('estimateVirtualDesign', BOOKING_SECTION_HASH, 'goBookVirtualDesign');
+
+        saveBookingUnlock(hint);
+
+        await postToFormspree(
+          form,
+          {
+            service_type: "Virtual Design",
+            estimate_price: price ? `$${price}` : "",
+            estimate_hint: hint,
+            estimate_hours: soloHours ? String(soloHours) : ""
+          },
+          "emailStatusVirtualDesign",
+          "Thank you! Your virtual design intake was received. We’ll review and follow up with a tailored ballpark and next steps."
+        );
+
+        try { form.reset(); } catch(e){}
+      });
+    }
+  } catch (err){ console.error("Virtual Design handler error:", err); }
+
   /* CONTACT form */
   try {
     const contactForm = document.getElementById('contactForm');
@@ -722,5 +837,6 @@ try {
 } catch (err) {
   console.error("Auth handler error:", err);
 }
+
 
 
