@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Holiday Decorating (Indoor) Intake – The Finishing Touch</title>
 
+  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
@@ -33,21 +34,35 @@
     .quote-menu a:hover{background:#f3ece6}
     .quote-dropdown.open .quote-menu{display:block}
 
-    .hidden { display:none!important; }
+    .hidden{display:none!important;}
+
+    /* Success card */
+    .success-card{
+      margin-top:14px;
+      background:#fbf5ee;
+      border:1px solid #ecdccc;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:.98rem;
+      display:none;
+      text-align:center;
+    }
   </style>
 </head>
+
 <body>
-  <!-- Header routes to client portal -->
+  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <a href="client.html" class="brand-link">
+        <a href="client.html" class="brand-link" style="display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none">
           <span class="vase-logo" aria-hidden="true"></span>
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
       <nav class="main-nav">
         <a href="client.html">Client Portal</a>
+
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
             Get Your Quote ▾
@@ -70,12 +85,22 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Holiday Decorating (Indoor) Intake</div>
+
     <p class="intake-note">
       Tell us your holiday vibe! We’ll show an instant ballpark <strong>install</strong> estimate below
-      (optional teardown after the season). When ready, hit <strong>Book Now</strong> to open our calendar.
+      (optional teardown after the season). Uploading photos/video (optional) helps us quote accurately.
     </p>
 
-    <form id="intakeFormHoliday" class="grid-1" novalidate>
+    <!-- Formspree (uploads enabled) -->
+    <form id="intakeFormHoliday" class="grid-1"
+          method="POST"
+          action="https://formspree.io/f/mzzaogbv"
+          enctype="multipart/form-data"
+          novalidate>
+
+      <input type="hidden" name="_subject" value="New Holiday Decorating Intake · The Finishing Touch" />
+      <input type="hidden" name="page" value="intake-holiday.html" />
+
       <!-- Contact -->
       <div class="grid-2">
         <label>Full Name<input name="name" autocomplete="name" required></label>
@@ -84,29 +109,25 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Holiday (NO events) -->
+      <!-- Holiday (home only) -->
       <div class="fieldset grid-2">
         <label>Holiday
           <select name="occasion" id="occasionSelect" required>
             <option value="">Select a holiday</option>
-
             <optgroup label="Fall">
               <option>Halloween</option>
               <option>Thanksgiving</option>
             </optgroup>
-
             <optgroup label="Winter Holidays">
               <option>Hanukkah</option>
               <option>Christmas</option>
               <option>New Year’s</option>
             </optgroup>
-
             <optgroup label="Other Seasonal">
               <option>Winter (non-holiday)</option>
               <option>Spring</option>
               <option>Summer</option>
             </optgroup>
-
             <option value="Custom">Other (home holiday only)…</option>
           </select>
         </label>
@@ -127,8 +148,8 @@
 
       <!-- Scope -->
       <div class="fieldset grid-2">
-        <!-- Tree cluster (visible for Christmas only) -->
-        <div class="grid-2" id="treeCluster">
+        <!-- Tree cluster (Christmas only) -->
+        <div class="grid-2 hidden" id="treeCluster" style="grid-column:1/-1">
           <label>Number of Trees
             <input name="trees" id="trees" type="number" min="0" value="1">
           </label>
@@ -149,16 +170,20 @@
             <select name="tree_ribbon" id="tree_ribbon"><option>No</option><option>Yes</option></select>
           </label>
           <div class="grid-1" style="grid-column:1/-1">
-            <span class="hint">Tree fields are hidden unless you select Christmas.</span>
+            <span class="hint">Tree fields appear only when Christmas is selected.</span>
           </div>
         </div>
 
         <label>Wreaths (count)<input name="wreaths" type="number" min="0" value="0"></label>
         <label>Garland Sections (mantle/rail/doorways)<input name="garland_sections" type="number" min="0" value="0"></label>
         <label>Stair/Railing Sections<input name="stair_sections" type="number" min="0" value="0"></label>
-        <label>Decorate Mantle?<select name="mantle"><option>No</option><option>Yes</option></select></label>
+
+        <label>Decorate Mantle?
+          <select name="mantle"><option>No</option><option>Yes</option></select>
+        </label>
 
         <label>Tablescapes / Vignettes (count)<input name="tablescapes" type="number" min="0" value="0"></label>
+
         <label>Storage Access
           <select name="storage">
             <option>Garage/closet (easy)</option>
@@ -170,6 +195,7 @@
         <label>Shopping Trips Needed
           <select name="shopping_trips"><option>0</option><option>1</option><option>2</option><option>3+</option></select>
         </label>
+
         <label>Include Teardown?
           <select name="teardown"><option>Yes</option><option selected>No</option></select>
         </label>
@@ -179,35 +205,61 @@
         </label>
 
         <label>Payment Preference
-          <select name="pay"><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
+          <select name="pay" required><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
         </label>
+      </div>
+
+      <!-- Media Uploads (match cleaning/organizing) -->
+      <div class="fieldset grid-1">
+        <p class="hint" style="margin:0 0 8px;">
+          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us quote accurately.
+          Best shots: living room, tree area, mantle, stairs/railings, entryway, and your main decor zones/storage access.
+        </p>
+
+        <label>Upload Photos (3–10 max)
+          <input name="media_photos" id="holidayMediaPhotos" type="file" accept="image/*" multiple>
+        </label>
+
+        <label>Upload Video (optional, short)
+          <input name="media_video" id="holidayMediaVideo" type="file" accept="video/*">
+        </label>
+
+        <p class="hint" id="holidayUploadStatus" style="margin:6px 0 0;"></p>
       </div>
 
       <!-- Consents -->
       <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
+
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_work_photos" required>
+          <input type="checkbox" name="consent_work_photos" value="Yes" required>
           <span>I allow before/after photos for job verification and quality control (not for marketing unless I also consent below).</span>
         </label>
+
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_marketing_photos">
+          <input type="checkbox" name="consent_marketing_photos" value="Yes">
           <span>Okay to use select photos for marketing (no street address/personal items shown). I can revoke in writing.</span>
         </label>
+
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_terms" required>
+          <input type="checkbox" name="consent_terms" value="Yes" required>
           <span>I agree to the service terms. <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
         </label>
+
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_updates">
-          <span>Okay to email/SMS me with scheduling & updates.</span>
+          <input type="checkbox" name="consent_updates" value="Yes">
+          <span>Okay to contact me by email/SMS with scheduling, invoices, updates, and offers.</span>
         </label>
       </fieldset>
 
       <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Get Holiday Estimate</button>
-        <p id="estimateHoliday" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
+        <button class="btn btn-solid" type="submit" id="holidaySubmitBtn">Get Holiday Estimate</button>
+
+        <p id="holidayStatus" class="hint" style="margin-top:10px;"></p>
+
+        <div id="holidayEstimateCard" class="success-card" aria-live="polite"></div>
+        <div id="holidaySuccessCard" class="success-card" aria-live="polite"></div>
       </div>
     </form>
   </main>
@@ -226,44 +278,49 @@
     })();
   </script>
 
- 
-
-  <!-- Your site JS (pricing/time calculators) -->
-  <script src="script.js?v=9" defer></script>
-
-  <!-- In-page estimate + Book Now (Square) -->
+  <!-- Holiday page logic: visibility + uploads validation + instant estimate + Formspree submit -->
   <script>
     (function(){
+      // Upload constraints (same pattern as cleaning)
+      const PHOTO_MIN = 3;
+      const PHOTO_MAX = 10;
+      const MAX_PHOTO_MB_EACH = 12;
+      const MAX_VIDEO_MB = 60;
+
       const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
 
-      const treeCluster   = document.getElementById('treeCluster');
-      const treesInput    = document.getElementById('trees');
-      const occasionSel   = document.getElementById('occasionSelect');
-      const occCustomWrap = document.getElementById('occasionCustomWrap');
-      const occCustom     = document.getElementById('occasionCustom');
+      function bytesToMB(b){ return b/(1024*1024); }
+      function roundTo(n, step){ return Math.round(n/step)*step; }
+      function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 
-      function currentOccasion(){
-        const val = (occasionSel?.value || "").trim();
-        if (!val) return "";
-        if (val === "Custom") return (occCustom?.value || "").trim();
-        return val;
-      }
-      function showTrees(yes){
-        if (yes){ treeCluster.classList.remove('hidden'); }
-        else { treeCluster.classList.add('hidden'); if (treesInput) treesInput.value = 0; }
-      }
-      function updateTreeVisibility(){
-        const occ = currentOccasion().toLowerCase();
-        showTrees(occ.includes('christmas'));
-      }
-      function toggleOccasionCustom(){
-        const isCustom = occasionSel && (occasionSel.value === "Custom");
-        occCustomWrap.style.display = isCustom ? "" : "none";
-        if (!isCustom) occCustom.value = "";
-        updateTreeVisibility();
+      function validateUploads(photoInput, videoInput){
+        const photos = photoInput?.files ? Array.from(photoInput.files) : [];
+        const video  = videoInput?.files ? Array.from(videoInput.files) : [];
+
+        // allow 0 OR 3–10
+        if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)){
+          return `Please upload ${PHOTO_MIN}–${PHOTO_MAX} photos (or none). You selected ${photos.length}.`;
+        }
+        if (video.length > 1) return "Please upload only 1 video.";
+
+        const tooBigPhoto = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
+        if (tooBigPhoto) return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
+
+        if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
+          return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+        }
+        return null;
       }
 
-      function labelFromHours(teamHours, occasionLabel){
+      function setUploadHint(photoInput, videoInput, statusEl){
+        const pCount = photoInput?.files?.length || 0;
+        const vCount = videoInput?.files?.length || 0;
+        if (!statusEl) return;
+        if (!pCount && !vCount) { statusEl.textContent = ""; return; }
+        statusEl.textContent = `Selected: ${pCount} photo(s)${vCount ? " + 1 video" : ""}.`;
+      }
+
+      function labelFromTeamHours(teamHours, occasionLabel){
         const occ = occasionLabel ? ` — ${occasionLabel}` : "";
         if (teamHours <= 2.5) return `Holiday Decorating${occ} — Small (≈2–2.5 hr)`;
         if (teamHours <= 4)   return `Holiday Decorating${occ} — Medium (≈3–4 hr)`;
@@ -271,104 +328,252 @@
         return `Holiday Decorating${occ} — XL (6.5+ hr)`;
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function currentOccasion(occasionSel, occCustom){
+        const val = (occasionSel?.value || "").trim();
+        if (!val) return "";
+        if (val === "Custom") return (occCustom?.value || "").trim();
+        return val;
+      }
+
+      function calcHolidayLocal(data){
+        const occasion = (data.occasion || "").toLowerCase();
+        const vibe = (data.vibe || "").toLowerCase();
+
+        const trees = Number(data.trees || 0) || 0;
+        const wreaths = Number(data.wreaths || 0) || 0;
+        const garland = Number(data.garland_sections || 0) || 0;
+        const stairs  = Number(data.stair_sections || 0) || 0;
+        const tables  = Number(data.tablescapes || 0) || 0;
+
+        const mantleYes = (data.mantle || "No") === "Yes";
+        const storage = (data.storage || "").toLowerCase();
+        const trips = (data.shopping_trips || "0").toString();
+        const teardownYes = (data.teardown || "No") === "Yes";
+
+        const tallest = (data.tallest || "7–8 ft").toLowerCase();
+        const treeStyle = (data.tree_style || "").toLowerCase();
+        const ribbonYes = (data.tree_ribbon || "No") === "Yes";
+
+        // Team hours baseline
+        let teamHours = 1.75;
+
+        // Trees (Christmas)
+        if (occasion.includes("christmas")) {
+          let perTree = 1.25;
+          if (tallest.includes("9") || tallest.includes("10")) perTree += 0.35;
+          if (tallest.includes("11") || tallest.includes("12")) perTree += 0.65;
+
+          if (treeStyle.includes("refresh")) perTree += 0.35;
+          if (treeStyle.includes("full design")) perTree += 0.75;
+          if (ribbonYes) perTree += 0.45;
+
+          teamHours += trees * perTree;
+        }
+
+        teamHours += wreaths * 0.20;
+        teamHours += garland * 0.45;
+        teamHours += stairs * 0.50;
+        teamHours += tables * 0.55;
+        if (mantleYes) teamHours += 0.60;
+
+        if (storage.includes("attic")) teamHours += 0.45;
+        if (storage.includes("offsite")) teamHours += 0.75;
+
+        if (trips === "1") teamHours += 0.60;
+        if (trips === "2") teamHours += 1.10;
+        if (trips === "3+") teamHours += 1.75;
+
+        if (vibe.includes("bold")) teamHours += 0.35;
+        if (vibe.includes("neutral")) teamHours -= 0.10;
+
+        teamHours = clamp(teamHours, 2, 10);
+
+        // Price model (ballpark install labor)
+        const BASE_RATE_TEAM_HR = 165;
+        let price = teamHours * BASE_RATE_TEAM_HR;
+
+        const MIN_PRICE = 325;
+        price = Math.max(price, MIN_PRICE);
+        price = roundTo(price, 25);
+
+        const soloHours = roundTo(teamHours * 2, 0.5);
+
+        let teardownHours = 0;
+        let teardownPrice = 0;
+        if (teardownYes){
+          teardownHours = roundTo(teamHours * 0.55, 0.5);
+          teardownPrice = roundTo(teardownHours * BASE_RATE_TEAM_HR, 25);
+          teardownPrice = Math.max(teardownPrice, 175);
+        }
+
+        return {
+          price: Math.round(price),
+          soloHours,
+          teamHours: roundTo(teamHours, 0.5),
+          teardownHours,
+          teardownPrice: Math.round(teardownPrice),
+          baseRateTeamHr: BASE_RATE_TEAM_HR
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("intakeFormHoliday");
+        if (!form) return;
+
+        const submitBtn = document.getElementById("holidaySubmitBtn");
+        const statusEl = document.getElementById("holidayStatus");
+        const estimateCard = document.getElementById("holidayEstimateCard");
+        const successCard = document.getElementById("holidaySuccessCard");
+
+        const occasionSel = document.getElementById("occasionSelect");
+        const occCustomWrap = document.getElementById("occasionCustomWrap");
+        const occCustom = document.getElementById("occasionCustom");
+
+        const treeCluster = document.getElementById("treeCluster");
+        const treesInput = document.getElementById("trees");
+
+        const photoInput = document.getElementById("holidayMediaPhotos");
+        const videoInput = document.getElementById("holidayMediaVideo");
+        const uploadStatus = document.getElementById("holidayUploadStatus");
+
+        function toggleOccasionCustom(){
+          const isCustom = occasionSel && (occasionSel.value === "Custom");
+          occCustomWrap.style.display = isCustom ? "" : "none";
+          if (!isCustom) occCustom.value = "";
+          updateTreeVisibility();
+        }
+
+        function updateTreeVisibility(){
+          const occ = currentOccasion(occasionSel, occCustom).toLowerCase();
+          const show = occ.includes("christmas");
+          if (show){
+            treeCluster.classList.remove("hidden");
+          } else {
+            treeCluster.classList.add("hidden");
+            if (treesInput) treesInput.value = 0;
+          }
+        }
+
+        occasionSel?.addEventListener("change", toggleOccasionCustom);
+        occCustom?.addEventListener("input", updateTreeVisibility);
+
+        photoInput?.addEventListener("change", ()=> setUploadHint(photoInput, videoInput, uploadStatus));
+        videoInput?.addEventListener("change", ()=> setUploadHint(photoInput, videoInput, uploadStatus));
+
+        // initial state
         toggleOccasionCustom();
-        occasionSel?.addEventListener('change', toggleOccasionCustom);
-        occCustom?.addEventListener('input', updateTreeVisibility);
 
-        const formHol = document.getElementById('intakeFormHoliday');
-        if (!formHol) return;
+        function renderEstimate(data){
+          const est = calcHolidayLocal(data);
+          const label = labelFromTeamHours(est.teamHours, data.occasion || "");
+          const parts = [
+            `<strong>Install (ballpark): $${est.price}</strong>`,
+            `Estimated time: ${est.soloHours} solo hrs (~${est.teamHours} hrs with 2 stylists)`,
+          ];
+          if (est.teardownHours){
+            parts.push(`Teardown (optional): ~${est.teardownHours} hrs • approx <strong>$${est.teardownPrice}</strong>`);
+          }
+          parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
+          parts.push(`<span class="hint">Recommended: ${label}. Square opens in a new tab—choose the closest matching time block.</span>`);
+          return { est, html: parts.join("<br>") };
+        }
 
-        formHol.addEventListener('submit', (e)=>{
+        form.addEventListener("submit", async (e) => {
           e.preventDefault();
           e.stopImmediatePropagation();
 
-          const data = Object.fromEntries(new FormData(formHol).entries());
-          data.occasion = currentOccasion();
-          data.occasion_custom = occCustom?.value || "";
+          if (statusEl) statusEl.textContent = "";
+          if (estimateCard){ estimateCard.style.display="none"; estimateCard.textContent=""; }
+          if (successCard){ successCard.style.display="none"; successCard.textContent=""; }
 
-          try {
-            if (typeof calcHoliday === 'function') {
-              const { price, soloHours, teamHours, teardownHours, teardownPrice } = calcHoliday(data);
+          const uploadErr = validateUploads(photoInput, videoInput);
+          if (uploadErr){
+            if (statusEl) statusEl.textContent = uploadErr;
+            return;
+          }
 
-              const estEl = document.getElementById('estimateHoliday');
-              const parts = [
-                `Install (ballpark): <strong>$${price}</strong>`,
-                `Estimated time: ${soloHours} solo hrs (~${teamHours} hrs with 2 stylists)`
-              ];
-              if (teardownHours){
-                parts.push(`Teardown (optional): ~${teardownHours} hrs • approx <strong>$${teardownPrice}</strong>`);
+          if (submitBtn){
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting…";
+          }
+
+          // Build FormData (includes uploads)
+          const fd = new FormData(form);
+
+          // Create a clear occasion value for internal processing
+          const occ = currentOccasion(occasionSel, occCustom);
+          fd.set("occasion", occ);
+          fd.set("occasion_custom", (occCustom?.value || "").trim());
+
+          // Build plain data object for math (ignore files)
+          const data = {};
+          fd.forEach((v,k)=>{
+            if (k === "media_photos" || k === "media_video") return;
+            data[k] = v;
+          });
+          data.occasion = occ;
+
+          // Render estimate (client sees it + you get internal fields)
+          const { est, html } = renderEstimate(data);
+
+          // On-page estimate card
+          if (estimateCard){
+            estimateCard.innerHTML = html;
+            estimateCard.style.display = "block";
+          }
+
+          // Add internal-only fields to the Formspree email
+          const intakeId = `holiday_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+          fd.append("intake_id", intakeId);
+
+          fd.append("INTERNAL_install_ballpark", `$${est.price}`);
+          fd.append("INTERNAL_team_hours_est", String(est.teamHours));
+          fd.append("INTERNAL_solo_hours_est", String(est.soloHours));
+          fd.append("INTERNAL_teardown_selected", (data.teardown || "No"));
+          if (est.teardownHours){
+            fd.append("INTERNAL_teardown_hours_est", String(est.teardownHours));
+            fd.append("INTERNAL_teardown_ballpark", `$${est.teardownPrice}`);
+          }
+          fd.append("INTERNAL_rate_note", `Holiday estimator base: $${est.baseRateTeamHr}/team-hr • min $325 • rounded to $25`);
+
+          try{
+            const resp = await fetch(form.action, {
+              method: "POST",
+              headers: { "Accept": "application/json" },
+              body: fd
+            });
+
+            if (resp.ok){
+              if (successCard){
+                // Create a Book Now button right in the success card
+                successCard.innerHTML =
+                  `Thanks! We’ve received your intake. We’ll follow up to confirm details and finalize your estimate.<br><br>
+                   <a class="btn btn-solid" href="${SQUARE_BOOKING_BASE}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;">Book Now</a>`;
+                successCard.style.display = "block";
               }
-              parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
-              estEl.innerHTML = parts.join("<br>");
-
-              // Book button
-              let btn = document.getElementById('scheduleOnSquareHoliday');
-              if (!btn){
-                btn = document.createElement('a');
-                btn.id = 'scheduleOnSquareHoliday';
-                btn.className = 'btn btn-solid';
-                btn.style.marginTop = '10px';
-                btn.textContent = 'Book Now';
-                estEl.parentNode.insertBefore(btn, estEl.nextSibling);
-              }
-              btn.href = SQUARE_BOOKING_BASE;
-              btn.target = '_blank';
-              btn.rel = 'noopener';
-
-              // Guidance
-              let hintEl = document.getElementById('holidayHint');
-              if (!hintEl){
-                hintEl = document.createElement('p');
-                hintEl.id = 'holidayHint';
-                hintEl.className = 'hint';
-                btn.parentNode.insertBefore(hintEl, btn.nextSibling);
-              }
-              hintEl.textContent = `Recommended: ${labelFromHours(teamHours, data.occasion)}. Square opens in a new tab—choose the closest matching time block.`;
+              form.reset();
+              toggleOccasionCustom();
+              if (uploadStatus) uploadStatus.textContent = "";
+            } else {
+              if (statusEl) statusEl.textContent =
+                "We received your intake, but couldn’t send the email copy right now. If needed, please email us directly.";
             }
-          } catch(err){ console.warn("Holiday estimate error:", err); }
+          } catch(err){
+            console.warn(err);
+            if (statusEl) statusEl.textContent =
+              "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+          } finally {
+            if (submitBtn){
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Get Holiday Estimate";
+            }
+          }
         }, true);
       });
     })();
   </script>
 
-  <!-- Chat (unchanged) -->
-  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-  <div id="ftt-chat" aria-live="polite" aria-label="Chat window" hidden>
-    <div class="ftt-chat-header">
-      <div>
-        <div class="ftt-title">The Finishing Touch</div>
-        <div class="ftt-subtitle">AI Concierge • human on request</div>
-      </div>
-      <button class="ftt-close" aria-label="Close chat">×</button>
-    </div>
-    <div id="ftt-thread" class="ftt-thread"></div>
-    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
-      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
-      <button class="ftt-send" type="submit">Send</button>
-    </form>
-    <div class="ftt-quick">
-      <button data-q="pricing">Pricing</button>
-      <button data-q="availability">Availability</button>
-      <button data-q="services">Services</button>
-      <button data-q="book">Book now</button>
-      <button data-q="human">Talk to a person</button>
-      <button data-q="help">Help me choose</button>
-    </div>
-  </div>
-  <script>
-    (function(){
-      const C={timezone:"America/Chicago",intakeAnchor:"intake-holiday.html",bookUrl:"https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",email:"contact.thefinishingtouch.tx@gmail.com",messengerDeepLink:"https://m.me/thefinishingtouch.tx",hours:{days:[1,2,3,4,5],open:"09:00",close:"17:00"}};
-      const el={launcher:document.getElementById("ftt-chat-launcher"),panel:document.getElementById("ftt-chat"),thread:document.getElementById("ftt-thread")};
-      function add(html,who="bot"){const b=document.createElement("div");b.className=`ftt-bubble ${who}`;b.innerHTML=html;el.thread.appendChild(b);el.thread.scrollTop=el.thread.scrollHeight;}
-      function greet(){add("Hi! I’m your AI concierge. Ask me about holiday decorating, pricing, or availability. Say “human” anytime.","bot");}
-      function intent(t){t=t.toLowerCase();if(/human|person|agent|representative|someone|call|talk/.test(t))return"human";if(/price|pricing|cost|rate|how much/.test(t))return"pricing";if(/avail|slot|appointment|when|schedule|open/.test(t))return"availability";if(/service|decor|holiday/.test(t))return"services";if(/book|booking/.test(t))return"book";if(/which|help choose|recommend|not sure|what should i (pick|choose)|suggest/.test(t))return"recommend";return"fallback";}
-      function ans(i){const intake=`<a href="${C.intakeAnchor}">Start Intake</a>`,book=`<a href="${C.bookUrl}" target="_blank" rel="noopener">Book now</a>`;switch(i){case"pricing":return["Indoor holiday installs are billed by time; your intake shows a tailored ballpark with optional teardown.",intake+" • or "+book].join("<br>");case"availability":return["Availability is live in Square.",book+" to see openings, or "+intake+" first."].join("<br>");case"services":return["Christmas trees, mantles, stairs, wreaths, garlands, tablescapes. (We don’t do event decor like balloon garlands.)","Start here: "+intake+" • Or jump to "+book+"."].join("<br>");case"book":return"Perfect—"+book+" (opens in a new tab), or "+intake+" for a tailored estimate first.";case"human":return`Tap <a href="${C.messengerDeepLink}" target="_blank" rel="noopener">Message us on Facebook</a> or email <a href="mailto:${C.email}">${C.email}</a>.`;case"recommend":return["<strong>Happy to help!</strong> Small: single tree or accent set. Medium: tree + mantle/rail. Large: multiple areas or extra sourcing.",`Ready to book? ${book} (new tab). Or ${intake} first.`].join("<br>");default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” to talk to a person."].join("<br>");}}
-      function init(){const close=document.querySelector(".ftt-close"),panel=document.getElementById("ftt-chat"),form=document.getElementById("ftt-inputbar"),input=document.getElementById("ftt-input"),quick=document.querySelector(".ftt-quick");el.launcher.addEventListener("click",()=>{panel.hidden=false;if(!el.thread.dataset.greeted){greet();el.thread.dataset.greeted="1";}input.focus();});close.addEventListener("click",()=>{panel.hidden=true;});form.addEventListener("submit",e=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(ans(intent(t)),"bot"),200);});quick.addEventListener("click",e=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const i=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(ans(i)),"bot",200);}});}
-      document.addEventListener("DOMContentLoaded",init);
-    })();
-  </script>
+  <!-- Optional shared chat guard (if you use it elsewhere) -->
+  <script src="ftt-chat.js" defer></script>
 </body>
 </html>
-
-
