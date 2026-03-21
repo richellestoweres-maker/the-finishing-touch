@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staging & Styling Intake – The Finishing Touch</title>
+
+  <!-- Fonts + Site CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-only helpers -->
+  <style>
+    body{background:#fbf8f4}
+    .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .intake-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
+    .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
+    .intake-note{max-width:760px;margin:0 auto 18px;text-align:center;opacity:.9}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-1{display:grid;gap:14px}
+    .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
+    .submit-row{text-align:center;margin-top:16px}
+    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
+    .quote-dropdown{position:relative;display:inline-block}
+    .quote-button, .btn.btn-solid{cursor:pointer}
+    .quote-menu{
+      position:absolute; right:0; top:calc(100% + 6px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:10px;
+      box-shadow:0 10px 30px rgba(0,0,0,.06);
+      padding:8px; min-width:220px; display:none; z-index:50;
+    }
+    .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
+    .quote-menu a:hover{background:#f3ece6}
+    .quote-dropdown.open .quote-menu{display:block}
+    .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
+    .hint{font-size:.92rem;opacity:.9}
+
+    .success-card{
+      margin-top:14px;
+      background:#fbf5ee;
+      border:1px solid #ecdccc;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:.98rem;
+      display:none;
+      text-align:center;
+    }
+
+    .choice-row{
+      display:grid;
+      gap:10px;
+      margin-top:6px;
+    }
+
+    .choice-card{
+      display:flex;
+      gap:.75rem;
+      align-items:flex-start;
+      padding:12px 14px;
+      border:1px solid #e8ddd1;
+      border-radius:12px;
+      background:#fcfaf7;
+    }
+
+    .choice-card input[type="radio"]{
+      margin-top:3px;
+      flex:0 0 auto;
+    }
+
+    .choice-card strong{
+      display:block;
+      margin-bottom:2px;
+    }
+
+    .soft-hidden{
+      display:none;
+    }
+
+    textarea{
+      width:100%;
+      resize:vertical;
+    }
+
+    @media (max-width: 760px){
+      .grid-2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="client.html" class="brand-link">
+          <span class="vase-logo" aria-hidden="true"></span>
+          <span class="brand-name">The Finishing Touch</span>
+        </a>
+      </div>
+      <nav class="main-nav">
+        <a href="client.html">Client Portal</a>
+
+        <div class="quote-dropdown" id="quoteDropdown">
+          <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
+            Get Your Quote ▾
+          </button>
+          <div class="quote-menu" id="quoteMenu" role="menu" aria-hidden="true">
+            <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
+            <a role="menuitem" href="intake-organizing.html">Organizing</a>
+            <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+            <a role="menuitem" href="intake-staging.html">Staging & Styling</a>
+            <a role="menuitem" href="intake-holiday.html">Holiday & Event (Indoor)</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="mini-bar">
+    <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
+  </div>
+
+  <!-- Main -->
+  <main class="intake-wrap">
+    <h1 class="intake-title">The Finishing Touch</h1>
+    <div class="intake-script">Staging & Styling Intake Form</div>
+    <p class="intake-note">
+      Complete this brief form so we can learn more about your property, style goals, and timeline.
+      You may upload photos/video for a faster review or request an in-person walkthrough.
+    </p>
+
+    <form id="intakeFormStaging" class="grid-1"
+          method="POST"
+          action="https://formspree.io/f/mzzaogbv"
+          enctype="multipart/form-data"
+          novalidate>
+      <input type="hidden" name="_subject" value="New Staging & Styling Intake · The Finishing Touch" />
+      <input type="hidden" name="page" value="intake-staging.html" />
+
+      <!-- Contact -->
+      <div class="grid-2">
+        <label>Full Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Property Address<input name="address" autocomplete="street-address"></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+      </div>
+
+      <!-- Project Details -->
+      <div class="fieldset grid-2">
+        <label>Project Type
+          <select name="project_type" required>
+            <option value="">Select one</option>
+            <option>Vacant Home Staging</option>
+            <option>Occupied Home Staging</option>
+            <option>Interior Styling Refresh</option>
+            <option>Listing Prep / Market-Ready Styling</option>
+            <option>Model Home / Showcase Styling</option>
+            <option>Room-by-Room Styling</option>
+          </select>
+        </label>
+
+        <label>Who is this project for?
+          <select name="client_type" required>
+            <option value="">Select one</option>
+            <option>Homeowner</option>
+            <option>Realtor</option>
+            <option>Investor</option>
+            <option>Builder</option>
+            <option>Property Manager</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label>Property Status
+          <select name="property_status" required>
+            <option value="">Select one</option>
+            <option>Vacant</option>
+            <option>Occupied</option>
+            <option>Partially Furnished</option>
+            <option>Not Sure Yet</option>
+          </select>
+        </label>
+
+        <label>Property Type
+          <select name="property_type" required>
+            <option value="">Select one</option>
+            <option>Single-Family Home</option>
+            <option>Townhome</option>
+            <option>Condo</option>
+            <option>Apartment</option>
+            <option>New Construction</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label>Square Footage (approx.)
+          <input name="sqft" type="number" min="0" step="1" placeholder="e.g., 2200">
+        </label>
+
+        <label>Stories
+          <select name="stories">
+            <option>1</option>
+            <option>2</option>
+            <option>3+</option>
+          </select>
+        </label>
+
+        <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
+        <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
+      </div>
+
+      <!-- Listing + Timeline -->
+      <div class="fieldset grid-2">
+        <label>Is the property already listed?
+          <select name="listed_status" required>
+            <option value="">Select one</option>
+            <option>No</option>
+            <option>Yes</option>
+            <option>Listing Soon</option>
+          </select>
+        </label>
+
+        <label>Desired Timeline
+          <select name="timeline" required>
+            <option value="">Select one</option>
+            <option>ASAP</option>
+            <option>Within 1 week</option>
+            <option>Within 2 weeks</option>
+            <option>Within 30 days</option>
+            <option>Just planning ahead</option>
+          </select>
+        </label>
+
+        <label>Preferred Installation / Consultation Days
+          <input name="availability" placeholder="e.g., Tue/Thu mornings">
+        </label>
+
+        <label>Estimated Budget Range
+          <select name="budget_range">
+            <option value="">Select one</option>
+            <option>Under $500</option>
+            <option>$500–$1,000</option>
+            <option>$1,000–$2,500</option>
+            <option>$2,500–$5,000</option>
+            <option>$5,000+</option>
+            <option>Not Sure Yet</option>
+          </select>
+        </label>
+
+        <label>Listing URL or Inspiration Link (optional)
+          <input name="link" type="url" placeholder="MLS, Zillow, Pinterest board, etc.">
+        </label>
+
+        <label>Target Buyer / Overall Goal
+          <input name="goal" placeholder="e.g., warm, high-end, family-friendly, coastal, market-ready">
+        </label>
+      </div>
+
+      <!-- Scope -->
+      <div class="fieldset grid-2">
+        <label>Rooms / Areas to Focus On
+          <input name="focus_areas" placeholder="e.g., living room, entry, primary bedroom, dining">
+        </label>
+
+        <label>Furniture Needed?
+          <select name="furniture_needed">
+            <option value="">Select one</option>
+            <option>Yes — full staging</option>
+            <option>Yes — partial staging</option>
+            <option>No — use existing furnishings</option>
+            <option>Not Sure Yet</option>
+          </select>
+        </label>
+
+        <label>Accessories / Styling Needed?
+          <select name="styling_needed">
+            <option value="">Select one</option>
+            <option>Yes — accessories only</option>
+            <option>Yes — artwork / decor styling</option>
+            <option>Yes — bedding / soft goods styling</option>
+            <option>No</option>
+            <option>Not Sure Yet</option>
+          </select>
+        </label>
+
+        <label>Primary Style Direction
+          <select name="style_direction">
+            <option value="">Select one</option>
+            <option>Light & Airy</option>
+            <option>Warm Neutral</option>
+            <option>Modern</option>
+            <option>Traditional</option>
+            <option>Coastal</option>
+            <option>Organic / Collected</option>
+            <option>Luxury / High-End</option>
+            <option>Not Sure Yet</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Notes -->
+      <div class="fieldset grid-1">
+        <label>Project Notes / Vision
+          <textarea name="notes" rows="4" placeholder="Tell us more about what you’re envisioning, any rooms that need the most help, whether this is for resale, everyday living, photos, open house prep, or anything else we should know."></textarea>
+        </label>
+      </div>
+
+      <!-- Estimate Method -->
+      <div class="fieldset grid-1">
+        <label style="font-weight:700;">How would you like us to review the property?</label>
+
+        <div class="choice-row">
+          <label class="choice-card">
+            <input type="radio" name="estimate_method" value="upload" checked>
+            <span>
+              <strong>Upload photos/video</strong>
+              Faster review turnaround without coordinating an in-person visit.
+            </span>
+          </label>
+
+          <label class="choice-card">
+            <input type="radio" name="estimate_method" value="walkthrough">
+            <span>
+              <strong>Request an in-person walkthrough</strong>
+              Best if you prefer not to upload media or would like us to evaluate the space in person.
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Walkthrough Availability -->
+      <div class="fieldset grid-1 soft-hidden" id="walkthroughSection">
+        <label>Walkthrough Availability (Days & Times)
+          <textarea
+            name="walkthrough_notes"
+            id="walkthroughNotes"
+            rows="4"
+            placeholder="e.g., I’m available Monday after 2:00 PM, Wednesday mornings, or Friday anytime before 4:00 PM."></textarea>
+        </label>
+        <p class="hint">Please share which days and times usually work best so we can try to coordinate a walkthrough.</p>
+      </div>
+
+      <!-- Media Uploads -->
+      <div class="fieldset grid-1" id="mediaSection">
+        <p class="hint" style="margin:0 0 8px;">
+          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us review the property.
+          Best shots: entry, living room, kitchen, dining, primary bedroom, bathrooms, exterior/front, and any areas you’d like us to focus on.
+          If you prefer not to upload media, select the in-person walkthrough option above.
+        </p>
+
+        <label>Upload Photos (3–10 max)
+          <input name="media_photos" id="stageMediaPhotos" type="file" accept="image/*" multiple>
+        </label>
+
+        <label>Upload Video (optional, short)
+          <input name="media_video" id="stageMediaVideo" type="file" accept="video/*">
+        </label>
+
+        <p class="hint" id="stageUploadStatus" style="margin:6px 0 0;"></p>
+      </div>
+
+      <!-- Consents -->
+      <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
+        <legend id="consentLegend" style="font-weight:700;">Consents</legend>
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_photos" value="Yes" required>
+          <span>I allow The Finishing Touch to review submitted photos/video and discuss recommendations based on the current condition of the property.</span>
+        </label>
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_marketing_photos" value="Yes">
+          <span>I give permission to use select finished photos of the staged/styled space for marketing (website/social). Street address and personal items will not be shown.</span>
+        </label>
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_terms" value="Yes" required>
+          <span>I agree to the consultation and service terms, including scheduling, access, and project scope adjustments if needed.</span>
+        </label>
+
+        <label style="display:flex;gap:.6rem;align-items:flex-start;">
+          <input type="checkbox" name="consent_updates" value="Yes">
+          <span>Okay to contact me by email/SMS with scheduling, proposals, updates, and offers.</span>
+        </label>
+      </fieldset>
+
+      <!-- Submit -->
+      <div class="submit-row">
+        <button class="btn btn-solid" type="submit" id="stageSubmitBtn">Submit Staging & Styling Intake</button>
+        <p id="formspreeStatusStaging" class="hint" style="margin-top:10px;"></p>
+        <div id="successCardStaging" class="success-card" aria-live="polite"></div>
+      </div>
+    </form>
+  </main>
+
+  <!-- Dropdown behavior -->
+  <script>
+    (function(){
+      const dd  = document.getElementById('quoteDropdown');
+      const btn = document.getElementById('quoteBtn');
+      const menu= document.getElementById('quoteMenu');
+      if (!dd || !btn || !menu) return;
+      function toggle(open){
+        dd.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        menu.setAttribute('aria-hidden', String(!open));
+      }
+      btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
+      document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
+    })();
+  </script>
+
+  <script src="script.js?v=9" defer></script>
+  <script src="ft-auto.js" defer></script>
+
+  <!-- Form handling -->
+  <script>
+    (function(){
+      const PHOTO_MIN = 3;
+      const PHOTO_MAX = 10;
+      const MAX_PHOTO_MB_EACH = 12;
+      const MAX_VIDEO_MB = 60;
+
+      function bytesToMB(b){ return b / (1024 * 1024); }
+
+      function getEstimateMethod(){
+        const checked = document.querySelector('input[name="estimate_method"]:checked');
+        return checked ? checked.value : "upload";
+      }
+
+      function validateUploads(photoInput, videoInput){
+        const estimateMethod = getEstimateMethod();
+        const photos = photoInput?.files ? Array.from(photoInput.files) : [];
+        const video  = videoInput?.files ? Array.from(videoInput.files) : [];
+
+        if (estimateMethod === "walkthrough"){
+          if (video.length > 1){
+            return "Please upload only 1 video.";
+          }
+
+          const tooBigPhotoWalk = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
+          if (tooBigPhotoWalk){
+            return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
+          }
+
+          if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
+            return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+          }
+
+          return null;
+        }
+
+        if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)){
+          return `Please upload ${PHOTO_MIN}–${PHOTO_MAX} photos (or none). You selected ${photos.length}.`;
+        }
+
+        if (video.length > 1){
+          return "Please upload only 1 video.";
+        }
+
+        const tooBigPhoto = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
+        if (tooBigPhoto){
+          return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
+        }
+
+        if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
+          return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+        }
+
+        return null;
+      }
+
+      function setUploadHint(photoInput, videoInput, statusEl){
+        const pCount = photoInput?.files?.length || 0;
+        const vCount = videoInput?.files?.length || 0;
+        const estimateMethod = getEstimateMethod();
+        if (!statusEl) return;
+
+        if (estimateMethod === "walkthrough" && !pCount && !vCount){
+          statusEl.textContent = "No uploads needed if you prefer an in-person walkthrough.";
+          return;
+        }
+
+        if (!pCount && !vCount){
+          statusEl.textContent = "";
+          return;
+        }
+
+        statusEl.textContent = `Selected: ${pCount} photo(s)${vCount ? " + 1 video" : ""}.`;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('intakeFormStaging');
+        if (!form) return;
+
+        const statusEl = document.getElementById('formspreeStatusStaging');
+        const successCard = document.getElementById('successCardStaging');
+        const submitBtn = document.getElementById('stageSubmitBtn');
+
+        const photoInput = document.getElementById('stageMediaPhotos');
+        const videoInput = document.getElementById('stageMediaVideo');
+        const uploadStatus = document.getElementById('stageUploadStatus');
+
+        const walkthroughSection = document.getElementById('walkthroughSection');
+        const walkthroughNotes = document.getElementById('walkthroughNotes');
+        const estimateMethodRadios = document.querySelectorAll('input[name="estimate_method"]');
+
+        function syncEstimateMethodUI(){
+          const method = getEstimateMethod();
+          const isWalkthrough = method === "walkthrough";
+
+          if (walkthroughSection){
+            walkthroughSection.style.display = isWalkthrough ? "grid" : "none";
+          }
+
+          if (walkthroughNotes){
+            walkthroughNotes.required = isWalkthrough;
+          }
+
+          setUploadHint(photoInput, videoInput, uploadStatus);
+        }
+
+        estimateMethodRadios.forEach(radio => {
+          radio.addEventListener('change', syncEstimateMethodUI);
+        });
+
+        photoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
+        videoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
+
+        syncEstimateMethodUI();
+
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          if (statusEl) statusEl.textContent = "";
+          if (successCard){
+            successCard.style.display = "none";
+            successCard.textContent = "";
+          }
+
+          const estimateMethod = getEstimateMethod();
+          const walkthroughValue = walkthroughNotes ? walkthroughNotes.value.trim() : "";
+
+          if (estimateMethod === "walkthrough" && !walkthroughValue){
+            if (statusEl) statusEl.textContent = "Please share which days and times you’re available for a walkthrough.";
+            walkthroughNotes?.focus();
+            return;
+          }
+
+          const uploadErr = validateUploads(photoInput, videoInput);
+          if (uploadErr){
+            if (statusEl) statusEl.textContent = uploadErr;
+            return;
+          }
+
+          if (submitBtn){
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting…";
+          }
+
+          const fd = new FormData(form);
+
+          const data = {};
+          fd.forEach((v, k) => {
+            if (k === "media_photos" || k === "media_video") return;
+            data[k] = v;
+          });
+
+          fd.append("INTERNAL_estimate_method", estimateMethod);
+          if (estimateMethod === "walkthrough"){
+            fd.append("INTERNAL_walkthrough_requested", "Yes");
+          }
+
+          try{
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
+              const summary = `${data.project_type || 'Staging'} — ${data.property_status || ''} ${data.property_type || ''}`.trim();
+              await FTAuto.createJobFromIntake({
+                type: "staging",
+                intakeData: data,
+                summary
+              });
+            }
+          } catch(err){
+            console.warn("Could not create job from intake (ok to ignore):", err);
+          }
+
+          try{
+            const resp = await fetch(form.action, {
+              method: "POST",
+              headers: { "Accept": "application/json" },
+              body: fd
+            });
+
+            if (resp.ok){
+              if (statusEl) statusEl.textContent = "";
+
+              if (successCard){
+                successCard.textContent =
+                  estimateMethod === "walkthrough"
+                    ? "Thanks! We’ve received your intake and walkthrough availability. We’ll review your details and follow up to coordinate next steps."
+                    : "Thanks! We’ve received your intake. We’ll review your project details and follow up with tailored next steps.";
+                successCard.style.display = "block";
+              }
+
+              form.reset();
+              syncEstimateMethodUI();
+              if (uploadStatus) uploadStatus.textContent = "";
+            } else {
+              if (statusEl) statusEl.textContent =
+                "We received your intake, but couldn’t send the email copy right now. If needed, please email us directly.";
+            }
+          } catch(err){
+            console.warn(err);
+            if (statusEl) statusEl.textContent =
+              "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+          } finally {
+            if (submitBtn){
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit Staging & Styling Intake";
+            }
+          }
+        }, true);
+      });
+    })();
+  </script>
+
+  <script src="ftt-chat.js" defer></script>
+</body>
+</html>
