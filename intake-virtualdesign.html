@@ -10,12 +10,29 @@
   <link rel="stylesheet" href="styles.css?v=8" />
 
   <style>
+    :root{
+      --ftt-bg:#fbf8f4;
+      --ftt-panel:#fffdfa;
+      --ftt-border:#e9dfd4;
+      --ftt-border-dark:#d8c8b7;
+      --ftt-text:#2f2926;
+      --ftt-muted:#5f5651;
+      --ftt-soft:#7a7069;
+      --ftt-accent:#d2bda9;
+      --ftt-accent-dark:#b89e87;
+      --ftt-shadow:0 10px 30px rgba(62,44,31,.06);
+      --ftt-radius:22px;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      background: #fbf8f4;
+      background: var(--ftt-bg);
+      color: var(--ftt-text);
     }
 
     .intake-top {
-      width: min(960px, 92%);
+      width: min(980px, 92%);
       margin: 18px auto 0;
       display: flex;
       justify-content: space-between;
@@ -30,94 +47,276 @@
 
     .intake-head {
       text-align: center;
-      margin-top: 20px;
-      margin-bottom: 10px;
+      margin-top: 22px;
+      margin-bottom: 14px;
       padding: 0 16px;
     }
 
     .intake-title {
       font-family: "Playfair Display", serif;
-      font-size: clamp(2rem, 4vw, 3rem);
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      line-height: 1.15;
       margin: 0 0 8px;
-      color: #2f2926;
+      color: var(--ftt-text);
     }
 
     .intake-script {
       font-family: "Allura", cursive;
       font-size: 2rem;
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       color: #6c625d;
     }
 
     .microcopy {
-      width: min(760px, 92%);
+      width: min(780px, 92%);
       margin: 0 auto;
       color: #4f4742;
-      line-height: 1.7;
-      font-size: 0.98rem;
-    }
-
-    .section-divider {
-      border: 0;
-      border-top: 1px solid #e9dfd4;
-      margin: 10px 0 4px;
-    }
-
-    .hint {
-      display: block;
-      margin-top: 6px;
-      font-size: .92rem;
-      opacity: .8;
-    }
-
-    .tiny {
-      font-size: .92rem;
-      opacity: .85;
-      margin: 0;
-      line-height: 1.5;
-    }
-
-    .file-note {
-      font-size: .92rem;
-      opacity: .85;
-      margin-top: 6px;
-      line-height: 1.5;
-    }
-
-    .section-note {
-      font-size: .95rem;
-      color: #5f5651;
-      margin: 2px 0 12px;
-      line-height: 1.55;
+      line-height: 1.75;
+      font-size: 1rem;
     }
 
     .intake-wrap {
-      width: min(960px, 92%);
+      width: min(980px, 92%);
       margin: 0 auto 48px;
     }
 
     .intake-panel {
-      background: #fffdfa;
-      border: 1px solid #eee3d8;
-      border-radius: 22px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(62, 44, 31, 0.05);
+      background: var(--ftt-panel);
+      border: 1px solid var(--ftt-border);
+      border-radius: var(--ftt-radius);
+      padding: 28px;
+      box-shadow: var(--ftt-shadow);
+    }
+
+    .section-divider {
+      border: 0;
+      border-top: 1px solid var(--ftt-border);
+      margin: 18px 0 10px;
     }
 
     .field-heading {
       font-family: "Playfair Display", serif;
-      font-size: 1.2rem;
-      margin: 18px 0 6px;
-      color: #2f2926;
+      font-size: 1.35rem;
+      margin: 20px 0 6px;
+      color: var(--ftt-text);
     }
 
-    @media (max-width: 640px) {
-      .intake-panel {
-        padding: 18px;
+    .section-note {
+      font-size: .98rem;
+      color: var(--ftt-muted);
+      margin: 0 0 16px;
+      line-height: 1.6;
+    }
+
+    .hint,
+    .file-note,
+    .tiny {
+      display: block;
+      font-size: .93rem;
+      color: var(--ftt-soft);
+      line-height: 1.6;
+    }
+
+    .hint { margin-top: 7px; }
+    .file-note { margin-top: 8px; }
+    .tiny { margin: 8px 0 0; }
+
+    form.grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      width: 100%;
+      font-family: "Manrope", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--ftt-text);
+      line-height: 1.45;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    select,
+    textarea,
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      border: 1px solid var(--ftt-border-dark);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ftt-text);
+      padding: 14px 14px;
+      font: inherit;
+      min-height: 52px;
+      transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    textarea {
+      min-height: 132px;
+      resize: vertical;
+      padding-top: 14px;
+    }
+
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, #7c7068 50%),
+        linear-gradient(135deg, #7c7068 50%, transparent 50%);
+      background-position:
+        calc(100% - 20px) calc(50% - 3px),
+        calc(100% - 14px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 42px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--ftt-accent-dark);
+      box-shadow: 0 0 0 4px rgba(210, 189, 169, .18);
+      background: #fff;
+    }
+
+    input[type="file"] {
+      padding: 12px 14px;
+      min-height: auto;
+      background: #fff;
+    }
+
+    .required-badge {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      color: #7b6553;
+      background: #f3ebe2;
+      border-radius: 999px;
+      padding: 3px 8px;
+      vertical-align: middle;
+    }
+
+    .soft-box {
+      border: 1px solid var(--ftt-border);
+      background: #fcf8f3;
+      border-radius: 16px;
+      padding: 16px 16px;
+      color: #4f4742;
+      line-height: 1.7;
+    }
+
+    .soft-box strong {
+      color: var(--ftt-text);
+    }
+
+    .checkbox-group {
+      display: grid;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: .98rem;
+      line-height: 1.6;
+      color: #4f4742;
+    }
+
+    .check-row input[type="checkbox"] {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      min-height: 18px;
+      flex: 0 0 18px;
+      accent-color: #b89e87;
+    }
+
+    .submit-row {
+      margin-top: 6px;
+      display: grid;
+      gap: 10px;
+      justify-items: start;
+    }
+
+    .btn-solid {
+      background: linear-gradient(180deg, #e0cbb7, #ccb49d);
+      color: #2a2624;
+      border: 1px solid #8f7761;
+      border-radius: 999px;
+      padding: 14px 24px;
+      min-height: 54px;
+      font-weight: 800;
+      font-family: "Playfair Display", serif;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(62,44,31,.10);
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+
+    .btn-solid:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(62,44,31,.14);
+      opacity: .98;
+    }
+
+    .status {
+      font-size: .95rem;
+      color: var(--ftt-muted);
+    }
+
+    .inline-note {
+      font-size: .92rem;
+      color: var(--ftt-soft);
+      margin-top: -4px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-3 {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
-    #ftt-chat-launcher, #ftt-chat {
+    @media (max-width: 700px) {
+      .intake-panel {
+        padding: 20px;
+      }
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .intake-top {
+        justify-content: flex-start;
+      }
+    }
+
+    #ftt-chat-launcher,
+    #ftt-chat {
       z-index: 9999;
     }
   </style>
@@ -149,10 +348,9 @@
 
   <div class="intake-head">
     <h1 class="intake-title">Virtual Design Intake</h1>
-    <p class="intake-script">Thoughtful Design, Tailored Online</p>
+    <p class="intake-script">Thoughtfully Curated, Designed Online</p>
     <p class="microcopy">
-      Tell us about your space, style, and goals, and we’ll review your submission before following up with a tailored ballpark estimate and next steps.
-      This form is the first step in creating a space that feels elevated, cohesive, and beautifully aligned with your lifestyle.
+      Tell us about your space, your style, and what you’re hoping to create. Once we review your submission, we’ll follow up with a tailored ballpark estimate and recommended next steps. This form is the first step toward a space that feels elevated, cohesive, and beautifully finished.
     </p>
   </div>
 
@@ -161,34 +359,34 @@
       <form id="intakeFormVirtualDesign" class="grid-1" enctype="multipart/form-data" novalidate>
 
         <h2 class="field-heading">Contact Information</h2>
-        <p class="section-note">Start with the basics so we know how to best reach you.</p>
+        <p class="section-note">Start with the essentials so we know how to best reach you.</p>
 
         <div class="grid-2">
-          <label>Full Name
-            <input type="text" name="name" autocomplete="name" required />
+          <label for="name">Full Name
+            <input id="name" type="text" name="name" autocomplete="name" required>
           </label>
 
-          <label>Email
-            <input type="email" name="email" autocomplete="email" required />
+          <label for="email">Email
+            <input id="email" type="email" name="email" autocomplete="email" required>
           </label>
 
-          <label>Phone
-            <input type="tel" name="phone" autocomplete="tel" />
+          <label for="phone">Phone
+            <input id="phone" type="tel" name="phone" autocomplete="tel">
           </label>
 
-          <label>Location
-            <input type="text" name="location" placeholder="City, State or Virtual" />
+          <label for="location">Location
+            <input id="location" type="text" name="location" placeholder="City, State" autocomplete="address-level2">
           </label>
         </div>
 
         <hr class="section-divider">
 
         <h2 class="field-heading">Project Details</h2>
-        <p class="section-note">Help us understand the scope of your project and what kind of support you’re looking for.</p>
+        <p class="section-note">Help us understand the scope of your project and the level of support you’re looking for.</p>
 
         <div class="grid-2">
-          <label>Service Type
-            <select name="vd_package" required>
+          <label for="vd_package">Service Type
+            <select id="vd_package" name="vd_package" required>
               <option value="" selected disabled>Select one…</option>
               <option>Room Refresh Virtual Design</option>
               <option>Full Room Virtual Design</option>
@@ -197,8 +395,8 @@
             </select>
           </label>
 
-          <label>Number of Rooms/Areas
-            <select name="vd_rooms" required>
+          <label for="vd_rooms">Number of Rooms / Areas
+            <select id="vd_rooms" name="vd_rooms" required>
               <option value="" selected disabled>Select…</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -210,13 +408,15 @@
               <option value="8">8+</option>
             </select>
           </label>
+        </div>
 
-          <label>Spaces Included
-            <input type="text" name="vd_room_types" placeholder="Living room, primary bedroom, nursery, entryway…" />
+        <div class="grid-2">
+          <label for="vd_room_types">Spaces Included
+            <input id="vd_room_types" type="text" name="vd_room_types" placeholder="Living room, primary bedroom, nursery, entryway…">
           </label>
 
-          <label>Estimated Furnishings / Decor Budget
-            <select name="vd_budget">
+          <label for="vd_budget">Estimated Furnishings / Decor Budget
+            <select id="vd_budget" name="vd_budget">
               <option value="" selected>Select…</option>
               <option>$500–$1,500</option>
               <option>$1,500–$3,000</option>
@@ -228,115 +428,144 @@
         </div>
 
         <div class="grid-2">
-          <label>Desired Timeline
-            <select name="vd_timeline">
+          <label for="vd_timeline">Desired Timeline
+            <select id="vd_timeline" name="vd_timeline">
               <option value="" selected>Select…</option>
               <option>ASAP</option>
               <option>Within 1–2 weeks</option>
               <option>Within 2–4 weeks</option>
+              <option>Within 1–2 months</option>
               <option>Flexible</option>
             </select>
           </label>
 
-          <label>Sourcing Preference
-            <select name="vd_sourcing">
-              <option value="" selected>Select…</option>
-              <option>Yes — mostly new items</option>
-              <option>Yes — a mix of existing + new</option>
-              <option>No — style what I already own</option>
-              <option>Not sure yet</option>
-            </select>
-          </label>
-
-          <label>Design Style
-            <input type="text" name="vd_style" placeholder="Organic modern, classic, coastal, warm minimal, collected, transitional…" />
-          </label>
-
-          <label>Main Goal for the Space
-            <input type="text" name="vd_goal" placeholder="Better flow, more polished, family-friendly, guest-ready, elevated Airbnb feel…" />
+          <label for="vd_style">Design Style
+            <input id="vd_style" type="text" name="vd_style" placeholder="Organic modern, classic, collected, warm minimal, coastal…">
           </label>
         </div>
 
-        <label>Inspiration Links
-          <input type="url" name="vd_inspo_links" placeholder="Pinterest board, Instagram saves, mood board link, etc." />
-          <span class="hint">A strong inspiration board gives us a much clearer picture of your vision.</span>
-        </label>
+        <div class="grid-2">
+          <label for="vd_goal">Main Goal for the Space
+            <input id="vd_goal" type="text" name="vd_goal" placeholder="Better flow, more polished, guest-ready, warmer, more functional…">
+          </label>
 
-        <label>What feels unfinished, frustrating, or hardest right now?
-          <textarea name="vd_painpoints" rows="4" placeholder="The layout feels awkward, I don’t know what furniture works, the room lacks warmth, it doesn’t photograph well, I need help pulling it all together…"></textarea>
+          <label for="vd_inspo_links">Inspiration Links
+            <input id="vd_inspo_links" type="url" name="vd_inspo_links" placeholder="Pinterest board, mood board, saved collection, etc.">
+            <span class="hint">Strong inspiration visuals help us understand your direction much more clearly.</span>
+          </label>
+        </div>
+
+        <label for="vd_painpoints">What feels unfinished, frustrating, or hardest right now?
+          <textarea id="vd_painpoints" name="vd_painpoints" rows="4" placeholder="The layout feels awkward, I don’t know what furniture works, the room lacks warmth, it doesn’t feel cohesive, I need help pulling everything together…"></textarea>
         </label>
 
         <div class="grid-2">
-          <label>Measurements
-            <textarea name="vd_measurements" rows="4" placeholder="Room dimensions, wall lengths, ceiling height, window placement, furniture measurements, etc."></textarea>
+          <label for="vd_measurements">Measurements
+            <textarea id="vd_measurements" name="vd_measurements" rows="4" placeholder="Room dimensions, wall lengths, ceiling height, window placement, furniture measurements, etc."></textarea>
           </label>
 
-          <label>Existing Pieces to Keep
-            <textarea name="vd_existing" rows="4" placeholder="Sofa, rug, dining table, bed frame, accent chairs, artwork, or anything you definitely want incorporated."></textarea>
+          <label for="vd_existing">Existing Pieces to Keep
+            <textarea id="vd_existing" name="vd_existing" rows="4" placeholder="Sofa, rug, dining table, bed frame, accent chairs, artwork, or anything you want incorporated."></textarea>
           </label>
         </div>
 
         <hr class="section-divider">
 
-        <h2 class="field-heading">Photos, Video, or Walkthrough</h2>
-        <p class="section-note">You can upload visuals directly, or request a walkthrough so we can better understand the space.</p>
+        <h2 class="field-heading">Photos & Design Delivery</h2>
+        <p class="section-note">
+          Clear photos are required for all virtual design projects so we can create your mockup direction, source appropriate pieces, and build a curated product plan for your space.
+        </p>
+
+        <div class="soft-box">
+          <strong>Please note:</strong> A phone or Zoom consultation may be added to discuss your goals, style preferences, budget, and functionality needs in more detail, but photos are still required in order to create your virtual design plan.
+        </div>
+
+        <label for="vd_files">Upload Photos <span class="required-badge">Required</span>
+          <input id="vd_files" type="file" name="vd_files" accept="image/*,.pdf" multiple required>
+          <span class="file-note">
+            Please include clear wide shots of the room, each main wall, any problem areas, and any inspiration screenshots or reference images you’d like us to consider.
+          </span>
+        </label>
+
+        <label for="vd_video_links">Optional Video Link
+          <input id="vd_video_links" type="url" name="vd_video_links" placeholder="Dropbox, Google Drive, or other shareable video link if you'd like to include one">
+          <span class="hint">A video can be helpful, but it does not replace the required photo upload.</span>
+        </label>
 
         <div class="grid-2">
-          <label>How would you like to begin?
-            <select name="vd_consult_method">
+          <label for="vd_consultation">Would you like an optional consultation?
+            <select id="vd_consultation" name="vd_consultation">
               <option value="" selected>Select…</option>
-              <option>Upload photos</option>
-              <option>Upload video</option>
-              <option>Upload both photos and video</option>
-              <option>Schedule a walkthrough</option>
+              <option>No consultation needed</option>
+              <option>Phone consultation requested</option>
+              <option>Zoom consultation requested</option>
               <option>Not sure yet</option>
             </select>
           </label>
 
-          <label>Preferred Walkthrough Format
-            <select name="vd_walkthrough_type">
+          <label for="vd_purchase_option">How would you like to move forward if approved?
+            <select id="vd_purchase_option" name="vd_purchase_option">
               <option value="" selected>Select…</option>
-              <option>Phone consultation</option>
-              <option>Video call</option>
-              <option>In-person walkthrough</option>
-              <option>Not needed</option>
+              <option>Design plan + product links for self-purchase</option>
+              <option>Concierge sourcing & purchasing by The Finishing Touch</option>
+              <option>Not sure yet</option>
             </select>
           </label>
         </div>
 
-        <label>Upload Photos or PDFs
-          <input type="file" name="vd_files" accept="image/*,.pdf" multiple />
-          <div class="file-note">
-            If possible, include wide shots of the full room, each main wall, problem areas, and any inspiration screenshots you’d like us to reference.
-          </div>
+        <div class="grid-2">
+          <label for="vd_sourcing">Sourcing Preference
+            <select id="vd_sourcing" name="vd_sourcing">
+              <option value="" selected>Select…</option>
+              <option>Mostly new items</option>
+              <option>Mix of existing + new</option>
+              <option>Style what I already own as much as possible</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+
+          <label for="vd_shipping_notes">Shipping / Purchase Notes
+            <input id="vd_shipping_notes" type="text" name="vd_shipping_notes" placeholder="Any notes about shipping timing, retailer preferences, or purchasing limitations">
+          </label>
+        </div>
+
+        <label for="notes">Anything else we should know?
+          <textarea id="notes" name="notes" rows="4" placeholder="Children, pets, durability needs, colors you dislike, hosting needs, Airbnb guest profile, must-have features, or anything else that would help us tailor the design well."></textarea>
         </label>
 
-        <label>Anything else we should know?
-          <textarea name="notes" rows="4" placeholder="Children, pets, durability needs, colors you dislike, Airbnb guest profile, must-have features, or anything else that would help us tailor the design well."></textarea>
-        </label>
+        <hr class="section-divider">
 
-        <fieldset style="border:0;padding:0;margin:0">
-          <label style="display:flex;align-items:flex-start;gap:10px">
-            <input type="checkbox" name="agree_terms" required />
+        <h2 class="field-heading">Final Acknowledgements</h2>
+
+        <div class="checkbox-group">
+          <label class="check-row" for="agree_terms">
+            <input id="agree_terms" type="checkbox" name="agree_terms" required>
             <span>
               I agree to the <a href="terms.html#client-terms">Client Service Terms</a> and understand that all pricing shared before review is a ballpark estimate.
             </span>
           </label>
 
-          <label style="display:flex;align-items:flex-start;gap:10px;margin-top:8px">
-            <input type="checkbox" name="consent_marketing" />
+          <label class="check-row" for="agree_photos_required">
+            <input id="agree_photos_required" type="checkbox" name="agree_photos_required" required>
+            <span>
+              I understand that photos are required for virtual design services and that a phone or Zoom consultation does not replace the visual materials needed to create my design plan.
+            </span>
+          </label>
+
+          <label class="check-row" for="consent_marketing">
+            <input id="consent_marketing" type="checkbox" name="consent_marketing">
             <span>
               Optional: I consent to before-and-after images being used for marketing, provided personal or identifying items are not shown.
             </span>
           </label>
-        </fieldset>
+        </div>
 
         <div class="submit-row">
-          <button type="submit" class="btn btn-solid">Submit Virtual Design Intake</button>
+          <button type="submit" class="btn-solid">Submit Virtual Design Intake</button>
           <div id="estimateVirtualDesign"></div>
           <div id="emailStatusVirtualDesign" class="status" aria-live="polite"></div>
           <p class="tiny">
-            Once submitted, we’ll review everything and follow up with a tailored next-step recommendation.
+            Once submitted, we’ll review your materials and follow up with the next steps for your project.
           </p>
         </div>
 
@@ -356,26 +585,25 @@
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-    const btn = document.querySelector('.btn-auth');
+    const btn = document.querySelector(".btn-auth");
 
     onAuthStateChanged(auth, (user) => {
       if (!btn) return;
 
       if (user) {
-        btn.textContent = 'Sign out';
-        btn.href = '#';
+        btn.textContent = "Sign out";
+        btn.href = "#";
         btn.onclick = async (e) => {
           e.preventDefault();
           await signOut(auth);
           window.location.reload();
         };
       } else {
-        btn.textContent = 'Sign in / Create account';
-        btn.href = 'login.html';
+        btn.textContent = "Sign in / Create account";
+        btn.href = "login.html";
         btn.onclick = null;
       }
     });
   </script>
-
 </body>
 </html>
