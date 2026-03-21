@@ -5,74 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Virtual Design Intake – The Finishing Touch</title>
 
-  <!-- Fonts + Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- Site CSS -->
   <link rel="stylesheet" href="styles.css?v=8" />
 
   <style>
-    body{ background:#fbf8f4; }
-    .intake-top{
-      width:min(920px,92%);
-      margin:18px auto 0;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
+    body {
+      background: #fbf8f4;
     }
-    .intake-top a{ text-decoration:none; }
-    .intake-head{
-      text-align:center;
-      margin-top:10px;
-      margin-bottom:8px;
-    }
-    .intake-title{
-      font-family:"Playfair Display",serif;
-      margin:0 0 4px;
-    }
-    .intake-script{
-      font-family:"Allura",cursive;
-      font-size:2rem;
-      margin:0;
-      color:#524a46;
-    }
-    .microcopy{
-      text-align:center;
-      opacity:.85;
-      margin:8px auto 0;
-      width:min(720px,92%);
-    }
-    .hint{
-      display:block;
-      margin-top:6px;
-      font-size:.92rem;
-      opacity:.85;
-    }
-    .tiny{
-      font-size:.92rem;
-      opacity:.85;
-      margin:0;
-    }
-    .file-note{
-      font-size:.9rem;
-      opacity:.85;
-      margin-top:6px;
-      line-height:1.35;
-    }
-  </style>
 
-  <!-- Chat z-index safety (matches your site) -->
-  <style>
-    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+    .intake-top {
+      width: min(960px, 92%);
+      margin: 18px auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .intake-top a {
+      text-decoration: none;
+    }
+
+    .intake-head {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      padding: 0 16px;
+    }
+
+    .intake-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin: 0 0 8px;
+      color: #2f2926;
+    }
+
+    .intake-script {
+      font-family: "Allura", cursive;
+      font-size: 2rem;
+      margin: 0 0 10px;
+      color: #6c625d;
+    }
+
+    .microcopy {
+      width: min(760px, 92%);
+      margin: 0 auto;
+      color: #4f4742;
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    .section-divider {
+      border: 0;
+      border-top: 1px solid #e9dfd4;
+      margin: 10px 0 4px;
+    }
+
+    .hint {
+      display: block;
+      margin-top: 6px;
+      font-size: .92rem;
+      opacity: .8;
+    }
+
+    .tiny {
+      font-size: .92rem;
+      opacity: .85;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .file-note {
+      font-size: .92rem;
+      opacity: .85;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .section-note {
+      font-size: .95rem;
+      color: #5f5651;
+      margin: 2px 0 12px;
+      line-height: 1.55;
+    }
+
+    .intake-wrap {
+      width: min(960px, 92%);
+      margin: 0 auto 48px;
+    }
+
+    .intake-panel {
+      background: #fffdfa;
+      border: 1px solid #eee3d8;
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(62, 44, 31, 0.05);
+    }
+
+    .field-heading {
+      font-family: "Playfair Display", serif;
+      font-size: 1.2rem;
+      margin: 18px 0 6px;
+      color: #2f2926;
+    }
+
+    @media (max-width: 640px) {
+      .intake-panel {
+        padding: 18px;
+      }
+    }
+
+    #ftt-chat-launcher, #ftt-chat {
+      z-index: 9999;
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -97,175 +149,218 @@
 
   <div class="intake-head">
     <h1 class="intake-title">Virtual Design Intake</h1>
-    <p class="intake-script">Design, Delivered</p>
+    <p class="intake-script">Thoughtful Design, Tailored Online</p>
     <p class="microcopy">
-      Share your space details and inspiration. We’ll review and follow up with a tailored ballpark + next steps.
-      (This form does not finalize a booking.)
+      Tell us about your space, style, and goals, and we’ll review your submission before following up with a tailored ballpark estimate and next steps.
+      This form is the first step in creating a space that feels elevated, cohesive, and beautifully aligned with your lifestyle.
     </p>
   </div>
 
   <main class="intake-wrap">
+    <div class="intake-panel">
+      <form id="intakeFormVirtualDesign" class="grid-1" enctype="multipart/form-data" novalidate>
 
-    <form id="intakeFormVirtualDesign" class="grid-1" enctype="multipart/form-data" novalidate>
+        <h2 class="field-heading">Contact Information</h2>
+        <p class="section-note">Start with the basics so we know how to best reach you.</p>
 
-      <div class="grid-2">
-        <label>Full Name
-          <input type="text" name="name" autocomplete="name" required />
-        </label>
+        <div class="grid-2">
+          <label>Full Name
+            <input type="text" name="name" autocomplete="name" required />
+          </label>
 
-        <label>Email
-          <input type="email" name="email" autocomplete="email" required />
-        </label>
+          <label>Email
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
 
-        <label>Phone
-          <input type="tel" name="phone" autocomplete="tel" />
-        </label>
+          <label>Phone
+            <input type="tel" name="phone" autocomplete="tel" />
+          </label>
 
-        <label>City / State (or “Virtual”)
-          <input type="text" name="location" placeholder="League City, TX or Virtual" />
-        </label>
-      </div>
-
-      <hr style="border:0;border-top:1px solid #efe7de;margin:6px 0 0">
-
-      <div class="grid-2">
-        <label>Package Type
-          <select name="vd_package" required>
-            <option value="" selected disabled>Select one…</option>
-            <option>Room Refresh E-Design</option>
-            <option>Full Room E-Design</option>
-            <option>Airbnb / STR Virtual Design</option>
-          </select>
-        </label>
-
-        <label>Number of Rooms/Areas
-          <select name="vd_rooms" required>
-            <option value="" selected disabled>Select…</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8+</option>
-          </select>
-        </label>
-
-        <label>Room Types (comma-separated)
-          <input type="text" name="vd_room_types" placeholder="Living room, primary bedroom, entryway…" />
-        </label>
-
-        <label>Budget Range (for purchasing items)
-          <select name="vd_budget">
-            <option value="" selected>Select…</option>
-            <option>$500–$1,500</option>
-            <option>$1,500–$3,000</option>
-            <option>$3,000–$6,000</option>
-            <option>$6,000+</option>
-            <option>Not sure yet</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="grid-2">
-        <label>Timeline
-          <select name="vd_timeline">
-            <option value="" selected>Select…</option>
-            <option>ASAP (2–7 days)</option>
-            <option>1–2 weeks</option>
-            <option>2–4 weeks</option>
-            <option>Flexible</option>
-          </select>
-        </label>
-
-        <label>Do you want us to source new items?
-          <select name="vd_sourcing">
-            <option value="" selected>Select…</option>
-            <option>Yes — mostly new items</option>
-            <option>Yes — mix of what I have + new</option>
-            <option>No — style what I have</option>
-            <option>Not sure</option>
-          </select>
-        </label>
-      </div>
-
-      <label>Inspiration Links (Pinterest board, Instagram saves, etc.)
-        <input type="url" name="vd_inspo_links" placeholder="Paste links here…" />
-        <span class="hint">Tip: one good Pinterest board is gold.</span>
-      </label>
-
-      <label>What feels hardest right now?
-        <textarea name="vd_painpoints" rows="3" placeholder="Choosing furniture? It feels unfinished? Layout is awkward? Airbnb needs to photograph better?"></textarea>
-      </label>
-
-      <div class="grid-2">
-        <label>Measurements (optional)
-          <textarea name="vd_measurements" rows="3" placeholder="Room size, wall lengths, ceiling height, key furniture measurements…"></textarea>
-        </label>
-
-        <label>What you already own (optional)
-          <textarea name="vd_existing" rows="3" placeholder="Sofa size/color, bed size, dining table, pieces you want to keep…"></textarea>
-        </label>
-      </div>
-
-      <label>Upload Photos (optional)
-        <input type="file" name="vd_files" accept="image/*,.pdf" multiple />
-        <div class="file-note">
-          If you can, include: wide shots of each wall, close-ups of problem areas, and a photo of the room from the entry.
-          Screenshots of inspo are welcome too.
+          <label>Location
+            <input type="text" name="location" placeholder="City, State or Virtual" />
+          </label>
         </div>
-      </label>
 
-      <label>Anything else we should know?
-        <textarea name="notes" rows="3" placeholder="Kids/pets, durability needs, colors you hate, must-keep items, HOA constraints, Airbnb audience, etc."></textarea>
-      </label>
+        <hr class="section-divider">
 
-      <fieldset style="border:0;padding:0;margin:0">
-        <label style="display:flex;align-items:flex-start;gap:10px">
-          <input type="checkbox" name="agree_terms" required />
-          <span>
-            I agree to the <a href="terms.html#client-terms">Client Service Terms</a> and understand quotes are ballpark estimates until reviewed.
-          </span>
+        <h2 class="field-heading">Project Details</h2>
+        <p class="section-note">Help us understand the scope of your project and what kind of support you’re looking for.</p>
+
+        <div class="grid-2">
+          <label>Service Type
+            <select name="vd_package" required>
+              <option value="" selected disabled>Select one…</option>
+              <option>Room Refresh Virtual Design</option>
+              <option>Full Room Virtual Design</option>
+              <option>Airbnb / Short-Term Rental Design</option>
+              <option>Styling & Finishing Touches</option>
+            </select>
+          </label>
+
+          <label>Number of Rooms/Areas
+            <select name="vd_rooms" required>
+              <option value="" selected disabled>Select…</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8+</option>
+            </select>
+          </label>
+
+          <label>Spaces Included
+            <input type="text" name="vd_room_types" placeholder="Living room, primary bedroom, nursery, entryway…" />
+          </label>
+
+          <label>Estimated Furnishings / Decor Budget
+            <select name="vd_budget">
+              <option value="" selected>Select…</option>
+              <option>$500–$1,500</option>
+              <option>$1,500–$3,000</option>
+              <option>$3,000–$6,000</option>
+              <option>$6,000+</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid-2">
+          <label>Desired Timeline
+            <select name="vd_timeline">
+              <option value="" selected>Select…</option>
+              <option>ASAP</option>
+              <option>Within 1–2 weeks</option>
+              <option>Within 2–4 weeks</option>
+              <option>Flexible</option>
+            </select>
+          </label>
+
+          <label>Sourcing Preference
+            <select name="vd_sourcing">
+              <option value="" selected>Select…</option>
+              <option>Yes — mostly new items</option>
+              <option>Yes — a mix of existing + new</option>
+              <option>No — style what I already own</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+
+          <label>Design Style
+            <input type="text" name="vd_style" placeholder="Organic modern, classic, coastal, warm minimal, collected, transitional…" />
+          </label>
+
+          <label>Main Goal for the Space
+            <input type="text" name="vd_goal" placeholder="Better flow, more polished, family-friendly, guest-ready, elevated Airbnb feel…" />
+          </label>
+        </div>
+
+        <label>Inspiration Links
+          <input type="url" name="vd_inspo_links" placeholder="Pinterest board, Instagram saves, mood board link, etc." />
+          <span class="hint">A strong inspiration board gives us a much clearer picture of your vision.</span>
         </label>
 
-        <label style="display:flex;align-items:flex-start;gap:10px;margin-top:8px">
-          <input type="checkbox" name="consent_marketing" />
-          <span>
-            (Optional) You may use before/after photos for marketing if my personal items are not visible.
-          </span>
+        <label>What feels unfinished, frustrating, or hardest right now?
+          <textarea name="vd_painpoints" rows="4" placeholder="The layout feels awkward, I don’t know what furniture works, the room lacks warmth, it doesn’t photograph well, I need help pulling it all together…"></textarea>
         </label>
-      </fieldset>
 
-      <div class="submit-row">
-        <button type="submit" class="btn btn-solid">Submit Virtual Design Intake</button>
-        <div id="estimateVirtualDesign"></div>
-        <div id="emailStatusVirtualDesign" class="status" aria-live="polite"></div>
-        <p class="tiny">
-          After submission, we’ll review and follow up with a tailored ballpark and next steps.
-        </p>
-      </div>
+        <div class="grid-2">
+          <label>Measurements
+            <textarea name="vd_measurements" rows="4" placeholder="Room dimensions, wall lengths, ceiling height, window placement, furniture measurements, etc."></textarea>
+          </label>
 
-    </form>
+          <label>Existing Pieces to Keep
+            <textarea name="vd_existing" rows="4" placeholder="Sofa, rug, dining table, bed frame, accent chairs, artwork, or anything you definitely want incorporated."></textarea>
+          </label>
+        </div>
+
+        <hr class="section-divider">
+
+        <h2 class="field-heading">Photos, Video, or Walkthrough</h2>
+        <p class="section-note">You can upload visuals directly, or request a walkthrough so we can better understand the space.</p>
+
+        <div class="grid-2">
+          <label>How would you like to begin?
+            <select name="vd_consult_method">
+              <option value="" selected>Select…</option>
+              <option>Upload photos</option>
+              <option>Upload video</option>
+              <option>Upload both photos and video</option>
+              <option>Schedule a walkthrough</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+
+          <label>Preferred Walkthrough Format
+            <select name="vd_walkthrough_type">
+              <option value="" selected>Select…</option>
+              <option>Phone consultation</option>
+              <option>Video call</option>
+              <option>In-person walkthrough</option>
+              <option>Not needed</option>
+            </select>
+          </label>
+        </div>
+
+        <label>Upload Photos or PDFs
+          <input type="file" name="vd_files" accept="image/*,.pdf" multiple />
+          <div class="file-note">
+            If possible, include wide shots of the full room, each main wall, problem areas, and any inspiration screenshots you’d like us to reference.
+          </div>
+        </label>
+
+        <label>Anything else we should know?
+          <textarea name="notes" rows="4" placeholder="Children, pets, durability needs, colors you dislike, Airbnb guest profile, must-have features, or anything else that would help us tailor the design well."></textarea>
+        </label>
+
+        <fieldset style="border:0;padding:0;margin:0">
+          <label style="display:flex;align-items:flex-start;gap:10px">
+            <input type="checkbox" name="agree_terms" required />
+            <span>
+              I agree to the <a href="terms.html#client-terms">Client Service Terms</a> and understand that all pricing shared before review is a ballpark estimate.
+            </span>
+          </label>
+
+          <label style="display:flex;align-items:flex-start;gap:10px;margin-top:8px">
+            <input type="checkbox" name="consent_marketing" />
+            <span>
+              Optional: I consent to before-and-after images being used for marketing, provided personal or identifying items are not shown.
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="submit-row">
+          <button type="submit" class="btn btn-solid">Submit Virtual Design Intake</button>
+          <div id="estimateVirtualDesign"></div>
+          <div id="emailStatusVirtualDesign" class="status" aria-live="polite"></div>
+          <p class="tiny">
+            Once submitted, we’ll review everything and follow up with a tailored next-step recommendation.
+          </p>
+        </div>
+
+      </form>
+    </div>
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <p>© 2025 The Finishing Touch | Virtual design available anywhere</p>
+      <p>© 2026 The Finishing Touch | Virtual design available anywhere</p>
     </div>
   </footer>
 
-  <!-- Your main JS -->
   <script src="script.js?v=8" defer></script>
 
-  <!-- Smart auth button -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
     const btn = document.querySelector('.btn-auth');
+
     onAuthStateChanged(auth, (user) => {
       if (!btn) return;
+
       if (user) {
         btn.textContent = 'Sign out';
         btn.href = '#';
