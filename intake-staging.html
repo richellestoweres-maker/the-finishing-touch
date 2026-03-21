@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-only helpers -->
   <style>
     body{background:#fbf8f4}
     .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
@@ -34,7 +33,6 @@
     .quote-dropdown.open .quote-menu{display:block}
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
     .hint{font-size:.92rem;opacity:.9}
-
     .success-card{
       margin-top:14px;
       background:#fbf5ee;
@@ -79,6 +77,7 @@
     textarea{
       width:100%;
       resize:vertical;
+      min-height:110px;
     }
 
     @media (max-width: 760px){
@@ -92,13 +91,13 @@
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <a href="client.html" class="brand-link">
+        <a href="https://www.thefinishingtouch-tx.com/index.html" class="brand-link">
           <span class="vase-logo" aria-hidden="true"></span>
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
       <nav class="main-nav">
-        <a href="client.html">Client Portal</a>
+        <a href="https://www.thefinishingtouch-tx.com/index.html">Home</a>
 
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
@@ -117,16 +116,15 @@
   </header>
 
   <div class="mini-bar">
-    <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
+    <a class="btn btn-outline" href="https://www.thefinishingtouch-tx.com/index.html">← Back to Home</a>
   </div>
 
-  <!-- Main -->
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Staging & Styling Intake Form</div>
     <p class="intake-note">
-      Complete this brief form so we can learn more about your property, style goals, and timeline.
-      You may upload photos/video for a faster review or request an in-person walkthrough.
+      Complete this brief form so we can learn more about your home, listing, rental, or design goals.
+      Upload photos/video for a faster review, or request an in-person walkthrough if you’re local.
     </p>
 
     <form id="intakeFormStaging" class="grid-1"
@@ -145,38 +143,50 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Project Details -->
+      <!-- Client + Project Type -->
       <div class="fieldset grid-2">
-        <label>Project Type
-          <select name="project_type" required>
-            <option value="">Select one</option>
-            <option>Vacant Home Staging</option>
-            <option>Occupied Home Staging</option>
-            <option>Interior Styling Refresh</option>
-            <option>Listing Prep / Market-Ready Styling</option>
-            <option>Model Home / Showcase Styling</option>
-            <option>Room-by-Room Styling</option>
-          </select>
-        </label>
-
         <label>Who is this project for?
           <select name="client_type" required>
             <option value="">Select one</option>
             <option>Homeowner</option>
             <option>Realtor</option>
             <option>Investor</option>
-            <option>Builder</option>
-            <option>Property Manager</option>
+            <option>Airbnb / Short-Term Rental Host</option>
+            <option>Virtual Design Client</option>
             <option>Other</option>
+          </select>
+        </label>
+
+        <label>Project Type
+          <select name="project_type" required>
+            <option value="">Select one</option>
+            <option>Room-by-Room Decorating & Styling</option>
+            <option>Listing Prep & Photo-Day Styling</option>
+            <option>Occupied Home Staging</option>
+            <option>Vacant Home Staging</option>
+            <option>Airbnb / STR Styling</option>
+            <option>Virtual E-Design Package</option>
+            <option>Model / Showcase Styling</option>
+          </select>
+        </label>
+
+        <label>Local or Virtual?
+          <select name="service_format" required>
+            <option value="">Select one</option>
+            <option>Local / In-Person</option>
+            <option>Virtual / E-Design</option>
+            <option>Not Sure Yet</option>
           </select>
         </label>
 
         <label>Property Status
           <select name="property_status" required>
             <option value="">Select one</option>
+            <option>Owner-Occupied</option>
             <option>Vacant</option>
-            <option>Occupied</option>
             <option>Partially Furnished</option>
+            <option>Airbnb / Short-Term Rental</option>
+            <option>Listing / Flip</option>
             <option>Not Sure Yet</option>
           </select>
         </label>
@@ -197,26 +207,24 @@
           <input name="sqft" type="number" min="0" step="1" placeholder="e.g., 2200">
         </label>
 
-        <label>Stories
-          <select name="stories">
-            <option>1</option>
-            <option>2</option>
-            <option>3+</option>
-          </select>
+        <label>Bedrooms
+          <input name="beds" type="number" min="0" value="3">
         </label>
 
-        <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
-        <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
+        <label>Bathrooms
+          <input name="baths" type="number" min="0" value="2">
+        </label>
       </div>
 
-      <!-- Listing + Timeline -->
+      <!-- Goals + Timeline -->
       <div class="fieldset grid-2">
-        <label>Is the property already listed?
-          <select name="listed_status" required>
+        <label>Is the property listed yet?
+          <select name="listed_status">
             <option value="">Select one</option>
             <option>No</option>
             <option>Yes</option>
             <option>Listing Soon</option>
+            <option>Not Applicable</option>
           </select>
         </label>
 
@@ -231,7 +239,7 @@
           </select>
         </label>
 
-        <label>Preferred Installation / Consultation Days
+        <label>Preferred Days / Times
           <input name="availability" placeholder="e.g., Tue/Thu mornings">
         </label>
 
@@ -247,47 +255,46 @@
           </select>
         </label>
 
-        <label>Listing URL or Inspiration Link (optional)
-          <input name="link" type="url" placeholder="MLS, Zillow, Pinterest board, etc.">
+        <label>Listing URL / Airbnb Link / Inspiration Link
+          <input name="project_link" type="url" placeholder="MLS, Airbnb, Pinterest board, etc.">
         </label>
 
-        <label>Target Buyer / Overall Goal
-          <input name="goal" placeholder="e.g., warm, high-end, family-friendly, coastal, market-ready">
+        <label>Overall Goal
+          <input name="goal" placeholder="e.g., listing-ready, cozy luxury, more polished, guest-ready, better flow">
         </label>
       </div>
 
       <!-- Scope -->
       <div class="fieldset grid-2">
-        <label>Rooms / Areas to Focus On
-          <input name="focus_areas" placeholder="e.g., living room, entry, primary bedroom, dining">
-        </label>
-
-        <label>Furniture Needed?
-          <select name="furniture_needed">
+        <label>What kind of help do you want?
+          <select name="scope_preference" required>
             <option value="">Select one</option>
-            <option>Yes — full staging</option>
-            <option>Yes — partial staging</option>
-            <option>No — use existing furnishings</option>
+            <option>Style What I Have</option>
+            <option>Mix of Old & New</option>
+            <option>Full Refresh</option>
             <option>Not Sure Yet</option>
           </select>
         </label>
 
-        <label>Accessories / Styling Needed?
-          <select name="styling_needed">
+        <label>Which spaces need help most?
+          <input name="focus_areas" placeholder="e.g., living room, entry, primary bedroom, dining, kitchen">
+        </label>
+
+        <label>Do you need sourcing for new decor/furniture?
+          <select name="sourcing_needed">
             <option value="">Select one</option>
-            <option>Yes — accessories only</option>
-            <option>Yes — artwork / decor styling</option>
-            <option>Yes — bedding / soft goods styling</option>
-            <option>No</option>
-            <option>Not Sure Yet</option>
+            <option>Yes — decor only</option>
+            <option>Yes — furniture + decor</option>
+            <option>No — mostly use what I have</option>
+            <option>Maybe / Not Sure Yet</option>
           </select>
         </label>
 
-        <label>Primary Style Direction
+        <label>Style Direction
           <select name="style_direction">
             <option value="">Select one</option>
-            <option>Light & Airy</option>
             <option>Warm Neutral</option>
+            <option>Light & Airy</option>
             <option>Modern</option>
             <option>Traditional</option>
             <option>Coastal</option>
@@ -296,18 +303,36 @@
             <option>Not Sure Yet</option>
           </select>
         </label>
+
+        <label>Need a clickable shopping list / virtual design plan?
+          <select name="virtual_deliverables">
+            <option value="">Select one</option>
+            <option>Yes</option>
+            <option>No</option>
+            <option>Maybe / Want to discuss</option>
+          </select>
+        </label>
+
+        <label>Need install / styling day on-site?
+          <select name="install_needed">
+            <option value="">Select one</option>
+            <option>Yes</option>
+            <option>No</option>
+            <option>Maybe / Want to discuss</option>
+          </select>
+        </label>
       </div>
 
       <!-- Notes -->
       <div class="fieldset grid-1">
         <label>Project Notes / Vision
-          <textarea name="notes" rows="4" placeholder="Tell us more about what you’re envisioning, any rooms that need the most help, whether this is for resale, everyday living, photos, open house prep, or anything else we should know."></textarea>
+          <textarea name="notes" rows="5" placeholder="Tell us more about what you’re envisioning, any rooms that need the most help, whether this is for resale, everyday living, listing photos, open house prep, or guest experience. You can also share Pinterest inspiration, colors you love, or anything else we should know."></textarea>
         </label>
       </div>
 
       <!-- Estimate Method -->
       <div class="fieldset grid-1">
-        <label style="font-weight:700;">How would you like us to review the property?</label>
+        <label style="font-weight:700;">How would you like us to review the space?</label>
 
         <div class="choice-row">
           <label class="choice-card">
@@ -322,7 +347,7 @@
             <input type="radio" name="estimate_method" value="walkthrough">
             <span>
               <strong>Request an in-person walkthrough</strong>
-              Best if you prefer not to upload media or would like us to evaluate the space in person.
+              Best for local projects if you’d rather have us see the home in person.
             </span>
           </label>
         </div>
@@ -343,7 +368,7 @@
       <!-- Media Uploads -->
       <div class="fieldset grid-1" id="mediaSection">
         <p class="hint" style="margin:0 0 8px;">
-          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us review the property.
+          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us review the space.
           Best shots: entry, living room, kitchen, dining, primary bedroom, bathrooms, exterior/front, and any areas you’d like us to focus on.
           If you prefer not to upload media, select the in-person walkthrough option above.
         </p>
@@ -364,7 +389,7 @@
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
-          <input type="checkbox" name="consent_photos" value="Yes" required>
+          <input type="checkbox" name="consent_review" value="Yes" required>
           <span>I allow The Finishing Touch to review submitted photos/video and discuss recommendations based on the current condition of the property.</span>
         </label>
 
@@ -414,7 +439,6 @@
   <script src="script.js?v=9" defer></script>
   <script src="ft-auto.js" defer></script>
 
-  <!-- Form handling -->
   <script>
     (function(){
       const PHOTO_MIN = 3;
@@ -561,7 +585,6 @@
           }
 
           const fd = new FormData(form);
-
           const data = {};
           fd.forEach((v, k) => {
             if (k === "media_photos" || k === "media_video") return;
@@ -575,7 +598,7 @@
 
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
-              const summary = `${data.project_type || 'Staging'} — ${data.property_status || ''} ${data.property_type || ''}`.trim();
+              const summary = `${data.project_type || 'Staging & Styling'} — ${data.client_type || ''}`.trim();
               await FTAuto.createJobFromIntake({
                 type: "staging",
                 intakeData: data,
@@ -599,8 +622,8 @@
               if (successCard){
                 successCard.textContent =
                   estimateMethod === "walkthrough"
-                    ? "Thanks! We’ve received your intake and walkthrough availability. We’ll review your details and follow up to coordinate next steps."
-                    : "Thanks! We’ve received your intake. We’ll review your project details and follow up with tailored next steps.";
+                    ? "Thanks! We’ve received your intake and walkthrough availability. We’ll review everything and follow up with next steps."
+                    : "Thanks! We’ve received your intake. We’ll review your project details and follow up with next steps.";
                 successCard.style.display = "block";
               }
 
