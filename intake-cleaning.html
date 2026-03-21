@@ -46,6 +46,36 @@
       display:none;
       text-align:center;
     }
+
+    .choice-row{
+      display:grid;
+      gap:10px;
+      margin-top:6px;
+    }
+
+    .choice-card{
+      display:flex;
+      gap:.75rem;
+      align-items:flex-start;
+      padding:12px 14px;
+      border:1px solid #e8ddd1;
+      border-radius:12px;
+      background:#fcfaf7;
+    }
+
+    .choice-card input[type="radio"]{
+      margin-top:3px;
+      flex:0 0 auto;
+    }
+
+    .choice-card strong{
+      display:block;
+      margin-bottom:2px;
+    }
+
+    .soft-hidden{
+      display:none;
+    }
   </style>
 </head>
 
@@ -87,7 +117,7 @@
     <div class="intake-script">Cleaning Intake Form</div>
     <p class="intake-note">
       Complete this brief form so we can review your home and follow up with a tailored ballpark estimate and recommended next steps.
-      Uploading photos/video (optional) helps us quote accurately.
+      You may upload photos/video for a faster estimate or request an in-person walkthrough.
     </p>
 
     <!-- Formspree (uploads enabled) -->
@@ -170,11 +200,47 @@
         </label>
       </div>
 
-      <!-- Media Uploads -->
+      <!-- Estimate Method -->
       <div class="fieldset grid-1">
+        <label style="font-weight:700;">How would you like us to review your home?</label>
+
+        <div class="choice-row">
+          <label class="choice-card">
+            <input type="radio" name="estimate_method" value="upload" checked>
+            <span>
+              <strong>Upload photos/video</strong>
+              Faster estimate turnaround without coordinating an in-person visit.
+            </span>
+          </label>
+
+          <label class="choice-card">
+            <input type="radio" name="estimate_method" value="walkthrough">
+            <span>
+              <strong>Request an in-person walkthrough</strong>
+              Best if you prefer not to upload media or would like us to see the home in person.
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Walkthrough Availability -->
+      <div class="fieldset grid-1 soft-hidden" id="walkthroughSection">
+        <label>Walkthrough Availability (Days & Times)
+          <textarea
+            name="walkthrough_notes"
+            id="walkthroughNotes"
+            rows="4"
+            placeholder="e.g., I’m available Monday after 3:00 PM, Wednesday morning, or Friday anytime after 1:00 PM."></textarea>
+        </label>
+        <p class="hint">Please share which days and times usually work best so we can try to coordinate a walkthrough.</p>
+      </div>
+
+      <!-- Media Uploads -->
+      <div class="fieldset grid-1" id="mediaSection">
         <p class="hint" style="margin:0 0 8px;">
           <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us quote accurately.
           Best shots: wide-angle of each room, bathrooms, kitchen, and any heavy buildup areas (baseboards, showers, stovetop, etc.).
+          If you prefer not to upload media, select the in-person walkthrough option above.
         </p>
 
         <label>Upload Photos (3–10 max)
@@ -199,7 +265,7 @@
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_marketing_photos" value="Yes">
-          <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. </span>
+          <span>I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
@@ -263,9 +329,33 @@
       function bytesToMB(b){ return b / (1024 * 1024); }
       function roundHalf(n){ return Math.round(n * 2) / 2; }
 
+      function getEstimateMethod(){
+        const checked = document.querySelector('input[name="estimate_method"]:checked');
+        return checked ? checked.value : "upload";
+      }
+
       function validateUploads(photoInput, videoInput){
+        const estimateMethod = getEstimateMethod();
         const photos = photoInput?.files ? Array.from(photoInput.files) : [];
         const video  = videoInput?.files ? Array.from(videoInput.files) : [];
+
+        // If walkthrough is selected, uploads are fully optional
+        if (estimateMethod === "walkthrough"){
+          if (video.length > 1){
+            return "Please upload only 1 video.";
+          }
+
+          const tooBigPhotoWalk = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
+          if (tooBigPhotoWalk){
+            return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
+          }
+
+          if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
+            return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+          }
+
+          return null;
+        }
 
         // photos: allow 0 OR 3–10
         if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)){
@@ -293,8 +383,19 @@
       function setUploadHint(photoInput, videoInput, statusEl){
         const pCount = photoInput?.files?.length || 0;
         const vCount = videoInput?.files?.length || 0;
+        const estimateMethod = getEstimateMethod();
         if (!statusEl) return;
-        if (!pCount && !vCount) { statusEl.textContent = ""; return; }
+
+        if (estimateMethod === "walkthrough" && !pCount && !vCount){
+          statusEl.textContent = "No uploads needed if you prefer an in-person walkthrough.";
+          return;
+        }
+
+        if (!pCount && !vCount) {
+          statusEl.textContent = "";
+          return;
+        }
+
         statusEl.textContent = `Selected: ${pCount} photo(s)${vCount ? " + 1 video" : ""}.`;
       }
 
@@ -378,15 +479,52 @@
         const videoInput = document.getElementById('cleanMediaVideo');
         const uploadStatus = document.getElementById('cleanUploadStatus');
 
+        const walkthroughSection = document.getElementById('walkthroughSection');
+        const walkthroughNotes = document.getElementById('walkthroughNotes');
+        const estimateMethodRadios = document.querySelectorAll('input[name="estimate_method"]');
+
+        function syncEstimateMethodUI(){
+          const method = getEstimateMethod();
+          const isWalkthrough = method === "walkthrough";
+
+          if (walkthroughSection){
+            walkthroughSection.style.display = isWalkthrough ? "grid" : "none";
+          }
+
+          if (walkthroughNotes){
+            walkthroughNotes.required = isWalkthrough;
+          }
+
+          setUploadHint(photoInput, videoInput, uploadStatus);
+        }
+
+        estimateMethodRadios.forEach(radio => {
+          radio.addEventListener('change', syncEstimateMethodUI);
+        });
+
         photoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
         videoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
+
+        syncEstimateMethodUI();
 
         form.addEventListener('submit', async function(e){
           e.preventDefault();
           e.stopImmediatePropagation();
 
           if (statusEl) statusEl.textContent = "";
-          if (successCard){ successCard.style.display="none"; successCard.textContent=""; }
+          if (successCard){
+            successCard.style.display = "none";
+            successCard.textContent = "";
+          }
+
+          const estimateMethod = getEstimateMethod();
+          const walkthroughValue = walkthroughNotes ? walkthroughNotes.value.trim() : "";
+
+          if (estimateMethod === "walkthrough" && !walkthroughValue){
+            if (statusEl) statusEl.textContent = "Please share which days and times you’re available for a walkthrough.";
+            walkthroughNotes?.focus();
+            return;
+          }
 
           // Validate uploads
           const uploadErr = validateUploads(photoInput, videoInput);
@@ -438,14 +576,17 @@
           const ownerOpsLeftover = remainingAfterSub - taxReserve - profitTarget;
 
           // Per-cleaner suggestion if you do NOT use the subcontract company (you + 1–2 helpers)
-          // Treat ownerOpsLeftover as YOUR bucket in the subcontract-company scenario.
-          // For individual contractor scenario, you might instead allocate a chosen owner wage and split the rest.
           const OWNER_WAGE_SHARE_IF_INDIVIDUALS = 0.50; // of the remainderAfterSub conceptually (adjust anytime)
           const ownerWageSuggested_ifIndividuals = remainingAfterSub * OWNER_WAGE_SHARE_IF_INDIVIDUALS;
           const contractorsPoolSuggested_ifIndividuals = Math.max(0, remainingAfterSub - (remainingAfterSub * (TAX_PCT_OF_REMAINDER + PROFIT_PCT_OF_REMAINDER)) - ownerWageSuggested_ifIndividuals);
           const contractorPayEachSuggested_ifIndividuals = cleanerCount ? (contractorsPoolSuggested_ifIndividuals / cleanerCount) : 0;
 
           // Attach internal-only fields to Formspree email (client does not see these)
+          fd.append("INTERNAL_estimate_method", estimateMethod);
+          if (estimateMethod === "walkthrough"){
+            fd.append("INTERNAL_walkthrough_requested", "Yes");
+          }
+
           if (totalPrice) fd.append("INTERNAL_price_estimate", `$${Math.round(totalPrice)}`);
           fd.append("INTERNAL_solo_hours", String(soloHours));
           fd.append("INTERNAL_team_hours", String(teamHours));
@@ -459,7 +600,6 @@
           fd.append("INTERNAL_profit_target_20pct_of_remaining", profitTarget.toFixed(2));
           fd.append("INTERNAL_owner_ops_leftover_after_tax_profit", ownerOpsLeftover.toFixed(2));
 
-          // Optional internal guidance line to help you quickly decide
           fd.append("INTERNAL_payout_summary",
             `Client $${Math.round(totalPrice)} | Sub (60%) $${Math.round(subPayAssumed)} | Remainder $${Math.round(remainingAfterSub)} | Taxes(30%) $${Math.round(taxReserve)} | Profit(20%) $${Math.round(profitTarget)} | Owner/Ops $${Math.round(ownerOpsLeftover)}`
           );
@@ -507,12 +647,18 @@
 
             if (resp.ok){
               if (statusEl) statusEl.textContent = "";
+
               if (successCard){
                 successCard.textContent =
-                  "Thanks! We’ve received your intake. We’ll review your details and follow up with a tailored ballpark estimate and next steps.";
+                  estimateMethod === "walkthrough"
+                    ? "Thanks! We’ve received your intake and walkthrough availability. We’ll review your details and follow up to coordinate next steps."
+                    : "Thanks! We’ve received your intake. We’ll review your details and follow up with a tailored ballpark estimate and next steps.";
+
                 successCard.style.display = "block";
               }
+
               form.reset();
+              syncEstimateMethodUI();
               if (uploadStatus) uploadStatus.textContent = "";
             } else {
               if (statusEl) statusEl.textContent =
@@ -537,8 +683,6 @@
   <script src="ftt-chat.js" defer></script>
 </body>
 </html>
-
-
 
 
 
