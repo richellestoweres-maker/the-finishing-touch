@@ -110,7 +110,8 @@
 
     .hint,
     .file-note,
-    .tiny {
+    .tiny,
+    .inline-note {
       display: block;
       font-size: .93rem;
       color: var(--ftt-soft);
@@ -120,6 +121,7 @@
     .hint { margin-top: 7px; }
     .file-note { margin-top: 8px; }
     .tiny { margin: 8px 0 0; }
+    .inline-note { margin-top: 2px; }
 
     form.grid-1 {
       display: grid;
@@ -130,12 +132,6 @@
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
     }
 
@@ -222,7 +218,7 @@
       border: 1px solid var(--ftt-border);
       background: #fcf8f3;
       border-radius: 16px;
-      padding: 16px 16px;
+      padding: 16px;
       color: #4f4742;
       line-height: 1.7;
     }
@@ -288,25 +284,12 @@
       color: var(--ftt-muted);
     }
 
-    .inline-note {
-      font-size: .92rem;
-      color: var(--ftt-soft);
-      margin-top: -4px;
-    }
-
-    @media (max-width: 900px) {
-      .grid-3 {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
     @media (max-width: 700px) {
       .intake-panel {
         padding: 20px;
       }
 
-      .grid-2,
-      .grid-3 {
+      .grid-2 {
         grid-template-columns: 1fr;
       }
 
@@ -456,7 +439,7 @@
         </div>
 
         <label for="vd_painpoints">What feels unfinished, frustrating, or hardest right now?
-          <textarea id="vd_painpoints" name="vd_painpoints" rows="4" placeholder="The layout feels awkward, I don’t know what furniture works, the room lacks warmth, it doesn’t feel cohesive, I need help pulling everything together…"></textarea>
+          <textarea id="vd_painpoints" name="vd_painpoints" rows="4" placeholder="The layout feels awkward, I don’t know what furniture works, the room doesn’t feel cohesive, or I need help pulling everything together…"></textarea>
         </label>
 
         <div class="grid-2">
@@ -471,25 +454,27 @@
 
         <hr class="section-divider">
 
-        <h2 class="field-heading">Photos & Design Delivery</h2>
+        <h2 class="field-heading">Photos, Videos & Design Delivery</h2>
         <p class="section-note">
           Clear photos are required for all virtual design projects so we can create your mockup direction, source appropriate pieces, and build a curated product plan for your space.
         </p>
 
         <div class="soft-box">
-          <strong>Please note:</strong> A phone or Zoom consultation may be added to discuss your goals, style preferences, budget, and functionality needs in more detail, but photos are still required in order to create your virtual design plan.
+          <strong>Please note:</strong> A phone or Zoom consultation may be added to discuss your goals, style preferences, budget, and functionality needs in more detail, but visual materials are still required in order to create your design plan.
         </div>
 
-        <label for="vd_files">Upload Photos <span class="required-badge">Required</span>
-          <input id="vd_files" type="file" name="vd_files" accept="image/*,.pdf" multiple required>
+        <label for="vd_photos">Upload Photos <span class="required-badge">Required</span>
+          <input id="vd_photos" type="file" name="vd_photos" accept="image/*" multiple required>
           <span class="file-note">
-            Please include clear wide shots of the room, each main wall, any problem areas, and any inspiration screenshots or reference images you’d like us to consider.
+            Please upload as many photos as needed. Include wide shots of the full room, each main wall, any problem areas, and any reference images you’d like us to consider.
           </span>
         </label>
 
-        <label for="vd_video_links">Optional Video Link
-          <input id="vd_video_links" type="url" name="vd_video_links" placeholder="Dropbox, Google Drive, or other shareable video link if you'd like to include one">
-          <span class="hint">A video can be helpful, but it does not replace the required photo upload.</span>
+        <label for="vd_videos">Upload Videos
+          <input id="vd_videos" type="file" name="vd_videos" accept="video/*" multiple>
+          <span class="file-note">
+            You may upload videos here as well. If a video file is too large to send through the form, you may email it or text it to our business line instead.
+          </span>
         </label>
 
         <div class="grid-2">
@@ -529,6 +514,10 @@
           </label>
         </div>
 
+        <div class="soft-box">
+          <strong>Need another way to send visuals?</strong> You may also send photos or videos by email to <strong>contact.thefinishingtouch.tx@gmail.com</strong> or by text to our business line at <strong>(281) 620-3963</strong>.
+        </div>
+
         <label for="notes">Anything else we should know?
           <textarea id="notes" name="notes" rows="4" placeholder="Children, pets, durability needs, colors you dislike, hosting needs, Airbnb guest profile, must-have features, or anything else that would help us tailor the design well."></textarea>
         </label>
@@ -545,10 +534,10 @@
             </span>
           </label>
 
-          <label class="check-row" for="agree_photos_required">
-            <input id="agree_photos_required" type="checkbox" name="agree_photos_required" required>
+          <label class="check-row" for="agree_visuals_required">
+            <input id="agree_visuals_required" type="checkbox" name="agree_visuals_required" required>
             <span>
-              I understand that photos are required for virtual design services and that a phone or Zoom consultation does not replace the visual materials needed to create my design plan.
+              I understand that visual materials are required for virtual design services and that a phone or Zoom consultation does not replace the photos needed to create my design plan.
             </span>
           </label>
 
