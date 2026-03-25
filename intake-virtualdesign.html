@@ -35,7 +35,7 @@
       width: min(980px, 92%);
       margin: 18px auto 0;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
@@ -292,10 +292,6 @@
       .grid-2 {
         grid-template-columns: 1fr;
       }
-
-      .intake-top {
-        justify-content: flex-start;
-      }
     }
 
     #ftt-chat-launcher,
@@ -326,7 +322,6 @@
 
   <div class="intake-top">
     <a class="btn btn-outline" href="virtualdesign.html">← Back to Virtual Design</a>
-    <a class="btn btn-outline" href="terms.html#client-terms">View Service Terms</a>
   </div>
 
   <div class="intake-head">
@@ -527,10 +522,10 @@
         <h2 class="field-heading">Final Acknowledgements</h2>
 
         <div class="checkbox-group">
-          <label class="check-row" for="agree_terms">
-            <input id="agree_terms" type="checkbox" name="agree_terms" required>
+          <label class="check-row" for="agree_acknowledgement">
+            <input id="agree_acknowledgement" type="checkbox" name="agree_acknowledgement" required>
             <span>
-              I agree to the <a href="terms.html#client-terms">Client Service Terms</a> and understand that all pricing shared before review is a ballpark estimate.
+              I understand that this is a virtual service, that all pricing shared before review is a ballpark estimate, and that final recommendations are based on the photos, videos, measurements, and project details I provide.
             </span>
           </label>
 
