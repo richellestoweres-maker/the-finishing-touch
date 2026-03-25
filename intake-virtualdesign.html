@@ -35,7 +35,7 @@
       width: min(980px, 92%);
       margin: 18px auto 0;
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
@@ -292,6 +292,10 @@
       .grid-2 {
         grid-template-columns: 1fr;
       }
+
+      .intake-top {
+        justify-content: flex-start;
+      }
     }
 
     #ftt-chat-launcher,
@@ -322,6 +326,7 @@
 
   <div class="intake-top">
     <a class="btn btn-outline" href="virtualdesign.html">← Back to Virtual Design</a>
+    <a class="btn btn-outline" href="virtualdesign-terms.html">View Virtual Design Terms</a>
   </div>
 
   <div class="intake-head">
@@ -525,7 +530,7 @@
           <label class="check-row" for="agree_acknowledgement">
             <input id="agree_acknowledgement" type="checkbox" name="agree_acknowledgement" required>
             <span>
-              I understand that this is a virtual service, that all pricing shared before review is a ballpark estimate, and that final recommendations are based on the photos, videos, measurements, and project details I provide.
+              I have reviewed the <a href="virtualdesign-terms.html">Virtual Design Terms</a> and understand that this is a virtual service, that all pricing shared before review is a ballpark estimate, and that final recommendations are based on the photos, videos, measurements, and project details I provide.
             </span>
           </label>
 
