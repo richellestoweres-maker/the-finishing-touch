@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Virtual Design Terms – The Finishing Touch</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    :root{
+      --ftt-bg:#fbf8f4;
+      --ftt-panel:#fffdfa;
+      --ftt-border:#e9dfd4;
+      --ftt-border-dark:#d8c8b7;
+      --ftt-text:#2f2926;
+      --ftt-muted:#5f5651;
+      --ftt-soft:#7a7069;
+      --ftt-accent:#d2bda9;
+      --ftt-accent-dark:#b89e87;
+      --ftt-shadow:0 10px 30px rgba(62,44,31,.06);
+      --ftt-radius:22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--ftt-bg);
+      color: var(--ftt-text);
+    }
+
+    .terms-top {
+      width: min(980px, 92%);
+      margin: 18px auto 0;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .terms-top a {
+      text-decoration: none;
+    }
+
+    .terms-head {
+      text-align: center;
+      margin-top: 22px;
+      margin-bottom: 14px;
+      padding: 0 16px;
+    }
+
+    .terms-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      line-height: 1.15;
+      margin: 0 0 8px;
+      color: var(--ftt-text);
+    }
+
+    .terms-script {
+      font-family: "Allura", cursive;
+      font-size: 2rem;
+      margin: 0 0 12px;
+      color: #6c625d;
+    }
+
+    .microcopy {
+      width: min(780px, 92%);
+      margin: 0 auto;
+      color: #4f4742;
+      line-height: 1.75;
+      font-size: 1rem;
+    }
+
+    .terms-wrap {
+      width: min(980px, 92%);
+      margin: 0 auto 48px;
+    }
+
+    .terms-panel {
+      background: var(--ftt-panel);
+      border: 1px solid var(--ftt-border);
+      border-radius: var(--ftt-radius);
+      padding: 30px;
+      box-shadow: var(--ftt-shadow);
+    }
+
+    .terms-panel h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 1.35rem;
+      margin: 0 0 10px;
+      color: var(--ftt-text);
+    }
+
+    .terms-panel p,
+    .terms-panel li {
+      color: #4f4742;
+      line-height: 1.75;
+      font-size: 1rem;
+    }
+
+    .terms-panel ul {
+      margin: 10px 0 0 0;
+      padding-left: 20px;
+    }
+
+    .term-block + .term-block {
+      margin-top: 26px;
+      padding-top: 24px;
+      border-top: 1px solid var(--ftt-border);
+    }
+
+    .soft-callout {
+      border: 1px solid var(--ftt-border);
+      background: #fcf8f3;
+      border-radius: 16px;
+      padding: 16px;
+      color: #4f4742;
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+
+    .soft-callout strong {
+      color: var(--ftt-text);
+    }
+
+    @media (max-width: 700px) {
+      .terms-panel {
+        padding: 22px;
+      }
+    }
+
+    #ftt-chat-launcher,
+    #ftt-chat {
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="terms-top">
+    <a class="btn btn-outline" href="intake-virtualdesign.html">← Back to Virtual Design Intake</a>
+  </div>
+
+  <div class="terms-head">
+    <h1 class="terms-title">Virtual Design Terms</h1>
+    <p class="terms-script">Thoughtfully Curated, Delivered Online</p>
+    <p class="microcopy">
+      These terms apply specifically to The Finishing Touch virtual design services. Because this is a remote service, all recommendations, sourcing, and deliverables are based on the materials, measurements, and project details submitted by the client.
+    </p>
+  </div>
+
+  <main class="terms-wrap">
+    <div class="terms-panel">
+
+      <section class="term-block">
+        <h2>1. Nature of Service</h2>
+        <p>
+          Virtual design is an online-only service. The Finishing Touch provides design guidance, visual direction, sourcing support, curated product recommendations, and related deliverables based on the information submitted through the intake process and any approved follow-up communication.
+        </p>
+        <p>
+          This service does not include in-home installation, physical staging, furniture assembly, contractor supervision, measuring services, or on-site project management unless separately agreed to in writing.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>2. Required Client Materials</h2>
+        <p>
+          Clear visual materials are required in order to create a virtual design plan. Clients are responsible for submitting accurate and helpful project information, which may include:
+        </p>
+        <ul>
+          <li>photos of the space</li>
+          <li>videos, if available</li>
+          <li>measurements</li>
+          <li>inspiration images or links</li>
+          <li>budget information</li>
+          <li>existing furniture or decor details</li>
+        </ul>
+        <p>
+          A phone or Zoom consultation may be offered as an additional support option, but it does not replace the need for photos and other visual reference materials.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>3. Accuracy of Submitted Information</h2>
+        <p>
+          All design recommendations, product selections, and layout guidance are based on the accuracy of the information provided by the client. The Finishing Touch is not responsible for issues resulting from inaccurate dimensions, omitted room details, incomplete photos, misleading lighting, outdated product availability, or any other incomplete or incorrect submission materials.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>4. Estimates, Pricing, and Approval</h2>
+        <p>
+          Any pricing shared before full project review is a ballpark estimate only. Final pricing for the design service will depend on project scope, number of spaces, sourcing needs, revisions, consultation requests, and any added support requested after review.
+        </p>
+        <p>
+          Product pricing, availability, shipping timelines, taxes, and retailer policies are controlled by third parties and may change at any time.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>5. Product Sourcing and Purchasing</h2>
+        <p>
+          Depending on the service selected, clients may receive either:
+        </p>
+        <ul>
+          <li>a design plan with curated product links for self-purchase, or</li>
+          <li>a concierge sourcing and purchasing option in which The Finishing Touch purchases approved items on the client’s behalf.</li>
+        </ul>
+        <p>
+          If concierge sourcing is selected, any purchasing support, procurement fee, handling fee, administrative fee, or similar service charge will be communicated as part of the project approval process before final purchase coordination begins.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>6. Shipping, Delays, and Third-Party Retailers</h2>
+        <p>
+          The Finishing Touch is not responsible for shipping delays, damage in transit, discontinued items, manufacturer defects, retailer fulfillment errors, backorders, or carrier-related delivery issues. Any such matters remain subject to the policies of the retailer, vendor, manufacturer, or shipping provider involved.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>7. Revisions and Scope Changes</h2>
+        <p>
+          Revision rounds, additional room requests, extra sourcing, or other expansion of project scope may require additional fees. Any work that extends beyond the originally approved service will be treated as an add-on or revised scope and priced accordingly.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>8. Design Intent and Client Implementation</h2>
+        <p>
+          Virtual design is intended to provide aesthetic and functional guidance. Final implementation is the client’s responsibility unless otherwise agreed in writing. This includes, but is not limited to, measuring, ordering, assembling, placing, styling, hanging, installing, and coordinating any labor or contractor work required to complete the space.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>9. Refunds and Digital Work Product</h2>
+        <p>
+          Because virtual design involves time, creative development, curation, and digital work product, fees for completed design work, research, sourcing, planning, and already-rendered services are non-refundable once work has begun.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>10. Photography and Portfolio Use</h2>
+        <p>
+          The Finishing Touch will not use a client’s project images for marketing or portfolio purposes unless permission is granted by the client. If permission is granted, identifying or personal items will be avoided whenever reasonably possible.
+        </p>
+      </section>
+
+      <section class="term-block">
+        <h2>11. Right to Decline or Pause Service</h2>
+        <p>
+          The Finishing Touch reserves the right to decline, pause, or discontinue a project if required materials are not provided, communication becomes inconsistent, project expectations become unreasonable, or the requested scope falls outside the service model offered.
+        </p>
+      </section>
+
+      <div class="soft-callout">
+        <strong>By moving forward with the intake process,</strong> the client acknowledges that virtual design recommendations are based on remotely submitted materials and that the quality and accuracy of those materials directly affects the final design outcome.
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 The Finishing Touch | Virtual design available anywhere</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector(".btn-auth");
+
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+
+      if (user) {
+        btn.textContent = "Sign out";
+        btn.href = "#";
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = "Sign in / Create account";
+        btn.href = "login.html";
+        btn.onclick = null;
+      }
+    });
+  </script>
+</body>
+</html>
