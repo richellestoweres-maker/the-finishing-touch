@@ -291,12 +291,11 @@ h1,h2,h3{
   font-weight:600;
 }
 
-/* MOBILE FIXES */
 @media (max-width:780px){
 
   .hero-media{
-    height:68vh;
-    min-height:520px;
+    height:52vh;
+    min-height:380px;
   }
 
   .hero-title{
