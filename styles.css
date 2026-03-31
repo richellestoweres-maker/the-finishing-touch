@@ -39,6 +39,8 @@ h1,h2,h3{
 .site-header{
   background:linear-gradient(#efe6db,#e9dfd3);
   border-bottom:1px solid #eadfd4;
+  position:relative;
+  z-index:10000;
 }
 .header-inner{
   display:flex;
@@ -67,7 +69,7 @@ h1,h2,h3{
 .main-nav{
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:10px;
   flex-wrap:wrap;
 }
 .main-nav a{
@@ -76,6 +78,57 @@ h1,h2,h3{
   font-weight:600;
   padding:8px 10px;
   border-radius:999px;
+  white-space:nowrap;
+}
+
+/* Top nav dropdown */
+.nav-dropdown{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+}
+.nav-link.has-caret{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.caret{
+  font-size:.8rem;
+  line-height:1;
+}
+.nav-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  min-width:230px;
+  background:#fffdfb;
+  border:1px solid #eadfd4;
+  border-radius:14px;
+  box-shadow:0 14px 35px rgba(0,0,0,.12);
+  padding:8px;
+  display:none;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .2s ease, transform .2s ease;
+  z-index:10001;
+}
+.nav-dropdown-menu a{
+  display:block;
+  padding:10px 12px;
+  border-radius:10px;
+  text-decoration:none;
+  color:var(--taupe-900);
+  font-weight:600;
+  white-space:nowrap;
+}
+.nav-dropdown-menu a:hover{
+  background:#f6f1eb;
+}
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
 }
 
 /* Buttons */
@@ -97,7 +150,10 @@ h1,h2,h3{
 }
 
 /* Hero */
-.hero{position:relative}
+.hero{
+  position:relative;
+  z-index:1;
+}
 .hero-media{
   position:relative;
   height:56vh;
@@ -130,23 +186,26 @@ h1,h2,h3{
   font-size:3rem;
   margin:.5rem 0;
 }
-.hero-sub{margin-bottom:1rem}
+.hero-sub{
+  margin-bottom:1rem;
+}
 
 /* Sections */
-.section{padding:56px 0}
+.section{
+  padding:56px 0;
+}
 
 /* Services */
-.services{background:#f3ece4}
+.services{
+  background:#f3ece4;
+  position:relative;
+  z-index:1;
+}
 
-/* =========================================
-   SERVICES GRID
-   Desktop: 5 across
-   Tablet + Mobile: 2 + 2 + centered last
-   ========================================= */
-
+/* Services Grid */
 .page-home .services .cards{
   display:grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns:repeat(5, 1fr);
   gap:18px;
   width:min(1200px,95%);
   margin-inline:auto;
@@ -155,12 +214,11 @@ h1,h2,h3{
 /* Mobile & Tablet */
 @media (max-width:899px){
   .page-home .services .cards{
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:repeat(2, 1fr);
   }
 
-  /* Center the 5th card */
   .page-home .services .service-card-link:last-child{
-    grid-column: 1 / -1;
+    grid-column:1 / -1;
     justify-self:center;
     width:min(420px,100%);
   }
@@ -179,6 +237,7 @@ h1,h2,h3{
   text-align:center;
   box-shadow:var(--shadow);
   transition:.2s ease;
+  height:100%;
 }
 .card:hover{
   transform:translateY(-3px);
@@ -203,7 +262,9 @@ h1,h2,h3{
   box-shadow:var(--shadow);
 }
 @media (max-width:1000px){
-  .about-grid{grid-template-columns:1fr}
+  .about-grid{
+    grid-template-columns:1fr;
+  }
 }
 
 /* Footer */
@@ -220,7 +281,16 @@ h1,h2,h3{
 
 /* Mobile adjustments */
 @media (max-width:780px){
-  .hero-title{font-size:2.1rem}
-  .section{padding:40px 0}
+  .hero-title{
+    font-size:2.1rem;
+  }
+  .section{
+    padding:40px 0;
+  }
+  .main-nav{
+    gap:6px;
+  }
+  .main-nav a{
+    padding:7px 8px;
+  }
 }
-
