@@ -20,84 +20,186 @@
 
     /* Header layout */
     .page-home .header-inner{
-      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:10px 0;
     }
-    .page-home .main-nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-    .page-home .main-nav a{ white-space:nowrap; }
+
+    .page-home .main-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    .page-home .main-nav a{
+      white-space:nowrap;
+    }
 
     /* Subtle cream button to match brand */
     .btn-cream{
-      background:#d2bda9; color:#2a2624; border:0; border-radius:999px; padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
+      background:#d2bda9;
+      color:#2a2624;
+      border:0;
+      border-radius:999px;
+      padding:.55rem .9rem;
+      font-weight:800;
+      text-decoration:none;
+      display:inline-block;
     }
 
-    /* HERO – sit above the service cards so the dropdown isn’t hidden */
-.page-home .hero{
-  position:relative;
-  z-index:2;
-}
+    /* HERO */
+    .page-home .hero{
+      position:relative;
+      z-index:2;
+    }
 
-.page-home .hero-media img{ 
-  width:100%; 
-  height:clamp(360px, 48vw, 560px); 
-  object-fit:cover; 
-  object-position:center; 
-  display:block; 
-}
-.page-home .hero-scrim{ 
-  position:absolute; 
-  inset:0; 
-  background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35)); 
-  pointer-events:none; 
-}
-.page-home .hero-content{ 
-  position:absolute; 
-  inset:0; 
-  display:grid; 
-  align-content:center; 
-}
-.page-home .hero-content .script-kicker,
-.page-home .hero-content .hero-title,
-.page-home .hero-content .hero-sub,
-.page-home .hero-content .quote-dropdown{
-  max-width:min(720px, 90%); 
-  color:#fff; 
-  text-shadow:0 2px 10px rgba(0,0,0,.25); 
-}
-.page-home .quote-menu a{ color:#2e2a27; }
+    .page-home .hero-media{
+      position:relative;
+    }
 
-/* Make services its own layer *under* the hero */
-.page-home .services{
-  position:relative;
-  z-index:1;
-}
+    .page-home .hero-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
 
+    .page-home .hero-scrim{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35));
+      pointer-events:none;
+    }
+
+    .page-home .hero-content{
+      position:absolute;
+      inset:0;
+      display:grid;
+      align-content:center;
+    }
+
+    .page-home .hero-content .script-kicker,
+    .page-home .hero-content .hero-title,
+    .page-home .hero-content .hero-sub,
+    .page-home .hero-content .quote-dropdown{
+      max-width:min(720px, 90%);
+      color:#fff;
+      text-shadow:0 2px 10px rgba(0,0,0,.25);
+    }
+
+    .page-home .quote-menu a{
+      color:#2e2a27;
+    }
+
+    /* Make services its own layer under the hero */
+    .page-home .services{
+      position:relative;
+      z-index:1;
+    }
 
     /* SERVICES grid centered nicely on desktop */
     .page-home .services .cards{
-      display:grid; grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:14px; align-items:stretch; margin-inline:auto; width:min(1200px,95%); justify-items:center;
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:14px;
+      align-items:stretch;
+      margin-inline:auto;
+      width:min(1200px,95%);
+      justify-items:center;
     }
-    @media (min-width: 920px){ .page-home .services .cards{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-    @media (min-width: 1100px){ .page-home .services .cards{ grid-template-columns: repeat(4, 1fr); } }
+
+    @media (min-width: 920px){
+      .page-home .services .cards{
+        grid-template-columns:repeat(3, minmax(0,1fr));
+      }
+    }
+
+    @media (min-width: 1100px){
+      .page-home .services .cards{
+        grid-template-columns:repeat(4, 1fr);
+      }
+    }
+
     .page-home .services .card{
-      background:#fff; border-radius:16px; padding:18px; text-align:center;
-      box-shadow:0 10px 26px rgba(0,0,0,.08); display:flex; flex-direction:column; gap:8px; justify-content:center; align-items:center;
-      width:100%; height:100%;
+      background:#fff;
+      border-radius:16px;
+      padding:18px;
+      text-align:center;
+      box-shadow:0 10px 26px rgba(0,0,0,.08);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      justify-content:center;
+      align-items:center;
+      width:100%;
+      height:100%;
     }
-    .page-home .service-icon{ font-size:28px; color:#2e2a27; opacity:.9; }
+
+    .page-home .service-icon{
+      font-size:28px;
+      color:#2e2a27;
+      opacity:.9;
+    }
+
     .page-home .services .card h3{ margin:.25rem 0 .15rem; }
     .page-home .services .card p{ margin:0; opacity:.9; }
 
     /* ABOUT */
-    .page-home .about-grid{ display:grid; grid-template-columns:1fr; gap:16px; align-items:center; }
-    @media (min-width: 900px){ .page-home .about-grid{ grid-template-columns: 1.1fr .9fr; } }
-    .page-home .about-photo img{ width:100%; height:auto; border-radius:16px; box-shadow:0 10px 26px rgba(0,0,0,.08); display:block; }
+    .page-home .about-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      align-items:center;
+    }
+
+    @media (min-width: 900px){
+      .page-home .about-grid{
+        grid-template-columns:1.1fr .9fr;
+      }
+    }
+
+    .page-home .about-photo img{
+      width:100%;
+      height:auto;
+      border-radius:16px;
+      box-shadow:0 10px 26px rgba(0,0,0,.08);
+      display:block;
+    }
 
     /* Reviews spacing */
-    .page-home #reviews .reviews-wrap{ padding: 28px 18px; }
+    .page-home #reviews .reviews-wrap{
+      padding:28px 18px;
+    }
 
     /* Chat above media */
-    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+    #ftt-chat-launcher, #ftt-chat{
+      z-index:9999;
+    }
+
+    /* Mobile-only arrows on service cards */
+    @media (max-width: 780px){
+      .page-home .service-card-link{
+        position:relative;
+        display:block;
+      }
+
+      .page-home .service-card-link::after{
+        content:"›";
+        position:absolute;
+        right:16px;
+        bottom:12px;
+        font-size:24px;
+        line-height:1;
+        color:#524a46;
+        opacity:.55;
+        pointer-events:none;
+      }
+    }
   </style>
 
   <!-- Chat widget base z-index (extra safety) -->
@@ -118,7 +220,6 @@
       <nav class="main-nav">
         <a href="index.html">Home</a>
 
-        <!-- Services link with hover dropdown -->
         <div class="nav-dropdown">
           <a href="#services" class="nav-link has-caret">
             Services <span class="caret">▾</span>
@@ -152,7 +253,6 @@
       <h1 class="hero-title">The Finishing Touch</h1>
       <p class="hero-sub">Curating clean, styled, and peaceful living spaces.</p>
 
-      <!-- Quote dropdown -->
       <div class="quote-dropdown" id="quoteDropdownHero">
         <button class="btn btn-quote" id="quoteBtnHero" aria-expanded="false" aria-controls="quoteMenuHero">
           Get Your Quote ▾
@@ -168,57 +268,51 @@
   </section>
 
   <!-- Services -->
-<section id="services" class="section services">
-  <div class="container cards">
+  <section id="services" class="section services">
+    <div class="container cards">
 
-    <!-- Cleaning -->
-    <a href="cleaning.html" class="service-card-link">
-      <article class="card">
-        <i class="fa-solid fa-broom service-icon" aria-hidden="true"></i>
-        <h3>Cleaning</h3>
-        <p>Meticulous care for a refreshed home</p>
-      </article>
-    </a>
+      <a href="cleaning.html" class="service-card-link">
+        <article class="card">
+          <i class="fa-solid fa-broom service-icon" aria-hidden="true"></i>
+          <h3>Cleaning</h3>
+          <p>Meticulous care for a refreshed home</p>
+        </article>
+      </a>
 
-    <!-- Staging & Styling -->
-    <a href="stagingandstyling.html" class="service-card-link">
-      <article class="card">
-        <i class="fa-solid fa-couch service-icon" aria-hidden="true"></i>
-        <h3>Staging &amp; Styling</h3>
-        <p>Elevate spaces for living or showings</p>
-      </article>
-    </a>
+      <a href="stagingandstyling.html" class="service-card-link">
+        <article class="card">
+          <i class="fa-solid fa-couch service-icon" aria-hidden="true"></i>
+          <h3>Staging &amp; Styling</h3>
+          <p>Elevate spaces for living or showings</p>
+        </article>
+      </a>
 
-    <!-- Organizing -->
-    <a href="organizing.html" class="service-card-link">
-      <article class="card">
-        <i class="fa-solid fa-border-all service-icon" aria-hidden="true"></i>
-        <h3>Organizing</h3>
-        <p>Declutter and create calm</p>
-      </article>
-    </a>
+      <a href="organizing.html" class="service-card-link">
+        <article class="card">
+          <i class="fa-solid fa-border-all service-icon" aria-hidden="true"></i>
+          <h3>Organizing</h3>
+          <p>Declutter and create calm</p>
+        </article>
+      </a>
 
-    <!-- Holiday Decorating -->
-    <a href="holidaydecorating.html" class="service-card-link">
-      <article class="card">
-        <i class="fa-solid fa-snowman service-icon" aria-hidden="true"></i>
-        <h3>Holiday Decorating</h3>
-        <p>Festive styling for gatherings &amp; celebrations</p>
-      </article>
-    </a>
+      <a href="holidaydecorating.html" class="service-card-link">
+        <article class="card">
+          <i class="fa-solid fa-snowman service-icon" aria-hidden="true"></i>
+          <h3>Holiday Decorating</h3>
+          <p>Festive styling for gatherings &amp; celebrations</p>
+        </article>
+      </a>
 
-    <!-- Virtual Design -->
-    <a href="virtualdesign.html" class="service-card-link">
-      <article class="card">
-        <i class="fa-solid fa-house-laptop service-icon" aria-hidden="true"></i>
-        <h3>Virtual Design</h3>
-        <p>Custom plans, moodboards, and sourcing — delivered online</p>
-      </article>
-    </a>
+      <a href="virtualdesign.html" class="service-card-link">
+        <article class="card">
+          <i class="fa-solid fa-house-laptop service-icon" aria-hidden="true"></i>
+          <h3>Virtual Design</h3>
+          <p>Custom plans, moodboards, and sourcing — delivered online</p>
+        </article>
+      </a>
 
-  </div>
-</section>
-
+    </div>
+  </section>
 
   <!-- About teaser -->
   <section id="about" class="section about">
@@ -238,7 +332,7 @@
     </div>
   </section>
 
-  <!-- Social proof instead of dark gallery belt -->
+  <!-- Social proof -->
   <section id="book" class="social-proof">
     <style>
       .social-proof{
@@ -434,9 +528,12 @@
 
       function add(html, who="bot"){
         const b=document.createElement("div");
-        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
-        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+        b.className=`ftt-bubble ${who}`;
+        b.innerHTML=html;
+        thread.appendChild(b);
+        thread.scrollTop=thread.scrollHeight;
       }
+
       function detectIntent(text){
         const t=text.toLowerCase();
         if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
@@ -447,9 +544,11 @@
         if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
         return "fallback";
       }
+
       function answer(intent){
         const intakeLink = `<a href="${CFG.intakeAnchor}">Start Intake</a>`;
         const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
+
         switch(intent){
           case "pricing":
             return [
@@ -458,8 +557,13 @@
               "• Standard Maintenance: commonly $275–$300.",
               "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + "."
             ].join("<br>");
+
           case "availability":
-            return ["We update availability live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
+            return [
+              "We update availability live in Square.",
+              bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."
+            ].join("<br>");
+
           case "services":
             return [
               "We offer luxury cleaning, organizing, and staging/decor.",
@@ -468,11 +572,15 @@
               "• Move-Out/Make-Ready: inside cabinets/fridge/oven by request.",
               "Want the full checklist? " + intakeLink + " and I’ll tailor it."
             ].join("<br>");
-          case "book": return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
+
+          case "book":
+            return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
+
           case "human":
             return isWithinBusinessHours()
               ? `Absolutely. Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`
               : `We’re offline. You can still <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply ASAP.`;
+
           case "recommend":
             return [
               "<strong>Happy to help you choose!</strong>",
@@ -480,6 +588,7 @@
               "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
               `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`
             ].join("<br>");
+
           default:
             return [
               "I can help with pricing, availability, and services.",
@@ -492,24 +601,38 @@
       launcher.addEventListener("click", ()=>{
         const open = panel.style.display !== "block";
         panel.style.display = open ? "block" : "none";
+
         if (open && !thread.dataset.greeted){
           add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
           thread.dataset.greeted = "1";
         }
+
         if (open) input.focus();
       });
-      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
+      closeBtn.addEventListener("click", ()=>{
+        panel.style.display = "none";
+      });
 
       form.addEventListener("submit",(e)=>{
         e.preventDefault();
         const text = input.value.trim();
         if (!text) return;
-        add(text, "me"); input.value = "";
+        add(text, "me");
+        input.value = "";
         setTimeout(()=> add(answer(detectIntent(text))), 120);
       });
+
       quick.addEventListener("click",(e)=>{
         if (e.target.matches("button[data-q]")){
-          const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+          const map = {
+            pricing:"pricing",
+            availability:"availability",
+            services:"services",
+            book:"book",
+            human:"human",
+            help:"recommend"
+          };
           const intent = map[e.target.getAttribute("data-q")] || "fallback";
           add(e.target.textContent, "me");
           setTimeout(()=> add(answer(intent)), 80);
@@ -522,15 +645,28 @@
   <style>
     .quote-dropdown { position: relative; }
     .quote-menu {
-      position: absolute; top: calc(100% + 8px); right: 0;
-      background: #fff; border-radius: 12px; padding: 8px; min-width: 220px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.12); z-index: 1001;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #fff;
+      border-radius: 12px;
+      padding: 8px;
+      min-width: 220px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+      z-index: 1001;
     }
     .quote-menu[aria-hidden="false"] { display: block; }
     .quote-menu[aria-hidden="true"]  { display: none; }
-    .quote-menu a { display: block; padding: 10px 12px; color: #2e2a27; text-decoration: none; border-radius: 10px; }
+    .quote-menu a {
+      display: block;
+      padding: 10px 12px;
+      color: #2e2a27;
+      text-decoration: none;
+      border-radius: 10px;
+    }
     .quote-menu a:hover { background: #f6f3ef; }
   </style>
+
   <script>
     (function(){
       const btn  = document.getElementById('quoteBtnHero');
@@ -546,14 +682,22 @@
         document.addEventListener('click', onDocClick, true);
         document.addEventListener('keydown', onKey);
       }
+
       function closeMenu(){
         btn.setAttribute('aria-expanded','false');
         menu.setAttribute('aria-hidden','true');
         document.removeEventListener('click', onDocClick, true);
         document.removeEventListener('keydown', onKey);
       }
-      function onDocClick(e){ if (!menu.contains(e.target) && e.target !== btn) closeMenu(); }
-      function onKey(e){ if (e.key === 'Escape') closeMenu(); }
+
+      function onDocClick(e){
+        if (!menu.contains(e.target) && e.target !== btn) closeMenu();
+      }
+
+      function onKey(e){
+        if (e.key === 'Escape') closeMenu();
+      }
+
       btn.addEventListener('click', (e)=>{
         e.preventDefault();
         const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -568,8 +712,10 @@
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
     const btn = document.querySelector('.btn-auth');
+
     onAuthStateChanged(auth, (user) => {
       if (!btn) return;
+
       if (user) {
         btn.textContent = 'Sign out';
         btn.href = '#';
@@ -586,7 +732,7 @@
     });
   </script>
 
-  <!-- Base Firebase import (keeps module available) -->
+  <!-- Base Firebase import -->
   <script type="module">
     import { auth } from "./ft-firebase.js";
   </script>
