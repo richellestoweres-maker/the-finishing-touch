@@ -5,89 +5,208 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Staging & Styling Intake – The Finishing Touch</title>
 
-  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    body{background:#fbf8f4}
-    .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-    .intake-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
-    .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
-    .intake-note{max-width:760px;margin:0 auto 18px;text-align:center;opacity:.9}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .grid-1{display:grid;gap:14px}
-    .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
-    .submit-row{text-align:center;margin-top:16px}
-    .brand a.brand-link{display:flex;align-items:center;gap:.5rem;color:inherit;text-decoration:none}
-    .quote-dropdown{position:relative;display:inline-block}
-    .quote-button, .btn.btn-solid{cursor:pointer}
-    .quote-menu{
-      position:absolute; right:0; top:calc(100% + 6px);
-      background:#fff; border:1px solid #e8ddd1; border-radius:10px;
-      box-shadow:0 10px 30px rgba(0,0,0,.06);
-      padding:8px; min-width:220px; display:none; z-index:50;
-    }
-    .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
-    .quote-menu a:hover{background:#f3ece6}
-    .quote-dropdown.open .quote-menu{display:block}
-    .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
-    .hint{font-size:.92rem;opacity:.9}
-    .success-card{
-      margin-top:14px;
-      background:#fbf5ee;
-      border:1px solid #ecdccc;
-      border-radius:14px;
-      padding:14px 16px;
-      font-size:.98rem;
-      display:none;
-      text-align:center;
+    body { background: #fbf8f4; }
+
+    .intake-wrap {
+      width: min(920px, 92%);
+      margin: 28px auto 60px;
+      background: #fff;
+      padding: 28px 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.06);
     }
 
-    .choice-row{
-      display:grid;
-      gap:10px;
-      margin-top:6px;
+    .intake-title {
+      text-align: center;
+      font-family: "Playfair Display", serif;
+      margin: 6px 0 2px;
     }
 
-    .choice-card{
-      display:flex;
-      gap:.75rem;
-      align-items:flex-start;
-      padding:12px 14px;
-      border:1px solid #e8ddd1;
-      border-radius:12px;
-      background:#fcfaf7;
+    .intake-script {
+      text-align: center;
+      font-family: "Allura", cursive;
+      font-size: 2rem;
+      margin: 0 0 12px;
+      color: #524a46;
     }
 
-    .choice-card input[type="radio"]{
-      margin-top:3px;
-      flex:0 0 auto;
+    .intake-note {
+      max-width: 760px;
+      margin: 0 auto 18px;
+      text-align: center;
+      opacity: .92;
     }
 
-    .choice-card strong{
-      display:block;
-      margin-bottom:2px;
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
 
-    .soft-hidden{
-      display:none;
+    .grid-1 {
+      display: grid;
+      gap: 14px;
     }
 
-    textarea{
-      width:100%;
-      resize:vertical;
-      min-height:110px;
+    .fieldset {
+      border-top: 1px solid #e8ddd1;
+      margin-top: 16px;
+      padding-top: 16px;
     }
 
-    @media (max-width: 760px){
-      .grid-2{grid-template-columns:1fr}
+    .section-heading {
+      font-family: "Playfair Display", serif;
+      font-size: 1.1rem;
+      margin: 0 0 10px;
+      color: #3f3936;
+    }
+
+    .section-subtext {
+      margin: -4px 0 8px;
+      font-size: .96rem;
+      opacity: .85;
+    }
+
+    .submit-row {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .brand a.brand-link {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .quote-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .quote-button,
+    .btn.btn-solid {
+      cursor: pointer;
+    }
+
+    .quote-menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      background: #fff;
+      border: 1px solid #e8ddd1;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.06);
+      padding: 8px;
+      min-width: 220px;
+      display: none;
+      z-index: 50;
+    }
+
+    .quote-menu a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #2a2624;
+      text-decoration: none;
+    }
+
+    .quote-menu a:hover {
+      background: #f3ece6;
+    }
+
+    .quote-dropdown.open .quote-menu {
+      display: block;
+    }
+
+    .mini-bar {
+      width: min(920px, 92%);
+      margin: 12px auto 0;
+      text-align: center;
+    }
+
+    .hint {
+      font-size: .92rem;
+      opacity: .9;
+    }
+
+    .success-card {
+      margin-top: 14px;
+      background: #fbf5ee;
+      border: 1px solid #ecdccc;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: .98rem;
+      display: none;
+      text-align: center;
+    }
+
+    .choice-row {
+      display: grid;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .choice-card {
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border: 1px solid #e8ddd1;
+      border-radius: 12px;
+      background: #fcfaf7;
+    }
+
+    .choice-card input[type="radio"] {
+      margin-top: 3px;
+      flex: 0 0 auto;
+    }
+
+    .choice-card strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .soft-hidden {
+      display: none;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .pill-note {
+      background: #f7f1ea;
+      border: 1px solid #eadccf;
+      border-radius: 999px;
+      padding: 8px 12px;
+      display: inline-block;
+      font-size: .88rem;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 760px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -96,6 +215,7 @@
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
+
       <nav class="main-nav">
         <a href="https://www.thefinishingtouch-tx.com/index.html">Home</a>
 
@@ -123,54 +243,84 @@
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Staging & Styling Intake Form</div>
     <p class="intake-note">
-      Complete this brief form so we can learn more about your home, listing, rental, or design goals.
-      Upload photos/video for a faster review, or request an in-person walkthrough if you’re local.
+      Complete this form so we can learn more about your property, goals, and timeline.
+      Whether this is for a listing, a short-term rental, or a styled refresh, we’ll review the details
+      and follow up with the best next steps for your project.
     </p>
 
-    <form id="intakeFormStaging" class="grid-1"
+    <form id="intakeFormStaging"
+          class="grid-1"
           method="POST"
           action="https://formspree.io/f/mzzaogbv"
           enctype="multipart/form-data"
           novalidate>
+
       <input type="hidden" name="_subject" value="New Staging & Styling Intake · The Finishing Touch" />
       <input type="hidden" name="page" value="intake-staging.html" />
 
       <!-- Contact -->
-      <div class="grid-2">
-        <label>Full Name<input name="name" autocomplete="name" required></label>
-        <label>Email<input name="email" type="email" autocomplete="email" required></label>
-        <label>Property Address<input name="address" autocomplete="street-address"></label>
-        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+      <div class="fieldset grid-2">
+        <label>
+          Full Name
+          <input name="name" autocomplete="name" required>
+        </label>
+
+        <label>
+          Email
+          <input name="email" type="email" autocomplete="email" required>
+        </label>
+
+        <label>
+          Property Address
+          <input name="address" autocomplete="street-address">
+        </label>
+
+        <label>
+          Phone
+          <input name="phone" type="tel" autocomplete="tel">
+        </label>
       </div>
 
-      <!-- Client + Project Type -->
+      <!-- Core Project Info -->
       <div class="fieldset grid-2">
-        <label>Who is this project for?
-          <select name="client_type" required>
+        <div style="grid-column:1/-1;">
+          <h2 class="section-heading">Project Overview</h2>
+          <p class="section-subtext">
+            Tell us what kind of project this is so we can guide it in the right direction from the start.
+          </p>
+        </div>
+
+        <label>
+          Who is this project for?
+          <select name="client_type" id="clientType" required>
             <option value="">Select one</option>
-            <option>Homeowner</option>
-            <option>Realtor</option>
-            <option>Investor</option>
-            <option>Airbnb / Short-Term Rental Host</option>
-            <option>Virtual Design Client</option>
-            <option>Other</option>
+            <option value="Homeowner">Homeowner</option>
+            <option value="Realtor">Realtor</option>
+            <option value="Investor">Investor</option>
+            <option value="Airbnb / Short-Term Rental Host">Airbnb / Short-Term Rental Host</option>
+            <option value="Virtual Design Client">Virtual Design Client</option>
+            <option value="Other">Other</option>
           </select>
         </label>
 
-        <label>Project Type
-          <select name="project_type" required>
+        <label>
+          What best describes the project?
+          <select name="project_type" id="projectType" required>
             <option value="">Select one</option>
-            <option>Room-by-Room Decorating & Styling</option>
             <option>Listing Prep & Photo-Day Styling</option>
             <option>Occupied Home Staging</option>
-            <option>Vacant Home Staging</option>
-            <option>Airbnb / STR Styling</option>
+            <option>Vacant Styling</option>
+            <option>Partial Staging</option>
+            <option>Full Vacant Staging</option>
+            <option>Airbnb / STR Setup or Styling</option>
+            <option>Room-by-Room Decorating & Styling</option>
             <option>Virtual E-Design Package</option>
             <option>Model / Showcase Styling</option>
           </select>
         </label>
 
-        <label>Local or Virtual?
+        <label>
+          Service Format
           <select name="service_format" required>
             <option value="">Select one</option>
             <option>Local / In-Person</option>
@@ -179,8 +329,9 @@
           </select>
         </label>
 
-        <label>Property Status
-          <select name="property_status" required>
+        <label>
+          Property Status
+          <select name="property_status" id="propertyStatus" required>
             <option value="">Select one</option>
             <option>Owner-Occupied</option>
             <option>Vacant</option>
@@ -191,7 +342,8 @@
           </select>
         </label>
 
-        <label>Property Type
+        <label>
+          Property Type
           <select name="property_type" required>
             <option value="">Select one</option>
             <option>Single-Family Home</option>
@@ -203,22 +355,30 @@
           </select>
         </label>
 
-        <label>Square Footage (approx.)
+        <label>
+          Approximate Square Footage
           <input name="sqft" type="number" min="0" step="1" placeholder="e.g., 2200">
         </label>
 
-        <label>Bedrooms
+        <label>
+          Bedrooms
           <input name="beds" type="number" min="0" value="3">
         </label>
 
-        <label>Bathrooms
+        <label>
+          Bathrooms
           <input name="baths" type="number" min="0" value="2">
         </label>
       </div>
 
-      <!-- Goals + Timeline -->
+      <!-- Timing + General Goals -->
       <div class="fieldset grid-2">
-        <label>Is the property listed yet?
+        <div style="grid-column:1/-1;">
+          <h2 class="section-heading">Timing & Direction</h2>
+        </div>
+
+        <label>
+          Is the property listed yet?
           <select name="listed_status">
             <option value="">Select one</option>
             <option>No</option>
@@ -228,7 +388,8 @@
           </select>
         </label>
 
-        <label>Desired Timeline
+        <label>
+          Desired Timeline
           <select name="timeline" required>
             <option value="">Select one</option>
             <option>ASAP</option>
@@ -239,58 +400,76 @@
           </select>
         </label>
 
-        <label>Preferred Days / Times
+        <label>
+          Preferred Days / Times
           <input name="availability" placeholder="e.g., Tue/Thu mornings">
         </label>
 
-        <label>Estimated Budget Range
-          <select name="budget_range">
+        <label>
+          Investment Comfort Level
+          <select name="investment_level">
             <option value="">Select one</option>
-            <option>Under $500</option>
-            <option>$500–$1,000</option>
-            <option>$1,000–$2,500</option>
-            <option>$2,500–$5,000</option>
-            <option>$5,000+</option>
-            <option>Not Sure Yet</option>
+            <option>Prefer to stay minimal</option>
+            <option>Mid-range investment</option>
+            <option>Open to recommendations</option>
+            <option>Want a high-end result</option>
+            <option>Not sure yet</option>
           </select>
         </label>
 
-        <label>Listing URL / Airbnb Link / Inspiration Link
+        <label>
+          Listing URL / Airbnb Link / Inspiration Board
           <input name="project_link" type="url" placeholder="MLS, Airbnb, Pinterest board, etc.">
         </label>
 
-        <label>Overall Goal
-          <input name="goal" placeholder="e.g., listing-ready, cozy luxury, more polished, guest-ready, better flow">
+        <label>
+          Overall Goal
+          <input name="goal" placeholder="e.g., listing-ready, guest-ready, more polished, better flow">
+        </label>
+
+        <label style="grid-column:1/-1;">
+          How do you want the space to feel?
+          <input name="space_feel" placeholder="e.g., warm, elevated, calm, airy, inviting, luxury, family-friendly">
         </label>
       </div>
 
-      <!-- Scope -->
+      <!-- General Scope -->
       <div class="fieldset grid-2">
-        <label>What kind of help do you want?
+        <div style="grid-column:1/-1;">
+          <h2 class="section-heading">Scope & Style</h2>
+        </div>
+
+        <label>
+          What kind of help do you want?
           <select name="scope_preference" required>
             <option value="">Select one</option>
-            <option>Style What I Have</option>
-            <option>Mix of Old & New</option>
-            <option>Full Refresh</option>
-            <option>Not Sure Yet</option>
+            <option>Style what I already have</option>
+            <option>Mix of existing pieces and new items</option>
+            <option>Decor-focused refresh</option>
+            <option>Furniture + decor recommendations</option>
+            <option>Full setup / full transformation</option>
+            <option>Not sure yet</option>
           </select>
         </label>
 
-        <label>Which spaces need help most?
-          <input name="focus_areas" placeholder="e.g., living room, entry, primary bedroom, dining, kitchen">
+        <label>
+          Which spaces need the most attention?
+          <input name="focus_areas" placeholder="e.g., living room, kitchen, primary bedroom, entry, dining">
         </label>
 
-        <label>Do you need sourcing for new decor/furniture?
+        <label>
+          Do you need sourcing?
           <select name="sourcing_needed">
             <option value="">Select one</option>
             <option>Yes — decor only</option>
             <option>Yes — furniture + decor</option>
             <option>No — mostly use what I have</option>
-            <option>Maybe / Not Sure Yet</option>
+            <option>Maybe / not sure yet</option>
           </select>
         </label>
 
-        <label>Style Direction
+        <label>
+          Style Direction
           <select name="style_direction">
             <option value="">Select one</option>
             <option>Warm Neutral</option>
@@ -304,29 +483,228 @@
           </select>
         </label>
 
-        <label>Need a clickable shopping list / virtual design plan?
+        <label>
+          Need a clickable shopping list or virtual plan?
           <select name="virtual_deliverables">
             <option value="">Select one</option>
             <option>Yes</option>
             <option>No</option>
-            <option>Maybe / Want to discuss</option>
+            <option>Maybe / want to discuss</option>
           </select>
         </label>
 
-        <label>Need install / styling day on-site?
+        <label>
+          Need on-site install or styling day?
           <select name="install_needed">
             <option value="">Select one</option>
             <option>Yes</option>
             <option>No</option>
-            <option>Maybe / Want to discuss</option>
+            <option>Maybe / want to discuss</option>
           </select>
+        </label>
+      </div>
+
+      <!-- Realtor Section -->
+      <div class="fieldset grid-2 soft-hidden" id="realtorSection">
+        <div style="grid-column:1/-1;">
+          <h2 class="section-heading">Realtor / Listing Details</h2>
+          <p class="section-subtext">
+            This helps us understand urgency, presentation goals, and how best to support the sale.
+          </p>
+        </div>
+
+        <label>
+          Target Listing Price
+          <input name="realtor_target_price" placeholder="e.g., $325,000">
+        </label>
+
+        <label>
+          Photo Date Scheduled?
+          <select name="realtor_photo_date_status">
+            <option value="">Select one</option>
+            <option>Yes</option>
+            <option>No</option>
+            <option>Not yet, but soon</option>
+          </select>
+        </label>
+
+        <label>
+          Days on Market (if already listed)
+          <input name="realtor_days_on_market" placeholder="e.g., 14 days">
+        </label>
+
+        <label>
+          Main Goal
+          <select name="realtor_goal">
+            <option value="">Select one</option>
+            <option>Sell faster</option>
+            <option>Maximize perceived value</option>
+            <option>Improve photos and presentation</option>
+            <option>All of the above</option>
+          </select>
+        </label>
+
+        <label style="grid-column:1/-1;">
+          Which spaces are most important for the listing?
+          <input name="realtor_priority_spaces" placeholder="e.g., living room, kitchen, primary bedroom, entry">
+        </label>
+      </div>
+
+      <!-- Airbnb Section -->
+      <div class="fieldset grid-2 soft-hidden" id="airbnbSection">
+        <div style="grid-column:1/-1;">
+          <h2 class="section-heading">Airbnb / Short-Term Rental Details</h2>
+          <p class="section-subtext">
+            This helps us tailor the setup for guest appeal, functionality, and a better booking experience.
+          </p>
+        </div>
+
+        <label>
+          Is this a new Airbnb or an existing one?
+          <select name="airbnb_status">
+            <option value="">Select one</option>
+            <option>Brand new setup</option>
+            <option>Existing Airbnb needing a refresh</option>
+            <option>Existing Airbnb needing a full rework</option>
+          </select>
+        </label>
+
+        <label>
+          Is the property currently furnished?
+          <select name="airbnb_furnished_status">
+            <option value="">Select one</option>
+            <option>Fully empty</option>
+            <option>Partially furnished</option>
+            <option>Mostly furnished</option>
+          </select>
+        </label>
+
+        <label>
+          Desired Guest Capacity
+          <input name="airbnb_guest_count" type="number" min="0" placeholder="e.g., 8">
+        </label>
+
+        <label>
+          What kind of help do you need most?
+          <select name="airbnb_scope">
+            <option value="">Select one</option>
+            <option>Styling refresh only</option>
+            <option>Decor + finishing touches</option>
+            <option>Furniture + decor setup</option>
+            <option>Full guest-ready setup</option>
+          </select>
+        </label>
+
+        <label>
+          Desired Guest Experience
+          <select name="airbnb_vibe">
+            <option value="">Select one</option>
+            <option>Cozy</option>
+            <option>Luxury</option>
+            <option>Family-friendly</option>
+            <option>Coastal / vacation feel</option>
+            <option>Modern / elevated</option>
+            <option>Instagram-worthy</option>
+          </select>
+        </label>
+
+        <label>
+          Do you need help with essentials too?
+          <select name="airbnb_essentials">
+            <option value="">Select one</option>
+            <option>Yes — bedding, bath, kitchen basics</option>
+            <option>Yes — some essentials</option>
+            <option>No — styling only</option>
+            <option>Maybe / want to discuss</option>
+          </select>
+        </label>
+
+        <label style="grid-column:1/-1;">
+          What would make this Airbnb feel more complete or more bookable?
+          <input name="airbnb_booking_goal" placeholder="e.g., sleeps more guests, feels more high-end, photographs better">
+        </label>
+      </div>
+
+      <!-- Homeowner Section -->
+      <div class="fieldset grid-2 soft-hidden" id="homeownerSection">
+        <div style="grid-column:1/-1;">
+          <h2 class="section-heading">Homeowner Styling Goals</h2>
+          <p class="section-subtext">
+            This helps us understand whether the space is for your own enjoyment, resale, or a little of both.
+          </p>
+        </div>
+
+        <label>
+          Is this for resale or for your own living?
+          <select name="homeowner_intent">
+            <option value="">Select one</option>
+            <option>Preparing to sell</option>
+            <option>Refreshing for everyday living</option>
+            <option>Not sure yet</option>
+          </select>
+        </label>
+
+        <label>
+          What do you want most?
+          <select name="homeowner_help_type">
+            <option value="">Select one</option>
+            <option>Style with what I have</option>
+            <option>Add decor and finishing touches</option>
+            <option>Furniture recommendations</option>
+            <option>Full room refresh</option>
+          </select>
+        </label>
+
+        <label style="grid-column:1/-1;">
+          Biggest frustration with the space
+          <input name="homeowner_frustration" placeholder="e.g., feels empty, feels cluttered, doesn’t flow, looks unfinished">
+        </label>
+      </div>
+
+      <!-- Investor Section -->
+      <div class="fieldset grid-2 soft-hidden" id="investorSection">
+        <div style="grid-column:1/-1;">
+          <h2 class="section-heading">Investor / Flip Details</h2>
+          <p class="section-subtext">
+            A quick snapshot helps us align with your timeline, presentation needs, and target finish level.
+          </p>
+        </div>
+
+        <label>
+          Is this property for sale or for rental?
+          <select name="investor_exit_strategy">
+            <option value="">Select one</option>
+            <option>For sale</option>
+            <option>For rental</option>
+            <option>Still deciding</option>
+          </select>
+        </label>
+
+        <label>
+          Level of finish desired
+          <select name="investor_finish_level">
+            <option value="">Select one</option>
+            <option>Minimal / strategic</option>
+            <option>Mid-range / polished</option>
+            <option>High-end presentation</option>
+          </select>
+        </label>
+
+        <label style="grid-column:1/-1;">
+          What is the main result you want from staging or styling?
+          <input name="investor_result_goal" placeholder="e.g., faster sale, stronger photos, better rental appeal">
         </label>
       </div>
 
       <!-- Notes -->
       <div class="fieldset grid-1">
-        <label>Project Notes / Vision
-          <textarea name="notes" rows="5" placeholder="Tell us more about what you’re envisioning, any rooms that need the most help, whether this is for resale, everyday living, listing photos, open house prep, or guest experience. You can also share Pinterest inspiration, colors you love, or anything else we should know."></textarea>
+        <div>
+          <h2 class="section-heading">Project Notes & Vision</h2>
+        </div>
+
+        <label>
+          Tell us more about the space and what you’re envisioning
+          <textarea name="notes" rows="5" placeholder="Share anything helpful here — rooms needing the most help, whether this is for resale, listing photos, guest appeal, everyday living, or a full refresh. You can also mention inspiration, colors you love, or specific concerns."></textarea>
         </label>
       </div>
 
@@ -347,65 +725,69 @@
             <input type="radio" name="estimate_method" value="walkthrough">
             <span>
               <strong>Request an in-person walkthrough</strong>
-              Best for local projects if you’d rather have us see the home in person.
+              Best for local projects if you’d rather have us see the property in person.
             </span>
           </label>
         </div>
       </div>
 
-      <!-- Walkthrough Availability -->
+      <!-- Walkthrough -->
       <div class="fieldset grid-1 soft-hidden" id="walkthroughSection">
-        <label>Walkthrough Availability (Days & Times)
+        <label>
+          Walkthrough Availability (Days & Times)
           <textarea
             name="walkthrough_notes"
             id="walkthroughNotes"
             rows="4"
             placeholder="e.g., I’m available Monday after 2:00 PM, Wednesday mornings, or Friday anytime before 4:00 PM."></textarea>
         </label>
-        <p class="hint">Please share which days and times usually work best so we can try to coordinate a walkthrough.</p>
+        <p class="hint">
+          Please share which days and times usually work best so we can try to coordinate a walkthrough.
+        </p>
       </div>
 
-      <!-- Media Uploads -->
+      <!-- Uploads -->
       <div class="fieldset grid-1" id="mediaSection">
         <p class="hint" style="margin:0 0 8px;">
           <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us review the space.
-          Best shots: entry, living room, kitchen, dining, primary bedroom, bathrooms, exterior/front, and any areas you’d like us to focus on.
-          If you prefer not to upload media, select the in-person walkthrough option above.
+          Helpful shots include the entry, living room, kitchen, dining area, primary bedroom, bathrooms, exterior/front, and any areas you’d like us to focus on.
         </p>
 
-        <label>Upload Photos (3–10 max)
+        <label>
+          Upload Photos (3–10 max)
           <input name="media_photos" id="stageMediaPhotos" type="file" accept="image/*" multiple>
         </label>
 
-        <label>Upload Video (optional, short)
+        <label>
+          Upload Video (optional, short)
           <input name="media_video" id="stageMediaVideo" type="file" accept="video/*">
         </label>
 
         <p class="hint" id="stageUploadStatus" style="margin:6px 0 0;"></p>
       </div>
 
-      <!-- Consents -->
+      <!-- Consent -->
       <fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
         <legend id="consentLegend" style="font-weight:700;">Consents</legend>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_review" value="Yes" required>
-          <span>I allow The Finishing Touch to review submitted photos/video and discuss recommendations based on the current condition of the property.</span>
+          <span>I allow The Finishing Touch to review submitted photos/video and discuss recommendations based on the current condition and goals for the property.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_marketing_photos" value="Yes">
-          <span>I give permission to use select finished photos of the staged/styled space for marketing (website/social). Street address and personal items will not be shown.</span>
+          <span>I give permission to use select finished photos of the staged or styled space for marketing. Street address and personal details will not be shown.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_terms" value="Yes" required>
-          <span>I agree to the consultation and service terms, including scheduling, access, and project scope adjustments if needed.</span>
+          <span>I agree to the consultation and service terms, including scheduling, access, and scope adjustments if needed.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_updates" value="Yes">
-          <span>Okay to contact me by email/SMS with scheduling, proposals, updates, and offers.</span>
+          <span>Okay to contact me by email or SMS with scheduling, updates, and next steps for this project.</span>
         </label>
       </fieldset>
 
@@ -420,19 +802,30 @@
 
   <!-- Dropdown behavior -->
   <script>
-    (function(){
-      const dd  = document.getElementById('quoteDropdown');
+    (function () {
+      const dd = document.getElementById('quoteDropdown');
       const btn = document.getElementById('quoteBtn');
-      const menu= document.getElementById('quoteMenu');
+      const menu = document.getElementById('quoteMenu');
       if (!dd || !btn || !menu) return;
-      function toggle(open){
+
+      function toggle(open) {
         dd.classList.toggle('open', open);
         btn.setAttribute('aria-expanded', String(open));
         menu.setAttribute('aria-hidden', String(!open));
       }
-      btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
-      document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
-      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
+
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        toggle(!dd.classList.contains('open'));
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!dd.contains(e.target)) toggle(false);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') toggle(false);
+      });
     })();
   </script>
 
@@ -440,126 +833,185 @@
   <script src="ft-auto.js" defer></script>
 
   <script>
-    (function(){
+    (function () {
       const PHOTO_MIN = 3;
       const PHOTO_MAX = 10;
       const MAX_PHOTO_MB_EACH = 12;
       const MAX_VIDEO_MB = 60;
 
-      function bytesToMB(b){ return b / (1024 * 1024); }
+      function bytesToMB(bytes) {
+        return bytes / (1024 * 1024);
+      }
 
-      function getEstimateMethod(){
+      function getEstimateMethod() {
         const checked = document.querySelector('input[name="estimate_method"]:checked');
         return checked ? checked.value : "upload";
       }
 
-      function validateUploads(photoInput, videoInput){
+      function validateUploads(photoInput, videoInput) {
         const estimateMethod = getEstimateMethod();
-        const photos = photoInput?.files ? Array.from(photoInput.files) : [];
-        const video  = videoInput?.files ? Array.from(videoInput.files) : [];
+        const photos = photoInput && photoInput.files ? Array.from(photoInput.files) : [];
+        const video = videoInput && videoInput.files ? Array.from(videoInput.files) : [];
 
-        if (estimateMethod === "walkthrough"){
-          if (video.length > 1){
-            return "Please upload only 1 video.";
+        if (estimateMethod === "walkthrough") {
+          if (video.length > 1) return "Please upload only 1 video.";
+
+          const tooBigPhotoWalk = photos.find(function (file) {
+            return bytesToMB(file.size) > MAX_PHOTO_MB_EACH;
+          });
+
+          if (tooBigPhotoWalk) {
+            return "One of your photos is too large. Please keep each photo under " + MAX_PHOTO_MB_EACH + "MB.";
           }
 
-          const tooBigPhotoWalk = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
-          if (tooBigPhotoWalk){
-            return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
-          }
-
-          if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
-            return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+          if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB) {
+            return "Your video is too large. Please keep it under " + MAX_VIDEO_MB + "MB.";
           }
 
           return null;
         }
 
-        if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)){
-          return `Please upload ${PHOTO_MIN}–${PHOTO_MAX} photos (or none). You selected ${photos.length}.`;
+        if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)) {
+          return "Please upload " + PHOTO_MIN + "–" + PHOTO_MAX + " photos (or none). You selected " + photos.length + ".";
         }
 
-        if (video.length > 1){
-          return "Please upload only 1 video.";
+        if (video.length > 1) return "Please upload only 1 video.";
+
+        const tooBigPhoto = photos.find(function (file) {
+          return bytesToMB(file.size) > MAX_PHOTO_MB_EACH;
+        });
+
+        if (tooBigPhoto) {
+          return "One of your photos is too large. Please keep each photo under " + MAX_PHOTO_MB_EACH + "MB.";
         }
 
-        const tooBigPhoto = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
-        if (tooBigPhoto){
-          return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
-        }
-
-        if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
-          return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+        if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB) {
+          return "Your video is too large. Please keep it under " + MAX_VIDEO_MB + "MB.";
         }
 
         return null;
       }
 
-      function setUploadHint(photoInput, videoInput, statusEl){
-        const pCount = photoInput?.files?.length || 0;
-        const vCount = videoInput?.files?.length || 0;
+      function setUploadHint(photoInput, videoInput, statusEl) {
+        const pCount = photoInput && photoInput.files ? photoInput.files.length : 0;
+        const vCount = videoInput && videoInput.files ? videoInput.files.length : 0;
         const estimateMethod = getEstimateMethod();
+
         if (!statusEl) return;
 
-        if (estimateMethod === "walkthrough" && !pCount && !vCount){
-          statusEl.textContent = "No uploads needed if you prefer an in-person walkthrough.";
+        if (estimateMethod === "walkthrough" && !pCount && !vCount) {
+          statusEl.textContent = "No uploads are required if you prefer an in-person walkthrough.";
           return;
         }
 
-        if (!pCount && !vCount){
+        if (!pCount && !vCount) {
           statusEl.textContent = "";
           return;
         }
 
-        statusEl.textContent = `Selected: ${pCount} photo(s)${vCount ? " + 1 video" : ""}.`;
+        statusEl.textContent = "Selected: " + pCount + " photo(s)" + (vCount ? " + 1 video" : "") + ".";
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function hideAllClientSections() {
+        const ids = [
+          "realtorSection",
+          "airbnbSection",
+          "homeownerSection",
+          "investorSection"
+        ];
+
+        ids.forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el) el.style.display = "none";
+        });
+      }
+
+      function syncClientTypeUI() {
+        const clientTypeEl = document.getElementById("clientType");
+        if (!clientTypeEl) return;
+
+        const val = clientTypeEl.value;
+        hideAllClientSections();
+
+        if (val === "Realtor") {
+          const section = document.getElementById("realtorSection");
+          if (section) section.style.display = "grid";
+        } else if (val === "Airbnb / Short-Term Rental Host") {
+          const section = document.getElementById("airbnbSection");
+          if (section) section.style.display = "grid";
+        } else if (val === "Homeowner" || val === "Virtual Design Client") {
+          const section = document.getElementById("homeownerSection");
+          if (section) section.style.display = "grid";
+        } else if (val === "Investor") {
+          const section = document.getElementById("investorSection");
+          if (section) section.style.display = "grid";
+        }
+      }
+
+      function syncEstimateMethodUI() {
+        const walkthroughSection = document.getElementById('walkthroughSection');
+        const walkthroughNotes = document.getElementById('walkthroughNotes');
+        const photoInput = document.getElementById('stageMediaPhotos');
+        const videoInput = document.getElementById('stageMediaVideo');
+        const uploadStatus = document.getElementById('stageUploadStatus');
+
+        const method = getEstimateMethod();
+        const isWalkthrough = method === "walkthrough";
+
+        if (walkthroughSection) {
+          walkthroughSection.style.display = isWalkthrough ? "grid" : "none";
+        }
+
+        if (walkthroughNotes) {
+          walkthroughNotes.required = isWalkthrough;
+        }
+
+        setUploadHint(photoInput, videoInput, uploadStatus);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('intakeFormStaging');
         if (!form) return;
 
         const statusEl = document.getElementById('formspreeStatusStaging');
         const successCard = document.getElementById('successCardStaging');
         const submitBtn = document.getElementById('stageSubmitBtn');
-
         const photoInput = document.getElementById('stageMediaPhotos');
         const videoInput = document.getElementById('stageMediaVideo');
         const uploadStatus = document.getElementById('stageUploadStatus');
-
-        const walkthroughSection = document.getElementById('walkthroughSection');
         const walkthroughNotes = document.getElementById('walkthroughNotes');
         const estimateMethodRadios = document.querySelectorAll('input[name="estimate_method"]');
+        const clientTypeEl = document.getElementById("clientType");
 
-        function syncEstimateMethodUI(){
-          const method = getEstimateMethod();
-          const isWalkthrough = method === "walkthrough";
-
-          if (walkthroughSection){
-            walkthroughSection.style.display = isWalkthrough ? "grid" : "none";
-          }
-
-          if (walkthroughNotes){
-            walkthroughNotes.required = isWalkthrough;
-          }
-
-          setUploadHint(photoInput, videoInput, uploadStatus);
+        if (clientTypeEl) {
+          clientTypeEl.addEventListener("change", syncClientTypeUI);
         }
 
-        estimateMethodRadios.forEach(radio => {
+        estimateMethodRadios.forEach(function (radio) {
           radio.addEventListener('change', syncEstimateMethodUI);
         });
 
-        photoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
-        videoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
+        if (photoInput) {
+          photoInput.addEventListener('change', function () {
+            setUploadHint(photoInput, videoInput, uploadStatus);
+          });
+        }
 
+        if (videoInput) {
+          videoInput.addEventListener('change', function () {
+            setUploadHint(photoInput, videoInput, uploadStatus);
+          });
+        }
+
+        syncClientTypeUI();
         syncEstimateMethodUI();
 
-        form.addEventListener('submit', async function(e){
+        form.addEventListener('submit', async function (e) {
           e.preventDefault();
           e.stopImmediatePropagation();
 
           if (statusEl) statusEl.textContent = "";
-          if (successCard){
+          if (successCard) {
             successCard.style.display = "none";
             successCard.textContent = "";
           }
@@ -567,79 +1019,94 @@
           const estimateMethod = getEstimateMethod();
           const walkthroughValue = walkthroughNotes ? walkthroughNotes.value.trim() : "";
 
-          if (estimateMethod === "walkthrough" && !walkthroughValue){
+          if (estimateMethod === "walkthrough" && !walkthroughValue) {
             if (statusEl) statusEl.textContent = "Please share which days and times you’re available for a walkthrough.";
-            walkthroughNotes?.focus();
+            if (walkthroughNotes) walkthroughNotes.focus();
             return;
           }
 
           const uploadErr = validateUploads(photoInput, videoInput);
-          if (uploadErr){
+          if (uploadErr) {
             if (statusEl) statusEl.textContent = uploadErr;
             return;
           }
 
-          if (submitBtn){
+          if (submitBtn) {
             submitBtn.disabled = true;
             submitBtn.textContent = "Submitting…";
           }
 
           const fd = new FormData(form);
           const data = {};
-          fd.forEach((v, k) => {
-            if (k === "media_photos" || k === "media_video") return;
-            data[k] = v;
+
+          fd.forEach(function (value, key) {
+            if (key === "media_photos" || key === "media_video") return;
+            data[key] = value;
           });
 
           fd.append("INTERNAL_estimate_method", estimateMethod);
-          if (estimateMethod === "walkthrough"){
+
+          if (estimateMethod === "walkthrough") {
             fd.append("INTERNAL_walkthrough_requested", "Yes");
           }
 
-          try{
-            if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
-              const summary = `${data.project_type || 'Staging & Styling'} — ${data.client_type || ''}`.trim();
-              await FTAuto.createJobFromIntake({
+          fd.append("INTERNAL_client_segment", data.client_type || "");
+          fd.append("INTERNAL_project_summary", [
+            data.client_type || "",
+            data.project_type || "",
+            data.property_status || "",
+            data.goal || ""
+          ].filter(Boolean).join(" | "));
+
+          try {
+            if (window.FTAuto && typeof window.FTAuto.createJobFromIntake === "function") {
+              const summary = ((data.project_type || "Staging & Styling") + " — " + (data.client_type || "")).trim();
+
+              await window.FTAuto.createJobFromIntake({
                 type: "staging",
                 intakeData: data,
-                summary
+                summary: summary
               });
             }
-          } catch(err){
+          } catch (err) {
             console.warn("Could not create job from intake (ok to ignore):", err);
           }
 
-          try{
+          try {
             const resp = await fetch(form.action, {
               method: "POST",
               headers: { "Accept": "application/json" },
               body: fd
             });
 
-            if (resp.ok){
+            if (resp.ok) {
               if (statusEl) statusEl.textContent = "";
 
-              if (successCard){
+              if (successCard) {
                 successCard.textContent =
                   estimateMethod === "walkthrough"
                     ? "Thanks! We’ve received your intake and walkthrough availability. We’ll review everything and follow up with next steps."
-                    : "Thanks! We’ve received your intake. We’ll review your project details and follow up with next steps.";
+                    : "Thanks! We’ve received your intake. We’ll review the project details and follow up with next steps.";
                 successCard.style.display = "block";
               }
 
               form.reset();
+              syncClientTypeUI();
               syncEstimateMethodUI();
+
               if (uploadStatus) uploadStatus.textContent = "";
             } else {
-              if (statusEl) statusEl.textContent =
-                "We received your intake, but couldn’t send the email copy right now. If needed, please email us directly.";
+              if (statusEl) {
+                statusEl.textContent = "We received your intake, but couldn’t send the email copy right now. If needed, please email us directly.";
+              }
             }
-          } catch(err){
+          } catch (err) {
             console.warn(err);
-            if (statusEl) statusEl.textContent =
-              "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+            if (statusEl) {
+              statusEl.textContent = "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+            }
           } finally {
-            if (submitBtn){
+            if (submitBtn) {
               submitBtn.disabled = false;
               submitBtn.textContent = "Submit Staging & Styling Intake";
             }
