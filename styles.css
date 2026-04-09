@@ -430,8 +430,6 @@ label > textarea{
   border:1px solid #d8c7b6;
   box-sizing:border-box;
   outline:none;
-  appearance:none;
-  -webkit-appearance:none;
 }
 
 /* Pill fields */
