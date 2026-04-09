@@ -315,3 +315,224 @@ h1,h2,h3{
   }
 
 }
+
+/* =========================
+   Shared Intake / Form Styles
+   ========================= */
+
+.intake-wrap{
+  width:min(920px,92%);
+  margin:28px auto 60px;
+  background:#fff;
+  padding:28px 24px;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
+
+.intake-title{
+  text-align:center;
+  font-family:"Playfair Display",serif;
+  margin:6px 0 2px;
+}
+
+.intake-script{
+  text-align:center;
+  font-family:"Allura",cursive;
+  font-size:2rem;
+  margin:0 0 12px;
+  color:var(--taupe-900);
+}
+
+.intake-note{
+  max-width:760px;
+  margin:0 auto 18px;
+  text-align:center;
+  opacity:.9;
+}
+
+.grid-1{
+  display:grid;
+  gap:14px;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.fieldset{
+  border-top:1px solid #e8ddd1;
+  margin-top:16px;
+  padding-top:16px;
+}
+
+.submit-row{
+  text-align:center;
+  margin-top:16px;
+}
+
+.mini-bar{
+  width:min(920px,92%);
+  margin:12px auto 0;
+  text-align:center;
+}
+
+.hint{
+  font-size:.92rem;
+  opacity:.9;
+}
+
+.success-card{
+  margin-top:14px;
+  background:#fbf5ee;
+  border:1px solid #ecdccc;
+  border-radius:14px;
+  padding:14px 16px;
+  font-size:.98rem;
+  display:none;
+  text-align:center;
+}
+
+.soft-hidden{
+  display:none;
+}
+
+.section-title{
+  grid-column:1 / -1;
+  font-family:"Playfair Display",serif;
+  font-size:1.04rem;
+  color:var(--taupe-900);
+  margin:0 0 2px;
+}
+
+.section-copy{
+  grid-column:1 / -1;
+  margin:-2px 0 6px;
+  font-size:.95rem;
+  opacity:.88;
+}
+
+/* Labels */
+label{
+  display:block;
+  color:var(--taupe-900);
+}
+
+label > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+label > select,
+label > textarea{
+  width:100%;
+  margin-top:6px;
+  font:inherit;
+  color:var(--taupe-900);
+  background:#fff;
+  border:1px solid #d8c7b6;
+  box-sizing:border-box;
+  outline:none;
+  appearance:none;
+  -webkit-appearance:none;
+}
+
+/* Pill fields */
+label > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+label > select{
+  height:44px;
+  padding:0 14px;
+  border-radius:999px;
+}
+
+/* Textareas */
+label > textarea{
+  min-height:120px;
+  padding:14px 16px;
+  border-radius:18px;
+  resize:vertical;
+}
+
+/* Focus state */
+label > input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+label > select:focus,
+label > textarea:focus{
+  border-color:#bfa58d;
+  box-shadow:0 0 0 3px rgba(210,189,169,.18);
+}
+
+/* Placeholder */
+label > input::placeholder,
+label > textarea::placeholder{
+  color:#8a7f78;
+  opacity:1;
+}
+
+/* File inputs */
+input[type="file"]{
+  margin-top:8px;
+  font:inherit;
+  color:var(--taupe-900);
+}
+
+/* Choice cards */
+.choice-row{
+  display:grid;
+  gap:10px;
+  margin-top:6px;
+}
+
+.choice-card{
+  display:flex;
+  gap:.75rem;
+  align-items:flex-start;
+  padding:14px 16px;
+  border:1px solid #e8ddd1;
+  border-radius:18px;
+  background:#fcfaf7;
+}
+
+.choice-card input[type="radio"]{
+  width:auto;
+  height:auto;
+  margin-top:4px;
+  flex:0 0 auto;
+  appearance:auto;
+  -webkit-appearance:auto;
+}
+
+.choice-card strong{
+  display:block;
+  margin-bottom:2px;
+}
+
+/* Consent fieldsets */
+fieldset.fieldset{
+  border:1px solid #e8ddd1;
+  border-radius:18px;
+  padding:18px 16px;
+}
+
+fieldset.fieldset legend{
+  padding:0 10px;
+  font-weight:700;
+  color:var(--taupe-900);
+}
+
+fieldset.fieldset label{
+  display:flex;
+  gap:.7rem;
+  align-items:flex-start;
+}
+
+fieldset.fieldset input[type="checkbox"]{
+  width:auto;
+  height:auto;
+  margin-top:4px;
+  flex:0 0 auto;
+  appearance:auto;
+  -webkit-appearance:auto;
+}
+
+@media (max-width:760px){
+  .grid-2{
+    grid-template-columns:1fr;
+  }
+}
