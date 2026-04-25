@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Site CSS -->
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
 
   <!-- Page-specific styles -->
   <style>
@@ -25,7 +25,7 @@
       background:var(--paper,#fbf8f4);
     }
     .about-hero-inner{
-      max-width:780px;
+      max-width:820px;
       margin:0 auto;
       text-align:center;
     }
@@ -125,15 +125,14 @@
       color:var(--taupe-900,#524a46);
     }
 
-    /* 4 across on desktop/iPad, 2x2 on mobile */
     .values-grid{
       display:grid;
       gap:18px;
-      grid-template-columns:repeat(4,minmax(0,1fr)); /* desktop + iPad */
+      grid-template-columns:repeat(4,minmax(0,1fr));
     }
     @media (max-width: 720px){
       .values-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr)); /* phones: 2 and 2 */
+        grid-template-columns:repeat(2,minmax(0,1fr));
       }
     }
 
@@ -161,7 +160,6 @@
       color:rgba(0,0,0,.75);
     }
 
-    /* --- MOBILE TWEAK so 2x2 cards aren’t skinny --- */
     @media (max-width: 640px){
       .page-about .values-section{
         padding-left:0;
@@ -173,10 +171,10 @@
         padding-right:10px;
       }
       .page-about .values-grid{
-        gap:12px;              /* a bit tighter so each card gets more width */
+        gap:12px;
       }
       .page-about .value-card{
-        padding:14px 10px 16px; /* slimmer side padding, makes them feel wider */
+        padding:14px 10px 16px;
       }
     }
 
@@ -302,7 +300,7 @@
       <h1>About The Finishing Touch</h1>
       <p>
         A luxury cleaning and interior services company rooted in care, calm, and attention to detail —
-        serving Galveston, Harris, and Brazoria County.
+        serving homes, rentals, small businesses, and project-based spaces across Galveston, Harris, and Brazoria County.
       </p>
     </div>
   </section>
@@ -318,22 +316,25 @@
       <div class="about-copy">
         <h2>Why I started The Finishing Touch</h2>
         <p>
-          The Finishing Touch was born from a simple but important belief: your home should feel like an exhale,
+          The Finishing Touch was born from a simple but important belief: your space should feel like an exhale,
           not another item on your to-do list. I started this business after seeing how often busy families,
-          professionals, and caregivers were trying to carry it all — careers, kids, pets, life — and still somehow
-          keep their home feeling peaceful, presentable, and pulled together.
+          professionals, caregivers, business owners, and property managers were trying to carry it all — work, kids,
+          pets, clients, projects, life — and still somehow keep their spaces feeling peaceful, presentable, and pulled together.
         </p>
         <p>
           I’ve always been drawn to the quiet details: the way a freshly made bed changes a room, how styled surfaces
-          make a space feel intentional, how a truly clean home lets you breathe a little deeper. What began as helping
-          friends and family quickly grew into a trusted local service, and over time The Finishing Touch expanded into
-          full home care: luxury cleaning, organizing, staging, interior decorating, and seasonal styling.
+          make a space feel intentional, how a clean entryway changes the way a client feels when they walk into a business,
+          and how a finished project feels different once the dust is gone. What began as helping friends and family
+          quickly grew into a trusted local service, and over time The Finishing Touch expanded into full-service care:
+          residential cleaning, organizing, staging, interior decorating, seasonal styling, Airbnb turnovers,
+          commercial cleaning, and post-construction or renovation cleans.
         </p>
         <p>
-          Today, my team and I treat every home as if it were our own — respecting your privacy, honoring your routines,
-          and paying attention to the small details that most people overlook. Whether we’re preparing a home for showings,
-          getting a family ready for the holidays, or maintaining a recurring clean, my goal is the same: to create
-          calm, elevated spaces that actually support the life you’re living inside them.
+          Today, my team and I treat every space as if it carries a story — respecting privacy, honoring routines,
+          protecting the details, and paying attention to the small things most people overlook. Whether we’re preparing
+          a home for showings, supporting a busy family, resetting an Airbnb, cleaning a small business, or polishing a
+          renovation after construction, my goal is the same: to create calm, elevated spaces that support the life,
+          work, and moments happening inside them.
         </p>
         <div class="about-signoff">
           <span>With care,</span>
@@ -347,14 +348,14 @@
   <!-- Values -->
   <section class="values-section">
     <div class="container">
-      <h2>How we care for your home</h2>
+      <h2>How we care for your space</h2>
       <div class="values-grid">
         <article class="value-card">
           <div class="value-icon"><i class="fa-solid fa-broom" aria-hidden="true"></i></div>
           <h3>Detail-Driven Cleaning</h3>
           <p>
             We don’t rush a checklist. We focus on thoughtful, consistent detail — from baseboards to
-            high-touch areas — so your home feels truly refreshed, not just quickly wiped down.
+            high-touch areas — so your space feels truly refreshed, not just quickly wiped down.
           </p>
         </article>
         <article class="value-card">
@@ -369,7 +370,7 @@
           <div class="value-icon"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i></div>
           <h3>Trust & Professionalism</h3>
           <p>
-            We respect your home, your privacy, and your time. Clear communication, reliable scheduling,
+            We respect your property, privacy, and time. Clear communication, reliable scheduling,
             and vetted contractors are non-negotiables for us.
           </p>
         </article>
@@ -377,8 +378,8 @@
           <div class="value-icon"><i class="fa-solid fa-people-roof" aria-hidden="true"></i></div>
           <h3>Tailored to Real Life</h3>
           <p>
-            Every home and family is different. We ask questions, listen to your priorities, and recommend
-            services that make sense for your lifestyle and budget.
+            Every home, business, and project is different. We ask questions, listen to your priorities,
+            and recommend services that make sense for your space, timeline, and budget.
           </p>
         </article>
       </div>
@@ -403,8 +404,21 @@
           </summary>
           <div>
             We currently serve parts of Galveston, Harris, and Brazoria County and surrounding areas.
-            If you’re unsure whether your home is within our service area, feel free to reach out with
-            your ZIP code and we’ll let you know.
+            If you’re unsure whether your home, business, rental, or project is within our service area,
+            feel free to reach out with your ZIP code and we’ll let you know.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">What services does The Finishing Touch offer?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            We offer residential cleaning, recurring upkeep, deep cleans, move-in and move-out cleans,
+            Airbnb and short-term rental turnovers, organizing, staging and styling, interior decorating,
+            seasonal or holiday decorating, small commercial cleaning, property management make-ready support,
+            and post-construction or renovation cleans.
           </div>
         </details>
 
@@ -414,9 +428,9 @@
             <span class="faq-toggle">+</span>
           </summary>
           <div>
-            An initial clean is a deeper, more detailed visit designed to reset your home. We focus on
-            high-touch areas, bathrooms, kitchen surfaces, floors, and dusting throughout, along with
-            extra attention in spaces that have more buildup. Once we’ve completed the initial clean,
+            An initial clean is a deeper, more detailed visit designed to reset your home before recurring
+            upkeep begins. We focus on high-touch areas, bathrooms, kitchen surfaces, floors, dusting throughout,
+            and extra attention in spaces that have more buildup. Once we’ve completed the initial clean,
             we can move you into a standard recurring maintenance schedule.
           </div>
         </details>
@@ -427,9 +441,51 @@
             <span class="faq-toggle">+</span>
           </summary>
           <div>
-            Yes. In addition to cleaning, we offer organizing, staging & styling, and seasonal or holiday
-            decorating. These can be booked as stand-alone services or layered on top of a cleaning visit
-            depending on your goals.
+            Yes. In addition to cleaning, we offer organizing, staging and styling, interior decorating,
+            and seasonal or holiday decorating. These can be booked as stand-alone services or layered on top
+            of a cleaning visit depending on your goals.
+          </div>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <div class="faq-group-title">Commercial, Rentals & Project-Based Cleaning</div>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">Do you offer commercial cleaning?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            Yes. We offer cleaning support for small commercial spaces such as offices, business suites,
+            salons, wellness spaces, medical offices, dental offices, vet clinics, daycare spaces, and
+            property management spaces. Commercial estimates are based on the type of business, square footage,
+            restrooms, flooring, cleaning frequency, access, and scope.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">Do you offer post-construction or renovation cleaning?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            Yes. We offer post-construction and renovation cleaning for homeowners, builders, contractors,
+            property managers, and business owners. These projects are quoted based on square footage,
+            dust level, debris, windows, cabinet interiors, appliances, utilities, paint or adhesive removal,
+            timeline, and the level of detail needed.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">Do you clean Airbnb or short-term rental properties?</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <div>
+            Yes. We offer Airbnb and short-term rental turnovers. These are quoted differently than standard
+            residential cleaning because they may include bed resets, trash removal, restocking, light staging,
+            photos, owner notes, and a tighter checkout-to-check-in timeline.
           </div>
         </details>
       </div>
@@ -443,9 +499,11 @@
             <span class="faq-toggle">+</span>
           </summary>
           <div>
-            Pricing is based on a combination of home size, condition, number of baths, lifestyle factors
-            (like pets), and the type of clean you’re requesting. We start with a ballpark range from your
-            intake form, then confirm your final quote after reviewing details, photos, or a walkthrough if needed.
+            Pricing is based on a combination of property type, square footage, condition, number of bathrooms,
+            layout, lifestyle factors such as pets, and the type of service you’re requesting. Commercial,
+            Airbnb, move-in/move-out, and post-construction projects are quoted based on their specific scope.
+            We start with a ballpark range from your intake form, then confirm details after reviewing photos,
+            video, or a walkthrough if needed.
           </div>
         </details>
 
@@ -467,25 +525,25 @@
             <span class="faq-toggle">+</span>
           </summary>
           <div>
-            The best first step is to complete our quick intake form so we can learn more about your home
-            and goals. From there, we’ll follow up with a tailored estimate and next steps to either schedule
-            your initial clean or set up a walkthrough.
+            The best first step is to complete our quick intake form so we can learn more about your home,
+            business, rental, or project. From there, we’ll follow up with a tailored estimate and next steps
+            to either schedule your service or set up a walkthrough.
           </div>
         </details>
       </div>
 
       <div class="faq-group">
-        <div class="faq-group-title">Policies & Home Care</div>
+        <div class="faq-group-title">Policies & Property Care</div>
 
         <details class="faq-item">
           <summary>
-            <span class="faq-question">Do I need to be home during the clean?</span>
+            <span class="faq-question">Do I need to be present during the clean?</span>
             <span class="faq-toggle">+</span>
           </summary>
           <div>
-            You’re welcome to be home, but it’s not required. Many clients provide access via lockbox,
-            code, or key. We’ll review access instructions, pets, and any special requests before your
-            visit so everything feels seamless and secure.
+            You’re welcome to be present, but it’s not required. Many clients provide access via lockbox,
+            code, key, or coordinated entry instructions. We’ll review access instructions, pets, alarms,
+            parking, and any special requests before your visit so everything feels seamless and secure.
           </div>
         </details>
 
@@ -495,7 +553,7 @@
             <span class="faq-toggle">+</span>
           </summary>
           <div>
-            Because we reserve a dedicated block of time for your home, we do require advance notice for
+            Because we reserve a dedicated block of time for your property, we do require advance notice for
             cancellations or reschedules. Details of our current cancellation policy are shared during booking,
             and we’re happy to clarify anything before your first visit.
           </div>
@@ -507,9 +565,9 @@
             <span class="faq-toggle">+</span>
           </summary>
           <div>
-            Yes. We take safety seriously. Our independent contractors are carefully vetted, required to carry
-            appropriate insurance, and held to The Finishing Touch standards for professionalism, confidentiality,
-            and respect in client homes.
+            Yes. We take safety seriously. Our independent contractors and subcontractors are carefully vetted,
+            required to carry appropriate insurance when applicable, and held to The Finishing Touch standards
+            for professionalism, confidentiality, client privacy, quality, and respect for every property we enter.
           </div>
         </details>
       </div>
@@ -533,7 +591,7 @@
   </footer>
 
   <!-- Site JS (if you have shared behaviors) -->
-  <script src="script.js?v=8"></script>
+  <script src="script.js?v=9"></script>
 </body>
 </html>
 
