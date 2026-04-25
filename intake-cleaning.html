@@ -211,7 +211,7 @@
       <!-- Residential Details -->
       <div class="fieldset grid-2 conditional-section" id="residentialSection">
         <p class="section-intro">
-          Residential details help us determine whether this should be quoted as an initial reset, standard upkeep, deep clean, or move-in/move-out clean.
+          Residential details help us determine whether this should be quoted as an initial reset, standard upkeep, deep clean, move-in/move-out clean, or post-renovation clean.
         </p>
 
         <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
@@ -381,7 +381,7 @@
         <label>Type of Project
           <select name="construction_project_type">
             <option>New home build</option>
-            <option>Remodel</option>
+            <option>Residential remodel / renovation</option>
             <option>Commercial build-out</option>
             <option>Make-ready / property management</option>
             <option>Medical / clinic build-out</option>
@@ -652,7 +652,7 @@
     })();
   </script>
 
-  <script src="script.js?v=10" defer></script>
+  <script src="script.js?v=11" defer></script>
   <script src="ft-auto.js" defer></script>
 
   <!-- Cleaning conditional logic + internal pricing + payout engine + Formspree upload submission -->
@@ -675,61 +675,60 @@
         return checked ? checked.value : "upload";
       }
 
-      function setRequiredInSection(section, isRequired){
+      function isPostConstructionService(serviceValue){
+        return String(serviceValue || "").toLowerCase().includes("post-construction");
+      }
+
+      function setSectionActive(section, isActive){
         if (!section) return;
+
+        section.style.display = isActive ? "grid" : "none";
+
         const fields = section.querySelectorAll("input, select, textarea");
+
         fields.forEach(field => {
-          if (field.dataset.alwaysRequired === "true") return;
+          field.disabled = !isActive;
           field.required = false;
         });
       }
 
-    function setSectionActive(section, isActive){
-  if (!section) return;
+      function showOnlyRelevantSections(){
+        const propertyType = document.getElementById("propertyType")?.value || "";
+        const serviceType = document.getElementById("serviceType");
+        const serviceValue = serviceType?.value || "";
 
-  section.style.display = isActive ? "grid" : "none";
+        const residentialSection = document.getElementById("residentialSection");
+        const commercialSection = document.getElementById("commercialSection");
+        const postConstructionSection = document.getElementById("postConstructionSection");
+        const airbnbSection = document.getElementById("airbnbSection");
 
-  const fields = section.querySelectorAll("input, select, textarea");
+        const shouldShowPostConstruction =
+          propertyType === "post_construction" || isPostConstructionService(serviceValue);
 
-  fields.forEach(field => {
-    field.disabled = !isActive;
-    field.required = false;
-  });
-}
+        const shouldShowResidential =
+          !propertyType ||
+          propertyType === "residential" ||
+          shouldShowPostConstruction;
 
-function showOnlyRelevantSections(){
-  const propertyType = document.getElementById("propertyType")?.value || "";
+        setSectionActive(residentialSection, shouldShowResidential);
+        setSectionActive(airbnbSection, propertyType === "airbnb");
+        setSectionActive(commercialSection, propertyType === "commercial");
+        setSectionActive(postConstructionSection, shouldShowPostConstruction);
 
-  const residentialSection = document.getElementById("residentialSection");
-  const commercialSection = document.getElementById("commercialSection");
-  const postConstructionSection = document.getElementById("postConstructionSection");
-  const airbnbSection = document.getElementById("airbnbSection");
+        if (serviceType){
+          if (propertyType === "airbnb"){
+            serviceType.value = "Airbnb Turnover";
+          }
 
-  setSectionActive(residentialSection, !propertyType || propertyType === "residential");
-  setSectionActive(airbnbSection, propertyType === "airbnb");
-  setSectionActive(commercialSection, propertyType === "commercial");
-  setSectionActive(postConstructionSection, propertyType === "post_construction");
+          if (propertyType === "commercial"){
+            serviceType.value = "Commercial Cleaning";
+          }
 
-  const serviceType = document.getElementById("serviceType");
-
-  if (serviceType){
-    if (propertyType === "residential" && serviceType.value.includes("Post-Construction")){
-      serviceType.value = "Initial Clean";
-    }
-
-    if (propertyType === "airbnb"){
-      serviceType.value = "Airbnb Turnover";
-    }
-
-    if (propertyType === "commercial"){
-      serviceType.value = "Commercial Cleaning";
-    }
-
-    if (propertyType === "post_construction"){
-      serviceType.value = "Post-Construction Final Clean";
-    }
-  }
-}
+          if (propertyType === "post_construction" && !isPostConstructionService(serviceType.value)){
+            serviceType.value = "Post-Construction Final Clean";
+          }
+        }
+      }
 
       function validateUploads(photoInput, videoInput){
         const estimateMethod = getEstimateMethod();
@@ -856,7 +855,7 @@ function showOnlyRelevantSections(){
         if (service === "Airbnb Turnover") solo *= 1.1;
         if (propertyType === "commercial") solo *= 1.25;
 
-        if (propertyType === "post_construction"){
+        if (propertyType === "post_construction" || service.includes("Post-Construction")){
           solo *= 1.8;
           if (constructionLevel === "heavy") solo *= 1.25;
           if (constructionLevel === "luxury") solo *= 1.4;
@@ -883,6 +882,8 @@ function showOnlyRelevantSections(){
         const submitBtn = document.getElementById('cleanSubmitBtn');
 
         const propertyType = document.getElementById("propertyType");
+        const serviceType = document.getElementById("serviceType");
+
         const photoInput = document.getElementById('cleanMediaPhotos');
         const videoInput = document.getElementById('cleanMediaVideo');
         const uploadStatus = document.getElementById('cleanUploadStatus');
@@ -897,6 +898,11 @@ function showOnlyRelevantSections(){
 
           if (walkthroughSection){
             walkthroughSection.style.display = isWalkthrough ? "grid" : "none";
+
+            const fields = walkthroughSection.querySelectorAll("input, select, textarea");
+            fields.forEach(field => {
+              field.disabled = !isWalkthrough;
+            });
           }
 
           if (walkthroughNotes){
@@ -907,6 +913,7 @@ function showOnlyRelevantSections(){
         }
 
         propertyType?.addEventListener("change", showOnlyRelevantSections);
+        serviceType?.addEventListener("change", showOnlyRelevantSections);
 
         estimateMethodRadios.forEach(radio => {
           radio.addEventListener('change', syncEstimateMethodUI);
@@ -929,7 +936,7 @@ function showOnlyRelevantSections(){
           }
 
           const estimateMethod = getEstimateMethod();
-          const walkthroughValue = walkthroughNotes ? walkthroughNotes.value.trim() : "";
+          const walkthroughValue = walkthroughNotes && !walkthroughNotes.disabled ? walkthroughNotes.value.trim() : "";
 
           if (estimateMethod === "walkthrough" && !walkthroughValue){
             if (statusEl) statusEl.textContent = "Please share which days and times you’re available for a walkthrough.";
@@ -1089,6 +1096,3 @@ function showOnlyRelevantSections(){
   <script src="ftt-chat.js" defer></script>
 </body>
 </html>
-
-
-
