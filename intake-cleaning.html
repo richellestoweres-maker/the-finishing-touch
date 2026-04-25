@@ -34,8 +34,6 @@
     .quote-dropdown.open .quote-menu{display:block}
     .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
     .hint{font-size:.92rem;opacity:.9}
-
-    /* Success card */
     .success-card{
       margin-top:14px;
       background:#fbf5ee;
@@ -46,13 +44,11 @@
       display:none;
       text-align:center;
     }
-
     .choice-row{
       display:grid;
       gap:10px;
       margin-top:6px;
     }
-
     .choice-card{
       display:flex;
       gap:.75rem;
@@ -62,25 +58,30 @@
       border-radius:12px;
       background:#fcfaf7;
     }
-
     .choice-card input[type="radio"]{
       margin-top:3px;
       flex:0 0 auto;
     }
-
     .choice-card strong{
       display:block;
       margin-bottom:2px;
     }
-
     .soft-hidden{
       display:none;
+    }
+    .section-intro{
+      grid-column:1/-1;
+      margin:0;
+      font-size:.95rem;
+      opacity:.9;
+    }
+    @media(max-width:720px){
+      .grid-2{grid-template-columns:1fr}
     }
   </style>
 </head>
 
 <body>
-  <!-- Header (routes back to CLIENT portal, not public home) -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -111,16 +112,14 @@
     <a class="btn btn-outline" href="client.html">← Back to Client Portal</a>
   </div>
 
-  <!-- Main -->
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Cleaning Intake Form</div>
     <p class="intake-note">
-      Complete this brief form so we can review your home and follow up with a tailored ballpark estimate and recommended next steps.
+      Complete this form so we can review your space and follow up with a tailored ballpark estimate and recommended next steps.
       You may upload photos/video for a faster estimate or request an in-person walkthrough.
     </p>
 
-    <!-- Formspree (uploads enabled) -->
     <form id="intakeFormCleaning" class="grid-1"
           method="POST"
           action="https://formspree.io/f/mzzaogbv"
@@ -137,29 +136,43 @@
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
       </div>
 
-      <!-- Service Details -->
+      <!-- Main Service Routing -->
       <div class="fieldset grid-2">
+        <label>What type of property is this?
+          <select name="property_type" id="propertyType" required>
+            <option value="">Select one</option>
+            <option value="residential">Residential Home</option>
+            <option value="airbnb">Airbnb / Short-Term Rental</option>
+            <option value="commercial">Commercial / Business</option>
+            <option value="post_construction">Post-Construction / Final Clean</option>
+          </select>
+        </label>
+
         <label>Service Type
-          <select name="service" required>
+          <select name="service" id="serviceType" required>
+            <option value="">Select one</option>
             <option>Initial Clean</option>
             <option>Standard Clean</option>
             <option>Deep Clean</option>
             <option>Move-In / Move-Out Clean</option>
             <option>Airbnb Turnover</option>
+            <option>Commercial Cleaning</option>
+            <option>Post-Construction Final Clean</option>
+            <option>Post-Construction Rough Clean</option>
+            <option>Post-Construction Touch-Up Clean</option>
           </select>
         </label>
 
         <label>Frequency
-          <select name="frequency" required>
-            <option value="one-time">one-time</option>
-            <option value="weekly">weekly</option>
-            <option value="biweekly">biweekly</option>
-            <option value="monthly">monthly</option>
+          <select name="frequency" id="frequency" required>
+            <option value="one-time">One-time</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Biweekly</option>
+            <option value="every_three_weeks">Every 3 weeks</option>
+            <option value="monthly">Monthly</option>
+            <option value="every_six_weeks">Every 6 weeks</option>
+            <option value="as_needed">As needed</option>
           </select>
-        </label>
-
-        <label>Last Professional Clean (optional)
-          <input name="last_cleaned" placeholder="e.g., within 30 days / 3+ months / not sure">
         </label>
 
         <label>Preferred Days / Times
@@ -167,18 +180,46 @@
         </label>
       </div>
 
-      <!-- Home Details -->
+      <!-- Property Basics -->
       <div class="fieldset grid-2">
-        <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
-        <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
-        <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
-
         <label>Square Footage (approx.)
           <input name="sqft" type="number" min="0" step="1" placeholder="e.g., 1750">
         </label>
 
+        <label>General Area / City
+          <input name="general_area" placeholder="e.g., League City, Friendswood, Galveston">
+        </label>
+
         <label>Stories
-          <select name="stories"><option>1</option><option>2</option></select>
+          <select name="stories">
+            <option>1</option>
+            <option>2</option>
+            <option>3+</option>
+          </select>
+        </label>
+
+        <label>Occupancy Status
+          <select name="occupied_status">
+            <option>Occupied</option>
+            <option>Vacant</option>
+            <option>Partially occupied</option>
+            <option>New build / not occupied yet</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Residential Details -->
+      <div class="fieldset grid-2 conditional-section" id="residentialSection">
+        <p class="section-intro">
+          Residential details help us determine whether this should be quoted as an initial reset, standard upkeep, deep clean, or move-in/move-out clean.
+        </p>
+
+        <label>Bedrooms<input name="beds" type="number" min="0" value="3"></label>
+        <label>Bathrooms<input name="baths" type="number" min="0" value="2"></label>
+        <label>Other Rooms<input name="other_rooms" type="number" min="0" value="0"></label>
+
+        <label>Last Professional Clean
+          <input name="last_cleaned" placeholder="e.g., within 30 days / 3+ months / not sure">
         </label>
 
         <label>Pets (type & number)<input name="pets" placeholder="e.g., 1 dog, 2 cats"></label>
@@ -188,21 +229,326 @@
         </label>
       </div>
 
+      <!-- Airbnb Details -->
+      <div class="fieldset grid-2 soft-hidden conditional-section" id="airbnbSection">
+        <p class="section-intro">
+          Airbnb turnover pricing depends on the number of beds, laundry expectations, staging needs, and the time window between checkout and check-in.
+        </p>
+
+        <label>Number of Beds to Reset
+          <input name="airbnb_beds_total" type="number" min="0" placeholder="e.g., 8">
+        </label>
+
+        <label>Laundry Needed?
+          <select name="airbnb_laundry">
+            <option>No laundry</option>
+            <option>Linens already clean, reset only</option>
+            <option>Wash/dry on-site</option>
+            <option>Off-site laundry needed</option>
+          </select>
+        </label>
+
+        <label>Average Turnover Window
+          <input name="airbnb_turnover_window" placeholder="e.g., 11 AM checkout / 4 PM check-in">
+        </label>
+
+        <label>Guest Supplies Restock?
+          <select name="airbnb_restock">
+            <option>No</option>
+            <option>Yes, supplies provided</option>
+            <option>Need help creating restock system</option>
+          </select>
+        </label>
+
+        <label>Are photos required after each turnover?
+          <select name="airbnb_photos_required">
+            <option>No</option>
+            <option>Yes</option>
+            <option>Not sure yet</option>
+          </select>
+        </label>
+
+        <label>How often do you need turnovers?
+          <select name="airbnb_cadence">
+            <option>As bookings happen</option>
+            <option>Weekly</option>
+            <option>Several times per week</option>
+            <option>Monthly / occasional</option>
+            <option>Not sure yet</option>
+          </select>
+        </label>
+
+        <label style="grid-column:1/-1;">Airbnb Notes
+          <textarea name="airbnb_notes" rows="4" placeholder="Decorative pillows, staging details, owner closet, supplies, linens, guest expectations, etc."></textarea>
+        </label>
+      </div>
+
+      <!-- Commercial Details -->
+      <div class="fieldset grid-2 soft-hidden conditional-section" id="commercialSection">
+        <p class="section-intro">
+          Commercial estimates depend on the type of business, restroom count, room count, flooring, special requirements, and whether this is one-time or recurring.
+        </p>
+
+        <label>Business / Facility Type
+          <select name="commercial_type">
+            <option value="">Select one</option>
+            <option>Office</option>
+            <option>Medical Office</option>
+            <option>Dental Office</option>
+            <option>Vet Clinic</option>
+            <option>Daycare / Childcare Facility</option>
+            <option>Salon / Spa</option>
+            <option>Retail Space</option>
+            <option>Warehouse / Industrial</option>
+            <option>Property Management / Multi-Unit</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label>Is this a one-time or ongoing commercial clean?
+          <select name="commercial_frequency_type">
+            <option>One-time</option>
+            <option>Recurring</option>
+            <option>Not sure yet</option>
+          </select>
+        </label>
+
+        <label>Number of Restrooms
+          <input name="commercial_restrooms" type="number" min="0" placeholder="e.g., 2">
+        </label>
+
+        <label>Number of Offices / Rooms
+          <input name="commercial_rooms" type="number" min="0" placeholder="e.g., 8">
+        </label>
+
+        <label>Flooring Type
+          <input name="commercial_flooring" placeholder="tile, concrete, carpet, vinyl, mixed">
+        </label>
+
+        <label>Preferred Cleaning Time
+          <select name="commercial_cleaning_time">
+            <option>During business hours</option>
+            <option>After-hours</option>
+            <option>Weekend</option>
+            <option>Flexible</option>
+          </select>
+        </label>
+
+        <label>Trash Removal Needed?
+          <select name="commercial_trash">
+            <option>No</option>
+            <option>Yes, standard trash only</option>
+            <option>Yes, heavier trash/debris</option>
+          </select>
+        </label>
+
+        <label>Special Requirements
+          <input name="commercial_requirements" placeholder="after-hours, breakroom, waiting room, exam rooms, daycare toys, etc.">
+        </label>
+
+        <label style="grid-column:1/-1;">Commercial Notes
+          <textarea name="commercial_notes" rows="4" placeholder="Tell us about the business, areas needing service, expectations, and any special instructions."></textarea>
+        </label>
+      </div>
+
+      <!-- Post Construction Details -->
+      <div class="fieldset grid-2 soft-hidden conditional-section" id="postConstructionSection">
+        <p class="section-intro">
+          Post-construction and final cleans vary based on dust level, debris, utilities, windows, cabinet interiors, appliances, paint/adhesive removal, and the purpose of the clean.
+        </p>
+
+        <label>Construction Clean Type
+          <select name="construction_clean_type" id="constructionCleanType">
+            <option value="">Select one</option>
+            <option>Final clean before move-in / turnover</option>
+            <option>Rough clean during construction</option>
+            <option>Touch-up clean after punch list</option>
+            <option>Post-remodel dust/detail clean</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+
+        <label>Level of Construction Dust / Buildup
+          <select name="construction_level" id="constructionLevel">
+            <option value="">Select one</option>
+            <option value="light">Light dust / mostly finished</option>
+            <option value="standard">Standard final clean dust</option>
+            <option value="heavy">Heavy dust / debris / detailed buildup</option>
+            <option value="luxury">Luxury detail / high-detail final presentation</option>
+          </select>
+        </label>
+
+        <label>Type of Project
+          <select name="construction_project_type">
+            <option>New home build</option>
+            <option>Remodel</option>
+            <option>Commercial build-out</option>
+            <option>Make-ready / property management</option>
+            <option>Medical / clinic build-out</option>
+            <option>Daycare / childcare build-out</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label>Who is requesting service?
+          <select name="requester_type">
+            <option>Homeowner</option>
+            <option>Builder / General Contractor</option>
+            <option>Realtor</option>
+            <option>Investor</option>
+            <option>Property Manager</option>
+            <option>Business Owner</option>
+          </select>
+        </label>
+
+        <label>Purpose of Clean
+          <select name="construction_purpose">
+            <option>Move-in ready</option>
+            <option>Builder handoff</option>
+            <option>Listing photos</option>
+            <option>Inspection</option>
+            <option>Opening day / business ready</option>
+            <option>Final walkthrough</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label>Target Completion Date
+          <input name="target_completion_date" type="date">
+        </label>
+
+        <label>Is this urgent?
+          <select name="urgent_timeline">
+            <option>No</option>
+            <option>Within 72 hours</option>
+            <option>Within 1 week</option>
+            <option>Flexible</option>
+          </select>
+        </label>
+
+        <label>Are utilities turned on?
+          <select name="utilities_on">
+            <option>Yes, water and electricity are on</option>
+            <option>Water only</option>
+            <option>Electricity only</option>
+            <option>No / not sure</option>
+          </select>
+        </label>
+
+        <label>Is AC running?
+          <select name="ac_running">
+            <option>Yes</option>
+            <option>No</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+
+        <label>Are appliances installed?
+          <select name="appliances_installed">
+            <option>Yes</option>
+            <option>No</option>
+            <option>Some</option>
+            <option>Not applicable</option>
+          </select>
+        </label>
+
+        <label>Are cabinets/drawers installed?
+          <select name="cabinets_installed">
+            <option>Yes</option>
+            <option>No</option>
+            <option>Some</option>
+            <option>Not applicable</option>
+          </select>
+        </label>
+
+        <label>Interior Cabinets/Drawers Included?
+          <select name="interior_cabinets_included">
+            <option>Yes</option>
+            <option>No</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+
+        <label>Interior Windows Included?
+          <select name="interior_windows_included">
+            <option>Yes</option>
+            <option>No</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+
+        <label>Window Tracks/Sills Included?
+          <select name="window_tracks_included">
+            <option>Yes</option>
+            <option>No</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+
+        <label>Exterior Windows Included?
+          <select name="exterior_windows_included">
+            <option>No</option>
+            <option>Yes</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+
+        <label>Paint, Caulk, Sticker, or Adhesive Removal Needed?
+          <select name="paint_adhesive_removal">
+            <option>No / not sure</option>
+            <option>Light touch-up only</option>
+            <option>Yes, noticeable areas</option>
+            <option>Heavy removal needed</option>
+          </select>
+        </label>
+
+        <label>Construction Debris Left Behind?
+          <select name="construction_debris">
+            <option>No</option>
+            <option>Small amount</option>
+            <option>Moderate amount</option>
+            <option>Heavy debris</option>
+          </select>
+        </label>
+
+        <label>Flooring Type
+          <input name="construction_flooring" placeholder="tile, hardwood, vinyl, concrete, carpet, mixed">
+        </label>
+
+        <label>High Dusting Needed?
+          <select name="high_dusting_needed">
+            <option>No</option>
+            <option>Yes, standard reachable areas</option>
+            <option>Yes, high ceilings/ledges</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+
+        <label style="grid-column:1/-1;">Project Notes
+          <textarea name="construction_notes" rows="4" placeholder="Tell us what stage the project is in, what needs the most attention, and whether this is for listing photos, client handoff, inspection, opening day, or move-in."></textarea>
+        </label>
+      </div>
+
       <!-- Add-ons + Pay -->
       <div class="fieldset grid-2">
         <label>Add-ons
-          <input name="addons" placeholder="oven, fridge, inside windows, baseboards, laundry">
+          <input name="addons" placeholder="oven, fridge, inside windows, baseboards, laundry, cabinets">
         </label>
+
         <label>Payment Method
           <select name="pay" required>
-            <option>Zelle</option><option>Venmo</option><option>Cash</option><option>Cash App</option>
+            <option>Zelle</option>
+            <option>Venmo</option>
+            <option>Cash</option>
+            <option>Cash App</option>
+            <option>Square Invoice</option>
           </select>
         </label>
       </div>
 
       <!-- Estimate Method -->
       <div class="fieldset grid-1">
-        <label style="font-weight:700;">How would you like us to review your home?</label>
+        <label style="font-weight:700;">How would you like us to review your space?</label>
 
         <div class="choice-row">
           <label class="choice-card">
@@ -217,7 +563,7 @@
             <input type="radio" name="estimate_method" value="walkthrough">
             <span>
               <strong>Request an in-person walkthrough</strong>
-              Best if you prefer not to upload media or would like us to see the home in person.
+              Best if you prefer not to upload media or would like us to see the space in person.
             </span>
           </label>
         </div>
@@ -238,8 +584,8 @@
       <!-- Media Uploads -->
       <div class="fieldset grid-1" id="mediaSection">
         <p class="hint" style="margin:0 0 8px;">
-          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us quote accurately.
-          Best shots: wide-angle of each room, bathrooms, kitchen, and any heavy buildup areas (baseboards, showers, stovetop, etc.).
+          <strong>Photos/Video:</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us quote accurately.
+          Best shots: wide-angle rooms plus close-ups of baseboards, vents, fans, showers, floors, dust, debris, paint, caulk, windows, cabinets, or heavy buildup.
           If you prefer not to upload media, select the in-person walkthrough option above.
         </p>
 
@@ -270,7 +616,7 @@
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_terms" value="Yes" required>
-          <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+          <span>I agree to the service terms including scheduling, access, cancellation, safety, and ballpark/final pricing policies. <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
@@ -306,25 +652,20 @@
     })();
   </script>
 
-  <!-- Your site JS (optional; calcCleaning may live here) -->
-  <script src="script.js?v=9" defer></script>
-
-  <!-- Helper that exposes FTAuto.createJobFromIntake(...) -->
+  <script src="script.js?v=10" defer></script>
   <script src="ft-auto.js" defer></script>
 
-  <!-- Cleaning internal pricing + payout engine + Formspree upload submission -->
+  <!-- Cleaning conditional logic + internal pricing + payout engine + Formspree upload submission -->
   <script>
     (function(){
-      // Upload constraints (adjust any time)
       const PHOTO_MIN = 3;
       const PHOTO_MAX = 10;
-      const MAX_PHOTO_MB_EACH = 12; // optional guard
-      const MAX_VIDEO_MB = 60;      // optional guard
+      const MAX_PHOTO_MB_EACH = 12;
+      const MAX_VIDEO_MB = 60;
 
-      // Default subcontract model
-      const SUBCONTRACT_COMPANY_PCT_DEFAULT = 0.60; // pay subs first (60% of client total)
-      const TAX_PCT_OF_REMAINDER = 0.30;            // after subs
-      const PROFIT_PCT_OF_REMAINDER = 0.20;         // after subs
+      const SUBCONTRACT_COMPANY_PCT_DEFAULT = 0.60;
+      const TAX_PCT_OF_REMAINDER = 0.30;
+      const PROFIT_PCT_OF_REMAINDER = 0.20;
 
       function bytesToMB(b){ return b / (1024 * 1024); }
       function roundHalf(n){ return Math.round(n * 2) / 2; }
@@ -334,40 +675,51 @@
         return checked ? checked.value : "upload";
       }
 
+      function setRequiredInSection(section, isRequired){
+        if (!section) return;
+        const fields = section.querySelectorAll("input, select, textarea");
+        fields.forEach(field => {
+          if (field.dataset.alwaysRequired === "true") return;
+          field.required = false;
+        });
+      }
+
+      function showOnlyRelevantSections(){
+        const propertyType = document.getElementById("propertyType")?.value || "";
+
+        const residentialSection = document.getElementById("residentialSection");
+        const commercialSection = document.getElementById("commercialSection");
+        const postConstructionSection = document.getElementById("postConstructionSection");
+        const airbnbSection = document.getElementById("airbnbSection");
+
+        if (residentialSection) residentialSection.style.display = (!propertyType || propertyType === "residential") ? "grid" : "none";
+        if (commercialSection) commercialSection.style.display = propertyType === "commercial" ? "grid" : "none";
+        if (postConstructionSection) postConstructionSection.style.display = propertyType === "post_construction" ? "grid" : "none";
+        if (airbnbSection) airbnbSection.style.display = propertyType === "airbnb" ? "grid" : "none";
+
+        setRequiredInSection(residentialSection, propertyType === "residential");
+        setRequiredInSection(commercialSection, propertyType === "commercial");
+        setRequiredInSection(postConstructionSection, propertyType === "post_construction");
+        setRequiredInSection(airbnbSection, propertyType === "airbnb");
+
+        const serviceType = document.getElementById("serviceType");
+
+        if (serviceType){
+          if (propertyType === "airbnb") serviceType.value = "Airbnb Turnover";
+          if (propertyType === "commercial") serviceType.value = "Commercial Cleaning";
+          if (propertyType === "post_construction") serviceType.value = "Post-Construction Final Clean";
+        }
+      }
+
       function validateUploads(photoInput, videoInput){
         const estimateMethod = getEstimateMethod();
         const photos = photoInput?.files ? Array.from(photoInput.files) : [];
         const video  = videoInput?.files ? Array.from(videoInput.files) : [];
 
-        // If walkthrough is selected, uploads are fully optional
-        if (estimateMethod === "walkthrough"){
-          if (video.length > 1){
-            return "Please upload only 1 video.";
-          }
-
-          const tooBigPhotoWalk = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
-          if (tooBigPhotoWalk){
-            return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
-          }
-
-          if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
-            return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
-          }
-
-          return null;
-        }
-
-        // photos: allow 0 OR 3–10
-        if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)){
-          return `Please upload ${PHOTO_MIN}–${PHOTO_MAX} photos (or none). You selected ${photos.length}.`;
-        }
-
-        // video: allow 0 or 1
         if (video.length > 1){
           return "Please upload only 1 video.";
         }
 
-        // optional file size checks
         const tooBigPhoto = photos.find(f => bytesToMB(f.size) > MAX_PHOTO_MB_EACH);
         if (tooBigPhoto){
           return `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
@@ -375,6 +727,14 @@
 
         if (video[0] && bytesToMB(video[0].size) > MAX_VIDEO_MB){
           return `Your video is too large. Please keep it under ${MAX_VIDEO_MB}MB.`;
+        }
+
+        if (estimateMethod === "walkthrough"){
+          return null;
+        }
+
+        if (photos.length !== 0 && (photos.length < PHOTO_MIN || photos.length > PHOTO_MAX)){
+          return `Please upload ${PHOTO_MIN}–${PHOTO_MAX} photos, or leave photos blank and request a walkthrough. You selected ${photos.length}.`;
         }
 
         return null;
@@ -399,61 +759,88 @@
         statusEl.textContent = `Selected: ${pCount} photo(s)${vCount ? " + 1 video" : ""}.`;
       }
 
-      // Fallback price calculator if global calcCleaning isn't available
-      // Standard: weekly 0.14 / biweekly 0.16 / monthly 0.18
-      // Initial: 0.18–0.22 midpoint 0.20
-      // Deep: 0.22–0.28 midpoint 0.25
-      // Move-in/out: 0.28–0.35 midpoint 0.30
       function calcCleaningLocal(data){
         const sqft = Number(data.sqft || 0) || 0;
-        const service = data.service || 'Initial Clean';
-        const frequency = data.frequency || 'one-time';
+        const service = data.service || "Initial Clean";
+        const frequency = data.frequency || "one-time";
+        const propertyType = data.property_type || "";
+        const constructionLevel = data.construction_level || "";
+        const commercialType = data.commercial_type || "";
+
         if (!sqft) return null;
 
-        let rate = 0.20; // default midpoint Initial
+        let rate = 0.20;
 
-        if (service === 'Standard Clean'){
-          if (frequency === 'weekly') rate = 0.14;
-          else if (frequency === 'biweekly') rate = 0.16;
-          else if (frequency === 'monthly') rate = 0.18;
-          else rate = 0.18; // one-time standard behaves like monthly/reset
-        } else if (service === 'Deep Clean'){
+        if (propertyType === "post_construction" || service.includes("Post-Construction")){
+          if (constructionLevel === "light") rate = 0.35;
+          else if (constructionLevel === "standard") rate = 0.42;
+          else if (constructionLevel === "heavy") rate = 0.50;
+          else if (constructionLevel === "luxury") rate = 0.60;
+          else rate = 0.42;
+        } else if (propertyType === "commercial" || service === "Commercial Cleaning"){
+          rate = 0.18;
+
+          if (
+            commercialType === "Medical Office" ||
+            commercialType === "Dental Office" ||
+            commercialType === "Vet Clinic" ||
+            commercialType === "Daycare / Childcare Facility"
+          ){
+            rate = 0.22;
+          }
+        } else if (service === "Standard Clean"){
+          if (frequency === "weekly") rate = 0.14;
+          else if (frequency === "biweekly") rate = 0.16;
+          else if (frequency === "monthly" || frequency === "every_six_weeks") rate = 0.18;
+          else rate = 0.18;
+        } else if (service === "Deep Clean"){
           rate = 0.25;
-        } else if (service === 'Move-In / Move-Out Clean'){
+        } else if (service === "Move-In / Move-Out Clean"){
           rate = 0.30;
-        } else if (service === 'Airbnb Turnover'){
+        } else if (service === "Airbnb Turnover"){
           rate = 0.25;
-        } else if (service === 'Initial Clean'){
+        } else if (service === "Initial Clean"){
           rate = 0.20;
         }
 
         return sqft * rate;
       }
 
-      // Simple hours estimator
       function estimateHoursCleaningLocal(data){
         const sqftNum = Number(data.sqft || 0) || 0;
         const beds = Number(data.beds || 0);
         const baths = Number(data.baths || 0);
         const otherRooms = Number(data.other_rooms || 0);
         const stories = String(data.stories || "1");
-        const service = data.service || 'Initial Clean';
+        const service = data.service || "Initial Clean";
+        const propertyType = data.property_type || "";
+        const constructionLevel = data.construction_level || "";
 
         let solo = 3;
+
         if (sqftNum > 0){
           solo = 1 + Math.ceil(sqftNum / 1000);
-          solo = Math.min(Math.max(solo, 2), 6);
+          solo = Math.min(Math.max(solo, 2), 10);
         }
 
         solo += Math.max(0, beds - 3) * 0.5;
         solo += Math.max(0, baths - 2) * 0.75;
         solo += Math.max(0, otherRooms) * 0.25;
+
         if (stories === "2") solo += 0.25;
+        if (stories === "3+") solo += 0.75;
 
         if (service === "Deep Clean") solo *= 1.5;
         if (service === "Move-In / Move-Out Clean") solo *= 2;
         if (service === "Initial Clean") solo *= 1.2;
         if (service === "Airbnb Turnover") solo *= 1.1;
+        if (propertyType === "commercial") solo *= 1.25;
+
+        if (propertyType === "post_construction"){
+          solo *= 1.8;
+          if (constructionLevel === "heavy") solo *= 1.25;
+          if (constructionLevel === "luxury") solo *= 1.4;
+        }
 
         solo = roundHalf(solo);
         const team = roundHalf(solo / 2);
@@ -475,6 +862,7 @@
         const successCard = document.getElementById('successCardCleaning');
         const submitBtn = document.getElementById('cleanSubmitBtn');
 
+        const propertyType = document.getElementById("propertyType");
         const photoInput = document.getElementById('cleanMediaPhotos');
         const videoInput = document.getElementById('cleanMediaVideo');
         const uploadStatus = document.getElementById('cleanUploadStatus');
@@ -498,6 +886,8 @@
           setUploadHint(photoInput, videoInput, uploadStatus);
         }
 
+        propertyType?.addEventListener("change", showOnlyRelevantSections);
+
         estimateMethodRadios.forEach(radio => {
           radio.addEventListener('change', syncEstimateMethodUI);
         });
@@ -505,6 +895,7 @@
         photoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
         videoInput?.addEventListener('change', () => setUploadHint(photoInput, videoInput, uploadStatus));
 
+        showOnlyRelevantSections();
         syncEstimateMethodUI();
 
         form.addEventListener('submit', async function(e){
@@ -526,7 +917,6 @@
             return;
           }
 
-          // Validate uploads
           const uploadErr = validateUploads(photoInput, videoInput);
           if (uploadErr){
             if (statusEl) statusEl.textContent = uploadErr;
@@ -538,10 +928,8 @@
             submitBtn.textContent = "Submitting…";
           }
 
-          // Build FormData FROM THE FORM (includes files)
           const fd = new FormData(form);
 
-          // Build plain data object for math (ignore file fields)
           const data = {};
           fd.forEach((v, k) => {
             if (k === "media_photos" || k === "media_video") return;
@@ -550,7 +938,6 @@
 
           data.sqft = (data.sqft || '').toString().trim();
 
-          // Price estimate (internal only)
           let price = null;
           try{
             if (typeof calcCleaning === "function") price = calcCleaning(data);
@@ -559,30 +946,27 @@
 
           const totalPrice = price != null ? Number(price) : 0;
 
-          // Hours + staffing suggestion
           const hours = estimateHoursCleaningLocal(data);
           const soloHours = hours.soloHours;
           const teamHours = hours.teamHours;
           const cleanerCount = suggestCleanerCount(soloHours);
 
-          // ===== YOUR MODEL: pay subcontractor first, THEN taxes/profit are calculated on remainder =====
           const subPayAssumed = totalPrice * SUBCONTRACT_COMPANY_PCT_DEFAULT;
           const remainingAfterSub = Math.max(0, totalPrice - subPayAssumed);
 
           const taxReserve = remainingAfterSub * TAX_PCT_OF_REMAINDER;
           const profitTarget = remainingAfterSub * PROFIT_PCT_OF_REMAINDER;
-
-          // This is your salary + overhead buffer from this job
           const ownerOpsLeftover = remainingAfterSub - taxReserve - profitTarget;
 
-          // Per-cleaner suggestion if you do NOT use the subcontract company (you + 1–2 helpers)
-          const OWNER_WAGE_SHARE_IF_INDIVIDUALS = 0.50; // of the remainderAfterSub conceptually (adjust anytime)
+          const OWNER_WAGE_SHARE_IF_INDIVIDUALS = 0.50;
           const ownerWageSuggested_ifIndividuals = remainingAfterSub * OWNER_WAGE_SHARE_IF_INDIVIDUALS;
           const contractorsPoolSuggested_ifIndividuals = Math.max(0, remainingAfterSub - (remainingAfterSub * (TAX_PCT_OF_REMAINDER + PROFIT_PCT_OF_REMAINDER)) - ownerWageSuggested_ifIndividuals);
           const contractorPayEachSuggested_ifIndividuals = cleanerCount ? (contractorsPoolSuggested_ifIndividuals / cleanerCount) : 0;
 
-          // Attach internal-only fields to Formspree email (client does not see these)
           fd.append("INTERNAL_estimate_method", estimateMethod);
+          fd.append("INTERNAL_property_type", data.property_type || "");
+          fd.append("INTERNAL_service_type", data.service || "");
+
           if (estimateMethod === "walkthrough"){
             fd.append("INTERNAL_walkthrough_requested", "Yes");
           }
@@ -595,23 +979,26 @@
           fd.append("INTERNAL_subcontract_company_pct_assumed", String(Math.round(SUBCONTRACT_COMPANY_PCT_DEFAULT * 100)) + "%");
           fd.append("INTERNAL_subcontractor_pay_assumed", subPayAssumed.toFixed(2));
           fd.append("INTERNAL_remaining_after_sub", remainingAfterSub.toFixed(2));
-
           fd.append("INTERNAL_tax_reserve_30pct_of_remaining", taxReserve.toFixed(2));
           fd.append("INTERNAL_profit_target_20pct_of_remaining", profitTarget.toFixed(2));
           fd.append("INTERNAL_owner_ops_leftover_after_tax_profit", ownerOpsLeftover.toFixed(2));
+
+          fd.append("INTERNAL_owner_wage_suggested_if_individuals", ownerWageSuggested_ifIndividuals.toFixed(2));
+          fd.append("INTERNAL_contractors_pool_suggested_if_individuals", contractorsPoolSuggested_ifIndividuals.toFixed(2));
+          fd.append("INTERNAL_contractor_pay_each_suggested_if_individuals", contractorPayEachSuggested_ifIndividuals.toFixed(2));
 
           fd.append("INTERNAL_payout_summary",
             `Client $${Math.round(totalPrice)} | Sub (60%) $${Math.round(subPayAssumed)} | Remainder $${Math.round(remainingAfterSub)} | Taxes(30%) $${Math.round(taxReserve)} | Profit(20%) $${Math.round(profitTarget)} | Owner/Ops $${Math.round(ownerOpsLeftover)}`
           );
 
           fd.append("INTERNAL_rate_framework_note",
-            "Standard: weekly 0.14 / biweekly 0.16 / monthly 0.18 | Initial: 0.18–0.22 | Deep: 0.22–0.28 | Move: 0.28–0.35"
+            "Residential: Standard weekly .14 / biweekly .16 / monthly .18 | Initial .18-.22 | Deep .22-.28 | Move .28-.35 | Airbnb .25+ | Commercial .18-.22+ | Post-construction .35-.60+ depending on condition"
           );
 
-          // Create Firestore job (if available)
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
-              const summary = `${Number(data.beds||0)} bed / ${Number(data.baths||0)} bath — ${data.service||'Cleaning'}`.trim();
+              const summary = `${data.property_type || "Cleaning"} — ${data.service || "Cleaning"} — ${data.sqft || "No sqft"} sq ft`;
+
               await FTAuto.createJobFromIntake({
                 type: "cleaning",
                 intakeData: data,
@@ -637,7 +1024,6 @@
             console.warn("Could not create job from intake (ok to ignore):", err);
           }
 
-          // Submit to Formspree (includes file uploads)
           try{
             const resp = await fetch(form.action, {
               method: "POST",
@@ -658,6 +1044,7 @@
               }
 
               form.reset();
+              showOnlyRelevantSections();
               syncEstimateMethodUI();
               if (uploadStatus) uploadStatus.textContent = "";
             } else {
@@ -679,12 +1066,9 @@
     })();
   </script>
 
-  <!-- Optional shared chat guard (if you use it elsewhere) -->
   <script src="ftt-chat.js" defer></script>
 </body>
 </html>
-
-
 
 
 
