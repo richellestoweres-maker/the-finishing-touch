@@ -684,32 +684,52 @@
         });
       }
 
-      function showOnlyRelevantSections(){
-        const propertyType = document.getElementById("propertyType")?.value || "";
+    function setSectionActive(section, isActive){
+  if (!section) return;
 
-        const residentialSection = document.getElementById("residentialSection");
-        const commercialSection = document.getElementById("commercialSection");
-        const postConstructionSection = document.getElementById("postConstructionSection");
-        const airbnbSection = document.getElementById("airbnbSection");
+  section.style.display = isActive ? "grid" : "none";
 
-        if (residentialSection) residentialSection.style.display = (!propertyType || propertyType === "residential") ? "grid" : "none";
-        if (commercialSection) commercialSection.style.display = propertyType === "commercial" ? "grid" : "none";
-        if (postConstructionSection) postConstructionSection.style.display = propertyType === "post_construction" ? "grid" : "none";
-        if (airbnbSection) airbnbSection.style.display = propertyType === "airbnb" ? "grid" : "none";
+  const fields = section.querySelectorAll("input, select, textarea");
 
-        setRequiredInSection(residentialSection, propertyType === "residential");
-        setRequiredInSection(commercialSection, propertyType === "commercial");
-        setRequiredInSection(postConstructionSection, propertyType === "post_construction");
-        setRequiredInSection(airbnbSection, propertyType === "airbnb");
+  fields.forEach(field => {
+    field.disabled = !isActive;
+    field.required = false;
+  });
+}
 
-        const serviceType = document.getElementById("serviceType");
+function showOnlyRelevantSections(){
+  const propertyType = document.getElementById("propertyType")?.value || "";
 
-        if (serviceType){
-          if (propertyType === "airbnb") serviceType.value = "Airbnb Turnover";
-          if (propertyType === "commercial") serviceType.value = "Commercial Cleaning";
-          if (propertyType === "post_construction") serviceType.value = "Post-Construction Final Clean";
-        }
-      }
+  const residentialSection = document.getElementById("residentialSection");
+  const commercialSection = document.getElementById("commercialSection");
+  const postConstructionSection = document.getElementById("postConstructionSection");
+  const airbnbSection = document.getElementById("airbnbSection");
+
+  setSectionActive(residentialSection, !propertyType || propertyType === "residential");
+  setSectionActive(airbnbSection, propertyType === "airbnb");
+  setSectionActive(commercialSection, propertyType === "commercial");
+  setSectionActive(postConstructionSection, propertyType === "post_construction");
+
+  const serviceType = document.getElementById("serviceType");
+
+  if (serviceType){
+    if (propertyType === "residential" && serviceType.value.includes("Post-Construction")){
+      serviceType.value = "Initial Clean";
+    }
+
+    if (propertyType === "airbnb"){
+      serviceType.value = "Airbnb Turnover";
+    }
+
+    if (propertyType === "commercial"){
+      serviceType.value = "Commercial Cleaning";
+    }
+
+    if (propertyType === "post_construction"){
+      serviceType.value = "Post-Construction Final Clean";
+    }
+  }
+}
 
       function validateUploads(photoInput, videoInput){
         const estimateMethod = getEstimateMethod();
