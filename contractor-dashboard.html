@@ -5,370 +5,853 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contractor Dashboard – The Finishing Touch</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    body { background: var(--paper, #fbf8f4); }
-    .portal { width:min(1100px, 94%); margin: 24px auto 60px; }
-    .topbar {
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background:#fff; padding:12px 16px; border-radius:14px; box-shadow:var(--shadow, 0 10px 30px rgba(0,0,0,.08));
+    :root{
+      --portal-bg:#fbf7f4;
+      --portal-card:#fffdfb;
+      --portal-ink:#2f2926;
+      --portal-muted:#7a6f68;
+      --portal-line:#eadfd8;
+      --portal-blush:#f2d8dc;
+      --portal-blush-strong:#e8b9c2;
+      --portal-blush-soft:#fff1f3;
+      --portal-taupe:#d2bda9;
+      --portal-shadow:0 18px 45px rgba(68, 54, 45, .10);
+      --portal-shadow-soft:0 10px 28px rgba(68, 54, 45, .08);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(242,216,220,.75), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(210,189,169,.34), transparent 32%),
+        var(--portal-bg);
+      color:var(--portal-ink);
+      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    .portal-shell{
+      width:min(1280px,96%);
+      margin:22px auto 56px;
+      display:grid;
+      grid-template-columns:260px minmax(0,1fr);
+      gap:18px;
+      align-items:start;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:18px;
+      min-height:calc(100vh - 44px);
+      background:rgba(255,253,251,.82);
+      backdrop-filter:blur(18px);
+      border:1px solid rgba(234,223,216,.9);
+      border-radius:28px;
+      padding:18px;
+      box-shadow:var(--portal-shadow);
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .brand-panel{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding:10px 8px 14px;
+      border-bottom:1px solid var(--portal-line);
+    }
+
+    .brand-panel .vase-logo{
+      width:34px;
+      height:44px;
+      background:url("logo-vase.png") center/contain no-repeat;
+      display:block;
+      flex:0 0 auto;
+    }
+
+    .brand-text strong{
+      display:block;
+      font-family:"Playfair Display",serif;
+      font-size:1.1rem;
+      line-height:1.05;
+      color:var(--portal-ink);
+    }
+
+    .brand-text span{
+      display:block;
+      margin-top:3px;
+      color:var(--portal-muted);
+      font-size:.82rem;
+      font-weight:700;
+    }
+
+    .rolepill{
+      width:max-content;
+      font-size:.76rem;
+      padding:.28rem .7rem;
+      border-radius:999px;
+      background:var(--portal-blush-soft);
+      border:1px solid var(--portal-blush);
+      color:#7d4f59;
+      font-weight:800;
+      margin-top:7px;
+    }
+
+    .side-nav{display:grid; gap:8px}
+
+    .side-link{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      width:100%;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--portal-muted);
+      text-decoration:none;
+      border-radius:18px;
+      padding:11px 12px;
+      font-weight:800;
+      cursor:pointer;
+      text-align:left;
+      font-family:inherit;
+      font-size:.94rem;
+    }
+
+    .side-link span.icon{
+      width:30px;
+      height:30px;
+      border-radius:12px;
+      display:inline-grid;
+      place-items:center;
+      background:#fff;
+      box-shadow:0 6px 18px rgba(68,54,45,.08);
+      flex:0 0 auto;
+    }
+
+    .side-link.active,
+    .side-link:hover{
+      color:var(--portal-ink);
+      background:linear-gradient(135deg, var(--portal-blush-soft), #fff);
+      border-color:var(--portal-blush);
+    }
+
+    .side-footer{
+      margin-top:auto;
+      display:grid;
+      gap:8px;
+      padding-top:14px;
+      border-top:1px solid var(--portal-line);
+    }
+
+    .main-area{min-width:0; display:grid; gap:16px}
+
+    .topbar{
+      background:rgba(255,253,251,.82);
+      backdrop-filter:blur(18px);
+      border:1px solid rgba(234,223,216,.9);
+      border-radius:28px;
+      padding:18px 20px;
+      box-shadow:var(--portal-shadow-soft);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
       flex-wrap:wrap;
     }
-    .brand-mini { display:flex; align-items:center; gap:.6rem; }
-    .brand-mini .vase-logo { width:28px; height:36px; background:url('logo-vase.png') center / contain no-repeat; display:inline-block; }
-    .rolepill { font-size:.8rem; padding:.2rem .6rem; border-radius:999px; border:1px solid #e3d9ce; background:#fffdfb; }
-    .right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .small { font-size:.9rem; opacity:.85; }
 
-    .tabs { display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    .tabbtn {
-      border:1.5px solid #e3d9ce; background:#fff; color:#2e2a27; border-radius:999px; padding:.5rem .85rem; font-weight:800; cursor:pointer; white-space:nowrap;
+    .welcome h1{
+      margin:0;
+      font-family:"Playfair Display",serif;
+      font-size:clamp(1.55rem,2.6vw,2.25rem);
+      line-height:1.05;
+      color:var(--portal-ink);
     }
-    .tabbtn.active { background: var(--accent, #d2bda9); border-color: var(--accent, #d2bda9); color:#2a2624; }
 
-    .filters { display:flex; gap:8px; flex-wrap:wrap; }
-    .chip {
-      border:1px solid #e3d9ce; background:#fffdfb; color:#2e2a27; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:800; font-size:.9rem;
+    .welcome p{
+      margin:6px 0 0;
+      color:var(--portal-muted);
+      font-weight:600;
+      font-size:.94rem;
+    }
+
+    .top-actions{display:flex; gap:9px; align-items:center; flex-wrap:wrap}
+
+    .whoami{
+      color:var(--portal-muted);
+      font-size:.86rem;
+      font-weight:700;
+      max-width:240px;
+      overflow:hidden;
+      text-overflow:ellipsis;
       white-space:nowrap;
     }
-    .chip.active { background:#2e2a27; color:#fff; border-color:#2e2a27; }
 
-    .main { margin-top:14px; display:grid; grid-template-columns: 1fr; gap:14px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
-    .card {
-      background:#fff; border-radius:14px; box-shadow:var(--shadow, 0 10px 30px rgba(0,0,0,.08));
-      padding:14px; display:flex; flex-direction:column; gap:10px;
-    }
-    .toprow { display:flex; justify-content:space-between; gap:8px; align-items:baseline; }
-    .muted { opacity:.85; }
-    .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:.95rem; opacity:.95; }
-    .meta span { display:inline-flex; align-items:center; gap:6px; }
-    .pay { font-weight:800; }
-    .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
-    .btn { display:inline-block; padding:.55rem .85rem; border-radius:999px; font-weight:800; text-decoration:none; cursor:pointer; }
-    .btn-outline { border:1.5px solid #2e2a27; background:#fff; color:#2e2a27; }
-    .btn-solid { background: var(--accent, #d2bda9); color:#2a2624; border:0; }
-    .empty { text-align:center; padding:24px; background:#fff; border-radius:14px; border:1px dashed #e3d9ce; }
-
-    .toast {
-      position: fixed; left: 50%; transform: translateX(-50%);
-      bottom: 16px; background:#0f172a; color:#fff; padding:10px 14px; border-radius:10px;
-      box-shadow:0 10px 25px rgba(0,0,0,.25); z-index: 99999; font-weight:700; display:none;
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:32px;
+      padding:22px;
+      background:
+        linear-gradient(135deg, rgba(242,216,220,.95), rgba(255,253,251,.95) 54%, rgba(210,189,169,.42)),
+        #fff;
+      border:1px solid rgba(234,223,216,.95);
+      box-shadow:var(--portal-shadow);
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:16px;
+      align-items:center;
     }
 
-    .gate { margin-top:14px; }
-    .hidden{ display:none !important; }
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      width:230px;
+      height:230px;
+      border-radius:999px;
+      background:rgba(255,255,255,.38);
+      right:-70px;
+      top:-70px;
+      pointer-events:none;
+    }
+
+    .hero-copy{position:relative; z-index:1}
+
+    .script-kicker{
+      font-family:"Allura",cursive;
+      color:#925e69;
+      font-size:2rem;
+      line-height:1;
+      margin:0 0 4px;
+    }
+
+    .hero-copy h2{
+      margin:0;
+      font-family:"Playfair Display",serif;
+      color:var(--portal-ink);
+      font-size:clamp(1.4rem,2.4vw,2.1rem);
+    }
+
+    .hero-copy p{
+      margin:8px 0 0;
+      max-width:680px;
+      color:#61554f;
+      font-weight:600;
+    }
+
+    .stats-row{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      position:relative;
+      z-index:1;
+    }
+
+    .stat{
+      background:rgba(255,253,251,.76);
+      border:1px solid rgba(234,223,216,.82);
+      border-radius:22px;
+      padding:14px;
+      box-shadow:0 10px 24px rgba(68,54,45,.07);
+    }
+
+    .stat strong{
+      display:block;
+      font-size:1.4rem;
+      line-height:1;
+      color:var(--portal-ink);
+    }
+
+    .stat span{
+      display:block;
+      margin-top:5px;
+      color:var(--portal-muted);
+      font-weight:800;
+      font-size:.78rem;
+    }
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      background:rgba(255,253,251,.76);
+      border:1px solid var(--portal-line);
+      border-radius:24px;
+      padding:12px;
+      box-shadow:var(--portal-shadow-soft);
+      margin-bottom:14px;
+    }
+
+    .tabs{display:flex; gap:8px; flex-wrap:wrap}
+
+    .tabbtn{
+      border:1px solid var(--portal-line);
+      background:#fff;
+      color:var(--portal-muted);
+      border-radius:999px;
+      padding:.62rem .92rem;
+      font-weight:900;
+      cursor:pointer;
+      white-space:nowrap;
+      font-family:inherit;
+    }
+
+    .tabbtn.active{
+      background:#2f2926;
+      color:#fff;
+      border-color:#2f2926;
+      box-shadow:0 10px 22px rgba(47,41,38,.18);
+    }
+
+    .filters{display:flex; gap:8px; flex-wrap:wrap}
+
+    .chip{
+      border:1px solid var(--portal-line);
+      background:#fffdfb;
+      color:var(--portal-muted);
+      border-radius:999px;
+      padding:.45rem .78rem;
+      cursor:pointer;
+      font-weight:900;
+      font-size:.86rem;
+      white-space:nowrap;
+      font-family:inherit;
+    }
+
+    .chip.active{
+      background:var(--portal-blush-soft);
+      border-color:var(--portal-blush-strong);
+      color:#7d4f59;
+    }
+
+    .main{display:grid; gap:14px}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:14px;
+    }
+
+    .card{
+      background:rgba(255,253,251,.95);
+      border:1px solid var(--portal-line);
+      border-radius:26px;
+      box-shadow:var(--portal-shadow-soft);
+      padding:17px;
+      display:flex;
+      flex-direction:column;
+      gap:11px;
+    }
+
+    .job-card{position:relative; overflow:hidden}
+
+    .job-card::before{
+      content:"";
+      position:absolute;
+      inset:0 auto 0 0;
+      width:6px;
+      background:linear-gradient(180deg,var(--portal-blush-strong),var(--portal-taupe));
+      border-radius:999px;
+      opacity:.9;
+    }
+
+    .toprow{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+      padding-left:4px;
+    }
+
+    .toprow strong{
+      font-family:"Playfair Display",serif;
+      font-size:1.18rem;
+      color:var(--portal-ink);
+    }
+
+    .muted{
+      color:var(--portal-muted);
+      font-weight:700;
+      font-size:.9rem;
+    }
+
+    .meta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      font-size:.9rem;
+      color:#61554f;
+      font-weight:700;
+    }
+
+    .meta span{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#fff7f8;
+      border:1px solid #f1dce1;
+      border-radius:999px;
+      padding:.32rem .6rem;
+    }
+
+    .pay{color:#2f2926; font-weight:900}
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:2px;
+      padding-left:4px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      padding:.62rem .9rem;
+      border-radius:999px;
+      font-weight:900;
+      text-decoration:none;
+      cursor:pointer;
+      font-family:inherit;
+      border:0;
+      transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+
+    .btn-outline{
+      border:1.5px solid #2f2926;
+      background:#fffdfb;
+      color:#2f2926;
+    }
+
+    .btn-solid{
+      background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));
+      color:#2f2926;
+      box-shadow:0 10px 22px rgba(232,185,194,.34);
+    }
+
+    .btn-soft{
+      background:var(--portal-blush-soft);
+      color:#7d4f59;
+      border:1px solid var(--portal-blush);
+    }
+
+    .empty{
+      text-align:center;
+      padding:28px;
+      background:rgba(255,253,251,.9);
+      border-radius:26px;
+      border:1px dashed #e3cfd4;
+      color:var(--portal-muted);
+      font-weight:800;
+    }
+
+    .gate{margin-top:14px}
+    .hidden{display:none !important}
+
+    .placeholder-panel{display:none}
+    .placeholder-panel.active{display:block}
+
+    .placeholder-card h3{
+      margin:0;
+      font-family:"Playfair Display",serif;
+      color:var(--portal-ink);
+    }
+
+    .placeholder-card p{
+      margin:0;
+      color:var(--portal-muted);
+      font-weight:600;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:18px;
+      background:#2f2926;
+      color:#fff;
+      padding:11px 16px;
+      border-radius:999px;
+      box-shadow:0 14px 30px rgba(0,0,0,.25);
+      z-index:99999;
+      font-weight:900;
+      display:none;
+    }
+
+    @media (max-width:920px){
+      .portal-shell{grid-template-columns:1fr}
+      .sidebar{position:relative; top:auto; min-height:auto}
+      .side-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .hero-card{grid-template-columns:1fr}
+      .stats-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+
+    @media (max-width:620px){
+      .portal-shell{
+        width:min(100% - 18px,1280px);
+        margin-top:10px;
+      }
+      .topbar,.hero-card,.toolbar,.sidebar{border-radius:22px}
+      .side-nav{grid-template-columns:1fr}
+      .stats-row{grid-template-columns:1fr}
+      .top-actions{width:100%}
+      .btn{width:100%}
+    }
   </style>
 </head>
 
 <body>
-  <div class="portal">
-    <div class="topbar" role="banner">
-      <div class="brand-mini">
+  <div class="portal-shell">
+    <aside class="sidebar" aria-label="Contractor portal navigation">
+      <div class="brand-panel">
         <span class="vase-logo" aria-hidden="true"></span>
-        <div>
-          <div style="font-family:'Playfair Display',serif; line-height:1; color:#2e2a27;">The Finishing Touch</div>
+        <div class="brand-text">
+          <strong>The Finishing Touch</strong>
+          <span>Contractor Portal</span>
           <div id="rolePill" class="rolepill">Checking role…</div>
         </div>
       </div>
 
-      <div class="right">
-        <span id="whoami" class="small"></span>
+      <nav class="side-nav">
+        <button class="side-link active" type="button" data-side="dashboard"><span class="icon">⌂</span>Dashboard</button>
+        <button class="side-link" type="button" data-side="jobs"><span class="icon">✦</span>Jobs / Assignments</button>
+        <button class="side-link" type="button" data-side="walkthroughs"><span class="icon">◷</span>Walkthroughs</button>
+        <button class="side-link" type="button" data-side="estimates"><span class="icon">♢</span>My Estimates</button>
+        <button class="side-link" type="button" data-side="messages"><span class="icon">✉</span>Messages</button>
+        <button class="side-link" type="button" data-side="documents"><span class="icon">☑</span>Documents</button>
+        <button class="side-link" type="button" data-side="resources"><span class="icon">♡</span>Resources</button>
+        <button class="side-link" type="button" data-side="payments"><span class="icon">$</span>Payments</button>
+      </nav>
+
+      <div class="side-footer">
         <a class="btn btn-outline" href="index.html">Home</a>
         <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden style="display:none">Manual Intake</a>
-        <a id="signOutBtn" class="btn btn-outline" href="#" aria-label="Sign out">Sign out</a>
+        <a id="signOutBtn" class="btn btn-soft" href="#" aria-label="Sign out">Sign out</a>
       </div>
-    </div>
+    </aside>
 
-    <section id="gate-signedout" class="card gate">
-      <p>Please <a href="login.html?next=contractor-dashboard.html"><strong>sign in or create an account</strong></a> to continue.</p>
-      <p class="muted">New? <a href="contractor-apply.html"><strong>Apply here</strong></a> — you’ll be marked pending until approved.</p>
-    </section>
+    <main class="main-area">
+      <section class="topbar">
+        <div class="welcome">
+          <h1>Welcome back</h1>
+          <p>View open opportunities, manage claimed jobs, and keep your work flowing beautifully.</p>
+        </div>
+        <div class="top-actions">
+          <span id="whoami" class="whoami"></span>
+        </div>
+      </section>
 
-    <section id="gate-notapplied" class="card gate hidden">
-      <p><strong>No application on file.</strong></p>
-      <p class="muted">Please submit your contractor application so we can approve your access.</p>
-      <div>
-        <a class="btn btn-solid" href="contractor-apply.html">Apply to be a Contractor</a>
-      </div>
-    </section>
+      <section class="hero-card">
+        <div class="hero-copy">
+          <p class="script-kicker">Today’s touchpoints</p>
+          <h2>Your contractor command center</h2>
+          <p>Claim available work, review assigned jobs, and soon you’ll be able to submit walkthrough estimates, photos, videos, and completion checklists right here.</p>
+        </div>
 
-    <section id="gate-pending" class="card gate hidden" aria-live="polite">
-      <p class="muted"><strong>Your account is pending review.</strong> We’ll email you once approved. This page will unlock automatically.</p>
-      <div>
-        <a class="btn btn-outline" href="contractor-apply.html">View / Update your application</a>
-      </div>
-    </section>
+        <div class="stats-row" aria-label="Contractor overview">
+          <div class="stat">
+            <strong id="statOpen">0</strong>
+            <span>Open Jobs</span>
+          </div>
+          <div class="stat">
+            <strong id="statMine">0</strong>
+            <span>My Jobs</span>
+          </div>
+          <div class="stat">
+            <strong id="statService">All</strong>
+            <span>Service Filter</span>
+          </div>
+        </div>
+      </section>
 
-    <div id="portal-ui" class="hidden" style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-      <div class="tabs" role="tablist" aria-label="Job views">
-        <button id="tabOpen" class="tabbtn active" type="button" role="tab" aria-selected="true" aria-controls="panelOpen">Open Jobs</button>
-        <button id="tabMine" class="tabbtn" type="button" role="tab" aria-selected="false" aria-controls="panelMine">My Jobs</button>
-      </div>
-      <div class="filters" id="filterChips" aria-label="Filters"></div>
-    </div>
+      <section id="gate-signedout" class="card gate">
+        <p>Please <a href="login.html?next=contractor-dashboard.html"><strong>sign in or create an account</strong></a> to continue.</p>
+        <p class="muted">New? <a href="contractor-apply.html"><strong>Apply here</strong></a> — you’ll be marked pending until approved.</p>
+      </section>
 
-    <section id="panelOpen" class="main" role="tabpanel" aria-labelledby="tabOpen">
-      <div id="openJobs" class="grid" aria-live="polite"></div>
-    </section>
+      <section id="gate-notapplied" class="card gate hidden">
+        <p><strong>No application on file.</strong></p>
+        <p class="muted">Please submit your contractor application so we can approve your access.</p>
+        <div>
+          <a class="btn btn-solid" href="contractor-apply.html">Apply to be a Contractor</a>
+        </div>
+      </section>
 
-    <section id="panelMine" class="main" role="tabpanel" aria-labelledby="tabMine" hidden>
-      <div id="myJobs" class="grid" aria-live="polite"></div>
-    </section>
+      <section id="gate-pending" class="card gate hidden" aria-live="polite">
+        <p class="muted"><strong>Your account is pending review.</strong> We’ll email you once approved. This page will unlock automatically.</p>
+        <div>
+          <a class="btn btn-outline" href="contractor-apply.html">View / Update your application</a>
+        </div>
+      </section>
+
+      <section id="dashboardPanel">
+        <div id="portal-ui" class="hidden toolbar">
+          <div class="tabs" role="tablist" aria-label="Job views">
+            <button id="tabOpen" class="tabbtn active" type="button" role="tab" aria-selected="true" aria-controls="panelOpen">Open Jobs</button>
+            <button id="tabMine" class="tabbtn" type="button" role="tab" aria-selected="false" aria-controls="panelMine">My Jobs</button>
+          </div>
+          <div class="filters" id="filterChips" aria-label="Filters"></div>
+        </div>
+
+        <section id="panelOpen" class="main" role="tabpanel" aria-labelledby="tabOpen">
+          <div id="openJobs" class="grid" aria-live="polite"></div>
+        </section>
+
+        <section id="panelMine" class="main" role="tabpanel" aria-labelledby="tabMine" hidden>
+          <div id="myJobs" class="grid" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <section id="placeholderPanel" class="placeholder-panel">
+        <article class="card placeholder-card">
+          <h3 id="placeholderTitle">Coming Soon</h3>
+          <p id="placeholderText">This section is ready for the next build phase.</p>
+        </article>
+      </section>
+    </main>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script type="module">
-    import { auth, db } from "./ft-firebase.js";
+import { auth, db } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
       collection, query, where, onSnapshot,
       doc, getDoc, updateDoc, serverTimestamp, runTransaction
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const rolePill = document.getElementById("rolePill");
-    const whoami = document.getElementById("whoami");
-    const btnSignOut = document.getElementById("signOutBtn");
-    const chipsWrap = document.getElementById("filterChips");
-    const adminBtn = document.getElementById("adminIntakeBtn");
+    const rolePill   = document.getElementById('rolePill');
+    const whoami     = document.getElementById('whoami');
+    const btnSignOut = document.getElementById('signOutBtn');
+    const chipsWrap  = document.getElementById('filterChips');
+    const adminBtn   = document.getElementById('adminIntakeBtn');
 
-    const tabOpen = document.getElementById("tabOpen");
-    const tabMine = document.getElementById("tabMine");
-    const panelOpen = document.getElementById("panelOpen");
-    const panelMine = document.getElementById("panelMine");
+    const tabOpen    = document.getElementById('tabOpen');
+    theTabListeners();
+    const tabMine    = document.getElementById('tabMine');
+    const panelOpen  = document.getElementById('panelOpen');
+    const panelMine  = document.getElementById('panelMine');
 
-    const openJobsEl = document.getElementById("openJobs");
-    const myJobsEl = document.getElementById("myJobs");
-    const toastEl = document.getElementById("toast");
+    const openJobsEl = document.getElementById('openJobs');
+    const myJobsEl   = document.getElementById('myJobs');
+    const toastEl    = document.getElementById('toast');
 
-    const gateSignedOut = document.getElementById("gate-signedout");
-    const gateNotApplied = document.getElementById("gate-notapplied");
-    const gatePending = document.getElementById("gate-pending");
-    const portalUI = document.getElementById("portal-ui");
+    const gateSignedOut  = document.getElementById('gate-signedout');
+    const gateNotApplied = document.getElementById('gate-notapplied');
+    const gatePending    = document.getElementById('gate-pending');
+    const portalUI       = document.getElementById('portal-ui');
 
     let me = null;
-    let meRole = "";
+    let meRole = '';
     let meServices = [];
-    let activeFilter = "all";
-    let lastOpenJobs = [];
-    let lastMyJobs = [];
+    let activeFilter = 'all';
+    let lastOpenJobs = [], lastMyJobs = [];
 
-    const ALL_TYPES = ["cleaning", "organizing", "decor", "holiday"];
-
-    let unsubOpen = null;
-    let unsubMineA = null;
-    let unsubMineB = null;
+    const ALL_TYPES = ['cleaning','organizing','decor','holiday'];
 
     function showGate(which){
-      [gateSignedOut, gateNotApplied, gatePending].forEach(x => x.classList.add("hidden"));
-      portalUI.classList.add("hidden");
-      panelOpen.style.display = "none";
-      panelMine.style.display = "none";
+      // hide all gates + portal
+      [gateSignedOut, gateNotApplied, gatePending].forEach(x => x.classList.add('hidden'));
+      portalUI.classList.add('hidden');
+      panelOpen.style.display = 'none';
+      panelMine.style.display = 'none';
 
-      if (which === "signedout") gateSignedOut.classList.remove("hidden");
-      if (which === "notapplied") gateNotApplied.classList.remove("hidden");
-      if (which === "pending") gatePending.classList.remove("hidden");
-
-      if (which === "portal") {
-        portalUI.classList.remove("hidden");
-        panelOpen.style.display = "";
-        panelMine.style.display = "";
+      switch(which){
+        case 'signedout': gateSignedOut.classList.remove('hidden'); break;
+        case 'notapplied': gateNotApplied.classList.remove('hidden'); break;
+        case 'pending': gatePending.classList.remove('hidden'); break;
+        case 'portal':
+          portalUI.classList.remove('hidden');
+          panelOpen.style.display = '';
+          panelMine.style.display = '';
+          break;
       }
     }
 
-    function showToast(msg, ms = 1900){
+    function showToast(msg, ms=1900){
       toastEl.textContent = msg;
-      toastEl.style.display = "block";
-      setTimeout(() => toastEl.style.display = "none", ms);
+      toastEl.style.display = 'block';
+      setTimeout(()=> toastEl.style.display = 'none', ms);
     }
-
-    function cap(s){
-      return s ? (s[0].toUpperCase() + s.slice(1)) : "";
-    }
-
+    function cap(s){ return s ? (s[0].toUpperCase() + s.slice(1)) : ''; }
     function fmtPay(n){
-      if (typeof n === "number" && !isNaN(n)) return `$${Math.round(n)}`;
-      const x = Number(n);
-      return isFinite(x) ? `$${Math.round(x)}` : "";
+      if (typeof n === 'number' && !isNaN(n)) return `$${Math.round(n)}`;
+      const x = Number(n); return isFinite(x) ? `$${Math.round(x)}` : '';
     }
-
     function fmtDate(d){
-      try {
-        return new Date(d).toLocaleDateString([], { month:"short", day:"numeric" });
-      } catch {
-        return d || "";
-      }
+      try { return new Date(d).toLocaleDateString([], { month:'short', day:'numeric' }); } catch { return d || ''; }
     }
-
     function payForContractor(j){
       const p = j.payEach ?? j.contractorPayEach ?? j.payPerContractor ?? j.contractorPay ?? null;
-      return p != null ? `Your pay est: <span class="pay">${fmtPay(p)}</span>` : "";
+      return p != null ? `Your pay est: <span class="pay">${fmtPay(p)}</span>` : '';
     }
-
     function slotsLeft(j){
       const need = Number(j.contractorsNeeded || 1);
       const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
       const left = Math.max(0, need - have);
       return { need, have, left };
     }
-
-    function canClaimRole(){
-      return meRole === "contractor" || meRole === "admin";
-    }
+    function canClaimRole(){ return meRole === 'contractor' || meRole === 'admin'; }
 
     function setTab(which){
-      const open = which === "open";
-
-      tabOpen.classList.toggle("active", open);
-      tabMine.classList.toggle("active", !open);
-
-      tabOpen.setAttribute("aria-selected", String(open));
-      tabMine.setAttribute("aria-selected", String(!open));
-
+      const open = which === 'open';
+      tabOpen.classList.toggle('active', open);
+      tabMine.classList.toggle('active', !open);
+      tabOpen.setAttribute('aria-selected', String(open));
+      tabMine.setAttribute('aria-selected', String(!open));
       panelOpen.hidden = !open;
       panelMine.hidden = open;
     }
-
-    tabOpen.addEventListener("click", () => setTab("open"));
-    tabMine.addEventListener("click", () => setTab("mine"));
+    function theTabListeners(){
+      // keep function hoisted in top, attach after DOM refs exist
+      document.addEventListener('click', (e)=>{
+        if (e.target?.id === 'tabOpen') setTab('open');
+        if (e.target?.id === 'tabMine') setTab('mine');
+      });
+    }
 
     function renderChips(){
       const allowed = (meServices && meServices.length)
         ? meServices.map(s => String(s).toLowerCase())
         : ALL_TYPES;
-
-      const types = ["all", ...allowed];
-      chipsWrap.innerHTML = "";
-
+      const types = ['all', ...allowed];
+      chipsWrap.innerHTML = '';
       types.forEach(t => {
-        const b = document.createElement("button");
-        b.className = "chip" + (t === activeFilter ? " active" : "");
-        b.type = "button";
-        b.textContent = t === "all" ? "All" : cap(t);
-
-        b.addEventListener("click", () => {
+        const b = document.createElement('button');
+        b.className = 'chip' + (t === activeFilter ? ' active' : '');
+        b.type = 'button';
+        b.textContent = t === 'all' ? 'All' : (t[0].toUpperCase() + t.slice(1));
+        b.addEventListener('click', () => {
           activeFilter = t;
+          const statService = document.getElementById("statService");
+          if (statService) statService.textContent = t === "all" ? "All" : cap(t);
           renderChips();
           drawOpenJobs(lastOpenJobs);
           drawMyJobs(lastMyJobs);
         });
-
         chipsWrap.appendChild(b);
       });
     }
 
-    btnSignOut.addEventListener("click", async (e) => {
+    btnSignOut.addEventListener('click', async (e) => {
       e.preventDefault();
-      try {
-        await signOut(auth);
-      } finally {
-        location.href = "index.html";
-      }
+      try { await signOut(auth); } finally { location.href = 'index.html'; }
     });
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        me = null;
-        whoami.textContent = "";
-        rolePill.textContent = "Signed out";
+        whoami.textContent = '';
+        rolePill.textContent = 'Signed out';
+        // admin button stays hidden
         adminBtn.hidden = true;
-        adminBtn.style.display = "none";
-        cleanup();
-        showGate("signedout");
+        adminBtn.style.display = 'none';
+        showGate('signedout');
         return;
       }
 
       me = user;
       whoami.textContent = user.email || user.uid;
-      rolePill.textContent = "Checking role…";
+      rolePill.textContent = 'Checking role…';
+      // default hidden (prevents flash)
       adminBtn.hidden = true;
-      adminBtn.style.display = "none";
+      adminBtn.style.display = 'none';
 
+      // Get the user doc to determine role
+      const uref = doc(db, 'users', user.uid);
       try {
-        const snap = await getDoc(doc(db, "users", user.uid));
-
+        const snap = await getDoc(uref);
         if (!snap.exists()) {
-          meRole = "";
+          meRole = '';
           meServices = [];
-          rolePill.textContent = "No role yet";
-          cleanup();
-          showGate("notapplied");
+          rolePill.textContent = 'No role yet';
+          showGate('notapplied');
           return;
         }
 
         const data = snap.data();
-        meRole = String(data.role || "").toLowerCase();
-        meServices = Array.isArray(data.serviceTypes)
-          ? data.serviceTypes.map(s => String(s).toLowerCase())
-          : [];
+        meRole = (data.role || '').toLowerCase();
+        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes.map(s=>String(s).toLowerCase()) : [];
+        rolePill.textContent = meRole ? cap(meRole) : 'No role yet';
 
-        rolePill.textContent = meRole ? cap(meRole) : "No role yet";
-
-        if (meRole === "admin") {
+        // Only admins see Manual Intake (no flicker)
+        if (meRole === 'admin') {
           adminBtn.hidden = false;
-          adminBtn.style.display = "";
+          adminBtn.style.display = '';
+        } else {
+          adminBtn.hidden = true;
+          adminBtn.style.display = 'none';
         }
 
-        if (meRole === "pending") {
-          cleanup();
-          showGate("pending");
+        if (meRole === 'pending') {
+          showGate('pending');
           return;
         }
 
-        if (meRole === "contractor" || meRole === "admin") {
-          showGate("portal");
+        if (meRole === 'contractor' || meRole === 'admin') {
+          showGate('portal');
           renderChips();
-          startListeners();
+          const statService = document.getElementById("statService");
+          if (statService) statService.textContent = activeFilter === "all" ? "All" : cap(activeFilter);
+          startListeners();     // <-- only start now (prevents permission-denied)
           return;
         }
 
-        cleanup();
-        showGate("notapplied");
-
+        // Unknown/empty role
+        showGate('notapplied');
       } catch (e) {
-        console.warn("Role check error:", e);
-        rolePill.textContent = "Unknown role";
-        cleanup();
-        showGate("notapplied");
+        console.warn('Role check error:', e);
+        rolePill.textContent = 'Unknown role';
+        showGate('notapplied');
       }
     });
 
+    let unsubOpen = null, unsubMineA = null, unsubMineB = null;
     function cleanup(){
-      try { if (unsubOpen) unsubOpen(); } catch {}
-      try { if (unsubMineA) unsubMineA(); } catch {}
-      try { if (unsubMineB) unsubMineB(); } catch {}
-
-      unsubOpen = null;
-      unsubMineA = null;
-      unsubMineB = null;
+      try { unsubOpen && unsubOpen(); } catch {}
+      try { unsubMineA && unsubMineA(); } catch {}
+      try { unsubMineB && unsubMineB(); } catch {}
+      unsubOpen = unsubMineA = unsubMineB = null;
     }
 
     function startListeners(){
       cleanup();
 
+      // Open jobs (contractor/admin can read per rules)
       unsubOpen = onSnapshot(
-        query(collection(db, "jobs"), where("status", "==", "open")),
+        query(collection(db, 'jobs'), where('status', '==', 'open')),
         (snap) => {
-          const byCreatedDesc = (a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0);
-          lastOpenJobs = snap.docs.map(d => ({ id:d.id, ...d.data() })).sort(byCreatedDesc);
+          const byCreatedDesc = (a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0);
+          lastOpenJobs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort(byCreatedDesc);
           drawOpenJobs(lastOpenJobs);
         },
-        (err) => console.warn("open jobs listener error:", err)
+        (err) => console.warn('open jobs listener error:', err)
       );
 
+      // My jobs — legacy single-assignee
       unsubMineA = onSnapshot(
-        query(collection(db, "jobs"), where("contractorId", "==", me?.uid || "")),
-        (snap) => mergeMine(snap.docs.map(d => ({ id:d.id, ...d.data() }))),
-        (err) => console.warn("my jobs legacy listener error:", err)
+        query(collection(db, 'jobs'), where('contractorId', '==', (me?.uid || ''))),
+        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+        (err) => console.warn('my jobs (A) listener error:', err)
       );
 
+      // My jobs — new multi-assignee
       unsubMineB = onSnapshot(
-        query(collection(db, "jobs"), where("contractorIds", "array-contains", me?.uid || "")),
-        (snap) => mergeMine(snap.docs.map(d => ({ id:d.id, ...d.data() }))),
-        (err) => console.warn("my jobs multi listener error:", err)
+        query(collection(db, 'jobs'), where('contractorIds', 'array-contains', (me?.uid || ''))),
+        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+        (err) => console.warn('my jobs (B) listener error:', err)
       );
     }
 
@@ -379,290 +862,293 @@
       drawMyJobs(lastMyJobs);
     }
 
-    function jobCardHTML(j){
-      const type = String(j.serviceType || "").toLowerCase();
-      const title = type ? cap(type) : "Job";
-      const zip = j.zip || j.postal || j.postcode || j.area || j.city || "";
-      const when = j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : "") : (j.window || "");
-      const bb = (j.beds || j.baths) ? `${j.beds || 0} bd / ${j.baths || 0} ba` : "";
-      const hours = j.estimatedTeamHours || j.teamHours || j.eta || "";
+    function jobCardHTML(j, inMine=false){
+      const type  = (j.serviceType || '').toLowerCase();
+      const title = type ? cap(type) : 'Job';
+      const zip   = j.zip || j.postal || j.postcode || j.area || j.city || '';
+      const when  = j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || '');
+      const bb    = (j.beds || j.baths) ? `${j.beds||0} bd / ${j.baths||0} ba` : '';
+      const hours = j.estimatedTeamHours || j.teamHours || j.eta || '';
       const { need, left } = slotsLeft(j);
-      const leftTxt = need > 1 ? `${left} of ${need} slots left` : "";
+      const leftTxt = need > 1 ? `${left} of ${need} slots left` : '';
       const payLine = payForContractor(j);
-      const statusChip = j.status ? `<span>• ${j.status}</span>` : "";
+      const statusChip = j.status ? `<span>• ${j.status}</span>` : '';
 
       return `
-        <div class="card" data-jobid="${j.id}">
+        <div class="card job-card" data-jobid="${j.id}">
           <div class="toprow">
             <strong>${title}</strong>
-            ${payLine ? `<div class="muted">${payLine}</div>` : ""}
+            ${payLine ? `<div class="muted">${payLine}</div>` : ''}
           </div>
-
           <div class="meta">
-            ${zip ? `<span>📍 <span>${zip}</span></span>` : ""}
-            ${when ? `<span>🗓️ <span>${when}</span></span>` : ""}
-            ${bb ? `<span>🛏️ <span>${bb}</span></span>` : ""}
-            ${hours ? `<span>⏱️ <span>${hours}</span></span>` : ""}
-            ${leftTxt ? `<span>👥 <span>${leftTxt}</span></span>` : ""}
+            ${zip   ? `<span>📍 <span>${zip}</span></span>` : ''}
+            ${when  ? `<span>🗓️ <span>${when}</span></span>` : ''}
+            ${bb    ? `<span>🛏️ <span>${bb}</span></span>` : ''}
+            ${hours ? `<span>⏱️ <span>${hours}</span></span>` : ''}
+            ${leftTxt ? `<span>👥 <span>${leftTxt}</span></span>` : ''}
             ${statusChip}
           </div>
-
-          ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : "")}
-
+          ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : '')}
           <div class="actions"></div>
         </div>
       `;
     }
 
     function drawOpenJobs(list){
+      const statOpen = document.getElementById("statOpen");
+      if (statOpen) statOpen.textContent = String(list.length);
       const allowed = (meServices && meServices.length) ? meServices : ALL_TYPES;
-
       const filtered = list.filter(j => {
-        const type = String(j.serviceType || "").toLowerCase();
+        const type = (j.serviceType || '').toLowerCase();
         const okType = allowed.includes(type);
-        const chipOk = activeFilter === "all" ? true : type === activeFilter;
+        const chipOk = (activeFilter === 'all') ? true : (type === activeFilter);
         return okType && chipOk;
       });
 
-      if (!filtered.length) {
+      if (!filtered.length){
         openJobsEl.innerHTML = `<div class="empty">No open jobs right now.</div>`;
         return;
       }
-
-      openJobsEl.innerHTML = filtered.map(j => jobCardHTML(j)).join("");
+      openJobsEl.innerHTML = filtered.map(j => jobCardHTML(j, false)).join('');
       filtered.forEach(j => injectOpenActions(j));
     }
 
     function drawMyJobs(list){
-      if (!list.length) {
+      if (!list.length){
         myJobsEl.innerHTML = `<div class="empty">You haven’t claimed any jobs yet.</div>`;
         return;
       }
-
-      myJobsEl.innerHTML = list.map(j => jobCardHTML(j)).join("");
+      myJobsEl.innerHTML = list.map(j => jobCardHTML(j, true)).join('');
       list.forEach(j => injectMineActions(j));
     }
 
-    async function getMyUserDoc(){
+    /* ---------- new helpers for compliance & private address ---------- */
+    async function getMyUserDoc() {
       if (!me) return null;
-      const snap = await getDoc(doc(db, "users", me.uid));
+      const snap = await getDoc(doc(db, 'users', me.uid));
       return snap.exists() ? snap.data() : null;
     }
 
-    function isCompliant(u){
+    function isCompliant(u) {
       const c = u?.compliance || {};
-      const bgClear = c.background?.status === "clear";
-      const insVerified = c.insurance?.status === "verified";
+      const bgClear = (c.background?.status === 'clear');       // e.g., {status:'clear'}
+      const insVerified = (c.insurance?.status === 'verified');  // e.g., {status:'verified'}
       return !!(bgClear && insVerified);
     }
 
-    async function ensureCompliantOrExplain(){
+    async function ensureCompliantOrExplain() {
       const u = await getMyUserDoc();
-
       if (isCompliant(u)) return true;
-
       alert(
         "Almost there!\n\n" +
-        "• Complete your Checkr background check.\n" +
-        "• Upload insurance and list The Finishing Touch as Certificate Holder.\n\n" +
+        "• Complete your Checkr background check (status must be Clear).\n" +
+        "• Upload insurance and list us as Certificate Holder (status must be Verified).\n\n" +
         "Once both are verified, you can claim jobs."
       );
-
       return false;
     }
 
-    async function fetchPrivateFullAddress(jobId){
+    async function fetchPrivateFullAddress(jobId) {
       try {
-        const privateMainRef = doc(db, "jobs", jobId, "private", "main");
-        const privateMainSnap = await getDoc(privateMainRef);
-
-        if (privateMainSnap.exists()) {
-          const data = privateMainSnap.data();
-          const fullAddress = data.fullAddress || data.address || "";
-          if (fullAddress) return String(fullAddress).trim();
-        }
-
-        const privatePiiRef = doc(db, "jobs", jobId, "private", "pii");
-        const privatePiiSnap = await getDoc(privatePiiRef);
-
-        if (privatePiiSnap.exists()) {
-          const data = privatePiiSnap.data();
-          const fullAddress = data.fullAddress || data.address || "";
-          if (fullAddress) return String(fullAddress).trim();
-        }
-
-        return "";
+        const ref = doc(db, 'jobs', jobId, 'private', 'main');
+        const snap = await getDoc(ref);
+        const full = snap.exists() ? (snap.data().fullAddress || '') : '';
+        return (full || '').trim();
       } catch {
-        return "";
+        return '';
       }
     }
+    /* ------------------------------------------------------------------ */
 
     function injectOpenActions(j){
       const card = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
       if (!card) return;
+      const actions = card.querySelector('.actions');
 
-      const actions = card.querySelector(".actions");
-
-      if (canClaimRole()) {
+      if (canClaimRole()){
         const { left } = slotsLeft(j);
-        const claim = document.createElement("button");
-        claim.className = "btn btn-solid";
-        claim.textContent = left > 1 ? "Claim a slot" : "Claim this job";
-        claim.addEventListener("click", () => claimJob(j.id, claim));
+        const claim = document.createElement('button');
+        claim.className = 'btn btn-solid';
+        claim.textContent = left > 1 ? 'Claim a slot' : 'Claim this job';
+        claim.addEventListener('click', () => claimJob(j.id, claim));
         actions.appendChild(claim);
       }
 
-      const msg = document.createElement("a");
-      msg.className = "btn btn-outline";
-      msg.textContent = "Message Admin";
-      msg.href = "#";
-      msg.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Messaging coming soon.");
-      });
+      const msg = document.createElement('a');
+      msg.className = 'btn btn-outline';
+      msg.textContent = 'Message Admin';
+      msg.href = '#';
+      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
       actions.appendChild(msg);
     }
 
     async function injectMineActions(j){
       const card = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
       if (!card) return;
+      const actions = card.querySelector('.actions');
 
-      const actions = card.querySelector(".actions");
-      const iAmOnThis = Array.isArray(j.contractorIds)
-        ? j.contractorIds.includes(me?.uid)
-        : j.contractorId === me?.uid;
-
+      // If I’m on this job, reveal full address from private subdoc (but never client name)
+      const iAmOnThis = Array.isArray(j.contractorIds) ? j.contractorIds.includes(me?.uid) : (j.contractorId === me?.uid);
       if (iAmOnThis) {
         const full = await fetchPrivateFullAddress(j.id);
-
         if (full) {
-          const meta = card.querySelector(".meta");
-
-          if (meta && !meta.querySelector(".fulladdr")) {
-            const span = document.createElement("span");
-            span.className = "fulladdr";
+          const meta = card.querySelector('.meta');
+          if (meta && !meta.querySelector('.fulladdr')) {
+            const span = document.createElement('span');
+            span.className = 'fulladdr';
             span.innerHTML = `📍 <span>${full}</span>`;
             meta.appendChild(span);
           }
         }
       }
 
-      const msg = document.createElement("a");
-      msg.className = "btn btn-outline";
-      msg.textContent = "Message Admin";
-      msg.href = "#";
-      msg.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Messaging coming soon.");
-      });
+      const msg = document.createElement('a');
+      msg.className = 'btn btn-outline';
+      msg.textContent = 'Message Admin';
+      msg.href = '#';
+      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
       actions.appendChild(msg);
 
-      const mark = document.createElement("button");
-      mark.className = "btn btn-solid";
-
-      mark.textContent =
-        j.status === "in_progress" ? "Mark Submitted" :
-        j.status === "claimed" ? "Start Work" :
-        j.status === "submitted" ? "Submitted" :
-        "Update Status";
-
-      mark.disabled = ["submitted", "approved", "paid"].includes(j.status);
-
-      mark.addEventListener("click", async () => {
+      const mark = document.createElement('button');
+      mark.className = 'btn btn-solid';
+      mark.textContent = j.status === 'in_progress' ? 'Mark Submitted'
+                      : (j.status === 'claimed' ? 'Start Work'
+                      : (j.status === 'submitted' ? 'Submitted' : 'Update Status'));
+      mark.disabled = (j.status === 'submitted' || j.status === 'approved' || j.status === 'paid');
+      mark.addEventListener('click', async () => {
         try {
-          const newStatus = j.status === "claimed" ? "in_progress" : "submitted";
-
-          await updateDoc(doc(db, "jobs", j.id), {
-            status: newStatus,
-            updatedAt: serverTimestamp()
-          });
-
-          showToast(newStatus === "in_progress" ? "Marked in progress" : "Marked submitted");
+          const newStatus = j.status === 'claimed' ? 'in_progress' : 'submitted';
+          await updateDoc(doc(db, 'jobs', j.id), { status: newStatus, updatedAt: serverTimestamp() });
+          showToast(newStatus === 'in_progress' ? 'Marked in progress' : 'Marked submitted');
         } catch (e) {
           console.warn(e);
-          alert("Could not update status.");
+          alert('Could not update status.');
         }
       });
-
       actions.appendChild(mark);
     }
 
     async function claimJob(jobId, buttonEl){
       if (!me) return;
 
+      // NEW: block claim if not compliant
       const ok = await ensureCompliantOrExplain();
       if (!ok) return;
 
-      if (buttonEl) {
-        buttonEl.disabled = true;
-        buttonEl.textContent = "Claiming…";
-      }
+      if (buttonEl) { buttonEl.disabled = true; buttonEl.textContent = 'Claiming…'; }
 
       try {
         await runTransaction(db, async (tx) => {
-          const ref = doc(db, "jobs", jobId);
+          const ref = doc(db, 'jobs', jobId);
           const snap = await tx.get(ref);
-
-          if (!snap.exists()) throw new Error("Job not found.");
-
+          if (!snap.exists()) throw new Error('Job not found.');
           const j = snap.data();
 
-          if ((j.status || "open") !== "open") {
-            throw new Error("Already claimed.");
-          }
+          if ((j.status || 'open') !== 'open') throw new Error('Already claimed.');
 
           const need = Number(j.contractorsNeeded || 1);
-          const ids = Array.isArray(j.contractorIds)
-            ? [...j.contractorIds]
-            : (j.contractorId ? [j.contractorId] : []);
-
+          const ids = Array.isArray(j.contractorIds) ? [...j.contractorIds]
+                    : (j.contractorId ? [j.contractorId] : []);
           if (ids.includes(me.uid)) return;
-          if (ids.length >= need) throw new Error("No slots left.");
+          if (ids.length >= need) throw new Error('No slots left.');
 
           ids.push(me.uid);
-
           const emails = Array.isArray(j.contractorEmails) ? [...j.contractorEmails] : [];
-          const myEmail = me.email || "";
-
-          if (myEmail && !emails.includes(myEmail)) {
-            emails.push(myEmail);
-          }
+          const myEmail = me.email || '';
+          if (myEmail && !emails.includes(myEmail)) emails.push(myEmail);
 
           const update = {
             contractorIds: ids,
             contractorEmails: emails,
             updatedAt: serverTimestamp()
           };
-
           if (ids.length >= need) {
-            update.status = "claimed";
+            update.status = 'claimed';
             update.claimedAt = serverTimestamp();
           } else {
-            update.status = "open";
+            update.status = 'open';
           }
-
           tx.update(ref, update);
         });
 
-        showToast("Job claimed");
-        setTab("mine");
-
+        showToast('Job claimed');
+        setTab('mine');
       } catch (e) {
         console.warn(e);
-
-        const msg = e && e.code === "permission-denied"
-          ? "Permission denied claiming. Your account may still be pending."
-          : (e.message || "Could not claim. It may have just been taken.");
-
+        const msg = (e && e.code === 'permission-denied')
+          ? 'Permission denied claiming. Your account may still be pending.'
+          : (e.message || 'Could not claim. It may have just been taken.');
         alert(msg);
-
       } finally {
-        if (buttonEl) {
-          buttonEl.disabled = false;
-          buttonEl.textContent = "Claim this job";
-        }
+        if (buttonEl) { buttonEl.disabled = false; buttonEl.textContent = 'Claim this job'; }
       }
     }
+  </script>
+
+  <script>
+    (function(){
+      const links = Array.from(document.querySelectorAll("[data-side]"));
+      const dashboard = document.getElementById("dashboardPanel");
+      const placeholder = document.getElementById("placeholderPanel");
+      const title = document.getElementById("placeholderTitle");
+      const text = document.getElementById("placeholderText");
+
+      const copy = {
+        dashboard: {
+          title: "Dashboard",
+          text: "View open jobs and manage claimed work."
+        },
+        jobs: {
+          title: "Jobs / Assignments",
+          text: "This will become your detailed job board with assigned work, arrival details, service notes, and completion steps."
+        },
+        walkthroughs: {
+          title: "Walkthroughs",
+          text: "Coming next: submit walkthrough checklists, upload home photos/videos, and send your estimate directly to admin."
+        },
+        estimates: {
+          title: "My Estimates",
+          text: "Soon you’ll be able to review submitted estimates and track whether they were approved, revised, or scheduled."
+        },
+        messages: {
+          title: "Messages",
+          text: "Brand-safe messaging is coming soon for scheduling, arrival updates, and job questions."
+        },
+        documents: {
+          title: "Documents",
+          text: "Insurance, background check status, W-9, contractor agreement, and onboarding documents will live here."
+        },
+        resources: {
+          title: "Resources",
+          text: "Cleaning checklists, product guides, photo requirements, and TFT standards will be organized here."
+        },
+        payments: {
+          title: "Payments",
+          text: "Payment status, completed job records, and payout notes will be added in a later phase."
+        }
+      };
+
+      function show(section){
+        links.forEach(link => link.classList.toggle("active", link.dataset.side === section));
+
+        if (section === "dashboard" || section === "jobs") {
+          dashboard.style.display = "";
+          placeholder.classList.remove("active");
+          return;
+        }
+
+        dashboard.style.display = "none";
+        placeholder.classList.add("active");
+        title.textContent = copy[section]?.title || "Coming Soon";
+        text.textContent = copy[section]?.text || "This section is ready for the next build phase.";
+      }
+
+      links.forEach(link => {
+        link.addEventListener("click", () => show(link.dataset.side));
+      });
+
+      show("dashboard");
+    })();
   </script>
 </body>
 </html>
