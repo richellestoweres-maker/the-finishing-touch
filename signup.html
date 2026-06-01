@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign Up – The Finishing Touch</title>
 
-  <!-- Fonts + Site CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Minimal luxe form styles (matches login) -->
   <style>
     .auth-wrap { width: min(460px, 92%); margin: 64px auto; background: #fff; padding: 28px; border-radius: 16px; box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08)); }
     .auth-wrap h1 { font-family: "Playfair Display", serif; font-size: 1.9rem; text-align: center; margin: 0 0 1rem; color: var(--taupe-900, #2e2a27); }
@@ -23,9 +21,9 @@
     .muted { color: #7b746e; font-size: .95rem; }
   </style>
 </head>
+
 <body>
   <div class="auth-wrap">
-    <!-- Back home button (inside the card) -->
     <div style="margin-bottom:10px;">
       <a class="btn btn-outline" href="index.html">← Back home</a>
     </div>
@@ -47,12 +45,11 @@
 
       <button id="signupBtn" type="submit" class="btn btn-solid">Sign Up</button>
 
-      <p class="muted">Already have an account? <a href="login.html">Sign in</a></p>
+      <p class="muted">Already have an account? <a id="loginLink" href="login.html">Sign in</a></p>
       <p id="signupError" class="error" aria-live="polite" hidden></p>
     </form>
   </div>
 
-  <!-- Firebase Auth + Firestore wiring -->
   <script type="module">
     import { auth, db } from "./ft-firebase.js";
     import {
@@ -64,56 +61,86 @@
       doc, setDoc, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const form    = document.getElementById('signupForm');
-    const nameEl  = document.getElementById('signupName');
-    const emailEl = document.getElementById('signupEmail');
-    const passEl  = document.getElementById('signupPass');
-    const btn     = document.getElementById('signupBtn');
-    const errEl   = document.getElementById('signupError');
+    const form = document.getElementById("signupForm");
+    const nameEl = document.getElementById("signupName");
+    const emailEl = document.getElementById("signupEmail");
+    const passEl = document.getElementById("signupPass");
+    const btn = document.getElementById("signupBtn");
+    const errEl = document.getElementById("signupError");
+    const loginLink = document.getElementById("loginLink");
 
-    // Where to redirect after success (honors ?next=..., internal only)
-    function getNext() {
+    const CONTRACTOR_CODE = "FTT-2025";
+
+    function safeNextFromQuery(){
       const params = new URLSearchParams(location.search);
-      const next = params.get('next') || 'index.html';
-      const isInternal = next && !/^https?:\/\//i.test(next) && !/^\/\//.test(next);
-      return isInternal ? next : 'index.html';
+      const next = (params.get("next") || "").trim();
+
+      if (!next) return "";
+      if (/^https?:\/\//i.test(next)) return "";
+      if (/^\/\//.test(next)) return "";
+
+      return next;
     }
 
-    // Already signed in? Send them along.
-    onAuthStateChanged(auth, (user) => { if (user) window.location.href = getNext(); });
+    function preserveNextOnLoginLink(){
+      const next = safeNextFromQuery();
+      if (next) {
+        loginLink.href = `login.html?next=${encodeURIComponent(next)}`;
+      }
+    }
 
-    form.addEventListener('submit', async (e) => {
+    function dashboardForRole(role, next){
+      if (role === "admin") return "admin-dashboard.html";
+      if (role === "contractor") return "contractor-dashboard.html";
+      if (role === "pending") return "contractor-apply.html";
+      return next || "client-dashboard.html";
+    }
+
+    preserveNextOnLoginLink();
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const next = safeNextFromQuery();
+        window.location.href = next || "client-dashboard.html";
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+
       errEl.hidden = true;
       btn.disabled = true;
+
       const originalText = btn.textContent;
       btn.textContent = "Creating account…";
 
-      const name  = nameEl.value.trim();
+      const name = nameEl.value.trim();
       const email = emailEl.value.trim();
-      const pass  = passEl.value.trim();
+      const pass = passEl.value.trim();
 
       try {
-        // 1) Create auth user
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
 
-        // 2) Optional display name
-        if (name) { await updateProfile(cred.user, { displayName: name }); }
+        if (name) {
+          await updateProfile(cred.user, { displayName: name });
+        }
 
-        // 3) Create user profile in Firestore with a role
-        // Default role: "client". Support private contractor invites via URL (?role=contractor&code=FTT-2025&types=cleaning,organizing)
         const params = new URLSearchParams(location.search);
-        const inviteRole = params.get('role'); // "contractor" or null
-        const inviteCode = params.get('code');
-        const CONTRACTOR_CODE = "FTT-2025";     // <-- change this to your private code
+        const inviteRole = params.get("role");
+        const inviteCode = params.get("code");
 
         let role = "client";
         let serviceTypes = [];
+
         if (inviteRole === "contractor" && inviteCode === CONTRACTOR_CODE) {
           role = "contractor";
-          const types = params.get('types');
+
+          const types = params.get("types");
           if (types) {
-            serviceTypes = types.split(',').map(s => s.trim()).filter(Boolean);
+            serviceTypes = types
+              .split(",")
+              .map(s => s.trim().toLowerCase())
+              .filter(Boolean);
           }
         }
 
@@ -121,12 +148,12 @@
           displayName: name || cred.user.email,
           email: cred.user.email,
           role,
-          serviceTypes,                 // empty for clients
+          serviceTypes,
           createdAt: serverTimestamp()
         });
 
-        // 4) Redirect
-        window.location.href = getNext();
+        const next = safeNextFromQuery();
+        window.location.href = dashboardForRole(role, next);
 
       } catch (e) {
         const map = {
@@ -135,8 +162,8 @@
           "auth/weak-password": "Password must be at least 6 characters.",
           "auth/missing-password": "Please enter a password."
         };
-        const code = e.code || "";
-        errEl.textContent = map[code] || (e.message?.replace("Firebase: ", "") || "Sign up failed.");
+
+        errEl.textContent = map[e.code] || (e.message?.replace("Firebase: ", "") || "Sign up failed.");
         errEl.hidden = false;
         btn.disabled = false;
         btn.textContent = originalText;
