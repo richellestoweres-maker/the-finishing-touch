@@ -1,147 +1,252 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Client Portal – The Finishing Touch</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Client Dashboard – The Finishing Touch</title>
 
-  <!-- Fonts & Site CSS (reuse home styling) -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=9"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 
-  <style>
-    html{scroll-behavior:smooth}
-    body{background:#fbf8f4}
-    .container{width:min(1180px,94%);margin-inline:auto}
+<style>
+:root{
+--portal-bg:#fbf7f4;
+--portal-card:#fffdfb;
+--portal-ink:#2f2926;
+--portal-muted:#7a6f68;
+--portal-line:#eadfd8;
+--portal-blush:#f2d8dc;
+--portal-blush-strong:#e8b9c2;
+--portal-blush-soft:#fff1f3;
+--portal-taupe:#d2bda9;
+--portal-shadow:0 18px 45px rgba(68,54,45,.10);
+--portal-shadow-soft:0 10px 28px rgba(68,54,45,.08);
+}
 
-    /* Header: match index.html */
-    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 0}
-    .main-nav{display:flex;gap:10px;flex-wrap:wrap}
-    .main-nav a{white-space:nowrap}
+*{box-sizing:border-box}
 
-    /* Hero: same look, slightly shorter */
-    .hero{position:relative}
-    .hero-media img{width:100%;height:clamp(260px,36vw,420px);object-fit:cover;object-position:center;display:block}
-    .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.35))}
-    .hero-content{position:absolute;inset:0;display:grid;align-content:center}
-    .hero-content .script-kicker,.hero-content .hero-title,.hero-content .hero-sub{max-width:min(820px,92%);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.25)}
+body{
+margin:0;
+background:
+radial-gradient(circle at top left, rgba(242,216,220,.72), transparent 34%),
+radial-gradient(circle at bottom right, rgba(210,189,169,.34), transparent 30%),
+var(--portal-bg);
+font-family:Manrope,sans-serif;
+color:var(--portal-ink);
+}
 
-    /* Sections & cards */
-    .section{padding:20px 0 10px}
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;align-items:stretch}
-    .card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 10px 26px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:8px;justify-content:center}
-    .card h3{margin:.25rem 0 .15rem}
-    .meta{display:flex;gap:10px;flex-wrap:wrap;font-size:.95rem;opacity:.9}
-    .small{font-size:.9rem;opacity:.85}
-    .hint{font-size:.92rem;opacity:.9}
+.portal-shell{
+width:min(1280px,96%);
+margin:22px auto 56px;
+display:grid;
+grid-template-columns:260px 1fr;
+gap:18px;
+}
 
-    /* Quick Actions */
-    .qa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
-    .inline-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .inline-actions select{border:1px solid #e3d9ce;border-radius:10px;padding:.55rem .7rem;background:#fffdfb}
+.sidebar{
+position:sticky;
+top:18px;
+min-height:calc(100vh - 44px);
+background:rgba(255,253,251,.82);
+backdrop-filter:blur(18px);
+border:1px solid rgba(234,223,216,.9);
+border-radius:28px;
+padding:18px;
+box-shadow:var(--portal-shadow);
+display:flex;
+flex-direction:column;
+gap:18px;
+}
 
-    .btn{display:inline-block;padding:.55rem .85rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer}
-    .btn-outline{border:1.5px solid #2e2a27;background:#fff;color:#2e2a27}
-    .btn-solid{background:#d2bda9;color:#2a2624;border:0}
+.brand-panel{display:flex;gap:12px;align-items:center;padding:10px 8px 14px;border-bottom:1px solid var(--portal-line)}
+.vase-logo{width:34px;height:44px;background:url('logo-vase.png') center/contain no-repeat;display:block}
+.brand-panel strong{display:block;font-family:Playfair Display,serif;font-size:1.1rem}
+.brand-panel span{color:var(--portal-muted);font-size:.82rem;font-weight:700}
 
-    /* Job list */
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-    .empty{background:#fff;border:1px dashed #e3d9ce;border-radius:16px;padding:22px;text-align:center}
+.side-nav{display:grid;gap:8px}
 
-    /* Footer spacer */
-    .spacer{height:24px}
+.side-link{
+display:flex;
+align-items:center;
+gap:10px;
+padding:11px 12px;
+border-radius:18px;
+cursor:pointer;
+font-weight:800;
+border:1px solid transparent;
+background:transparent;
+color:var(--portal-muted);
+}
 
-    /* Chat z-index safety */
-    #ftt-chat-launcher,#ftt-chat{z-index:9999}
-  </style>
+.side-link:hover,.side-link.active{
+background:linear-gradient(135deg,var(--portal-blush-soft),#fff);
+border-color:var(--portal-blush);
+color:var(--portal-ink);
+}
+
+.icon{
+width:30px;height:30px;border-radius:12px;background:#fff;
+display:grid;place-items:center;
+box-shadow:0 6px 18px rgba(68,54,45,.08)
+}
+
+.side-footer{margin-top:auto;display:grid;gap:8px;padding-top:14px;border-top:1px solid var(--portal-line)}
+
+.main-area{display:grid;gap:16px}
+
+.topbar,.hero-card,.toolbar,.card{
+background:rgba(255,253,251,.86);
+border:1px solid var(--portal-line);
+border-radius:28px;
+box-shadow:var(--portal-shadow-soft);
+}
+
+.topbar{padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.welcome h1{margin:0;font-family:Playfair Display,serif;font-size:2rem}
+.welcome p{margin:6px 0 0;color:var(--portal-muted)}
+
+.hero-card{
+padding:24px;
+background:linear-gradient(135deg, rgba(242,216,220,.95), rgba(255,253,251,.95) 55%, rgba(210,189,169,.42));
+display:grid;
+grid-template-columns:1.2fr .8fr;
+gap:18px;
+}
+
+.script-kicker{font-family:Allura,cursive;color:#925e69;font-size:2rem;margin:0}
+.hero-card h2{font-family:Playfair Display,serif;margin:0;font-size:2rem}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:rgba(255,253,251,.76);border:1px solid rgba(234,223,216,.82);border-radius:22px;padding:14px}
+.stat strong{display:block;font-size:1.4rem}
+.stat span{font-size:.78rem;color:var(--portal-muted);font-weight:800}
+
+.toolbar{padding:12px}
+.cards,.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+
+.card{padding:18px;display:flex;flex-direction:column;gap:10px}
+
+.btn{display:inline-flex;justify-content:center;align-items:center;padding:.62rem .9rem;border-radius:999px;font-weight:900;text-decoration:none;cursor:pointer}
+.btn-outline{border:1.5px solid #2f2926;background:#fffdfb;color:#2f2926}
+.btn-solid{background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));color:#2f2926}
+
+.empty{padding:28px;text-align:center;border:1px dashed #e3cfd4;border-radius:26px}
+
+.hidden{display:none!important}
+
+@media(max-width:920px){
+.portal-shell{grid-template-columns:1fr}
+.sidebar{position:relative;min-height:auto}
+.hero-card{grid-template-columns:1fr}
+}
+
+@media(max-width:620px){
+.portal-shell{width:min(100% - 18px,1280px)}
+.btn{width:100%}
+.stats-row{grid-template-columns:1fr}
+}
+</style>
 </head>
-<body class="page-client">
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand">
-        <span class="vase-logo" aria-hidden="true"></span>
-        <span class="brand-name">The Finishing Touch</span>
-      </div>
-      <nav class="main-nav">
-        <a href="index.html">Home</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#about">About</a>
-        <a href="contact.html">Contact</a>
-        <a class="btn btn-outline" id="btnSignOut" href="#">Sign out</a>
-      </nav>
-    </div>
-  </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-media">
-      <img src="bed-banner.png" alt="Styled bedroom by The Finishing Touch">
-      <div class="hero-scrim"></div>
-    </div>
-    <div class="container hero-content">
-      <p class="script-kicker">Welcome back</p>
-      <h1 class="hero-title" id="heroName">Your Client Portal</h1>
-      <p class="hero-sub">Start a new intake, check status, and manage bookings—all in one place.</p>
-    </div>
-  </section>
+<body>
+<div class="portal-shell">
 
-  <!-- Quick Actions -->
-  <section class="section">
-    <div class="container">
-      <div class="qa-grid">
-        <article class="card">
-          <h3>Start a New Intake</h3>
-          <p class="small">Pick a service to get an instant ballpark estimate, then book.</p>
-          <div class="inline-actions">
-            <select id="qaService">
-              <option value="intake-cleaning.html">Cleaning</option>
-              <option value="intake-organizing.html">Organizing</option>
-              <option value="intake-decor.html">Interior Decorating</option>
-              <option value="intake-holiday.html">Holiday & Events</option>
-            </select>
-            <a id="qaGo" class="btn btn-solid" href="#">Go</a>
-          </div>
-          <p class="hint">We’ll email you a copy of your estimate on the intake page.</p>
-        </article>
+<aside class="sidebar">
+<div class="brand-panel">
+<span class="vase-logo"></span>
+<div>
+<strong>The Finishing Touch</strong>
+<span>Client Portal</span>
+</div>
+</div>
 
-        <article class="card">
-          <h3>Book on Square</h3>
-          <p class="small">See live availability and schedule instantly.</p>
-          <a class="btn btn-outline" target="_blank" rel="noopener" href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9">Open Calendar</a>
-        </article>
+<nav class="side-nav">
+<div class="side-link active"><span class="icon">⌂</span>Dashboard</div>
+<div class="side-link"><span class="icon">✦</span>Bookings</div>
+<div class="side-link"><span class="icon">♡</span>Membership & Perks</div>
+<div class="side-link"><span class="icon">✉</span>Messages</div>
+<div class="side-link"><span class="icon">☑</span>Invoices</div>
+<div class="side-link"><span class="icon">⚙</span>Profile</div>
+</nav>
 
-        <article class="card">
-          <h3>My Estimates</h3>
-          <p class="small">Review estimates we’ve shared or saved with your account.</p>
-          <a class="btn btn-outline" href="#my-jobs">View</a>
-        </article>
+<div class="side-footer">
+<a class="btn btn-outline" href="index.html">Home</a>
+<a class="btn btn-solid" id="btnSignOut" href="#">Sign out</a>
+</div>
+</aside>
 
-        <article class="card">
-          <h3>Support</h3>
-          <p class="small">Questions about your booking or scope?</p>
-          <div class="inline-actions">
-            <a class="btn btn-outline" target="_blank" rel="noopener" href="https://m.me/thefinishingtouch.tx">Message us</a>
-            <a class="btn btn-outline" href="mailto:contact.thefinishingtouch.tx@gmail.com">Email</a>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
+<main class="main-area">
 
-  <!-- My Jobs -->
-  <section id="my-jobs" class="section">
-    <div class="container">
-      <h2 style="margin:8px 4px 10px">My Jobs</h2>
-      <div id="jobList" class="grid" aria-live="polite"></div>
-    </div>
-  </section>
+<section class="topbar">
+<div class="welcome">
+<h1 id="heroName">Welcome back</h1>
+<p>Manage your home services, bookings, and perks beautifully.</p>
+</div>
+</section>
 
-  <div class="spacer"></div>
+<section class="hero-card">
+<div>
+<p class="script-kicker">The Finishing Touch</p>
+<h2>Your home concierge experience</h2>
+<p>Book services, review estimates, and manage your home care all in one elevated place.</p>
+</div>
 
-  <!-- Firebase + logic -->
-  <script type="module">
-    import { auth, db } from "./ft-firebase.js";
+<div class="stats-row">
+<div class="stat">
+<strong id="jobCount">0</strong>
+<span>Bookings</span>
+</div>
+<div class="stat">
+<strong>VIP</strong>
+<span>Future Membership</span>
+</div>
+<div class="stat">
+<strong>24/7</strong>
+<span>Portal Access</span>
+</div>
+</div>
+</section>
+
+<section class="toolbar">
+<div class="cards">
+
+<article class="card">
+<h3>Start a New Intake</h3>
+<p>Choose a service and begin your quote.</p>
+<select id="qaService">
+<option value="intake-cleaning.html">Cleaning</option>
+<option value="intake-organizing.html">Organizing</option>
+<option value="intake-decor.html">Interior Decorating</option>
+<option value="intake-holiday.html">Holiday & Events</option>
+</select>
+<a id="qaGo" class="btn btn-solid" href="#">Start</a>
+</article>
+
+<article class="card">
+<h3>Book Calendar</h3>
+<p>View live Square availability.</p>
+<a class="btn btn-outline" target="_blank" href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9">Open Calendar</a>
+</article>
+
+<article class="card">
+<h3>Client Perks</h3>
+<p>Future loyalty rewards, birthday gifts, seasonal specials, and member benefits.</p>
+<a class="btn btn-outline" href="#">Coming Soon</a>
+</article>
+
+</div>
+</section>
+
+<section>
+<h2 style="font-family:Playfair Display,serif;margin:8px 4px 10px">My Jobs</h2>
+<div id="jobList" class="grid"></div>
+</section>
+
+</main>
+</div>
+
+<script type="module">
+import { auth, db } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import { collection, query, where, orderBy, onSnapshot, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
@@ -164,7 +269,7 @@
     el.qaService.addEventListener('change', setHref); setHref();
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user){ location.href = "login.html?next=" + encodeURIComponent("client.html"); return; }
+      if (!user){ location.href = "login.html?next=" + encodeURIComponent("client-dashboard.html"); return; }
 
       // Friendly greeting
       try {
@@ -211,9 +316,9 @@
         }).join("");
       });
     });
-  </script>
+</script>
 
-  <!-- === Finishing Touch — AI Concierge Chat (guarded) === -->
+<!-- === Finishing Touch — AI Concierge Chat (guarded) === -->
   <style>
     #ftt-chat-launcher{position:fixed;right:18px;bottom:18px;width:54px;height:54px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#2e2a27;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.18)}
     #ftt-chat{position:fixed;right:18px;bottom:84px;width:340px;max-width:calc(100vw - 36px);background:#fff;border:1px solid #e8ddd1;border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.18);display:none;font-family:Manrope,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -330,7 +435,11 @@
     })();
   </script>
 
-  <!-- Keep Firebase module available for other pages -->
-  <script type="module">import { auth } from "./ft-firebase.js";</script>
+  
+
+<script type="module">
+import { auth } from "./ft-firebase.js";
+</script>
+
 </body>
 </html>
