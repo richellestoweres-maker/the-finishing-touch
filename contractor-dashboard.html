@@ -527,6 +527,9 @@
       <nav class="side-nav">
         <button class="side-link active" type="button" data-side="dashboard"><span class="icon">⌂</span>Dashboard</button>
         <button class="side-link" type="button" data-side="jobs"><span class="icon">✦</span>Jobs / Assignments</button>
+        <button class="side-link" type="button" data-side="availability"><span class="icon">📅</span>Availability</button>
+        <button class="side-link" type="button" data-side="territory"><span class="icon">📍</span>Territory</button>
+        <button class="side-link" type="button" data-side="capacity"><span class="icon">⚙</span>Capacity</button>
         <button class="side-link" type="button" data-side="walkthroughs"><span class="icon">◷</span>Walkthroughs</button>
         <button class="side-link" type="button" data-side="estimates"><span class="icon">♢</span>My Estimates</button>
         <button class="side-link" type="button" data-side="messages"><span class="icon">✉</span>Messages</button>
@@ -557,7 +560,7 @@
         <div class="hero-copy">
           <p class="script-kicker">Today’s touchpoints</p>
           <h2>Your contractor command center</h2>
-          <p>Claim available work, review assigned jobs, and soon you’ll be able to submit walkthrough estimates, photos, videos, and completion checklists right here.</p>
+          <p>Claim work, manage TFT availability, set ZIP preferences, submit walkthroughs, and coordinate scheduling with admin — all from one place.</p>
         </div>
 
         <div class="stats-row" aria-label="Contractor overview">
@@ -571,7 +574,7 @@
           </div>
           <div class="stat">
             <strong id="statService">All</strong>
-            <span>Service Filter</span>
+            <span>Work Focus</span>
           </div>
         </div>
       </section>
@@ -612,6 +615,19 @@
         <section id="panelMine" class="main" role="tabpanel" aria-labelledby="tabMine" hidden>
           <div id="myJobs" class="grid" aria-live="polite"></div>
         </section>
+      </section>
+
+      <section class="card" style="background:#fff7f8;border-color:#f1dce1;">
+        <div class="toprow">
+          <strong style="font-family:Playfair Display,serif;">Contractor Portal 2.0</strong>
+          <div class="rolepill">1099 Active • W2 Hidden Ready</div>
+        </div>
+        <div class="meta">
+          <span>📅 Availability Mode</span>
+          <span>📍 Territory Rules</span>
+          <span>⚙ Capacity Settings</span>
+          <span>🤖 Scheduling AI Ready</span>
+        </div>
       </section>
 
       <section id="placeholderPanel" class="placeholder-panel">
@@ -1093,40 +1109,54 @@ import { auth, db } from "./ft-firebase.js";
       const title = document.getElementById("placeholderTitle");
       const text = document.getElementById("placeholderText");
 
-      const copy = {
+      
+const copy = {
         dashboard: {
           title: "Dashboard",
-          text: "View open jobs and manage claimed work."
+          text: "View open opportunities and manage claimed work."
         },
         jobs: {
           title: "Jobs / Assignments",
-          text: "This will become your detailed job board with assigned work, arrival details, service notes, and completion steps."
+          text: "Assigned work, arrival details, job notes, and completion workflow will live here."
+        },
+        availability: {
+          title: "Availability",
+          text: "Coming next: submit TFT-only availability slots without exposing your full personal or company calendar."
+        },
+        territory: {
+          title: "Territory + ZIP Preferences",
+          text: "Set preferred ZIP codes, travel zones, and area preferences by day."
+        },
+        capacity: {
+          title: "Capacity Settings",
+          text: "Set realistic workload: max homes/day, max hours/day, heavy clean limits, and preferred job sizes."
         },
         walkthroughs: {
           title: "Walkthroughs",
-          text: "Coming next: submit walkthrough checklists, upload home photos/videos, and send your estimate directly to admin."
+          text: "Upload walkthrough photos/videos, submit checklist findings, and send estimate recommendations to admin."
         },
         estimates: {
           title: "My Estimates",
-          text: "Soon you’ll be able to review submitted estimates and track whether they were approved, revised, or scheduled."
+          text: "Track estimates you submitted and whether they were approved, revised, or booked."
         },
         messages: {
           title: "Messages",
-          text: "Brand-safe messaging is coming soon for scheduling, arrival updates, and job questions."
+          text: "Messaging to TFT admin is coming for scheduling, ETA updates, and job communication."
         },
         documents: {
-          title: "Documents",
-          text: "Insurance, background check status, W-9, contractor agreement, and onboarding documents will live here."
+          title: "Documents + Compliance",
+          text: "Insurance, Checkr status, W‑9, contractor agreement, and onboarding paperwork live here."
         },
         resources: {
           title: "Resources",
-          text: "Cleaning checklists, product guides, photo requirements, and TFT standards will be organized here."
+          text: "Cleaning standards, organization guides, staging resources, and TFT SOPs will be stored here."
         },
         payments: {
           title: "Payments",
-          text: "Payment status, completed job records, and payout notes will be added in a later phase."
+          text: "Payout history, completed job records, and payment notes are planned here."
         }
       };
+
 
       function show(section){
         links.forEach(link => link.classList.toggle("active", link.dataset.side === section));
