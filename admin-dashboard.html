@@ -477,6 +477,135 @@
       #admin-help{right:0;left:0;bottom:0;width:100vw;height:70vh;border-radius:16px 16px 0 0}
       #admin-help-launcher{right:12px;bottom:12px}
     }
+  
+    /* === Admin Command Center 2.0 layout upgrade === */
+    .portal{
+      grid-template-columns:270px minmax(0,1fr);
+      align-items:start;
+    }
+    .topbar,.bar,.panels{grid-column:2}
+    .tabs{
+      grid-column:1;
+      grid-row:1 / span 4;
+      position:sticky;
+      top:18px;
+      min-height:calc(100vh - 44px);
+      align-content:start;
+      display:grid;
+      gap:8px;
+      border-radius:30px;
+      padding:18px;
+      background:rgba(255,253,251,.86);
+      backdrop-filter:blur(18px);
+      box-shadow:var(--portal-shadow);
+    }
+    .tabs::before{
+      content:"The Finishing Touch\\A Admin Command Center";
+      white-space:pre-line;
+      font-family:"Playfair Display",serif;
+      font-size:1.1rem;
+      line-height:1.15;
+      color:var(--portal-ink);
+      padding:8px 8px 14px;
+      border-bottom:1px solid var(--portal-line);
+      margin-bottom:8px;
+    }
+    .tabbtn{
+      width:100%;
+      text-align:left;
+      justify-content:flex-start;
+      display:flex;
+      align-items:center;
+      border-radius:18px;
+      border-color:transparent;
+      background:transparent;
+    }
+    .tabbtn::before{
+      width:30px;
+      height:30px;
+      border-radius:12px;
+      background:#fff;
+      display:inline-grid;
+      place-items:center;
+      margin-right:8px;
+      box-shadow:0 6px 18px rgba(68,54,45,.08);
+      content:"✦";
+      flex:0 0 auto;
+    }
+    .tabbtn[data-tab="open"]::before{content:"⌂"}
+    .tabbtn[data-tab="all"]::before{content:"☷"}
+    .tabbtn[data-tab="create"]::before{content:"+"}
+    .tabbtn[data-tab="walkthroughs"]::before{content:"◷"}
+    .tabbtn[data-tab="estimate"]::before{content:"♢"}
+    .tabbtn[data-tab="contractors"]::before{content:"👥"}
+    .tabbtn[data-tab="apps"]::before{content:"☑"}
+    .tabbtn[data-tab="clients"]::before{content:"🏡"}
+    .tabbtn[data-tab="scheduling"]::before{content:"🤖"}
+    .tabbtn[data-tab="calendar"]::before{content:"📅"}
+    .tabbtn[data-tab="payments"]::before{content:"$"}
+    .tabbtn[data-tab="settings"]::before{content:"⚙"}
+
+    .admin-hero{
+      grid-column:2;
+      border-radius:32px;
+      padding:22px;
+      background:linear-gradient(135deg,rgba(242,216,220,.95),rgba(255,253,251,.95) 55%,rgba(210,189,169,.42));
+      border:1px solid var(--portal-line);
+      box-shadow:var(--portal-shadow-soft);
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:16px;
+      align-items:center;
+    }
+    .admin-hero .script{
+      font-family:"Allura",cursive;
+      color:#925e69;
+      font-size:2rem;
+      margin:0 0 4px;
+    }
+    .admin-hero h1{
+      margin:0;
+      font-family:"Playfair Display",serif;
+      font-size:clamp(1.5rem,2.5vw,2.2rem);
+    }
+    .admin-hero p{
+      color:#61554f;
+      font-weight:700;
+    }
+    .admin-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    .admin-stat{
+      background:rgba(255,253,251,.76);
+      border:1px solid var(--portal-line);
+      border-radius:22px;
+      padding:14px;
+    }
+    .admin-stat strong{
+      display:block;
+      font-size:1.35rem;
+    }
+    .admin-stat span{
+      display:block;
+      margin-top:5px;
+      color:var(--portal-muted);
+      font-weight:900;
+      font-size:.78rem;
+    }
+    .placeholder-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+    .placeholder-list li{background:#fff7f8;border:1px solid #f1dce1;border-radius:16px;padding:10px 12px;font-weight:800;color:#61554f}
+    @media(max-width:980px){
+      .portal{grid-template-columns:1fr}
+      .topbar,.bar,.panels,.admin-hero,.tabs{grid-column:1}
+      .tabs{position:relative;top:auto;min-height:auto;grid-row:auto}
+      .admin-hero{grid-template-columns:1fr}
+    }
+    @media(max-width:720px){
+      .admin-stats{grid-template-columns:1fr}
+    }
+
   </style>
 
 </head>
@@ -499,15 +628,34 @@
       </div>
     </div>
 
+
+    <section class="admin-hero">
+      <div>
+        <p class="script">Operations, polished</p>
+        <h1>TFT Command Center</h1>
+        <p>Review jobs, approve quotes, vet applicants, manage contractor categories, and build toward a more automated company.</p>
+      </div>
+      <div class="admin-stats">
+        <div class="admin-stat"><strong>AI</strong><span>Screening + Scheduling</span></div>
+        <div class="admin-stat"><strong>+30%</strong><span>TFT Markup Logic</span></div>
+        <div class="admin-stat"><strong>W2</strong><span>Shift Mode Hidden</span></div>
+      </div>
+    </section>
+
     <!-- Tabs -->
     <div class="tabs" role="tablist" aria-label="Admin sections">
-      <button class="tabbtn active" data-tab="open">Open Jobs</button>
+      <button class="tabbtn active" data-tab="open">Job Inbox</button>
       <button class="tabbtn" data-tab="all">All Jobs</button>
       <button class="tabbtn" data-tab="create">Create Job</button>
-      <button class="tabbtn" data-tab="contractors">Contractors</button>
-      <button class="tabbtn" data-tab="clients">Clients</button>
+      <button class="tabbtn" data-tab="walkthroughs">Walkthroughs</button>
+      <button class="tabbtn" data-tab="estimate">Estimate Hub</button>
+      <button class="tabbtn" data-tab="contractors">Contractors / Teams</button>
       <button class="tabbtn" data-tab="apps">Applications</button>
-      <button class="tabbtn" data-tab="estimate">Estimate</button>
+      <button class="tabbtn" data-tab="clients">Clients</button>
+      <button class="tabbtn" data-tab="scheduling">Scheduling AI</button>
+        <button class="tabbtn" data-tab="calendar">Calendar</button>
+      <button class="tabbtn" data-tab="payments">Payments</button>
+      <button class="tabbtn" data-tab="settings">Settings</button>
     </div>
 
     <!-- Filter/search -->
@@ -535,13 +683,20 @@
             <select name="serviceType" required>
               <option value="cleaning">Cleaning</option>
               <option value="organizing">Organizing</option>
-              <option value="decor">Decor</option>
-              <option value="holiday">Holiday</option>
+              <option value="staging">Staging</option>
+              <option value="decor">Interior Decorating</option>
+              <option value="holiday">Holiday/Event Decorating</option>
+              <option value="airbnb">Airbnb Turnover</option>
+              <option value="commercial">Commercial</option>
+              <option value="carpet">Carpet/Upholstery Vendor</option>
+                <option value="staging_vendor">Staging Vendor / CORT Coordination</option>
             </select>
           </label>
           <label>Status
             <select name="status">
               <option value="open">open</option>
+              <option value="walkthrough_needed">walkthrough_needed</option>
+              <option value="estimate_pending">estimate_pending</option>
               <option value="claimed">claimed</option>
               <option value="in_progress">in_progress</option>
               <option value="submitted">submitted</option>
@@ -624,6 +779,10 @@
     <div class="form-grid" style="margin-top:8px">
       <label>Home / Site Size (sq ft)
         <input id="sqft" type="number" min="200" step="10" value="1600">
+      </label>
+
+      <label>Subcontractor Estimate (optional)
+        <input id="subEstimate" type="number" min="0" step="1" placeholder="Example: 255">
       </label>
 
       <label id="bedsWrap">Beds
@@ -712,6 +871,76 @@
   </div>
 </section>
 
+      <section id="panel-walkthroughs" class="panel">
+        <div class="grid">
+          <article class="card">
+            <div class="toprow"><strong>Walkthrough Queue</strong><span class="rolepill">Next Build</span></div>
+            <p class="small">Client intake + photos/videos will route here for contractor review.</p>
+            <div class="meta"><span>Pending Walkthroughs</span><span>Submitted Estimates</span><span>Admin Approval</span></div>
+          </article>
+          <article class="card">
+            <div class="toprow"><strong>Future Flow</strong><span class="rolepill">Automation</span></div>
+            <p class="small">Contractor submits estimate → TFT adds 30% → admin approves → client quote is generated.</p>
+          </article>
+        </div>
+      </section>
+
+      
+        <section id="panel-scheduling" class="panel">
+          <div class="grid">
+            <article class="card">
+              <div class="toprow"><strong>Scheduling AI</strong><span class="rolepill">Framework Ready</span></div>
+              <p class="small">Future AI dispatcher will recommend booking slots based on client preferences, worker availability, ZIP/day rules, estimated job duration, and drive-time buffers.</p>
+              <ul class="placeholder-list">
+                <li>Client preferred days/times</li><li>Contractor TFT availability slots</li><li>ZIP/territory preferences by day</li><li>Estimated cleaning/organizing/staging duration</li><li>Travel time + route clustering</li><li>Max jobs/day and max hours/day</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="toprow"><strong>1099 Availability Mode</strong><span class="rolepill">Active Model</span></div>
+              <p class="small">For subcontractors with their own companies. They provide TFT availability slots only, not their full outside business calendar.</p>
+              <ul class="placeholder-list">
+                <li>Manual weekly availability</li><li>Recurring availability templates</li><li>Unavailable/vacation days</li><li>Preferred arrival times</li><li>Service areas + ZIP preferences</li><li>Capacity by job type</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="toprow"><strong>Hidden W2 Shift Mode</strong><span class="rolepill">Built for Later</span></div>
+              <p class="small">This stays hidden until you hire employees. The architecture will support employee shifts, crews, lunch breaks, PTO, and payroll-friendly scheduling.</p>
+              <ul class="placeholder-list">
+                <li>Worker type: 1099 contractor or W2 employee</li><li>Shift start/end times</li><li>Lunch/break windows</li><li>PTO / blocked days</li><li>Solo, pair, crew, team lead assignments</li><li>Future overtime and payroll export logic</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="toprow"><strong>Staging + CORT Coordination</strong><span class="rolepill">Vendor Ready</span></div>
+              <p class="small">For staging jobs, TFT can coordinate CORT-style furniture rental without owning full inventory at first.</p>
+              <ul class="placeholder-list">
+                <li>Vacant staging rental coordination</li><li>Occupied styling / refresh</li><li>Decor inventory needs</li><li>Install team scheduling</li><li>Pickup/removal scheduling</li><li>Rental vendor notes and approvals</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="panel-calendar" class="panel">
+        <div class="card">
+          <div class="toprow"><strong>Calendar</strong><span class="rolepill">Square now → Stripe later</span></div>
+          <p class="small">Phase 1 can keep Square. Phase 2 becomes a native TFT booking calendar.</p>
+          <a class="btn btn-solid" target="_blank" rel="noopener" href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9">Open Square Calendar</a>
+        </div>
+      </section>
+
+      <section id="panel-payments" class="panel">
+        <div class="card">
+          <div class="toprow"><strong>Payments / Invoices</strong><span class="rolepill">Future Stripe</span></div>
+          <p class="small">Square stays for now. Later this becomes Stripe deposits, invoices, cancellation fees, memberships, and payment history.</p>
+        </div>
+      </section>
+
+      <section id="panel-settings" class="panel">
+        <div class="card">
+          <div class="toprow"><strong>Settings</strong><span class="rolepill">Coming Soon</span></div>
+          <p class="small">Service areas, contractor categories, application requirements, pricing rules, and automation settings will live here.</p>
+        </div>
+      </section>
+
 
   <!-- Admin Helper Chat (UI) -->
   <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
@@ -773,7 +1002,7 @@
     });
 
     // ---- UI state ----
-    const ALL_TYPES = ["cleaning","organizing","decor","holiday"];
+    const ALL_TYPES = ["cleaning","organizing","staging","decor","holiday","airbnb","commercial","carpet","staging_vendor","admin"];
     const chipsWrap = document.getElementById('filterChips');
     const searchBox = document.getElementById('searchBox');
     const clearSearch = document.getElementById('clearSearch');
@@ -912,40 +1141,109 @@
       });
     }
 
+    
+    function serviceLabel(types){
+      if (!Array.isArray(types) || !types.length) return "Not selected";
+      return types.map(t => cap(String(t).replaceAll("_"," "))).join(", ");
+    }
+
+    function aiApplicantSummary(a){
+      const types = Array.isArray(a.serviceTypes) ? a.serviceTypes : [];
+      const hasExperience = Number(a.yearsExperience || a.experienceYears || 0) >= 1;
+      const hasInsurance = !!(a.insurance || a.hasInsurance || a.insuranceStatus || a.coiUrl);
+      const hasPortfolio = !!(a.portfolioUrl || a.socialHandle || a.workSamples || a.beforeAfterPhotos || a.references);
+      const answers = JSON.stringify(a).toLowerCase();
+
+      let score = 0;
+      if (hasExperience) score += 30;
+      if (hasInsurance) score += 25;
+      if (hasPortfolio) score += 25;
+      if (types.length) score += 10;
+      if (answers.includes("reliable") || answers.includes("detail") || answers.includes("professional")) score += 10;
+
+      const redFlags = [];
+      if (!hasExperience) redFlags.push("Experience unclear or under 1 year");
+      if (!hasInsurance) redFlags.push("Insurance / COI not confirmed");
+      if (!hasPortfolio) redFlags.push("Work verification missing");
+      if (!types.length) redFlags.push("No service category selected");
+
+      const label = score >= 75 ? "Strong Candidate" : (score >= 45 ? "Needs Review" : "Likely Not a Fit");
+      const tone = score >= 75 ? "🟢" : (score >= 45 ? "🟡" : "🔴");
+
+      return { score, label, tone, redFlags };
+    }
+
     function drawApps(apps){
       const el = document.getElementById('listApps');
       if (!el) return;
       if (!apps.length){ el.innerHTML = `<div class="empty">No pending applications.</div>`; return; }
-      el.innerHTML = apps.map(a=>`
-        <div class="card">
-          <div class="toprow">
-            <strong>${a.displayName || a.email || a.id}</strong>
-            <span class="rolepill">pending</span>
+
+      el.innerHTML = apps.map(a=>{
+        const ai = aiApplicantSummary(a);
+        return `
+          <div class="card">
+            <div class="toprow">
+              <strong>${a.displayName || a.fullName || a.email || a.id}</strong>
+              <span class="rolepill">${ai.tone} ${ai.label}</span>
+            </div>
+            <div class="meta">
+              ${a.email?`<span>📧 ${a.email}</span>`:""}
+              <span>🧰 ${serviceLabel(a.serviceTypes)}</span>
+              <span>AI Score: ${ai.score}/100</span>
+            </div>
+            <div class="small">
+              <strong>AI Screening Notes:</strong><br>
+              ${ai.redFlags.length ? ai.redFlags.map(r=>`• ${r}`).join("<br>") : "• Application appears complete enough for interview review."}
+            </div>
+            <div class="actions">
+              <button class="btn btn-solid" data-act="approve" data-uid="${a.id}">Approve → Team</button>
+              <button class="btn btn-outline" data-act="interview" data-uid="${a.id}">AI Interview Questions</button>
+              <button class="btn btn-outline" data-act="review" data-uid="${a.id}">Needs Review</button>
+              <button class="btn btn-danger" data-act="reject" data-uid="${a.id}">Reject</button>
+            </div>
           </div>
-          <div class="meta">
-            ${a.email?`<span>📧 ${a.email}</span>`:""}
-            ${Array.isArray(a.serviceTypes)&&a.serviceTypes.length?`<span>🧰 ${a.serviceTypes.join(", ")}</span>`:""}
-          </div>
-          <div class="actions">
-            <button class="btn btn-solid" data-act="approve" data-uid="${a.id}">Approve → contractor</button>
-            <button class="btn btn-outline" data-act="reject" data-uid="${a.id}">Reject</button>
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
 
       el.querySelectorAll('[data-act="approve"]').forEach(b=>{
         b.addEventListener("click", async ()=>{
-          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:"contractor", updatedAt: serverTimestamp() }); alert("Approved."); }
+          const role = prompt("Approve as which role? Examples: contractor, organizer, decorator, stager, admin_assistant, walkthrough_specialist", "contractor");
+          if (!role) return;
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:role.trim(), applicationStatus:"approved", approvedAt:serverTimestamp(), updatedAt: serverTimestamp() }); alert("Approved."); }
           catch(e){ alert("Could not approve."); console.warn(e); }
         });
       });
+
+      el.querySelectorAll('[data-act="interview"]').forEach(b=>{
+        b.addEventListener("click", ()=>{
+          alert("AI Interview Assistant – Next Build
+
+This will generate role-specific questions based on applicant category, missing details, and red flags.
+
+Examples:
+• Describe your process from arrival to completion.
+• How do you handle a client saying something was missed?
+• What supplies/tools do you bring?
+• Share proof of prior work, references, or portfolio.");
+        });
+      });
+
+      el.querySelectorAll('[data-act="review"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { applicationStatus:"needs_review", updatedAt: serverTimestamp() }); alert("Marked needs review."); }
+          catch(e){ alert("Could not update."); console.warn(e); }
+        });
+      });
+
       el.querySelectorAll('[data-act="reject"]').forEach(b=>{
         b.addEventListener("click", async ()=>{
-          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:"rejected", updatedAt: serverTimestamp() }); alert("Rejected."); }
+          if (!confirm("Reject this application?")) return;
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:"rejected", applicationStatus:"rejected", updatedAt: serverTimestamp() }); alert("Rejected."); }
           catch(e){ alert("Could not reject."); console.warn(e); }
         });
       });
     }
+
 
     function hookJobActions(container, jobs){
       const byId = new Map(jobs.map(j=>[j.id,j]));
@@ -1113,9 +1411,53 @@
 
     // ---- Estimator ----
     function wireEstimator(){
-      const svc = document.getElementById('estService');
       const btn = document.getElementById('estCalcBtn');
       const out = document.getElementById('estOut');
+      const svc = document.getElementById('estService');
+
+      // New Estimate Hub fallback for the current admin layout
+      if (!svc && btn && out) {
+        const getNum = (id, fallback=0) => {
+          const el = document.getElementById(id);
+          const n = Number(el?.value || fallback);
+          return Number.isFinite(n) ? n : fallback;
+        };
+        const getVal = (id, fallback="") => document.getElementById(id)?.value || fallback;
+        const round5 = n => Math.round(n / 5) * 5;
+
+        btn.addEventListener("click", () => {
+          const category = getVal("estCategory","residential");
+          const sqft = Math.max(200, getNum("sqft",1600));
+          const service = getVal("resService","initial");
+          const soil = getVal("soilRes","standard");
+          const pet = getVal("petImpact","none");
+          const subEstimate = getNum("subEstimate",0);
+
+          const rates = { standard:.16, initial:.20, deep:.25, move:.32 };
+          const soils = { standard:1, lived:1.12, dirty:1.25, major:1.45, light:1, moderate:1.15, heavy:1.3, severe:1.55 };
+          const pets = { none:0, light:15, moderate:35, high:65, foster:95 };
+
+          let base = sqft * (rates[service] || .20) * (soils[soil] || 1);
+          if (category === "airbnb") base = Math.max(175, sqft * .22 + getNum("airLaundry",0)*18 + getNum("airBeds",0)*15);
+          if (category === "commercial") base = sqft * .16 * (soils[getVal("soilCom","light")] || 1);
+          if (getVal("commonOnly","no") === "yes") base *= .68;
+          if (getVal("stories","1") === "2") base += 20;
+          base += (pets[pet] || 0);
+          base += getNum("addFans",0)*8 + getNum("addBlinds",0)*10 + getNum("addWindows",0)*5 + getNum("addOvens",0)*35 + getNum("addFridges",0)*35;
+
+          const draft = round5(base);
+          const marked = subEstimate ? round5(subEstimate * 1.30) : null;
+
+          out.innerHTML = `
+            <strong>Internal Draft Estimate</strong><br>
+            System draft client estimate: <strong>$${draft}</strong><br>
+            <span class="hint">This is internal only. Approve before sending to client.</span>
+            ${subEstimate ? `<hr style="border:0;border-top:1px solid #eadfd8;margin:10px 0">Sub estimate: <strong>$${subEstimate}</strong><br>TFT +30% client quote: <strong>$${marked}</strong>` : ""}
+          `;
+        });
+        return;
+      }
+
       if (!svc || !btn || !out) return;
 
       function show(key){
