@@ -3,11 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contractor Dashboard – The Finishing Touch</title>
+  <title>Admin Dashboard – The Finishing Touch</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&family=Allura&display=swap" rel="stylesheet">
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
+  
   <style>
     :root{
       --portal-bg:#fbf7f4;
@@ -19,8 +21,8 @@
       --portal-blush-strong:#e8b9c2;
       --portal-blush-soft:#fff1f3;
       --portal-taupe:#d2bda9;
-      --portal-shadow:0 18px 45px rgba(68, 54, 45, .10);
-      --portal-shadow-soft:0 10px 28px rgba(68, 54, 45, .08);
+      --portal-shadow:0 18px 45px rgba(68,54,45,.10);
+      --portal-shadow-soft:0 10px 28px rgba(68,54,45,.08);
     }
 
     *{box-sizing:border-box}
@@ -29,136 +31,27 @@
       margin:0;
       min-height:100vh;
       background:
-        radial-gradient(circle at top left, rgba(242,216,220,.75), transparent 34%),
-        radial-gradient(circle at bottom right, rgba(210,189,169,.34), transparent 32%),
+        radial-gradient(circle at top left, rgba(242,216,220,.72), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(210,189,169,.34), transparent 30%),
         var(--portal-bg);
-      color:var(--portal-ink);
       font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--portal-ink);
     }
 
-    .portal-shell{
+    .portal{
       width:min(1280px,96%);
-      margin:22px auto 56px;
+      margin:22px auto 60px;
       display:grid;
-      grid-template-columns:260px minmax(0,1fr);
-      gap:18px;
-      align-items:start;
+      gap:16px;
     }
-
-    .sidebar{
-      position:sticky;
-      top:18px;
-      min-height:calc(100vh - 44px);
-      background:rgba(255,253,251,.82);
-      backdrop-filter:blur(18px);
-      border:1px solid rgba(234,223,216,.9);
-      border-radius:28px;
-      padding:18px;
-      box-shadow:var(--portal-shadow);
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
-
-    .brand-panel{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      padding:10px 8px 14px;
-      border-bottom:1px solid var(--portal-line);
-    }
-
-    .brand-panel .vase-logo{
-      width:34px;
-      height:44px;
-      background:url("logo-vase.png") center/contain no-repeat;
-      display:block;
-      flex:0 0 auto;
-    }
-
-    .brand-text strong{
-      display:block;
-      font-family:"Playfair Display",serif;
-      font-size:1.1rem;
-      line-height:1.05;
-      color:var(--portal-ink);
-    }
-
-    .brand-text span{
-      display:block;
-      margin-top:3px;
-      color:var(--portal-muted);
-      font-size:.82rem;
-      font-weight:700;
-    }
-
-    .rolepill{
-      width:max-content;
-      font-size:.76rem;
-      padding:.28rem .7rem;
-      border-radius:999px;
-      background:var(--portal-blush-soft);
-      border:1px solid var(--portal-blush);
-      color:#7d4f59;
-      font-weight:800;
-      margin-top:7px;
-    }
-
-    .side-nav{display:grid; gap:8px}
-
-    .side-link{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      width:100%;
-      border:1px solid transparent;
-      background:transparent;
-      color:var(--portal-muted);
-      text-decoration:none;
-      border-radius:18px;
-      padding:11px 12px;
-      font-weight:800;
-      cursor:pointer;
-      text-align:left;
-      font-family:inherit;
-      font-size:.94rem;
-    }
-
-    .side-link span.icon{
-      width:30px;
-      height:30px;
-      border-radius:12px;
-      display:inline-grid;
-      place-items:center;
-      background:#fff;
-      box-shadow:0 6px 18px rgba(68,54,45,.08);
-      flex:0 0 auto;
-    }
-
-    .side-link.active,
-    .side-link:hover{
-      color:var(--portal-ink);
-      background:linear-gradient(135deg, var(--portal-blush-soft), #fff);
-      border-color:var(--portal-blush);
-    }
-
-    .side-footer{
-      margin-top:auto;
-      display:grid;
-      gap:8px;
-      padding-top:14px;
-      border-top:1px solid var(--portal-line);
-    }
-
-    .main-area{min-width:0; display:grid; gap:16px}
 
     .topbar{
-      background:rgba(255,253,251,.82);
+      background:rgba(255,253,251,.86);
       backdrop-filter:blur(18px);
-      border:1px solid rgba(234,223,216,.9);
-      border-radius:28px;
+      border:1px solid rgba(234,223,216,.95);
+      border-radius:30px;
       padding:18px 20px;
-      box-shadow:var(--portal-shadow-soft);
+      box-shadow:var(--portal-shadow);
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -166,131 +59,62 @@
       flex-wrap:wrap;
     }
 
-    .welcome h1{
-      margin:0;
-      font-family:"Playfair Display",serif;
-      font-size:clamp(1.55rem,2.6vw,2.25rem);
-      line-height:1.05;
-      color:var(--portal-ink);
-    }
-
-    .welcome p{
-      margin:6px 0 0;
-      color:var(--portal-muted);
-      font-weight:600;
-      font-size:.94rem;
-    }
-
-    .top-actions{display:flex; gap:9px; align-items:center; flex-wrap:wrap}
-
-    .whoami{
-      color:var(--portal-muted);
-      font-size:.86rem;
-      font-weight:700;
-      max-width:240px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-    }
-
-    .hero-card{
-      position:relative;
-      overflow:hidden;
-      border-radius:32px;
-      padding:22px;
-      background:
-        linear-gradient(135deg, rgba(242,216,220,.95), rgba(255,253,251,.95) 54%, rgba(210,189,169,.42)),
-        #fff;
-      border:1px solid rgba(234,223,216,.95);
-      box-shadow:var(--portal-shadow);
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:16px;
-      align-items:center;
-    }
-
-    .hero-card::after{
-      content:"";
-      position:absolute;
-      width:230px;
-      height:230px;
-      border-radius:999px;
-      background:rgba(255,255,255,.38);
-      right:-70px;
-      top:-70px;
-      pointer-events:none;
-    }
-
-    .hero-copy{position:relative; z-index:1}
-
-    .script-kicker{
-      font-family:"Allura",cursive;
-      color:#925e69;
-      font-size:2rem;
-      line-height:1;
-      margin:0 0 4px;
-    }
-
-    .hero-copy h2{
-      margin:0;
-      font-family:"Playfair Display",serif;
-      color:var(--portal-ink);
-      font-size:clamp(1.4rem,2.4vw,2.1rem);
-    }
-
-    .hero-copy p{
-      margin:8px 0 0;
-      max-width:680px;
-      color:#61554f;
-      font-weight:600;
-    }
-
-    .stats-row{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:10px;
-      position:relative;
-      z-index:1;
-    }
-
-    .stat{
-      background:rgba(255,253,251,.76);
-      border:1px solid rgba(234,223,216,.82);
-      border-radius:22px;
-      padding:14px;
-      box-shadow:0 10px 24px rgba(68,54,45,.07);
-    }
-
-    .stat strong{
-      display:block;
-      font-size:1.4rem;
-      line-height:1;
-      color:var(--portal-ink);
-    }
-
-    .stat span{
-      display:block;
-      margin-top:5px;
-      color:var(--portal-muted);
-      font-weight:800;
-      font-size:.78rem;
-    }
-
-    .toolbar{
+    .brand-mini{
       display:flex;
       align-items:center;
-      justify-content:space-between;
       gap:12px;
-      flex-wrap:wrap;
-      background:rgba(255,253,251,.76);
-      border:1px solid var(--portal-line);
-      border-radius:24px;
-      padding:12px;
-      box-shadow:var(--portal-shadow-soft);
-      margin-bottom:14px;
     }
 
-    .tabs{display:flex; gap:8px; flex-wrap:wrap}
+    .brand-mini .vase-logo{
+      width:36px;
+      height:48px;
+      background:url("logo-vase.png") center/contain no-repeat;
+      display:inline-block;
+      flex:0 0 auto;
+    }
+
+    .brand-mini > div > div:first-child{
+      font-family:"Playfair Display",serif !important;
+      font-size:1.24rem;
+      color:var(--portal-ink) !important;
+    }
+
+    .rolepill{
+      width:max-content;
+      font-size:.76rem;
+      padding:.28rem .72rem;
+      border-radius:999px;
+      background:var(--portal-blush-soft);
+      border:1px solid var(--portal-blush);
+      color:#7d4f59;
+      font-weight:900;
+      margin-top:5px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .small{
+      font-size:.9rem;
+      color:var(--portal-muted);
+      font-weight:700;
+    }
+
+    .tabs{
+      background:rgba(255,253,251,.78);
+      border:1px solid var(--portal-line);
+      border-radius:26px;
+      padding:12px;
+      box-shadow:var(--portal-shadow-soft);
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:0;
+    }
 
     .tabbtn{
       border:1px solid var(--portal-line);
@@ -302,6 +126,14 @@
       cursor:pointer;
       white-space:nowrap;
       font-family:inherit;
+      transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
+    }
+
+    .tabbtn:hover{
+      transform:translateY(-1px);
+      background:var(--portal-blush-soft);
+      border-color:var(--portal-blush);
+      color:#7d4f59;
     }
 
     .tabbtn.active{
@@ -311,7 +143,25 @@
       box-shadow:0 10px 22px rgba(47,41,38,.18);
     }
 
-    .filters{display:flex; gap:8px; flex-wrap:wrap}
+    .bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      background:rgba(255,253,251,.78);
+      border:1px solid var(--portal-line);
+      border-radius:26px;
+      padding:12px;
+      box-shadow:var(--portal-shadow-soft);
+      margin-top:0;
+    }
+
+    .filters{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
 
     .chip{
       border:1px solid var(--portal-line);
@@ -332,7 +182,39 @@
       color:#7d4f59;
     }
 
-    .main{display:grid; gap:14px}
+    .search{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .search input{
+      border:1px solid var(--portal-line);
+      border-radius:999px;
+      padding:.7rem .95rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      min-width:min(280px,70vw);
+      outline:none;
+      font-family:inherit;
+    }
+
+    .search input:focus{
+      border-color:var(--portal-blush-strong);
+      box-shadow:0 0 0 4px rgba(232,185,194,.18);
+    }
+
+    .panels{
+      margin-top:0;
+    }
+
+    .panel{
+      display:none;
+    }
+
+    .panel.active{
+      display:block;
+    }
 
     .grid{
       display:grid;
@@ -349,18 +231,18 @@
       display:flex;
       flex-direction:column;
       gap:11px;
+      position:relative;
+      overflow:hidden;
     }
 
-    .job-card{position:relative; overflow:hidden}
-
-    .job-card::before{
+    .card::before{
       content:"";
       position:absolute;
       inset:0 auto 0 0;
       width:6px;
       background:linear-gradient(180deg,var(--portal-blush-strong),var(--portal-taupe));
       border-radius:999px;
-      opacity:.9;
+      opacity:.82;
     }
 
     .toprow{
@@ -373,14 +255,8 @@
 
     .toprow strong{
       font-family:"Playfair Display",serif;
-      font-size:1.18rem;
+      font-size:1.16rem;
       color:var(--portal-ink);
-    }
-
-    .muted{
-      color:var(--portal-muted);
-      font-weight:700;
-      font-size:.9rem;
     }
 
     .meta{
@@ -390,6 +266,7 @@
       font-size:.9rem;
       color:#61554f;
       font-weight:700;
+      opacity:1;
     }
 
     .meta span{
@@ -401,8 +278,6 @@
       border-radius:999px;
       padding:.32rem .6rem;
     }
-
-    .pay{color:#2f2926; font-weight:900}
 
     .actions{
       display:flex;
@@ -427,7 +302,9 @@
       transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
     }
 
-    .btn:hover{transform:translateY(-1px)}
+    .btn:hover{
+      transform:translateY(-1px);
+    }
 
     .btn-outline{
       border:1.5px solid #2f2926;
@@ -441,10 +318,9 @@
       box-shadow:0 10px 22px rgba(232,185,194,.34);
     }
 
-    .btn-soft{
-      background:var(--portal-blush-soft);
-      color:#7d4f59;
-      border:1px solid var(--portal-blush);
+    .btn-danger{
+      background:#7f1d1d;
+      color:#fff;
     }
 
     .empty{
@@ -457,728 +333,1063 @@
       font-weight:800;
     }
 
-    .gate{margin-top:14px}
-    .hidden{display:none !important}
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      background:rgba(255,253,251,.92);
+      border:1px solid var(--portal-line);
+      border-radius:28px;
+      padding:18px;
+      box-shadow:var(--portal-shadow-soft);
+    }
 
-    .placeholder-panel{display:none}
-    .placeholder-panel.active{display:block}
-
-    .placeholder-card h3{
-      margin:0;
-      font-family:"Playfair Display",serif;
+    .form-grid label{
+      display:grid;
+      gap:6px;
+      font-weight:900;
       color:var(--portal-ink);
     }
 
-    .placeholder-card p{
-      margin:0;
-      color:var(--portal-muted);
-      font-weight:600;
+    .form-grid input,
+    .form-grid select,
+    .form-grid textarea{
+      border:1px solid var(--portal-line);
+      border-radius:16px;
+      padding:.72rem .8rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      outline:none;
+      font-family:inherit;
     }
 
-    .toast{
+    .form-grid input:focus,
+    .form-grid select:focus,
+    .form-grid textarea:focus{
+      border-color:var(--portal-blush-strong);
+      box-shadow:0 0 0 4px rgba(232,185,194,.18);
+    }
+
+    .hint{
+      font-size:.92rem;
+      color:var(--portal-muted);
+      font-weight:700;
+    }
+
+    code{
+      background:var(--portal-blush-soft);
+      border:1px solid var(--portal-blush);
+      color:#7d4f59;
+      border-radius:8px;
+      padding:2px 5px;
+    }
+
+    #panel-estimate .card{
+      border-radius:28px;
+    }
+
+    #estResult{
+      background:#fffdfb !important;
+      border:1px solid var(--portal-line) !important;
+    }
+
+    #admin-help-launcher{
       position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:18px;
-      background:#2f2926;
-      color:#fff;
-      padding:11px 16px;
+      right:20px;
+      bottom:20px;
+      width:54px;
+      height:54px;
       border-radius:999px;
-      box-shadow:0 14px 30px rgba(0,0,0,.25);
-      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));
+      color:#2f2926;
+      font-size:22px;
+      box-shadow:0 14px 30px rgba(68,54,45,.22);
+      cursor:pointer;
+      z-index:9999;
       font-weight:900;
+    }
+
+    #admin-help{
+      position:fixed;
+      right:20px;
+      bottom:86px;
+      width:360px;
+      max-width:90vw;
+      background:#fffdfb;
+      border:1px solid var(--portal-line);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 20px 50px rgba(68,54,45,.24);
+      z-index:9999;
+      font-family:Manrope,system-ui,sans-serif;
       display:none;
     }
 
-    @media (max-width:920px){
-      .portal-shell{grid-template-columns:1fr}
-      .sidebar{position:relative; top:auto; min-height:auto}
-      .side-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .hero-card{grid-template-columns:1fr}
-      .stats-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .ah-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      background:#2f2926;
+      color:#fff;
     }
 
-    @media (max-width:620px){
-      .portal-shell{
-        width:min(100% - 18px,1280px);
-        margin-top:10px;
+    .ah-title{font-weight:900}
+    .ah-sub{font-size:12px;opacity:.82}
+    .ah-close{background:transparent;border:none;color:#fff;font-size:24px;cursor:pointer}
+    .ah-thread{max-height:50vh;overflow:auto;padding:12px;background:#fbf7f4;display:flex;flex-direction:column;gap:10px}
+    .ah-bubble{max-width:85%;padding:10px 12px;border-radius:14px;line-height:1.35;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .ah-bubble.bot{background:#fffdfb;border:1px solid var(--portal-line);align-self:flex-start}
+    .ah-bubble.me{background:var(--portal-blush-soft);border:1px solid var(--portal-blush);color:#7d4f59;align-self:flex-end}
+    .ah-input{display:flex;gap:8px;padding:10px;border-top:1px solid var(--portal-line);background:#fff}
+    .ah-input input{flex:1;border:1px solid var(--portal-line);border-radius:999px;padding:10px;font-size:14px}
+    .ah-send{background:#2f2926;color:#fff;border:none;border-radius:999px;padding:0 14px;cursor:pointer;font-weight:900}
+    .ah-quick{display:flex;gap:6px;padding:8px 10px;flex-wrap:wrap;background:#fff;border-top:1px solid var(--portal-line)}
+    .ah-quick button{font-size:12px;border:1px solid var(--portal-line);background:#fffdfb;border-radius:999px;padding:6px 10px;cursor:pointer;font-weight:800}
+
+    @media (max-width:760px){
+      .form-grid{
+        grid-template-columns:1fr;
       }
-      .topbar,.hero-card,.toolbar,.sidebar{border-radius:22px}
-      .side-nav{grid-template-columns:1fr}
-      .stats-row{grid-template-columns:1fr}
-      .top-actions{width:100%}
-      .btn{width:100%}
+
+      .topbar,
+      .tabs,
+      .bar,
+      .card,
+      .form-grid{
+        border-radius:22px;
+      }
+
+      .search input{
+        min-width:100%;
+      }
+
+      .btn{
+        width:100%;
+      }
+    }
+
+    @media (max-width:640px){
+      #admin-help{right:0;left:0;bottom:0;width:100vw;height:70vh;border-radius:16px 16px 0 0}
+      #admin-help-launcher{right:12px;bottom:12px}
     }
   </style>
+
 </head>
-
 <body>
-  <div class="portal-shell">
-    <aside class="sidebar" aria-label="Contractor portal navigation">
-      <div class="brand-panel">
+  <div class="portal">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand-mini">
         <span class="vase-logo" aria-hidden="true"></span>
-        <div class="brand-text">
-          <strong>The Finishing Touch</strong>
-          <span>Contractor Portal</span>
-          <div id="rolePill" class="rolepill">Checking role…</div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;line-height:1;color:#2e2a27">The Finishing Touch</div>
+          <div class="rolepill">Admin</div>
         </div>
       </div>
-
-      <nav class="side-nav">
-        <button class="side-link active" type="button" data-side="dashboard"><span class="icon">⌂</span>Dashboard</button>
-        <button class="side-link" type="button" data-side="jobs"><span class="icon">✦</span>Jobs / Assignments</button>
-        <button class="side-link" type="button" data-side="availability"><span class="icon">📅</span>Availability</button>
-        <button class="side-link" type="button" data-side="territory"><span class="icon">📍</span>Territory</button>
-        <button class="side-link" type="button" data-side="capacity"><span class="icon">⚙</span>Capacity</button>
-        <button class="side-link" type="button" data-side="walkthroughs"><span class="icon">◷</span>Walkthroughs</button>
-        <button class="side-link" type="button" data-side="estimates"><span class="icon">♢</span>My Estimates</button>
-        <button class="side-link" type="button" data-side="messages"><span class="icon">✉</span>Messages</button>
-        <button class="side-link" type="button" data-side="documents"><span class="icon">☑</span>Documents</button>
-        <button class="side-link" type="button" data-side="resources"><span class="icon">♡</span>Resources</button>
-        <button class="side-link" type="button" data-side="payments"><span class="icon">$</span>Payments</button>
-      </nav>
-
-      <div class="side-footer">
+      <div class="row">
+        <span id="whoami" class="small"></span>
         <a class="btn btn-outline" href="index.html">Home</a>
-        <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden style="display:none">Manual Intake</a>
-        <a id="signOutBtn" class="btn btn-soft" href="#" aria-label="Sign out">Sign out</a>
+        <a class="btn btn-outline" href="contractor-dashboard.html">Contractor view</a>
+        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
       </div>
-    </aside>
+    </div>
 
-    <main class="main-area">
-      <section class="topbar">
-        <div class="welcome">
-          <h1>Welcome back</h1>
-          <p>View open opportunities, manage claimed jobs, and keep your work flowing beautifully.</p>
-        </div>
-        <div class="top-actions">
-          <span id="whoami" class="whoami"></span>
-        </div>
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Admin sections">
+      <button class="tabbtn active" data-tab="open">Open Jobs</button>
+      <button class="tabbtn" data-tab="all">All Jobs</button>
+      <button class="tabbtn" data-tab="create">Create Job</button>
+      <button class="tabbtn" data-tab="contractors">Contractors</button>
+      <button class="tabbtn" data-tab="clients">Clients</button>
+      <button class="tabbtn" data-tab="apps">Applications</button>
+      <button class="tabbtn" data-tab="estimate">Estimate</button>
+    </div>
+
+    <!-- Filter/search -->
+    <div class="bar">
+      <div class="filters" id="filterChips" aria-label="Filter by service type"></div>
+      <div class="search">
+        <input id="searchBox" type="search" placeholder="Search jobs: zip, summary, notes…" />
+        <button id="clearSearch" class="btn btn-outline" type="button">Clear</button>
+      </div>
+    </div>
+
+    <!-- Panels -->
+    <div class="panels">
+      <section id="panel-open" class="panel active" aria-live="polite">
+        <div id="listOpen" class="grid"></div>
       </section>
 
-      <section class="hero-card">
-        <div class="hero-copy">
-          <p class="script-kicker">Today’s touchpoints</p>
-          <h2>Your contractor command center</h2>
-          <p>Claim work, manage TFT availability, set ZIP preferences, submit walkthroughs, and coordinate scheduling with admin — all from one place.</p>
-        </div>
+      <section id="panel-all" class="panel" aria-live="polite">
+        <div id="listAll" class="grid"></div>
+      </section>
 
-        <div class="stats-row" aria-label="Contractor overview">
-          <div class="stat">
-            <strong id="statOpen">0</strong>
-            <span>Open Jobs</span>
+      <section id="panel-create" class="panel">
+        <form id="createForm" class="form-grid" autocomplete="off">
+          <label>Service Type
+            <select name="serviceType" required>
+              <option value="cleaning">Cleaning</option>
+              <option value="organizing">Organizing</option>
+              <option value="decor">Decor</option>
+              <option value="holiday">Holiday</option>
+            </select>
+          </label>
+          <label>Status
+            <select name="status">
+              <option value="open">open</option>
+              <option value="claimed">claimed</option>
+              <option value="in_progress">in_progress</option>
+              <option value="submitted">submitted</option>
+              <option value="approved">approved</option>
+              <option value="paid">paid</option>
+            </select>
+          </label>
+
+          <label>Zip / Area <input name="zip" placeholder="77573" /></label>
+          <label>Client UID (optional) <input name="clientId" placeholder="users/{uid}" /></label>
+          <label>Contractors Needed <input name="contractorsNeeded" type="number" min="1" value="1" required /></label>
+          <label>Flat Rate (shown to client) <input name="flatRate" type="number" min="0" step="1" placeholder="275" /></label>
+          <label>Team Hours (est) <input name="estimatedTeamHours" type="number" min="0" step=".5" placeholder="3.5" /></label>
+
+          <!-- Exact scheduling -->
+          <label>Service Date <input name="serviceDate" type="date" /></label>
+          <label>Arrival Time <input name="serviceTime" type="time" /></label>
+
+          <label>Summary <input name="summary" placeholder="3 bed / 2 bath – initial deep clean." /></label>
+          <label style="grid-column:1/-1">Notes (internal)
+            <textarea name="notes" rows="3" placeholder="entry codes, parking notes — keep PII out of top-level doc"></textarea>
+          </label>
+
+          <div style="grid-column:1/-1;display:flex;gap:10px;align-items:center">
+            <button class="btn btn-solid" type="submit">Create Job</button>
+            <span id="createMsg" class="hint"></span>
           </div>
-          <div class="stat">
-            <strong id="statMine">0</strong>
-            <span>My Jobs</span>
-          </div>
-          <div class="stat">
-            <strong id="statService">All</strong>
-            <span>Work Focus</span>
-          </div>
-        </div>
+        </form>
+        <p class="hint" style="margin-top:10px">Reminder: put any sensitive client details inside <code>jobs/{id}/private/{doc}</code> (admin-only).</p>
       </section>
 
-      <section id="gate-signedout" class="card gate">
-        <p>Please <a href="login.html?next=contractor-dashboard.html"><strong>sign in or create an account</strong></a> to continue.</p>
-        <p class="muted">New? <a href="contractor-apply.html"><strong>Apply here</strong></a> — you’ll be marked pending until approved.</p>
+      <section id="panel-contractors" class="panel" aria-live="polite">
+        <div id="listContractors" class="grid"></div>
       </section>
 
-      <section id="gate-notapplied" class="card gate hidden">
-        <p><strong>No application on file.</strong></p>
-        <p class="muted">Please submit your contractor application so we can approve your access.</p>
-        <div>
-          <a class="btn btn-solid" href="contractor-apply.html">Apply to be a Contractor</a>
-        </div>
+      <section id="panel-clients" class="panel" aria-live="polite">
+        <div id="listClients" class="grid"></div>
       </section>
 
-      <section id="gate-pending" class="card gate hidden" aria-live="polite">
-        <p class="muted"><strong>Your account is pending review.</strong> We’ll email you once approved. This page will unlock automatically.</p>
-        <div>
-          <a class="btn btn-outline" href="contractor-apply.html">View / Update your application</a>
-        </div>
+      <section id="panel-apps" class="panel" aria-live="polite">
+        <div id="listApps" class="grid"></div>
       </section>
 
-      <section id="dashboardPanel">
-        <div id="portal-ui" class="hidden toolbar">
-          <div class="tabs" role="tablist" aria-label="Job views">
-            <button id="tabOpen" class="tabbtn active" type="button" role="tab" aria-selected="true" aria-controls="panelOpen">Open Jobs</button>
-            <button id="tabMine" class="tabbtn" type="button" role="tab" aria-selected="false" aria-controls="panelMine">My Jobs</button>
-          </div>
-          <div class="filters" id="filterChips" aria-label="Filters"></div>
-        </div>
+     <!-- Quick Estimate (REPLACE THIS WHOLE SECTION) -->
+<section id="panel-estimate" class="panel">
+  <div class="card" style="padding:16px">
+    <div class="row" style="margin-bottom:10px;gap:10px;align-items:flex-end;flex-wrap:wrap">
+      <label>Category
+        <select id="estCategory">
+          <option value="residential" selected>Residential</option>
+          <option value="airbnb">Airbnb Turnover (Hybrid)</option>
+          <option value="commercial">Commercial (Office / Medical / Vet)</option>
+        </select>
+      </label>
 
-        <section id="panelOpen" class="main" role="tabpanel" aria-labelledby="tabOpen">
-          <div id="openJobs" class="grid" aria-live="polite"></div>
-        </section>
+      <!-- Residential service -->
+      <label id="resServiceWrap">Service
+        <select id="resService">
+          <option value="standard" selected>Standard Clean</option>
+          <option value="initial">Initial Clean</option>
+          <option value="deep">Deep Clean</option>
+          <option value="move">Move-In / Move-Out</option>
+        </select>
+      </label>
 
-        <section id="panelMine" class="main" role="tabpanel" aria-labelledby="tabMine" hidden>
-          <div id="myJobs" class="grid" aria-live="polite"></div>
-        </section>
-      </section>
+      <!-- Commercial sub-type -->
+      <label id="comTypeWrap" style="display:none">Type
+        <select id="comType">
+          <option value="office" selected>Office</option>
+          <option value="medical">Medical / Clinic</option>
+          <option value="vet">Veterinary</option>
+        </select>
+      </label>
 
-      <section class="card" style="background:#fff7f8;border-color:#f1dce1;">
-        <div class="toprow">
-          <strong style="font-family:Playfair Display,serif;">Contractor Portal 2.0</strong>
-          <div class="rolepill">1099 Active • W2 Hidden Ready</div>
-        </div>
-        <div class="meta">
-          <span>📅 Availability Mode</span>
-          <span>📍 Territory Rules</span>
-          <span>⚙ Capacity Settings</span>
-          <span>🤖 Scheduling AI Ready</span>
-        </div>
-      </section>
+      <button id="estCalcBtn" class="btn btn-solid" type="button">Calculate</button>
+      <span class="hint">Soil level + common areas + pet impact are supported.</span>
+    </div>
 
-      <section id="placeholderPanel" class="placeholder-panel">
-        <article class="card placeholder-card">
-          <h3 id="placeholderTitle">Coming Soon</h3>
-          <p id="placeholderText">This section is ready for the next build phase.</p>
-        </article>
-      </section>
-    </main>
+    <!-- Shared size + options -->
+    <div class="form-grid" style="margin-top:8px">
+      <label>Home / Site Size (sq ft)
+        <input id="sqft" type="number" min="200" step="10" value="1600">
+      </label>
+
+      <label id="bedsWrap">Beds
+        <input id="beds" type="number" min="0" value="3">
+      </label>
+
+      <label id="bathsWrap">Baths
+        <input id="baths" type="number" min="0" value="2">
+      </label>
+
+      <!-- Residential soil names (your choice: C) -->
+      <label id="soilResWrap">Soil Level (Residential)
+        <select id="soilRes">
+          <option value="standard" selected>Standard</option>
+          <option value="lived">Lived-In</option>
+          <option value="dirty">Dirty</option>
+          <option value="major">Major Impact</option>
+        </select>
+      </label>
+
+      <!-- Commercial soil names (your choice: A) -->
+      <label id="soilComWrap" style="display:none">Soil Level (Commercial)
+        <select id="soilCom">
+          <option value="light" selected>Light</option>
+          <option value="moderate">Moderate</option>
+          <option value="heavy">Heavy</option>
+          <option value="severe">Severe</option>
+        </select>
+      </label>
+
+      <!-- Airbnb hybrid bits -->
+      <label id="airLaundryWrap" style="display:none">Laundry Bundles (sets)
+        <input id="airLaundry" type="number" min="0" value="2">
+      </label>
+      <label id="airTurnsWrap" style="display:none">Bedrooms in Listing
+        <input id="airBeds" type="number" min="0" value="2">
+      </label>
+
+      <label>Stories
+        <select id="stories"><option>1</option><option selected>2</option></select>
+      </label>
+
+      <label>Common Areas Only?
+        <select id="commonOnly">
+          <option value="no" selected>No</option>
+          <option value="yes">Yes (Living/Kitchen/Halls/Baths)</option>
+        </select>
+      </label>
+
+      <!-- Pet Impact quick picker (hidden in total per your choice B) -->
+      <label>Pet Impact
+        <select id="petImpact">
+          <option value="none" selected>None</option>
+          <option value="light">Light</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+          <option value="foster">Foster / Rescue</option>
+        </select>
+      </label>
+
+      <!-- Add-ons (per-item, your “Premium” tier) -->
+      <label>Ceiling Fans (count)
+        <input id="addFans" type="number" min="0" value="0">
+      </label>
+      <label>Blinds (count)
+        <input id="addBlinds" type="number" min="0" value="0">
+      </label>
+      <label>Windows (interior panes)
+        <input id="addWindows" type="number" min="0" value="0">
+      </label>
+      <label>Ovens (count)
+        <input id="addOvens" type="number" min="0" value="0">
+      </label>
+      <label>Fridges (count)
+        <input id="addFridges" type="number" min="0" value="0">
+      </label>
+
+      <label style="grid-column:1/-1">Notes (optional)
+        <input id="estNotes" placeholder="Entry, parking, special requests (admin only)">
+      </label>
+    </div>
+
+    <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
+      <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Admin Helper Chat (UI) -->
+  <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
+  <div id="admin-help" aria-live="polite" aria-label="Admin help chat">
+    <div class="ah-head">
+      <div>
+        <div class="ah-title">Admin Help</div>
+        <div class="ah-sub">Short answers + quick links</div>
+      </div>
+      <button class="ah-close" aria-label="Close">×</button>
+    </div>
+    <div id="ah-thread" class="ah-thread"></div>
+    <div class="ah-quick">
+      <button data-q="how quote">How do I quote?</button>
+      <button data-q="organizing">Organizing time?</button>
+      <button data-q="assign">Assign a job</button>
+      <button data-q="status">Statuses</button>
+      <button data-q="booking">Booking link</button>
+      <button data-q="gameday">Game Day fields</button>
+      <button data-q="birthday">Birthday fields</button>
+      <button data-q="christmas">Christmas fields</button>
+      <button data-q="holiday">Holiday cheat sheet</button>
+    </div>
+    <div class="ah-input">
+      <input id="ah-input" type="text" placeholder="Ask a quick question…" />
+      <button class="ah-send" id="ah-send">Send</button>
+    </div>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <!-- Pricing calculators (exposes calc* fns used by estimator) -->
+  <script src="script.js" defer></script>
 
+  <!-- App logic -->
   <script type="module">
-import { auth, db } from "./ft-firebase.js";
+    import { auth, db } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      collection, query, where, onSnapshot,
-      doc, getDoc, updateDoc, serverTimestamp, runTransaction
+      collection, query, where, orderBy, onSnapshot, limit,
+      doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+      serverTimestamp, runTransaction, Timestamp
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const rolePill   = document.getElementById('rolePill');
-    const whoami     = document.getElementById('whoami');
-    const btnSignOut = document.getElementById('signOutBtn');
-    const chipsWrap  = document.getElementById('filterChips');
-    const adminBtn   = document.getElementById('adminIntakeBtn');
+    // ---- Auth gate ----
+    const whoami = document.getElementById('whoami');
+    const btnOut = document.getElementById('signOutBtn');
 
-    const tabOpen    = document.getElementById('tabOpen');
-    theTabListeners();
-    const tabMine    = document.getElementById('tabMine');
-    const panelOpen  = document.getElementById('panelOpen');
-    const panelMine  = document.getElementById('panelMine');
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { location.href = "login.html?next=" + encodeURIComponent("admin-dashboard.html"); return; }
+      whoami.textContent = user.email || user.uid;
 
-    const openJobsEl = document.getElementById('openJobs');
-    const myJobsEl   = document.getElementById('myJobs');
-    const toastEl    = document.getElementById('toast');
+      const roleSnap = await getDoc(doc(db, "users", user.uid));
+      const role = (roleSnap.exists() ? (roleSnap.data().role || "") : "").toLowerCase();
+      if (role !== "admin") { location.href = "contractor-dashboard.html"; return; }
+      init();
+    });
 
-    const gateSignedOut  = document.getElementById('gate-signedout');
-    const gateNotApplied = document.getElementById('gate-notapplied');
-    const gatePending    = document.getElementById('gate-pending');
-    const portalUI       = document.getElementById('portal-ui');
+    btnOut.addEventListener('click', async (e) => {
+      e.preventDefault(); await signOut(auth); location.href = "index.html";
+    });
 
-    let me = null;
-    let meRole = '';
-    let meServices = [];
-    let activeFilter = 'all';
-    let lastOpenJobs = [], lastMyJobs = [];
+    // ---- UI state ----
+    const ALL_TYPES = ["cleaning","organizing","decor","holiday"];
+    const chipsWrap = document.getElementById('filterChips');
+    const searchBox = document.getElementById('searchBox');
+    const clearSearch = document.getElementById('clearSearch');
+    const tabs = Array.from(document.querySelectorAll(".tabbtn"));
+    const panels = Array.from(document.querySelectorAll(".panel"));
+    const elOpen = document.getElementById('listOpen');
+    const elAll  = document.getElementById('listAll');
+    const elCons = document.getElementById('listContractors');
+    const elClients = document.getElementById('listClients');
+    const elApps = document.getElementById('listApps');
 
-    const ALL_TYPES = ['cleaning','organizing','decor','holiday'];
+    let activeType = "all";
+    let searchTerm = "";
+    let lastOpen = [], lastAll = [];
 
-    function showGate(which){
-      // hide all gates + portal
-      [gateSignedOut, gateNotApplied, gatePending].forEach(x => x.classList.add('hidden'));
-      portalUI.classList.add('hidden');
-      panelOpen.style.display = 'none';
-      panelMine.style.display = 'none';
-
-      switch(which){
-        case 'signedout': gateSignedOut.classList.remove('hidden'); break;
-        case 'notapplied': gateNotApplied.classList.remove('hidden'); break;
-        case 'pending': gatePending.classList.remove('hidden'); break;
-        case 'portal':
-          portalUI.classList.remove('hidden');
-          panelOpen.style.display = '';
-          panelMine.style.display = '';
-          break;
-      }
+    function setTab(key){
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab===key));
+      panels.forEach(p => p.classList.toggle("active", p.id === "panel-"+key));
     }
-
-    function showToast(msg, ms=1900){
-      toastEl.textContent = msg;
-      toastEl.style.display = 'block';
-      setTimeout(()=> toastEl.style.display = 'none', ms);
-    }
-    function cap(s){ return s ? (s[0].toUpperCase() + s.slice(1)) : ''; }
-    function fmtPay(n){
-      if (typeof n === 'number' && !isNaN(n)) return `$${Math.round(n)}`;
-      const x = Number(n); return isFinite(x) ? `$${Math.round(x)}` : '';
-    }
-    function fmtDate(d){
-      try { return new Date(d).toLocaleDateString([], { month:'short', day:'numeric' }); } catch { return d || ''; }
-    }
-    function payForContractor(j){
-      const p = j.payEach ?? j.contractorPayEach ?? j.payPerContractor ?? j.contractorPay ?? null;
-      return p != null ? `Your pay est: <span class="pay">${fmtPay(p)}</span>` : '';
-    }
-    function slotsLeft(j){
-      const need = Number(j.contractorsNeeded || 1);
-      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
-      const left = Math.max(0, need - have);
-      return { need, have, left };
-    }
-    function canClaimRole(){ return meRole === 'contractor' || meRole === 'admin'; }
-
-    function setTab(which){
-      const open = which === 'open';
-      tabOpen.classList.toggle('active', open);
-      tabMine.classList.toggle('active', !open);
-      tabOpen.setAttribute('aria-selected', String(open));
-      tabMine.setAttribute('aria-selected', String(!open));
-      panelOpen.hidden = !open;
-      panelMine.hidden = open;
-    }
-    function theTabListeners(){
-      // keep function hoisted in top, attach after DOM refs exist
-      document.addEventListener('click', (e)=>{
-        if (e.target?.id === 'tabOpen') setTab('open');
-        if (e.target?.id === 'tabMine') setTab('mine');
-      });
-    }
+    tabs.forEach(t => t.addEventListener("click", () => setTab(t.dataset.tab)));
 
     function renderChips(){
-      const allowed = (meServices && meServices.length)
-        ? meServices.map(s => String(s).toLowerCase())
-        : ALL_TYPES;
-      const types = ['all', ...allowed];
-      chipsWrap.innerHTML = '';
-      types.forEach(t => {
-        const b = document.createElement('button');
-        b.className = 'chip' + (t === activeFilter ? ' active' : '');
-        b.type = 'button';
-        b.textContent = t === 'all' ? 'All' : (t[0].toUpperCase() + t.slice(1));
-        b.addEventListener('click', () => {
-          activeFilter = t;
-          const statService = document.getElementById("statService");
-          if (statService) statService.textContent = t === "all" ? "All" : cap(t);
-          renderChips();
-          drawOpenJobs(lastOpenJobs);
-          drawMyJobs(lastMyJobs);
-        });
+      chipsWrap.innerHTML = "";
+      ["all", ...ALL_TYPES].forEach(t => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip" + (t===activeType ? " active" : "");
+        b.textContent = t==="all" ? "All" : (t[0].toUpperCase()+t.slice(1));
+        b.addEventListener("click", () => { activeType = t; drawOpen(lastOpen); drawAll(lastAll); });
         chipsWrap.appendChild(b);
       });
     }
 
-    btnSignOut.addEventListener('click', async (e) => {
-      e.preventDefault();
-      try { await signOut(auth); } finally { location.href = 'index.html'; }
-    });
+    searchBox.addEventListener("input", () => { searchTerm = searchBox.value.trim().toLowerCase(); drawOpen(lastOpen); drawAll(lastAll); });
+    clearSearch.addEventListener("click", () => { searchBox.value=""; searchTerm=""; drawOpen(lastOpen); drawAll(lastAll); });
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        whoami.textContent = '';
-        rolePill.textContent = 'Signed out';
-        // admin button stays hidden
-        adminBtn.hidden = true;
-        adminBtn.style.display = 'none';
-        showGate('signedout');
-        return;
-      }
-
-      me = user;
-      whoami.textContent = user.email || user.uid;
-      rolePill.textContent = 'Checking role…';
-      // default hidden (prevents flash)
-      adminBtn.hidden = true;
-      adminBtn.style.display = 'none';
-
-      // Get the user doc to determine role
-      const uref = doc(db, 'users', user.uid);
-      try {
-        const snap = await getDoc(uref);
-        if (!snap.exists()) {
-          meRole = '';
-          meServices = [];
-          rolePill.textContent = 'No role yet';
-          showGate('notapplied');
-          return;
-        }
-
-        const data = snap.data();
-        meRole = (data.role || '').toLowerCase();
-        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes.map(s=>String(s).toLowerCase()) : [];
-        rolePill.textContent = meRole ? cap(meRole) : 'No role yet';
-
-        // Only admins see Manual Intake (no flicker)
-        if (meRole === 'admin') {
-          adminBtn.hidden = false;
-          adminBtn.style.display = '';
-        } else {
-          adminBtn.hidden = true;
-          adminBtn.style.display = 'none';
-        }
-
-        if (meRole === 'pending') {
-          showGate('pending');
-          return;
-        }
-
-        if (meRole === 'contractor' || meRole === 'admin') {
-          showGate('portal');
-          renderChips();
-          const statService = document.getElementById("statService");
-          if (statService) statService.textContent = activeFilter === "all" ? "All" : cap(activeFilter);
-          startListeners();     // <-- only start now (prevents permission-denied)
-          return;
-        }
-
-        // Unknown/empty role
-        showGate('notapplied');
-      } catch (e) {
-        console.warn('Role check error:', e);
-        rolePill.textContent = 'Unknown role';
-        showGate('notapplied');
-      }
-    });
-
-    let unsubOpen = null, unsubMineA = null, unsubMineB = null;
-    function cleanup(){
-      try { unsubOpen && unsubOpen(); } catch {}
-      try { unsubMineA && unsubMineA(); } catch {}
-      try { unsubMineB && unsubMineB(); } catch {}
-      unsubOpen = unsubMineA = unsubMineB = null;
+    // ---- Helpers ----
+    function cap(s){ return s ? (s[0].toUpperCase()+s.slice(1)) : ""; }
+    function fmt(n){ return (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : ""; }
+    function matchFilters(j){
+      const type = (j.serviceType||"").toLowerCase();
+      const okType = (activeType==="all") || (type===activeType);
+      if (!okType) return false;
+      if (!searchTerm) return true;
+      const hay = JSON.stringify(j).toLowerCase();
+      return hay.includes(searchTerm);
+    }
+    function slots(j){
+      const need = Number(j.contractorsNeeded || 1);
+      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
+      const left = Math.max(0, need - have);
+      return {need,have,left};
+    }
+    function fmtDate(ts){
+      if (!ts?.toDate) return {date:"", time:""};
+      const d=ts.toDate();
+      return {
+        date: d.toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'}),
+        time: d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})
+      };
     }
 
-    function startListeners(){
-      cleanup();
-
-      // Open jobs (contractor/admin can read per rules)
-      unsubOpen = onSnapshot(
-        query(collection(db, 'jobs'), where('status', '==', 'open')),
-        (snap) => {
-          const byCreatedDesc = (a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0);
-          lastOpenJobs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort(byCreatedDesc);
-          drawOpenJobs(lastOpenJobs);
-        },
-        (err) => console.warn('open jobs listener error:', err)
-      );
-
-      // My jobs — legacy single-assignee
-      unsubMineA = onSnapshot(
-        query(collection(db, 'jobs'), where('contractorId', '==', (me?.uid || ''))),
-        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
-        (err) => console.warn('my jobs (A) listener error:', err)
-      );
-
-      // My jobs — new multi-assignee
-      unsubMineB = onSnapshot(
-        query(collection(db, 'jobs'), where('contractorIds', 'array-contains', (me?.uid || ''))),
-        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
-        (err) => console.warn('my jobs (B) listener error:', err)
-      );
-    }
-
-    function mergeMine(list){
-      const map = new Map(lastMyJobs.map(j => [j.id, j]));
-      list.forEach(j => map.set(j.id, j));
-      lastMyJobs = Array.from(map.values());
-      drawMyJobs(lastMyJobs);
-    }
-
-    function jobCardHTML(j, inMine=false){
-      const type  = (j.serviceType || '').toLowerCase();
-      const title = type ? cap(type) : 'Job';
-      const zip   = j.zip || j.postal || j.postcode || j.area || j.city || '';
-      const when  = j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || '');
-      const bb    = (j.beds || j.baths) ? `${j.beds||0} bd / ${j.baths||0} ba` : '';
-      const hours = j.estimatedTeamHours || j.teamHours || j.eta || '';
-      const { need, left } = slotsLeft(j);
-      const leftTxt = need > 1 ? `${left} of ${need} slots left` : '';
-      const payLine = payForContractor(j);
-      const statusChip = j.status ? `<span>• ${j.status}</span>` : '';
+    function jobCard(j){
+      const {need, left} = slots(j);
+      const zip = j.zip || j.area || j.city || "";
+      const dt = fmtDate(j.serviceDate);
+      const title = cap(j.serviceType||"job");
+      const payLine = j.flatRate!=null ? `<span>Client est: <strong>${fmt(j.flatRate)}</strong></span>` : "";
+      const leftTxt = need>1 ? `• ${left} of ${need} slots left` : "";
 
       return `
-        <div class="card job-card" data-jobid="${j.id}">
+        <div class="card" data-id="${j.id}">
           <div class="toprow">
             <strong>${title}</strong>
-            ${payLine ? `<div class="muted">${payLine}</div>` : ''}
+            <span class="small">Status: <code>${j.status||''}</code></span>
           </div>
           <div class="meta">
-            ${zip   ? `<span>📍 <span>${zip}</span></span>` : ''}
-            ${when  ? `<span>🗓️ <span>${when}</span></span>` : ''}
-            ${bb    ? `<span>🛏️ <span>${bb}</span></span>` : ''}
-            ${hours ? `<span>⏱️ <span>${hours}</span></span>` : ''}
-            ${leftTxt ? `<span>👥 <span>${leftTxt}</span></span>` : ''}
-            ${statusChip}
+            ${zip?`<span>📍 ${zip}</span>`:""}
+            ${dt.date?`<span>🗓️ ${dt.date}</span>`:""}
+            ${dt.time?`<span>🕘 ${dt.time}</span>`:""}
+            ${j.estimatedTeamHours?`<span>⏱️ ${j.estimatedTeamHours} hrs</span>`:""}
+            ${leftTxt}
+            ${payLine}
           </div>
-          ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : '')}
-          <div class="actions"></div>
+          ${j.summary?`<div>${j.summary}</div>`:""}
+          ${j.notes?`<div class="small" style="opacity:.8">${j.notes}</div>`:""}
+
+          <div class="actions">
+            <button class="btn btn-outline" data-act="assign-self">Assign me</button>
+            <button class="btn btn-outline" data-act="assign-by-email">Assign by email</button>
+            <button class="btn btn-outline" data-act="unassign">Unassign</button>
+            <select class="btn" data-act="status">
+              ${["open","claimed","in_progress","submitted","approved","paid"].map(s=>`<option value="${s}" ${j.status===s?"selected":""}>${s}</option>`).join("")}
+            </select>
+            <button class="btn btn-outline" data-act="private">Private note</button>
+            <button class="btn btn-danger" data-act="delete">Delete</button>
+          </div>
         </div>
       `;
     }
 
-    function drawOpenJobs(list){
-      const statOpen = document.getElementById("statOpen");
-      if (statOpen) statOpen.textContent = String(list.length);
-      const allowed = (meServices && meServices.length) ? meServices : ALL_TYPES;
-      const filtered = list.filter(j => {
-        const type = (j.serviceType || '').toLowerCase();
-        const okType = allowed.includes(type);
-        const chipOk = (activeFilter === 'all') ? true : (type === activeFilter);
-        return okType && chipOk;
+    function drawOpen(list){
+      const filtered = list.filter(matchFilters);
+      elOpen.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No open jobs match.</div>`;
+      hookJobActions(elOpen, filtered);
+    }
+    function drawAll(list){
+      const filtered = list.filter(matchFilters);
+      elAll.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No jobs match.</div>`;
+      hookJobActions(elAll, filtered);
+    }
+
+    function drawPeople(container, people, role){
+      if (!container) return;
+      if (!people.length){ container.innerHTML = `<div class="empty">No ${role}s found.</div>`; return; }
+      container.innerHTML = people.map(p=>`
+        <div class="card">
+          <div class="toprow">
+            <strong>${p.displayName || p.email || p.id}</strong>
+            <span class="rolepill">${p.role || ""}</span>
+          </div>
+          <div class="meta">
+            ${p.email?`<span>📧 ${p.email}</span>`:""}
+            ${Array.isArray(p.serviceTypes)&&p.serviceTypes.length?`<span>🧰 ${p.serviceTypes.join(", ")}</span>`:""}
+          </div>
+          ${role==="contractor"?`<div class="actions">
+            <button class="btn btn-outline" data-uid="${p.id}" data-email="${p.email||""}" data-act="copy-id">Copy UID</button>
+          </div>`:""}
+        </div>
+      `).join("");
+
+      container.querySelectorAll('[data-act="copy-id"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          try{ await navigator.clipboard.writeText(b.dataset.uid); b.textContent="Copied!"; setTimeout(()=>b.textContent="Copy UID",900);}catch{}
+        });
       });
-
-      if (!filtered.length){
-        openJobsEl.innerHTML = `<div class="empty">No open jobs right now.</div>`;
-        return;
-      }
-      openJobsEl.innerHTML = filtered.map(j => jobCardHTML(j, false)).join('');
-      filtered.forEach(j => injectOpenActions(j));
     }
 
-    function drawMyJobs(list){
-      if (!list.length){
-        myJobsEl.innerHTML = `<div class="empty">You haven’t claimed any jobs yet.</div>`;
-        return;
-      }
-      myJobsEl.innerHTML = list.map(j => jobCardHTML(j, true)).join('');
-      list.forEach(j => injectMineActions(j));
-    }
+    function drawApps(apps){
+      const el = document.getElementById('listApps');
+      if (!el) return;
+      if (!apps.length){ el.innerHTML = `<div class="empty">No pending applications.</div>`; return; }
+      el.innerHTML = apps.map(a=>`
+        <div class="card">
+          <div class="toprow">
+            <strong>${a.displayName || a.email || a.id}</strong>
+            <span class="rolepill">pending</span>
+          </div>
+          <div class="meta">
+            ${a.email?`<span>📧 ${a.email}</span>`:""}
+            ${Array.isArray(a.serviceTypes)&&a.serviceTypes.length?`<span>🧰 ${a.serviceTypes.join(", ")}</span>`:""}
+          </div>
+          <div class="actions">
+            <button class="btn btn-solid" data-act="approve" data-uid="${a.id}">Approve → contractor</button>
+            <button class="btn btn-outline" data-act="reject" data-uid="${a.id}">Reject</button>
+          </div>
+        </div>
+      `).join("");
 
-    /* ---------- new helpers for compliance & private address ---------- */
-    async function getMyUserDoc() {
-      if (!me) return null;
-      const snap = await getDoc(doc(db, 'users', me.uid));
-      return snap.exists() ? snap.data() : null;
-    }
-
-    function isCompliant(u) {
-      const c = u?.compliance || {};
-      const bgClear = (c.background?.status === 'clear');       // e.g., {status:'clear'}
-      const insVerified = (c.insurance?.status === 'verified');  // e.g., {status:'verified'}
-      return !!(bgClear && insVerified);
-    }
-
-    async function ensureCompliantOrExplain() {
-      const u = await getMyUserDoc();
-      if (isCompliant(u)) return true;
-      alert(
-        "Almost there!\n\n" +
-        "• Complete your Checkr background check (status must be Clear).\n" +
-        "• Upload insurance and list us as Certificate Holder (status must be Verified).\n\n" +
-        "Once both are verified, you can claim jobs."
-      );
-      return false;
-    }
-
-    async function fetchPrivateFullAddress(jobId) {
-      try {
-        const ref = doc(db, 'jobs', jobId, 'private', 'main');
-        const snap = await getDoc(ref);
-        const full = snap.exists() ? (snap.data().fullAddress || '') : '';
-        return (full || '').trim();
-      } catch {
-        return '';
-      }
-    }
-    /* ------------------------------------------------------------------ */
-
-    function injectOpenActions(j){
-      const card = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
-      if (!card) return;
-      const actions = card.querySelector('.actions');
-
-      if (canClaimRole()){
-        const { left } = slotsLeft(j);
-        const claim = document.createElement('button');
-        claim.className = 'btn btn-solid';
-        claim.textContent = left > 1 ? 'Claim a slot' : 'Claim this job';
-        claim.addEventListener('click', () => claimJob(j.id, claim));
-        actions.appendChild(claim);
-      }
-
-      const msg = document.createElement('a');
-      msg.className = 'btn btn-outline';
-      msg.textContent = 'Message Admin';
-      msg.href = '#';
-      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
-      actions.appendChild(msg);
-    }
-
-    async function injectMineActions(j){
-      const card = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
-      if (!card) return;
-      const actions = card.querySelector('.actions');
-
-      // If I’m on this job, reveal full address from private subdoc (but never client name)
-      const iAmOnThis = Array.isArray(j.contractorIds) ? j.contractorIds.includes(me?.uid) : (j.contractorId === me?.uid);
-      if (iAmOnThis) {
-        const full = await fetchPrivateFullAddress(j.id);
-        if (full) {
-          const meta = card.querySelector('.meta');
-          if (meta && !meta.querySelector('.fulladdr')) {
-            const span = document.createElement('span');
-            span.className = 'fulladdr';
-            span.innerHTML = `📍 <span>${full}</span>`;
-            meta.appendChild(span);
-          }
-        }
-      }
-
-      const msg = document.createElement('a');
-      msg.className = 'btn btn-outline';
-      msg.textContent = 'Message Admin';
-      msg.href = '#';
-      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
-      actions.appendChild(msg);
-
-      const mark = document.createElement('button');
-      mark.className = 'btn btn-solid';
-      mark.textContent = j.status === 'in_progress' ? 'Mark Submitted'
-                      : (j.status === 'claimed' ? 'Start Work'
-                      : (j.status === 'submitted' ? 'Submitted' : 'Update Status'));
-      mark.disabled = (j.status === 'submitted' || j.status === 'approved' || j.status === 'paid');
-      mark.addEventListener('click', async () => {
-        try {
-          const newStatus = j.status === 'claimed' ? 'in_progress' : 'submitted';
-          await updateDoc(doc(db, 'jobs', j.id), { status: newStatus, updatedAt: serverTimestamp() });
-          showToast(newStatus === 'in_progress' ? 'Marked in progress' : 'Marked submitted');
-        } catch (e) {
-          console.warn(e);
-          alert('Could not update status.');
-        }
+      el.querySelectorAll('[data-act="approve"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:"contractor", updatedAt: serverTimestamp() }); alert("Approved."); }
+          catch(e){ alert("Could not approve."); console.warn(e); }
+        });
       });
-      actions.appendChild(mark);
+      el.querySelectorAll('[data-act="reject"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:"rejected", updatedAt: serverTimestamp() }); alert("Rejected."); }
+          catch(e){ alert("Could not reject."); console.warn(e); }
+        });
+      });
     }
 
-    async function claimJob(jobId, buttonEl){
-      if (!me) return;
+    function hookJobActions(container, jobs){
+      const byId = new Map(jobs.map(j=>[j.id,j]));
+      container.querySelectorAll(".card .actions").forEach(row=>{
+        const id = row.closest(".card").dataset.id;
+        const job = byId.get(id);
+        if (!job) return;
 
-      // NEW: block claim if not compliant
-      const ok = await ensureCompliantOrExplain();
-      if (!ok) return;
+        row.querySelector('[data-act="assign-self"]')?.addEventListener("click", ()=>assignSelf(id));
+        row.querySelector('[data-act="assign-by-email"]')?.addEventListener("click", ()=>assignByEmail(id));
+        row.querySelector('[data-act="unassign"]')?.addEventListener("click", ()=>unassign(id));
+        row.querySelector('[data-act="private"]')?.addEventListener("click", ()=>editPrivate(id));
+        row.querySelector('[data-act="delete"]')?.addEventListener("click", ()=>delJob(id));
+        row.querySelector('[data-act="status"]')?.addEventListener("change", (e)=>setStatus(id, e.target.value));
+      });
+    }
 
-      if (buttonEl) { buttonEl.disabled = true; buttonEl.textContent = 'Claiming…'; }
-
-      try {
-        await runTransaction(db, async (tx) => {
-          const ref = doc(db, 'jobs', jobId);
-          const snap = await tx.get(ref);
-          if (!snap.exists()) throw new Error('Job not found.');
-          const j = snap.data();
-
-          if ((j.status || 'open') !== 'open') throw new Error('Already claimed.');
-
-          const need = Number(j.contractorsNeeded || 1);
-          const ids = Array.isArray(j.contractorIds) ? [...j.contractorIds]
-                    : (j.contractorId ? [j.contractorId] : []);
-          if (ids.includes(me.uid)) return;
-          if (ids.length >= need) throw new Error('No slots left.');
-
-          ids.push(me.uid);
-          const emails = Array.isArray(j.contractorEmails) ? [...j.contractorEmails] : [];
-          const myEmail = me.email || '';
-          if (myEmail && !emails.includes(myEmail)) emails.push(myEmail);
-
+    // ---- Job actions ----
+    async function assignSelf(jobId){
+      const me = auth.currentUser; if (!me) return;
+      try{
+        await runTransaction(db, async tx=>{
+          const ref=doc(db,"jobs",jobId), snap=await tx.get(ref);
+          if (!snap.exists()) throw "Missing";
+          const j=snap.data();
+          const need=Number(j.contractorsNeeded||1);
+          const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:[];
+          if (!ids.includes(me.uid)) ids.push(me.uid);
           const update = {
             contractorIds: ids,
-            contractorEmails: emails,
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
+            status: (ids.length>=need) ? "claimed" : "open",
+            claimedAt: (ids.length>=need) ? serverTimestamp() : j.claimedAt || null
           };
-          if (ids.length >= need) {
-            update.status = 'claimed';
-            update.claimedAt = serverTimestamp();
-          } else {
-            update.status = 'open';
-          }
           tx.update(ref, update);
         });
-
-        showToast('Job claimed');
-        setTab('mine');
-      } catch (e) {
-        console.warn(e);
-        const msg = (e && e.code === 'permission-denied')
-          ? 'Permission denied claiming. Your account may still be pending.'
-          : (e.message || 'Could not claim. It may have just been taken.');
-        alert(msg);
-      } finally {
-        if (buttonEl) { buttonEl.disabled = false; buttonEl.textContent = 'Claim this job'; }
-      }
+        alert("Assigned.");
+      }catch(e){ alert("Could not assign."); console.warn(e); }
     }
-  </script>
 
-  <script>
-    (function(){
-      const links = Array.from(document.querySelectorAll("[data-side]"));
-      const dashboard = document.getElementById("dashboardPanel");
-      const placeholder = document.getElementById("placeholderPanel");
-      const title = document.getElementById("placeholderTitle");
-      const text = document.getElementById("placeholderText");
+    async function assignByEmail(jobId){
+      const email = prompt("Enter contractor email to assign:"); if (!email) return;
+      try{
+        const q = query(collection(db,"users"), where("email","==", email));
+        const snap = await getDocs(q);
+        if (snap.empty){ alert("No user with that email."); return; }
+        const u = { id: snap.docs[0].id, ...snap.docs[0].data() };
+        if ((u.role||"").toLowerCase()==="pending"){ alert("User is pending; approve first."); return; }
 
-      
-const copy = {
-        dashboard: {
-          title: "Dashboard",
-          text: "View open opportunities and manage claimed work."
-        },
-        jobs: {
-          title: "Jobs / Assignments",
-          text: "Assigned work, arrival details, job notes, and completion workflow will live here."
-        },
-        availability: {
-          title: "Availability",
-          text: "Coming next: submit TFT-only availability slots without exposing your full personal or company calendar."
-        },
-        territory: {
-          title: "Territory + ZIP Preferences",
-          text: "Set preferred ZIP codes, travel zones, and area preferences by day."
-        },
-        capacity: {
-          title: "Capacity Settings",
-          text: "Set realistic workload: max homes/day, max hours/day, heavy clean limits, and preferred job sizes."
-        },
-        walkthroughs: {
-          title: "Walkthroughs",
-          text: "Upload walkthrough photos/videos, submit checklist findings, and send estimate recommendations to admin."
-        },
-        estimates: {
-          title: "My Estimates",
-          text: "Track estimates you submitted and whether they were approved, revised, or booked."
-        },
-        messages: {
-          title: "Messages",
-          text: "Messaging to TFT admin is coming for scheduling, ETA updates, and job communication."
-        },
-        documents: {
-          title: "Documents + Compliance",
-          text: "Insurance, Checkr status, W‑9, contractor agreement, and onboarding paperwork live here."
-        },
-        resources: {
-          title: "Resources",
-          text: "Cleaning standards, organization guides, staging resources, and TFT SOPs will be stored here."
-        },
-        payments: {
-          title: "Payments",
-          text: "Payout history, completed job records, and payment notes are planned here."
+        await runTransaction(db, async tx=>{
+          const ref=doc(db,"jobs",jobId), ds=await tx.get(ref);
+          if (!ds.exists()) throw "Missing";
+          const j=ds.data();
+          const need=Number(j.contractorsNeeded||1);
+          const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:[];
+          if (!ids.includes(u.id)) ids.push(u.id);
+          const update = {
+            contractorIds: ids,
+            updatedAt: serverTimestamp(),
+            status: (ids.length>=need) ? "claimed" : "open",
+            claimedAt: (ids.length>=need) ? serverTimestamp() : j.claimedAt || null
+          };
+          tx.update(ref, update);
+        });
+        alert("Assigned.");
+      }catch(e){ alert("Could not assign."); console.warn(e); }
+    }
+
+    async function unassign(jobId){
+      const who = prompt("Remove which contractor UID? (leave blank to remove the last one)");
+      try{
+        await runTransaction(db, async tx=>{
+          const ref=doc(db,"jobs",jobId), ds=await tx.get(ref);
+          if (!ds.exists()) throw "Missing";
+          const j=ds.data();
+          let ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:[];
+          if (!ids.length) return;
+          if (who){ ids = ids.filter(x=>x!==who); } else { ids.pop(); }
+          tx.update(ref, {
+            contractorIds: ids,
+            updatedAt: serverTimestamp(),
+            status: ids.length ? (j.status||"claimed") : "open"
+          });
+        });
+        alert("Unassigned.");
+      }catch(e){ alert("Could not unassign."); console.warn(e); }
+    }
+
+    async function setStatus(jobId, status){
+      try{ await updateDoc(doc(db,"jobs",jobId), { status, updatedAt: serverTimestamp() }); }
+      catch(e){ alert("Could not update status."); console.warn(e); }
+    }
+
+    async function delJob(jobId){
+      if (!confirm("Delete this job?")) return;
+      try{ await deleteDoc(doc(db,"jobs",jobId)); }
+      catch(e){ alert("Could not delete."); console.warn(e); }
+    }
+
+    async function editPrivate(jobId){
+      const note = prompt("Private note (replaces jobs/{id}/private/main.note). Leave blank to clear.");
+      try{
+        const ref = doc(db, "jobs", jobId, "private", "main");
+        await setDoc(ref, { note: (note||""), updatedAt: serverTimestamp() });
+        alert("Saved.");
+      }catch(e){ alert("Could not save private note."); console.warn(e); }
+    }
+
+    // ---- Create form ----
+    function wireCreateForm(){
+      const form = document.getElementById('createForm');
+      const msg  = document.getElementById('createMsg');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        msg.textContent = "Creating…";
+
+        const fd = new FormData(form);
+        const data = Object.fromEntries(fd.entries());
+
+        // Combine date + time into Firestore Timestamp
+        let serviceDateTs = null;
+        if (data.serviceDate) {
+          const [hh,mm] = (data.serviceTime || "09:00").split(":").map(n=>parseInt(n||0,10));
+          const [y,m,d] = data.serviceDate.split("-").map(n=>parseInt(n,10));
+          serviceDateTs = Timestamp.fromDate(new Date(y,(m||1)-1,d, hh||9, mm||0,0,0));
         }
-      };
 
+        const job = {
+          serviceType: (data.serviceType||"").toLowerCase(),
+          status: (data.status||"open"),
+          zip: (data.zip||"").trim(),
+          area: (data.area||"").trim(),
+          summary: (data.summary||"").trim(),
+          notes: (data.notes||"").trim(),
+          flatRate: data.flatRate? Number(data.flatRate) : null,
+          estimatedTeamHours: data.estimatedTeamHours? Number(data.estimatedTeamHours) : null,
+          contractorsNeeded: Math.max(1, Number(data.contractorsNeeded||1)),
+          contractorIds: [],
+          clientId: (data.clientId||"").trim(),
+          serviceDate: serviceDateTs,
+          arriveEarlyMinutes: 15,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago",
+          reminderFlags: { dayBefore: false, dayOf: false },
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
 
-      function show(section){
-        links.forEach(link => link.classList.toggle("active", link.dataset.side === section));
+        // cleanup empty props
+        Object.keys(job).forEach(k=>{ if (job[k]==="" || job[k]==null) delete job[k]; });
 
-        if (section === "dashboard" || section === "jobs") {
-          dashboard.style.display = "";
-          placeholder.classList.remove("active");
-          return;
+        try{
+          await addDoc(collection(db,"jobs"), job);
+          msg.textContent = "Created ✔";
+          form.reset();
+          setTimeout(()=>msg.textContent="",1200);
+          setTab("open");
+        }catch(e){
+          msg.textContent = "Could not create job.";
+          console.warn(e);
         }
+      });
+    }
 
-        dashboard.style.display = "none";
-        placeholder.classList.add("active");
-        title.textContent = copy[section]?.title || "Coming Soon";
-        text.textContent = copy[section]?.text || "This section is ready for the next build phase.";
+    // ---- Estimator ----
+    function wireEstimator(){
+      const svc = document.getElementById('estService');
+      const btn = document.getElementById('estCalcBtn');
+      const out = document.getElementById('estOut');
+      if (!svc || !btn || !out) return;
+
+      function show(key){
+        document.getElementById('estCleaning').style.display  = (key==='cleaning' ? '' : 'none');
+        document.getElementById('estOrganizing').style.display= (key==='organizing' ? '' : 'none');
+        document.getElementById('estDecor').style.display     = (key==='decor' ? '' : 'none');
+        document.getElementById('estHoliday').style.display   = (key==='holiday' ? '' : 'none');
+      }
+      show(svc.value);
+      svc.addEventListener('change', ()=> show(svc.value));
+
+      function labelFromHours(teamHours, occ){
+        const tag = occ ? ` — ${occ}` : "";
+        if (teamHours <= 2.5) return `Holiday & Event (indoor${tag}) — Small (≈2–2.5 hr)`;
+        if (teamHours <= 4)   return `Holiday & Event (indoor${tag}) — Medium (≈3–4 hr)`;
+        if (teamHours <= 6)   return `Holiday & Event (indoor${tag}) — Large (≈5–6 hr)`;
+        return `Holiday & Event (indoor${tag}) — XL (6.5+ hr)`;
       }
 
-      links.forEach(link => {
-        link.addEventListener("click", () => show(link.dataset.side));
-      });
+      btn.addEventListener('click', () => {
+        const type = svc.value;
+        try{
+          if (type === 'cleaning'){
+            const data = {
+              sqft: document.getElementById('c_sqft').value,
+              service: document.getElementById('c_service').value,
+              beds: document.getElementById('c_beds').value,
+              baths: document.getElementById('c_baths').value,
+              other_rooms: document.getElementById('c_other').value,
+              stories: document.getElementById('c_stories').value,
+              frequency: document.getElementById('c_freq').value,
+              addons: document.getElementById('c_addons').value
+            };
+            const price = (window.calcCleaning ? calcCleaning(data) : 0);
+            const { teamHours } = (window.estimateHoursCleaning ? estimateHoursCleaning(data) : {teamHours:0});
+            const hint = (window.cleaningHint ? cleaningHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
 
-      show("dashboard");
-    })();
+          if (type === 'organizing'){
+            const data = {
+              org_area: document.getElementById('o_area').value,
+              org_size: document.getElementById('o_size').value,
+              spaces: document.getElementById('o_spaces').value,
+              complexity: document.getElementById('o_complex').value,
+              org_clutter: document.getElementById('o_clutter').value,
+              org_decision_speed: document.getElementById('o_decision').value,
+              org_volume: document.getElementById('o_volume').value,
+              org_containers: document.getElementById('o_cont').value,
+              addons: document.getElementById('o_addons').value
+            };
+            const price = (window.calcOrganizing ? calcOrganizing(data) : 0);
+            const { teamHours } = (window.estimateHoursOrganizing ? estimateHoursOrganizing(data) : {teamHours:0});
+            const hint = (window.organizingHint ? organizingHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+
+          if (type === 'decor'){
+            const data = {
+              room: document.getElementById('d_room').value,
+              count: document.getElementById('d_count').value,
+              decor_scope: document.getElementById('d_scope').value,
+              decor_type: document.getElementById('d_type').value,
+              addons: document.getElementById('d_addons').value
+            };
+            const price = (window.calcDecor ? calcDecor(data) : 0);
+            const { teamHours } = (window.estimateHoursDecor ? estimateHoursDecor(data) : {teamHours:0});
+            const hint = (window.decorHint ? decorHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+
+          if (type === 'holiday'){
+            const occasion = (document.getElementById('h_occasion')?.value || '').trim();
+            const data = {
+              occasion,
+              trees: document.getElementById('h_trees').value,
+              tallest: document.getElementById('h_tallest').value,
+              tree_style: document.getElementById('h_style').value,
+              tree_ribbon: document.getElementById('h_ribbon').value,
+              wreaths: document.getElementById('h_wreaths').value,
+              garland_sections: document.getElementById('h_garland').value,
+              stair_sections: document.getElementById('h_stairs').value,
+              mantle: document.getElementById('h_mantle').value,
+              tablescapes: document.getElementById('h_tables').value,
+              storage: document.getElementById('h_storage').value,
+              shopping_trips: document.getElementById('h_trips').value,
+              teardown: document.getElementById('h_teardown').value
+            };
+            const res = (window.calcHoliday ? calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
+            const fancyHint = labelFromHours(res.teamHours, occasion);
+            const lines = [
+              `Install est: <strong>$${res.price}</strong>`,
+              `Team time: ~${res.teamHours} hrs`,
+            ];
+            if (res.teardownHours){
+              lines.push(`Teardown: ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
+            }
+            lines.push(`<span class="hint">${fancyHint}</span>`);
+            out.innerHTML = lines.join('<br>');
+            return;
+          }
+
+          out.textContent = 'Pick a service.';
+        } catch (e){
+          console.warn(e);
+          out.textContent = 'Could not calculate. Check your inputs.';
+        }
+      });
+    }
+
+    // ---- Admin helper (no duplicate consts) ----
+    function wireAdminHelp(){
+      const launcher = document.getElementById('admin-help-launcher');
+      const panel    = document.getElementById('admin-help');
+      const thread   = document.getElementById('ah-thread');
+      const input    = document.getElementById('ah-input');
+      const send     = document.getElementById('ah-send');
+      const close    = document.querySelector('#admin-help .ah-close');
+      const quick    = document.querySelector('#admin-help .ah-quick');
+
+      const bookUrl = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
+
+      function addMsg(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ah-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function greet(){
+        addMsg("Hi! Admin helper here. Ask about quoting, statuses, assigning, booking links — or type a holiday like <em>Game Day</em>, <em>Birthday</em>, or <em>Christmas</em> to see which fields to fill in.");
+      }
+      function detectIntent(t){
+        t=(t||"").toLowerCase();
+        if (/\b(game\s*day|gameday|super ?bowl|football|sports)\b/.test(t)) return "gameday";
+        if (/\b(birthday|bday)\b/.test(t)) return "birthday";
+        if (/\b(christmas|xmas)\b/.test(t)) return "christmas";
+        if (/\b(holiday|event|which fields|holiday cheat|help.*holiday)\b/.test(t)) return "holiday";
+        if (/quote|estimate|price|how do i quote/.test(t)) return "quote";
+        if (/organizing|closet|pantry|garage/.test(t)) return "organizing";
+        if (/assign|unassign|add.*contractor/.test(t)) return "assign";
+        if (/status|submitted|approved|paid|claimed/.test(t)) return "status";
+        if (/book|calendar|square/.test(t)) return "booking";
+        return "fallback";
+      }
+      function answer(intent){
+        const booking = `Send the calendar: <a href="${bookUrl}" target="_blank" rel="noopener">Open Square</a>.`;
+        const estTab = `Use the <strong>Estimate</strong> tab for a fast ballpark (no saving).`;
+
+        const GAME_DAY = [
+          "<strong>Game Day (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Game Day</strong>",
+          "Set: <em>Tablescapes</em> (coffee table, console, food bar), <em>Garland</em> (entry/TV wall), <em>Wreaths</em> if any.",
+          "<strong>No trees.</strong>"
+        ].join("<br>");
+
+        const BIRTHDAY = [
+          "<strong>Birthday (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Birthday</strong>",
+          "Use: <em>Tablescapes</em> (cake/gift table), <em>Garland</em>, <em>Mantle</em> if used.",
+          "<strong>No trees.</strong>"
+        ].join("<br>");
+
+        const CHRISTMAS = [
+          "<strong>Christmas (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Christmas</strong>",
+          "Set: <strong># Trees + Tallest Size + Style</strong> (add <em>Ribbon</em> if used).",
+          "Then add: <em>Wreaths</em> / <em>Garland</em> / <em>Stairs</em> / <em>Mantle</em> / <em>Tablescapes</em>."
+        ].join("<br>");
+
+        switch(intent){
+          case "gameday":   return GAME_DAY;
+          case "birthday":  return BIRTHDAY;
+          case "christmas": return CHRISTMAS;
+          case "holiday":
+            return [
+              "<strong>Holiday/Event cheat sheet</strong>",
+              GAME_DAY, "", BIRTHDAY, "", CHRISTMAS,
+              "<span class='small' style='opacity:.8'>Tip: Storage (Attic/Offsite) + Shopping Trips add time; optional Teardown quotes its own hours + $.</span>"
+            ].join("<br>");
+          case "quote":
+            return [
+              estTab,
+              "• Cleaning: size/service, beds/baths, add-ons → time hint.",
+              "• Organizing: area/size + clutter/decision → time hint.",
+              "• Decor/Holiday: pick elements; Christmas unlocks tree fields.",
+              booking
+            ].join("<br>");
+          case "organizing":
+            return [
+              "Organizing defaults: Medium area ≈ 3–4 hr team block.",
+              "Heavier clutter / slower decisions increase hours; bins/labels add a bit.",
+              estTab
+            ].join("<br>");
+          case "assign":
+            return [
+              "Open/All Jobs → card actions:",
+              "• <strong>Assign me</strong> adds you.",
+              "• <strong>Assign by email</strong> finds user by email and adds them.",
+              "• <strong>Unassign</strong> removes a UID.",
+              "Status flips to <em>claimed</em> when all slots are filled."
+            ].join("<br>");
+          case "status":
+            return [
+              "<code>open → claimed → in_progress → submitted → approved → paid</code>",
+              "Contractors progress jobs; you can override with the dropdown.",
+              "Use <em>Private note</em> for entry codes/PII."
+            ].join("<br>");
+          case "booking": return booking;
+          default:
+            return "Try: “Game Day fields”, “Birthday fields”, “Christmas fields”, or “Holiday cheat sheet”. Also: “How do I quote?”, “Assign a job”, “Statuses”, “Booking link”.";
+        }
+      }
+      function sendText(txt){
+        const t = (txt||"").trim(); if(!t) return;
+        addMsg(t, "me");
+        setTimeout(()=> addMsg(answer(detectIntent(t))), 120);
+      }
+
+      launcher.addEventListener('click', ()=>{
+        panel.style.display = 'block';
+        if (!thread.dataset.greeted){ greet(); thread.dataset.greeted="1"; }
+        input.focus();
+      });
+      close.addEventListener('click', ()=> panel.style.display='none');
+      send.addEventListener('click', ()=>{ sendText(input.value); input.value=""; });
+      input.addEventListener('keydown', (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendText(input.value); input.value=""; }});
+      quick.addEventListener('click', (e)=>{
+        if (!e.target.matches('button[data-q]')) return;
+        const q = e.target.getAttribute('data-q');
+        addMsg(e.target.textContent, "me");
+        setTimeout(()=> addMsg(answer(detectIntent(q))), 120);
+      });
+    }
+
+    // ---- Init ----
+    function init(){
+      renderChips();
+
+      // Live lists
+      onSnapshot(
+        query(collection(db,"jobs"), where("status","==","open")),
+        snap => {
+          const byCreatedDesc = (a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0);
+          lastOpen = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(byCreatedDesc);
+          drawOpen(lastOpen);
+        }
+      );
+      onSnapshot(
+        query(collection(db,"jobs"), orderBy("createdAt","desc"), limit(200)),
+        snap => { lastAll = snap.docs.map(d=>({id:d.id, ...d.data()})); drawAll(lastAll); }
+      );
+      onSnapshot(
+        query(collection(db,"users"), where("role","in",["contractor","admin"])),
+        snap => { drawPeople(elCons, snap.docs.map(d=>({id:d.id, ...d.data()})), "contractor"); }
+      );
+      onSnapshot(
+        query(collection(db,"users"), where("role","==","client")),
+        snap => { drawPeople(elClients, snap.docs.map(d=>({id:d.id, ...d.data()})), "client"); }
+      );
+      onSnapshot(
+        query(collection(db,"users"), where("role","==","pending")),
+        snap => { drawApps(snap.docs.map(d=>({id:d.id, ...d.data()}))); }
+      );
+
+      // Wire features
+      wireCreateForm();
+      wireEstimator();
+      wireAdminHelp();
+
+      // Default to Open tab (safety)
+      setTab("open");
+    }
   </script>
 </body>
 </html>
