@@ -606,6 +606,14 @@
       .admin-stats{grid-template-columns:1fr}
     }
 
+  
+    .profile-box{margin-top:10px;padding:12px;border:1px solid #f1dce1;border-radius:18px;background:#fff7f8;color:#61554f;font-weight:700;line-height:1.45}
+    .profile-box strong{color:#2f2926}
+    .profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+    .profile-mini{border:1px solid #f1dce1;background:#fffdfb;border-radius:16px;padding:10px}
+    .profile-mini h4{margin:0 0 6px;font-family:"Playfair Display",serif;color:#2f2926;font-size:1rem}
+    .profile-mini p{margin:0;white-space:pre-wrap;word-break:break-word}
+    
   </style>
 
 </head>
@@ -729,6 +737,10 @@
       </section>
 
       <section id="panel-contractors" class="panel" aria-live="polite">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow"><strong>Team Scheduling Profiles</strong><span class="rolepill">Availability + Territory + Capacity</span></div>
+          <p class="small">Use this section to view each contractor’s TFT-only availability, ZIP preferences, travel rules, capacity, service capabilities, and hidden W2-ready worker type.</p>
+        </div>
         <div id="listContractors" class="grid"></div>
       </section>
 
@@ -1115,11 +1127,75 @@
       hookJobActions(elAll, filtered);
     }
 
+    
+    function safeText(value, fallback="Not provided"){
+      if (value === undefined || value === null || value === "") return fallback;
+      if (Array.isArray(value)) return value.length ? value.join(", ") : fallback;
+      return String(value);
+    }
+
+    async function loadContractorSettings(uid){
+      const sections = ["availability", "territory", "capacity"];
+      const result = {};
+
+      for (const section of sections) {
+        try {
+          const snap = await getDoc(doc(db, "users", uid, "contractorSettings", section));
+          result[section] = snap.exists() ? snap.data() : {};
+        } catch (e) {
+          console.warn("Could not load contractor setting:", section, e);
+          result[section] = {};
+        }
+      }
+
+      return result;
+    }
+
+    function settingsHTML(settings){
+      const availability = settings.availability || {};
+      const territory = settings.territory || {};
+      const capacity = settings.capacity || {};
+
+      return `
+        <div class="profile-box">
+          <strong>Team Scheduling Profile</strong>
+          <div class="profile-grid">
+            <div class="profile-mini">
+              <h4>Availability</h4>
+              <p><strong>Type:</strong> ${safeText(availability.availabilityType)}
+<strong>Preferred Times:</strong> ${safeText(availability.preferredStartTimes)}
+<strong>Available Slots:</strong> ${safeText(availability.availableSlots)}
+<strong>Blocked Days:</strong> ${safeText(availability.blockedDays)}</p>
+            </div>
+            <div class="profile-mini">
+              <h4>Territory</h4>
+              <p><strong>Preferred ZIPs:</strong> ${safeText(territory.preferredZips)}
+<strong>Day / ZIP Rules:</strong> ${safeText(territory.dayZipRules)}
+<strong>Travel Radius:</strong> ${safeText(territory.travelRadius)}
+<strong>Avoid Areas:</strong> ${safeText(territory.avoidAreas)}</p>
+            </div>
+            <div class="profile-mini">
+              <h4>Capacity</h4>
+              <p><strong>Worker Type:</strong> ${safeText(capacity.workerType || "1099_contractor")}
+<strong>Work Style:</strong> ${safeText(capacity.workStyle)}
+<strong>Max Homes/Day:</strong> ${safeText(capacity.maxHomesPerDay)}
+<strong>Max Hours/Day:</strong> ${safeText(capacity.maxHoursPerDay)}
+<strong>Preferred Size:</strong> ${safeText(capacity.preferredJobSize)}
+<strong>Heavy Clean:</strong> ${safeText(capacity.heavyCleanWilling)}
+<strong>Capabilities:</strong> ${safeText(capacity.serviceCapabilities)}
+<strong>Notes:</strong> ${safeText(capacity.capacityNotes)}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function drawPeople(container, people, role){
       if (!container) return;
       if (!people.length){ container.innerHTML = `<div class="empty">No ${role}s found.</div>`; return; }
+
       container.innerHTML = people.map(p=>`
-        <div class="card">
+        <div class="card" data-uid="${p.id}">
           <div class="toprow">
             <strong>${p.displayName || p.email || p.id}</strong>
             <span class="rolepill">${p.role || ""}</span>
@@ -1127,10 +1203,13 @@
           <div class="meta">
             ${p.email?`<span>📧 ${p.email}</span>`:""}
             ${Array.isArray(p.serviceTypes)&&p.serviceTypes.length?`<span>🧰 ${p.serviceTypes.join(", ")}</span>`:""}
+            ${p.applicationStatus?`<span>Status: ${p.applicationStatus}</span>`:""}
           </div>
           ${role==="contractor"?`<div class="actions">
-            <button class="btn btn-outline" data-uid="${p.id}" data-email="${p.email||""}" data-act="copy-id">Copy UID</button>
-          </div>`:""}
+            <button class="btn btn-outline" data-uid="${p.id}" data-act="copy-id">Copy UID</button>
+            <button class="btn btn-solid" data-uid="${p.id}" data-act="load-profile">View Scheduling Profile</button>
+          </div>
+          <div class="contractor-profile" id="profile-${p.id}"></div>`:""}
         </div>
       `).join("");
 
@@ -1139,9 +1218,32 @@
           try{ await navigator.clipboard.writeText(b.dataset.uid); b.textContent="Copied!"; setTimeout(()=>b.textContent="Copy UID",900);}catch{}
         });
       });
+
+      container.querySelectorAll('[data-act="load-profile"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const uid = b.dataset.uid;
+          const target = document.getElementById(`profile-${uid}`);
+          if (!target) return;
+
+          b.disabled = true;
+          const oldText = b.textContent;
+          b.textContent = "Loading…";
+
+          try{
+            const settings = await loadContractorSettings(uid);
+            target.innerHTML = settingsHTML(settings);
+          }catch(e){
+            console.warn(e);
+            target.innerHTML = `<div class="profile-box">Could not load scheduling profile.</div>`;
+          }finally{
+            b.disabled = false;
+            b.textContent = oldText;
+          }
+        });
+      });
     }
 
-    
+
     function serviceLabel(types){
       if (!Array.isArray(types) || !types.length) return "Not selected";
       return types.map(t => cap(String(t).replaceAll("_"," "))).join(", ");
@@ -1216,15 +1318,7 @@
 
       el.querySelectorAll('[data-act="interview"]').forEach(b=>{
         b.addEventListener("click", ()=>{
-          alert("AI Interview Assistant – Next Build
-
-This will generate role-specific questions based on applicant category, missing details, and red flags.
-
-Examples:
-• Describe your process from arrival to completion.
-• How do you handle a client saying something was missed?
-• What supplies/tools do you bring?
-• Share proof of prior work, references, or portfolio.");
+          alert("AI Interview Assistant – Next Build\n\nThis will generate role-specific questions based on applicant category, missing details, and red flags.\n\nExamples:\n• Describe your process from arrival to completion.\n• How do you handle a client saying something was missed?\n• What supplies/tools do you bring?\n• Share proof of prior work, references, or portfolio.");
         });
       });
 
