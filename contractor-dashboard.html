@@ -578,6 +578,17 @@
       font-weight:800;
     }
 
+
+    .compliance-progress{height:12px;background:#f3e8e4;border-radius:999px;overflow:hidden;border:1px solid #eadfd8}
+    .compliance-progress>span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));border-radius:999px;transition:width .2s ease}
+    .doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}
+    .doc-card{border:1px solid #f1dce1;background:#fffdfb;border-radius:20px;padding:13px;display:grid;gap:9px}
+    .doc-card h4{margin:0;font-family:"Playfair Display",serif;color:var(--portal-ink);font-size:1.05rem}
+    .doc-status{width:max-content;max-width:100%;font-size:.78rem;padding:.28rem .65rem;border-radius:999px;background:#fff7f8;border:1px solid #f1dce1;color:#7d4f59;font-weight:900}
+    .doc-card input[type="file"]{width:100%}
+    .doc-card .small-note{color:var(--portal-muted);font-size:.85rem;font-weight:700;line-height:1.35}
+    .compliance-note{padding:12px;border:1px solid #f1dce1;background:#fff7f8;border-radius:18px;color:#61554f;font-weight:800;line-height:1.45}
+
     @media (max-width:920px){
       .portal-shell{grid-template-columns:1fr}
       .sidebar{position:relative; top:auto; min-height:auto}
@@ -955,6 +966,58 @@
           </form>
 
           <div id="walkthroughResult" class="walkthrough-result" style="display:none"></div>
+        </article>
+      </section>
+
+
+      <section id="documentsPanel" class="placeholder-panel">
+        <article class="card placeholder-card">
+          <h3>Documents & Compliance</h3>
+          <p>Upload onboarding documents, track compliance, and keep required forms organized for The Finishing Touch.</p>
+
+          <div class="compliance-note">
+            <strong>Worker Classification:</strong>
+            <span id="docWorkerType">Assigned by The Finishing Touch</span><br>
+            <span class="upload-hint">Required documents are based on the worker type assigned by admin. 1099 contractors require W-9 and COI. W2 employees require payroll documents instead.</span>
+          </div>
+
+          <div>
+            <div class="toprow">
+              <strong style="font-family:Playfair Display,serif;">Compliance Progress</strong>
+              <span id="docProgressLabel" class="rolepill">0% Complete</span>
+            </div>
+            <div class="compliance-progress"><span id="docProgressBar"></span></div>
+          </div>
+
+          <form id="documentsForm" class="portal-form">
+            <label>Legal Name <input id="docLegalName" placeholder="Full legal name" /></label>
+            <label>Business Name, if applicable <input id="docBusinessName" placeholder="Business / DBA name" /></label>
+            <label>Phone <input id="docPhone" placeholder="Phone number" /></label>
+            <label>Mailing Address <input id="docMailingAddress" placeholder="Street, city, state, ZIP" /></label>
+            <label>Preferred Payment Method
+              <select id="docPaymentMethod">
+                <option value="">Select</option><option value="zelle">Zelle</option><option value="venmo">Venmo</option>
+                <option value="cash_app">Cash App</option><option value="quickbooks">QuickBooks / Direct Deposit Later</option>
+              </select>
+            </label>
+            <label>Payment Handle / Email <input id="docPaymentHandle" placeholder="Zelle email/phone, Venmo, Cash App, etc." /></label>
+            <label class="form-full">Emergency Contact <input id="docEmergencyContact" placeholder="Name, relationship, phone number" /></label>
+            <div class="form-full actions">
+              <button class="btn btn-solid" type="submit">Save Worker Info</button>
+              <span id="documentsMsg" class="success-note"></span>
+            </div>
+          </form>
+
+          <div class="doc-grid">
+            <div class="doc-card"><h4>Identity Verification</h4><span id="status-id" class="doc-status">Not Uploaded</span><input id="upload-id" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="id">Upload ID</button><div class="small-note">Driver’s license or state ID.</div></div>
+            <div class="doc-card"><h4>W-9 / Tax Info</h4><span id="status-w9" class="doc-status">QuickBooks Preferred</span><input id="upload-w9" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="w9">Upload W-9</button><div class="small-note">For 1099 contractors. Admin may also send a QuickBooks W-9 request.</div></div>
+            <div class="doc-card"><h4>Certificate of Insurance</h4><span id="status-coi" class="doc-status">Required for 1099</span><input id="upload-coi" type="file" accept="image/*,.pdf" /><label>Policy Expiration <input id="coiExpiration" type="date" /></label><button class="btn btn-solid" type="button" data-upload-doc="coi">Upload COI</button><div class="small-note">1099 contractors must keep active insurance on file.</div></div>
+            <div class="doc-card"><h4>W-4</h4><span id="status-w4" class="doc-status">W2 Only</span><input id="upload-w4" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="w4">Upload W-4</button><div class="small-note">For future W2 employees only.</div></div>
+            <div class="doc-card"><h4>I-9</h4><span id="status-i9" class="doc-status">W2 Only</span><input id="upload-i9" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="i9">Upload I-9</button><div class="small-note">For future W2 employees only.</div></div>
+            <div class="doc-card"><h4>Signed Agreement Packet</h4><span id="status-agreement" class="doc-status">Not Uploaded</span><input id="upload-agreement" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="agreement">Upload Signed Packet</button><div class="small-note">Contractor agreement, policies, acknowledgments, and service standards.</div></div>
+            <div class="doc-card"><h4>Portfolio / Work Samples</h4><span id="status-portfolio" class="doc-status">Optional</span><input id="upload-portfolio" type="file" accept="image/*,.pdf" multiple /><button class="btn btn-solid" type="button" data-upload-doc="portfolio">Upload Work Samples</button><div class="small-note">Before/after photos, organizing projects, decorating/staging examples, or certifications.</div></div>
+            <div class="doc-card"><h4>TFT Academy</h4><span class="doc-status">Coming Soon</span><div class="small-note">Future certifications: Foundations, Cleaning Specialist, Organization Specialist, Styling Specialist, Holiday Decor, Staging, Walkthrough Specialist, and Lead Specialist.</div></div>
+          </div>
         </article>
       </section>
 
@@ -1552,6 +1615,124 @@ import { auth, db, storage } from "./ft-firebase.js";
     }
 
 
+
+    function workerTypeLabel(type){
+      const t = String(type || "").toLowerCase();
+      if (t.includes("w2") || t.includes("employee")) return "W2 Employee";
+      if (t.includes("1099") || t.includes("contractor")) return "1099 Independent Contractor";
+      return "Assigned by The Finishing Touch";
+    }
+
+    function docStatusLabel(doc){
+      if (!doc) return "Not Uploaded";
+      return doc.adminStatus ? cap(String(doc.adminStatus).replaceAll("_"," ")) : "Uploaded - Pending Review";
+    }
+
+    async function loadComplianceProfile(){
+      if (!me) return;
+      try {
+        const snap = await getDoc(doc(db, "users", me.uid));
+        const data = snap.exists() ? snap.data() : {};
+        const compliance = data.compliance || {};
+        const docs = compliance.documents || {};
+        const workerType = data.workerType || data.classification || compliance.workerType || data.role || "";
+        const workerTypeEl = document.getElementById("docWorkerType");
+        if (workerTypeEl) workerTypeEl.textContent = workerTypeLabel(workerType);
+
+        const fields = {
+          docLegalName: data.legalName || compliance.legalName || "",
+          docBusinessName: data.businessName || compliance.businessName || "",
+          docPhone: data.phone || compliance.phone || "",
+          docMailingAddress: compliance.mailingAddress || "",
+          docPaymentMethod: compliance.paymentMethod || "",
+          docPaymentHandle: compliance.paymentHandle || "",
+          docEmergencyContact: compliance.emergencyContact || ""
+        };
+        Object.entries(fields).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.value = value || ""; });
+        ["id","w9","coi","w4","i9","agreement","portfolio"].forEach(type => {
+          const statusEl = document.getElementById(`status-${type}`);
+          if (statusEl) statusEl.textContent = docStatusLabel(docs[type]);
+        });
+        if (docs.coi?.expiration) { const exp = document.getElementById("coiExpiration"); if (exp) exp.value = docs.coi.expiration; }
+        const required = String(workerType).toLowerCase().includes("w2") || String(workerType).toLowerCase().includes("employee") ? ["id","w4","i9","agreement"] : ["id","w9","coi","agreement"];
+        const completed = required.filter(type => docs[type]?.url || (Array.isArray(docs[type]?.files) && docs[type].files.length)).length;
+        const pct = required.length ? Math.round((completed / required.length) * 100) : 0;
+        const bar = document.getElementById("docProgressBar");
+        const label = document.getElementById("docProgressLabel");
+        if (bar) bar.style.width = `${pct}%`;
+        if (label) label.textContent = `${pct}% Complete`;
+      } catch (err) { console.warn("Could not load compliance profile", err); }
+    }
+
+    async function uploadComplianceDocument(type){
+      if (!me) { alert("Please sign in first."); return; }
+      const input = document.getElementById(`upload-${type}`);
+      if (!input || !input.files || !input.files.length) { alert("Please choose a file first."); return; }
+      const statusEl = document.getElementById(`status-${type}`);
+      if (statusEl) statusEl.textContent = "Uploading…";
+      try {
+        const files = Array.from(input.files);
+        const uploaded = [];
+        for (const file of files) {
+          const path = `users/${me.uid}/compliance/${type}/${Date.now()}-${cleanFileName(file.name)}`;
+          const fileRef = storageRef(storage, path);
+          await uploadBytes(fileRef, file);
+          const url = await getDownloadURL(fileRef);
+          uploaded.push({ name:file.name, type:file.type, size:file.size, path, url, uploadedAt:new Date().toISOString() });
+        }
+        const first = uploaded[0] || {};
+        const docPayload = { adminStatus:"pending_review", uploadedAt:serverTimestamp(), files:uploaded, url:first.url || "", path:first.path || "" };
+        if (type === "coi") docPayload.expiration = document.getElementById("coiExpiration")?.value || "";
+        await setDoc(doc(db, "users", me.uid), {
+          compliance: { documents: { [type]: docPayload }, updatedAt: serverTimestamp() },
+          updatedAt: serverTimestamp()
+        }, { merge:true });
+        input.value = "";
+        if (statusEl) statusEl.textContent = "Uploaded - Pending Review";
+        showToast("Document uploaded");
+        await loadComplianceProfile();
+      } catch (err) {
+        console.warn(err);
+        if (statusEl) statusEl.textContent = "Upload Failed";
+        alert("Could not upload document. Please try again.");
+      }
+    }
+
+    function wireDocumentsCenter(){
+      const form = document.getElementById("documentsForm");
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!me) { alert("Please sign in first."); return; }
+          const msg = document.getElementById("documentsMsg");
+          msg.textContent = "Saving…";
+          try {
+            await setDoc(doc(db, "users", me.uid), {
+              legalName: document.getElementById("docLegalName").value.trim(),
+              businessName: document.getElementById("docBusinessName").value.trim(),
+              phone: document.getElementById("docPhone").value.trim(),
+              compliance: {
+                legalName: document.getElementById("docLegalName").value.trim(),
+                businessName: document.getElementById("docBusinessName").value.trim(),
+                phone: document.getElementById("docPhone").value.trim(),
+                mailingAddress: document.getElementById("docMailingAddress").value.trim(),
+                paymentMethod: document.getElementById("docPaymentMethod").value,
+                paymentHandle: document.getElementById("docPaymentHandle").value.trim(),
+                emergencyContact: document.getElementById("docEmergencyContact").value.trim(),
+                updatedAt: serverTimestamp()
+              },
+              updatedAt: serverTimestamp()
+            }, { merge:true });
+            msg.textContent = "Saved.";
+            showToast("Worker info saved");
+            await loadComplianceProfile();
+          } catch (err) { console.warn(err); msg.textContent = "Could not save."; }
+        });
+      }
+      document.querySelectorAll("[data-upload-doc]").forEach(btn => btn.addEventListener("click", () => uploadComplianceDocument(btn.dataset.uploadDoc)));
+    }
+
+
     async function saveContractorPortalSettings(section, payload){
       if (!me) {
         alert("Please sign in first.");
@@ -1634,6 +1815,8 @@ import { auth, db, storage } from "./ft-firebase.js";
 
     wireContractorSettingsForms();
     wireWalkthroughForm();
+    wireDocumentsCenter();
+    loadComplianceProfile();
 
   </script>
 
@@ -1679,8 +1862,8 @@ import { auth, db, storage } from "./ft-firebase.js";
           text: "Brand-safe messaging is coming soon for scheduling, arrival updates, and job questions."
         },
         documents: {
-          title: "Documents",
-          text: "Insurance, background check status, W-9, contractor agreement, and onboarding documents will live here."
+          title: "Documents & Compliance",
+          text: "Upload ID, tax documents, COI, signed agreements, payroll information, and future certification documents."
         },
         resources: {
           title: "Resources",
@@ -1700,7 +1883,8 @@ import { auth, db, storage } from "./ft-firebase.js";
           availability: document.getElementById("availabilityPanel"),
           territory: document.getElementById("territoryPanel"),
           capacity: document.getElementById("capacityPanel"),
-          walkthroughs: document.getElementById("walkthroughPanel")
+          walkthroughs: document.getElementById("walkthroughPanel"),
+          documents: document.getElementById("documentsPanel")
         };
 
         Object.values(realPanels).forEach(panel => panel?.classList.remove("active"));
