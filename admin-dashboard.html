@@ -536,6 +536,7 @@
     .tabbtn[data-tab="all"]::before{content:"☷"}
     .tabbtn[data-tab="create"]::before{content:"+"}
     .tabbtn[data-tab="walkthroughs"]::before{content:"◷"}
+    .tabbtn[data-tab="quotes"]::before{content:"$"}
     .tabbtn[data-tab="estimate"]::before{content:"♢"}
     .tabbtn[data-tab="contractors"]::before{content:"👥"}
     .tabbtn[data-tab="apps"]::before{content:"☑"}
@@ -614,6 +615,52 @@
     .profile-mini h4{margin:0 0 6px;font-family:"Playfair Display",serif;color:#2f2926;font-size:1rem}
     .profile-mini p{margin:0;white-space:pre-wrap;word-break:break-word}
     
+  
+    .walk-media-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+      gap:8px;
+      margin-top:8px;
+    }
+    .walk-media-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      border-radius:14px;
+      border:1px solid #f1dce1;
+      background:#fff7f8;
+      color:#7d4f59;
+      font-weight:900;
+      text-decoration:none;
+      padding:8px 10px;
+      text-align:center;
+      word-break:break-word;
+    }
+    .quote-box{
+      margin-top:8px;
+      padding:12px;
+      border:1px solid #f1dce1;
+      border-radius:18px;
+      background:#fff7f8;
+      color:#61554f;
+      font-weight:800;
+      line-height:1.5;
+    }
+    .quote-box strong{color:#2f2926}
+    .review-note{
+      width:100%;
+      border:1px solid var(--portal-line);
+      border-radius:16px;
+      padding:.72rem .8rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      outline:none;
+      font-family:inherit;
+      min-height:72px;
+      resize:vertical;
+    }
+
   </style>
 
 </head>
@@ -656,6 +703,7 @@
       <button class="tabbtn" data-tab="all">All Jobs</button>
       <button class="tabbtn" data-tab="create">Create Job</button>
       <button class="tabbtn" data-tab="walkthroughs">Walkthroughs</button>
+      <button class="tabbtn" data-tab="quotes">Quote Queue</button>
       <button class="tabbtn" data-tab="estimate">Estimate Hub</button>
       <button class="tabbtn" data-tab="contractors">Contractors / Teams</button>
       <button class="tabbtn" data-tab="apps">Applications</button>
@@ -883,21 +931,35 @@
   </div>
 </section>
 
+      
       <section id="panel-walkthroughs" class="panel">
-        <div class="grid">
-          <article class="card">
-            <div class="toprow"><strong>Walkthrough Queue</strong><span class="rolepill">Next Build</span></div>
-            <p class="small">Client intake + photos/videos will route here for contractor review.</p>
-            <div class="meta"><span>Pending Walkthroughs</span><span>Submitted Estimates</span><span>Admin Approval</span></div>
-          </article>
-          <article class="card">
-            <div class="toprow"><strong>Future Flow</strong><span class="rolepill">Automation</span></div>
-            <p class="small">Contractor submits estimate → TFT adds 30% → admin approves → client quote is generated.</p>
-          </article>
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Walkthrough Queue</strong>
+            <span class="rolepill">Review → Quote Queue</span>
+          </div>
+          <p class="small">Review submitted walkthroughs, media, contractor estimates, notes, and the auto-calculated TFT +30% draft quote. Approved walkthroughs create quote records for the Quote Queue.</p>
+          <div class="meta">
+            <span>Pending Review</span>
+            <span>Approved Quotes</span>
+            <span>Revisions</span>
+            <span>Declines</span>
+          </div>
         </div>
+        <div id="listWalkthroughs" class="grid" aria-live="polite"></div>
       </section>
 
-      
+      <section id="panel-quotes" class="panel">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Quote Queue</strong>
+            <span class="rolepill">Approved → Sent → Accepted</span>
+          </div>
+          <p class="small">Approved walkthroughs land here as client quote drafts. Later this will connect to client approval, deposits, Stripe, and booking automation.</p>
+        </div>
+        <div id="listQuotes" class="grid" aria-live="polite"></div>
+      </section>
+
         <section id="panel-scheduling" class="panel">
           <div class="grid">
             <article class="card">
@@ -1025,6 +1087,8 @@
     const elCons = document.getElementById('listContractors');
     const elClients = document.getElementById('listClients');
     const elApps = document.getElementById('listApps');
+    const elWalkthroughs = document.getElementById('listWalkthroughs');
+    const elQuotes = document.getElementById('listQuotes');
 
     let activeType = "all";
     let searchTerm = "";
@@ -1334,6 +1398,249 @@
           if (!confirm("Reject this application?")) return;
           try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:"rejected", applicationStatus:"rejected", updatedAt: serverTimestamp() }); alert("Rejected."); }
           catch(e){ alert("Could not reject."); console.warn(e); }
+        });
+      });
+    }
+
+
+
+    function money(n){
+      const x = Number(n || 0);
+      return Number.isFinite(x) ? `$${Math.round(x)}` : "$0";
+    }
+
+    function readable(value){
+      return String(value || "")
+        .replaceAll("_"," ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function mediaLinks(items, label){
+      if (!Array.isArray(items) || !items.length) return `<span class="small">No ${label} uploaded.</span>`;
+      return `<div class="walk-media-grid">` + items.map((m, i) => `
+        <a class="walk-media-link" href="${m.url}" target="_blank" rel="noopener">${label.slice(0,-1)} ${i+1}</a>
+      `).join("") + `</div>`;
+    }
+
+    function walkthroughCard(w){
+      const estimate = Number(w.contractorEstimate || 0);
+      const quote = Number(w.tftClientQuote || Math.round(estimate * 1.30));
+      const photos = Array.isArray(w.photos) ? w.photos : [];
+      const videos = Array.isArray(w.videos) ? w.videos : [];
+      const status = w.status || "pending_admin_review";
+
+      return `
+        <div class="card" data-walkid="${w.id}">
+          <div class="toprow">
+            <strong>${w.clientName || "Walkthrough"}</strong>
+            <span class="rolepill">${readable(status)}</span>
+          </div>
+          <div class="meta">
+            ${w.propertyAddress ? `<span>📍 ${w.propertyAddress}</span>` : ""}
+            ${w.serviceType ? `<span>🧹 ${readable(w.serviceType)}</span>` : ""}
+            ${w.conditionRating ? `<span>Condition: ${readable(w.conditionRating)}</span>` : ""}
+            ${w.submittedByEmail ? `<span>By: ${w.submittedByEmail}</span>` : ""}
+          </div>
+          <div class="quote-box">
+            <strong>Estimate Snapshot</strong><br>
+            Contractor estimate: <strong>${money(estimate)}</strong><br>
+            TFT +30% draft quote: <strong>${money(quote)}</strong><br>
+            Recommended hours: <strong>${w.recommendedHours || "Not provided"}</strong><br>
+            Recommended team size: <strong>${w.recommendedTeamSize || "Not provided"}</strong>
+          </div>
+          <div class="small">
+            <strong>Home Details:</strong><br>
+            Sq ft: ${w.sqft || "Not provided"} • Beds: ${w.beds || "0"} • Baths: ${w.baths || "0"} • Stories: ${w.stories || "Not provided"}<br>
+            Pets: ${w.pets || "Not provided"}
+          </div>
+          ${w.recommendedService ? `<div class="small"><strong>Recommended Service:</strong><br>${w.recommendedService}</div>` : ""}
+          ${w.notes ? `<div class="small"><strong>Notes:</strong><br>${w.notes}</div>` : ""}
+          ${w.addOnsRecommended ? `<div class="small"><strong>Add-ons Recommended:</strong><br>${w.addOnsRecommended}</div>` : ""}
+          ${w.concerns ? `<div class="small"><strong>Concerns / Damage Notes:</strong><br>${w.concerns}</div>` : ""}
+          <div><strong class="small">Photos</strong>${mediaLinks(photos, "photos")}</div>
+          <div><strong class="small">Videos</strong>${mediaLinks(videos, "videos")}</div>
+          <textarea class="review-note" data-field="reviewNote" placeholder="Admin note for approval/revision/decline..."></textarea>
+          <div class="actions">
+            <button class="btn btn-solid" data-act="approve-walk">Approve → Create Quote</button>
+            <button class="btn btn-outline" data-act="revise-walk">Request Revision</button>
+            <button class="btn btn-danger" data-act="decline-walk">Decline</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function quoteCard(q){
+      return `
+        <div class="card" data-quoteid="${q.id}">
+          <div class="toprow">
+            <strong>${q.clientName || "Client Quote"}</strong>
+            <span class="rolepill">${readable(q.status || "quote_draft")}</span>
+          </div>
+          <div class="meta">
+            ${q.propertyAddress ? `<span>📍 ${q.propertyAddress}</span>` : ""}
+            ${q.serviceType ? `<span>🧹 ${readable(q.serviceType)}</span>` : ""}
+            ${q.sourceWalkthroughId ? `<span>Walkthrough: ${q.sourceWalkthroughId}</span>` : ""}
+          </div>
+          <div class="quote-box">
+            <strong>Quote Draft</strong><br>
+            Contractor estimate/internal payout: <strong>${money(q.contractorEstimate)}</strong><br>
+            Client quote: <strong>${money(q.clientQuote)}</strong><br>
+            TFT margin draft: <strong>${money(Number(q.clientQuote || 0) - Number(q.contractorEstimate || 0))}</strong><br>
+            Recommended hours: <strong>${q.recommendedHours || "Not provided"}</strong><br>
+            Recommended team size: <strong>${q.recommendedTeamSize || "Not provided"}</strong>
+          </div>
+          ${q.summary ? `<div class="small"><strong>Quote Summary:</strong><br>${q.summary}</div>` : ""}
+          ${q.adminNote ? `<div class="small"><strong>Admin Note:</strong><br>${q.adminNote}</div>` : ""}
+          <div class="actions">
+            <button class="btn btn-solid" data-act="mark-sent">Mark Sent</button>
+            <button class="btn btn-outline" data-act="mark-accepted">Mark Accepted</button>
+            <button class="btn btn-danger" data-act="mark-declined">Mark Declined</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawWalkthroughs(list){
+      if (!elWalkthroughs) return;
+      if (!list.length){ elWalkthroughs.innerHTML = `<div class="empty">No walkthroughs submitted yet.</div>`; return; }
+      elWalkthroughs.innerHTML = list.map(walkthroughCard).join("");
+      hookWalkthroughActions(elWalkthroughs, list);
+    }
+
+    function drawQuotes(list){
+      if (!elQuotes) return;
+      if (!list.length){ elQuotes.innerHTML = `<div class="empty">No quote drafts yet.</div>`; return; }
+      elQuotes.innerHTML = list.map(quoteCard).join("");
+      hookQuoteActions(elQuotes, list);
+    }
+
+    function hookWalkthroughActions(container, list){
+      const byId = new Map(list.map(w => [w.id, w]));
+
+      container.querySelectorAll('[data-act="approve-walk"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-walkid]");
+          const id = card?.dataset.walkid;
+          const w = byId.get(id);
+          if (!w) return;
+          const adminNote = card.querySelector('[data-field="reviewNote"]')?.value?.trim() || "";
+          const contractorEstimate = Number(w.contractorEstimate || 0);
+          const clientQuote = Number(w.tftClientQuote || Math.round(contractorEstimate * 1.30));
+          btn.disabled = true;
+          btn.textContent = "Approving…";
+          try {
+            const quotePayload = {
+              sourceWalkthroughId: id,
+              status: "quote_draft",
+              clientName: w.clientName || "",
+              propertyAddress: w.propertyAddress || "",
+              serviceType: w.serviceType || "",
+              conditionRating: w.conditionRating || "",
+              contractorEstimate,
+              clientQuote,
+              tftMargin: clientQuote - contractorEstimate,
+              recommendedService: w.recommendedService || "",
+              recommendedHours: w.recommendedHours || 0,
+              recommendedTeamSize: w.recommendedTeamSize || 1,
+              sqft: w.sqft || 0,
+              beds: w.beds || 0,
+              baths: w.baths || 0,
+              stories: w.stories || "",
+              pets: w.pets || "",
+              notes: w.notes || "",
+              addOnsRecommended: w.addOnsRecommended || "",
+              concerns: w.concerns || "",
+              photos: Array.isArray(w.photos) ? w.photos : [],
+              videos: Array.isArray(w.videos) ? w.videos : [],
+              submittedByUid: w.submittedByUid || "",
+              submittedByEmail: w.submittedByEmail || "",
+              adminNote,
+              summary: `${readable(w.serviceType)} for ${w.clientName || "client"} — draft quote ${money(clientQuote)}.`,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            };
+            const quoteRef = await addDoc(collection(db, "quotes"), quotePayload);
+            await updateDoc(doc(db, "walkthroughs", id), {
+              status: "approved_quote_created",
+              quoteId: quoteRef.id,
+              adminNote,
+              approvedAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+            alert("Approved. Quote draft created in Quote Queue.");
+          } catch (e) {
+            console.warn(e);
+            alert("Could not approve walkthrough.");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Approve → Create Quote";
+          }
+        });
+      });
+
+      container.querySelectorAll('[data-act="revise-walk"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-walkid]");
+          const id = card?.dataset.walkid;
+          const adminNote = card.querySelector('[data-field="reviewNote"]')?.value?.trim() || "";
+          if (!adminNote) { alert("Please add a revision note first."); return; }
+          try {
+            await updateDoc(doc(db, "walkthroughs", id), {
+              status: "revision_requested",
+              adminNote,
+              updatedAt: serverTimestamp()
+            });
+            alert("Revision requested.");
+          } catch(e) { console.warn(e); alert("Could not request revision."); }
+        });
+      });
+
+      container.querySelectorAll('[data-act="decline-walk"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-walkid]");
+          const id = card?.dataset.walkid;
+          const adminNote = card.querySelector('[data-field="reviewNote"]')?.value?.trim() || "";
+          if (!confirm("Decline this walkthrough?")) return;
+          try {
+            await updateDoc(doc(db, "walkthroughs", id), {
+              status: "declined",
+              adminNote,
+              declinedAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+            alert("Walkthrough declined.");
+          } catch(e) { console.warn(e); alert("Could not decline walkthrough."); }
+        });
+      });
+    }
+
+    function hookQuoteActions(container, list){
+      container.querySelectorAll('[data-act="mark-sent"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.closest("[data-quoteid]")?.dataset.quoteid;
+          try {
+            await updateDoc(doc(db, "quotes", id), { status:"quote_sent", sentAt:serverTimestamp(), updatedAt:serverTimestamp() });
+            alert("Marked sent.");
+          } catch(e) { console.warn(e); alert("Could not update quote."); }
+        });
+      });
+      container.querySelectorAll('[data-act="mark-accepted"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.closest("[data-quoteid]")?.dataset.quoteid;
+          try {
+            await updateDoc(doc(db, "quotes", id), { status:"quote_accepted", acceptedAt:serverTimestamp(), updatedAt:serverTimestamp() });
+            alert("Marked accepted.");
+          } catch(e) { console.warn(e); alert("Could not update quote."); }
+        });
+      });
+      container.querySelectorAll('[data-act="mark-declined"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.closest("[data-quoteid]")?.dataset.quoteid;
+          if (!confirm("Mark quote declined?")) return;
+          try {
+            await updateDoc(doc(db, "quotes", id), { status:"quote_declined", declinedAt:serverTimestamp(), updatedAt:serverTimestamp() });
+            alert("Marked declined.");
+          } catch(e) { console.warn(e); alert("Could not update quote."); }
         });
       });
     }
@@ -1816,6 +2123,19 @@
       onSnapshot(
         query(collection(db,"users"), where("role","==","pending")),
         snap => { drawApps(snap.docs.map(d=>({id:d.id, ...d.data()}))); }
+      );
+
+
+      onSnapshot(
+        query(collection(db,"walkthroughs"), orderBy("createdAt","desc"), limit(100)),
+        snap => { drawWalkthroughs(snap.docs.map(d=>({id:d.id, ...d.data()}))); },
+        err => console.warn("walkthroughs listener error:", err)
+      );
+
+      onSnapshot(
+        query(collection(db,"quotes"), orderBy("createdAt","desc"), limit(100)),
+        snap => { drawQuotes(snap.docs.map(d=>({id:d.id, ...d.data()}))); },
+        err => console.warn("quotes listener error:", err)
       );
 
       // Wire features
