@@ -560,6 +560,24 @@
       font-weight:800;
     }
 
+
+    .upload-hint{
+      font-size:.86rem;
+      color:var(--portal-muted);
+      font-weight:700;
+      margin-top:-2px;
+    }
+
+    .walkthrough-result{
+      margin-top:10px;
+      padding:12px;
+      border:1px solid #f1dce1;
+      border-radius:18px;
+      background:#fff7f8;
+      color:#61554f;
+      font-weight:800;
+    }
+
     @media (max-width:920px){
       .portal-shell{grid-template-columns:1fr}
       .sidebar{position:relative; top:auto; min-height:auto}
@@ -829,6 +847,117 @@
         </article>
       </section>
 
+
+      <section id="walkthroughPanel" class="placeholder-panel">
+        <article class="card placeholder-card">
+          <h3>New Walkthrough</h3>
+          <p>Submit walkthrough details, photos/videos, and your estimate recommendation to The Finishing Touch for admin review.</p>
+
+          <form id="walkthroughForm" class="portal-form">
+            <label>Client Name
+              <input id="walkClientName" placeholder="Client first name or full name" required />
+            </label>
+
+            <label>Property Address
+              <input id="walkAddress" placeholder="Street, city, ZIP" required />
+            </label>
+
+            <label>Service Type
+              <select id="walkServiceType" required>
+                <option value="standard_clean">Standard Clean</option>
+                <option value="initial_clean">Initial Clean</option>
+                <option value="deep_clean">Deep Clean</option>
+                <option value="move_in_out">Move-In / Move-Out</option>
+                <option value="organizing">Organizing</option>
+                <option value="staging">Staging</option>
+                <option value="decorating">Interior Decorating</option>
+                <option value="holiday_decor">Holiday/Event Decorating</option>
+                <option value="airbnb">Airbnb Turnover</option>
+                <option value="commercial">Commercial</option>
+              </select>
+            </label>
+
+            <label>Condition Rating
+              <select id="walkCondition" required>
+                <option value="clean_well_maintained">Clean / Well Maintained</option>
+                <option value="moderate_lived_in">Moderate / Lived In</option>
+                <option value="heavy_buildup">Heavy Buildup</option>
+                <option value="very_dirty_major_impact">Very Dirty / Major Impact</option>
+              </select>
+            </label>
+
+            <label>Square Footage
+              <input id="walkSqft" type="number" min="0" step="10" placeholder="Example: 1800" />
+            </label>
+
+            <label>Bedrooms
+              <input id="walkBeds" type="number" min="0" step="1" placeholder="3" />
+            </label>
+
+            <label>Bathrooms
+              <input id="walkBaths" type="number" min="0" step=".5" placeholder="2" />
+            </label>
+
+            <label>Stories
+              <select id="walkStories">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3_plus">3+</option>
+              </select>
+            </label>
+
+            <label class="form-full">Pets / Pet Impact
+              <input id="walkPets" placeholder="Example: 2 dogs, heavy shedding, litter box, etc." />
+            </label>
+
+            <label>Recommended Service
+              <input id="walkRecommendedService" placeholder="Example: Initial clean + oven add-on" />
+            </label>
+
+            <label>Recommended Hours
+              <input id="walkRecommendedHours" type="number" min="0" step=".5" placeholder="Example: 4.5" />
+            </label>
+
+            <label>Recommended Team Size
+              <input id="walkTeamSize" type="number" min="1" step="1" placeholder="Example: 2" />
+            </label>
+
+            <label>Contractor Estimate
+              <input id="walkEstimate" type="number" min="0" step="1" placeholder="Example: 255" required />
+            </label>
+
+            <label class="form-full">Photos
+              <input id="walkPhotos" type="file" accept="image/*" multiple />
+              <span class="upload-hint">Upload clear room photos, close-ups of buildup, floors, bathrooms, kitchen, and any special areas.</span>
+            </label>
+
+            <label class="form-full">Videos
+              <input id="walkVideos" type="file" accept="video/*" multiple />
+              <span class="upload-hint">Optional, but helpful for layout, clutter level, pet hair, and overall condition.</span>
+            </label>
+
+            <label class="form-full">Walkthrough Notes
+              <textarea id="walkNotes" placeholder="Overall condition, client concerns, access notes, areas to focus on, anything unusual."></textarea>
+            </label>
+
+            <label class="form-full">Add-ons Recommended
+              <textarea id="walkAddons" placeholder="Example: inside oven, inside fridge, inside cabinets, blinds, heavy floor scrub, interior windows."></textarea>
+            </label>
+
+            <label class="form-full">Concerns / Damage Notes
+              <textarea id="walkConcerns" placeholder="Example: broken items, stains, areas that may not fully restore, safety concerns."></textarea>
+            </label>
+
+            <div class="form-full actions">
+              <button id="walkSubmitBtn" class="btn btn-solid" type="submit">Submit Walkthrough</button>
+              <span id="walkthroughMsg" class="success-note"></span>
+            </div>
+          </form>
+
+          <div id="walkthroughResult" class="walkthrough-result" style="display:none"></div>
+        </article>
+      </section>
+
       <section id="placeholderPanel" class="placeholder-panel">
         <article class="card placeholder-card">
           <h3 id="placeholderTitle">Coming Soon</h3>
@@ -842,12 +971,18 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script type="module">
-import { auth, db } from "./ft-firebase.js";
+import { auth, db, storage } from "./ft-firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import {
-      collection, query, where, onSnapshot,
+      collection, query, where, onSnapshot, addDoc,
       doc, getDoc, setDoc, updateDoc, serverTimestamp, runTransaction
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    import {
+      ref as storageRef,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
     const rolePill   = document.getElementById('rolePill');
     const whoami     = document.getElementById('whoami');
@@ -1300,6 +1435,123 @@ import { auth, db } from "./ft-firebase.js";
       }
     }
 
+
+    function cleanFileName(name){
+      return String(name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+    }
+
+    async function uploadWalkthroughFiles(walkthroughId, fileList, folderName){
+      const files = Array.from(fileList || []);
+      const uploaded = [];
+
+      for (const file of files) {
+        const path = `walkthroughs/${walkthroughId}/${folderName}/${Date.now()}-${cleanFileName(file.name)}`;
+        const fileRef = storageRef(storage, path);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+
+        uploaded.push({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          path,
+          url
+        });
+      }
+
+      return uploaded;
+    }
+
+    function getWalkNumber(id, fallback=0){
+      const el = document.getElementById(id);
+      const n = Number(el?.value || fallback);
+      return Number.isFinite(n) ? n : fallback;
+    }
+
+    function wireWalkthroughForm(){
+      const form = document.getElementById("walkthroughForm");
+      if (!form) return;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!me) {
+          alert("Please sign in first.");
+          return;
+        }
+
+        const btn = document.getElementById("walkSubmitBtn");
+        const msg = document.getElementById("walkthroughMsg");
+        const result = document.getElementById("walkthroughResult");
+
+        btn.disabled = true;
+        msg.textContent = "Submitting walkthrough…";
+        result.style.display = "none";
+        result.textContent = "";
+
+        try {
+          const contractorEstimate = getWalkNumber("walkEstimate", 0);
+          const tftClientQuote = Math.round(contractorEstimate * 1.30);
+
+          const payload = {
+            status: "pending_admin_review",
+            submittedByUid: me.uid,
+            submittedByEmail: me.email || "",
+            clientName: document.getElementById("walkClientName").value.trim(),
+            propertyAddress: document.getElementById("walkAddress").value.trim(),
+            serviceType: document.getElementById("walkServiceType").value,
+            conditionRating: document.getElementById("walkCondition").value,
+            sqft: getWalkNumber("walkSqft", 0),
+            beds: getWalkNumber("walkBeds", 0),
+            baths: getWalkNumber("walkBaths", 0),
+            stories: document.getElementById("walkStories").value,
+            pets: document.getElementById("walkPets").value.trim(),
+            recommendedService: document.getElementById("walkRecommendedService").value.trim(),
+            recommendedHours: getWalkNumber("walkRecommendedHours", 0),
+            recommendedTeamSize: getWalkNumber("walkTeamSize", 1),
+            contractorEstimate,
+            tftClientQuote,
+            notes: document.getElementById("walkNotes").value.trim(),
+            addOnsRecommended: document.getElementById("walkAddons").value.trim(),
+            concerns: document.getElementById("walkConcerns").value.trim(),
+            photos: [],
+            videos: [],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          };
+
+          const docRef = await addDoc(collection(db, "walkthroughs"), payload);
+
+          const photos = await uploadWalkthroughFiles(docRef.id, document.getElementById("walkPhotos").files, "photos");
+          const videos = await uploadWalkthroughFiles(docRef.id, document.getElementById("walkVideos").files, "videos");
+
+          await updateDoc(doc(db, "walkthroughs", docRef.id), {
+            photos,
+            videos,
+            updatedAt: serverTimestamp()
+          });
+
+          form.reset();
+          msg.textContent = "Submitted.";
+          result.style.display = "block";
+          result.innerHTML = `
+            <strong>Walkthrough submitted for admin review.</strong><br>
+            Contractor estimate: <strong>$${contractorEstimate}</strong><br>
+            TFT +30% draft client quote: <strong>$${tftClientQuote}</strong><br>
+            Photos uploaded: <strong>${photos.length}</strong> • Videos uploaded: <strong>${videos.length}</strong>
+          `;
+          showToast("Walkthrough submitted");
+        } catch (err) {
+          console.warn(err);
+          msg.textContent = "Could not submit.";
+          alert("Could not submit walkthrough. Please check required fields and try again.");
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    }
+
+
     async function saveContractorPortalSettings(section, payload){
       if (!me) {
         alert("Please sign in first.");
@@ -1381,6 +1633,7 @@ import { auth, db } from "./ft-firebase.js";
     }
 
     wireContractorSettingsForms();
+    wireWalkthroughForm();
 
   </script>
 
@@ -1415,7 +1668,7 @@ import { auth, db } from "./ft-firebase.js";
         },
         walkthroughs: {
           title: "Walkthroughs",
-          text: "Coming next: submit walkthrough checklists, upload home photos/videos, and send your estimate directly to admin."
+          text: "Submit walkthrough details, photos/videos, recommended hours, team size, and contractor estimate for admin review."
         },
         estimates: {
           title: "My Estimates",
@@ -1446,7 +1699,8 @@ import { auth, db } from "./ft-firebase.js";
         const realPanels = {
           availability: document.getElementById("availabilityPanel"),
           territory: document.getElementById("territoryPanel"),
-          capacity: document.getElementById("capacityPanel")
+          capacity: document.getElementById("capacityPanel"),
+          walkthroughs: document.getElementById("walkthroughPanel")
         };
 
         Object.values(realPanels).forEach(panel => panel?.classList.remove("active"));
