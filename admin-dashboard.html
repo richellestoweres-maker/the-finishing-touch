@@ -540,6 +540,7 @@
     .tabbtn[data-tab="estimate"]::before{content:"♢"}
     .tabbtn[data-tab="contractors"]::before{content:"👥"}
     .tabbtn[data-tab="apps"]::before{content:"☑"}
+    .tabbtn[data-tab="compliance"]::before{content:"🛡"}
     .tabbtn[data-tab="clients"]::before{content:"🏡"}
     .tabbtn[data-tab="scheduling"]::before{content:"🤖"}
     .tabbtn[data-tab="calendar"]::before{content:"📅"}
@@ -661,6 +662,106 @@
       resize:vertical;
     }
 
+  
+    .compliance-summary{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .compliance-kpi{
+      background:rgba(255,253,251,.95);
+      border:1px solid var(--portal-line);
+      border-radius:24px;
+      box-shadow:var(--portal-shadow-soft);
+      padding:15px;
+    }
+
+    .compliance-kpi strong{
+      display:block;
+      font-size:1.55rem;
+      color:var(--portal-ink);
+    }
+
+    .compliance-kpi span{
+      display:block;
+      color:var(--portal-muted);
+      font-weight:900;
+      font-size:.8rem;
+      margin-top:5px;
+    }
+
+    .doc-review-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .doc-review-card{
+      border:1px solid #f1dce1;
+      background:#fffdfb;
+      border-radius:18px;
+      padding:11px;
+      display:grid;
+      gap:8px;
+    }
+
+    .doc-review-card strong{
+      font-family:"Playfair Display",serif;
+      color:var(--portal-ink);
+    }
+
+    .doc-link{
+      color:#7d4f59;
+      font-weight:900;
+      text-decoration:none;
+      word-break:break-word;
+    }
+
+    .admin-select,
+    .admin-input{
+      border:1px solid var(--portal-line);
+      border-radius:16px;
+      padding:.64rem .75rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      outline:none;
+      font-family:inherit;
+      width:100%;
+      font-weight:800;
+    }
+
+    .admin-select:focus,
+    .admin-input:focus{
+      border-color:var(--portal-blush-strong);
+      box-shadow:0 0 0 4px rgba(232,185,194,.18);
+    }
+
+    .compliance-controls{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .status-pill{
+      width:max-content;
+      max-width:100%;
+      font-size:.76rem;
+      padding:.28rem .7rem;
+      border-radius:999px;
+      background:#fff7f8;
+      border:1px solid #f1dce1;
+      color:#7d4f59;
+      font-weight:900;
+    }
+
+    .status-good{color:#466b4f;background:#f4fbf4;border-color:#cfe6d0}
+    .status-warn{color:#8a5b00;background:#fff8e8;border-color:#f1d99c}
+    .status-bad{color:#7f1d1d;background:#fff1f1;border-color:#f1c5c5}
+
   </style>
 
 </head>
@@ -707,6 +808,7 @@
       <button class="tabbtn" data-tab="estimate">Estimate Hub</button>
       <button class="tabbtn" data-tab="contractors">Contractors / Teams</button>
       <button class="tabbtn" data-tab="apps">Applications</button>
+      <button class="tabbtn" data-tab="compliance">Compliance</button>
       <button class="tabbtn" data-tab="clients">Clients</button>
       <button class="tabbtn" data-tab="scheduling">Scheduling AI</button>
       <button class="tabbtn" data-tab="calendar">Calendar</button>
@@ -799,6 +901,61 @@
       <section id="panel-apps" class="panel" aria-live="polite">
         <div id="listApps" class="grid"></div>
       </section>
+
+
+      <section id="panel-compliance" class="panel" aria-live="polite">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Compliance & Onboarding Center</strong>
+            <span class="rolepill">Admin Only</span>
+          </div>
+          <p class="small">Assign worker type, review uploaded documents, approve or request updates, track insurance, background checks, QuickBooks W-9 status, and activate workers when ready.</p>
+        </div>
+
+        <div class="compliance-summary">
+          <div class="compliance-kpi"><strong id="kpiWorkers">0</strong><span>Total Workers</span></div>
+          <div class="compliance-kpi"><strong id="kpiActiveWorkers">0</strong><span>Active / Approved</span></div>
+          <div class="compliance-kpi"><strong id="kpiMissingDocs">0</strong><span>Missing Required Docs</span></div>
+          <div class="compliance-kpi"><strong id="kpiExpiringCoi">0</strong><span>COI Expiring / Expired</span></div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Worker Filters</strong>
+            <span class="rolepill">Review Queue</span>
+          </div>
+          <div class="compliance-controls">
+            <label class="small">Search
+              <input id="complianceSearch" class="admin-input" placeholder="Name, email, service, status..." />
+            </label>
+            <label class="small">Worker Type
+              <select id="complianceTypeFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="contractor_1099">1099 Contractor</option>
+                <option value="employee_w2">W2 Employee</option>
+                <option value="team_lead">Team Lead</option>
+                <option value="organizer">Organizer</option>
+                <option value="decorator">Decorator</option>
+                <option value="stager">Stager</option>
+                <option value="walkthrough_specialist">Walkthrough Specialist</option>
+                <option value="admin_assistant">Admin Assistant</option>
+              </select>
+            </label>
+            <label class="small">Compliance Status
+              <select id="complianceStatusFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="hold">Hold</option>
+                <option value="pending_documents">Pending Documents</option>
+                <option value="pending_review">Pending Review</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div id="listCompliance" class="grid"></div>
+      </section>
+
 
      <!-- Quick Estimate (REPLACE THIS WHOLE SECTION) -->
 <section id="panel-estimate" class="panel">
@@ -1089,10 +1246,15 @@
     const elApps = document.getElementById('listApps');
     const elWalkthroughs = document.getElementById('listWalkthroughs');
     const elQuotes = document.getElementById('listQuotes');
+    const elCompliance = document.getElementById('listCompliance');
+    const complianceSearch = document.getElementById('complianceSearch');
+    const complianceTypeFilter = document.getElementById('complianceTypeFilter');
+    const complianceStatusFilter = document.getElementById('complianceStatusFilter');
 
     let activeType = "all";
     let searchTerm = "";
     let lastOpen = [], lastAll = [];
+    let lastComplianceWorkers = [];
 
     function setTab(key){
       tabs.forEach(t => t.classList.toggle("active", t.dataset.tab===key));
@@ -1646,6 +1808,333 @@
     }
 
 
+
+    function normalizeType(value){
+      const v = String(value || "").toLowerCase();
+      if (v.includes("w2") || v.includes("employee")) return "employee_w2";
+      if (v.includes("1099") || v.includes("contractor")) return "contractor_1099";
+      return v || "contractor_1099";
+    }
+
+    function workerTypeDisplay(value){
+      const v = normalizeType(value);
+      const map = {
+        contractor_1099: "1099 Contractor",
+        employee_w2: "W2 Employee",
+        team_lead: "Team Lead",
+        organizer: "Organizer",
+        decorator: "Decorator",
+        stager: "Stager",
+        walkthrough_specialist: "Walkthrough Specialist",
+        admin_assistant: "Admin Assistant",
+        cleaning_technician: "Cleaning Technician"
+      };
+      return map[v] || readable(v || "contractor_1099");
+    }
+
+    function complianceDocStatus(docs, type){
+      const docItem = docs?.[type];
+      if (!docItem) return "missing";
+      if (docItem.adminStatus) return docItem.adminStatus;
+      if (docItem.url || (Array.isArray(docItem.files) && docItem.files.length)) return "pending_review";
+      return "missing";
+    }
+
+    function hasDoc(docs, type){
+      const d = docs?.[type];
+      return !!(d?.url || (Array.isArray(d?.files) && d.files.length));
+    }
+
+    function requiredDocsFor(workerType){
+      const t = normalizeType(workerType);
+      return t === "employee_w2" ? ["id","w4","i9","agreement"] : ["id","w9","coi","agreement"];
+    }
+
+    function coiWarning(docItem){
+      const exp = docItem?.expiration;
+      if (!exp) return { label:"No expiration", level:"warn" };
+      const today = new Date();
+      const target = new Date(exp + "T00:00:00");
+      const diff = Math.ceil((target - today) / (1000*60*60*24));
+      if (diff < 0) return { label:`Expired ${Math.abs(diff)} days ago`, level:"bad" };
+      if (diff <= 30) return { label:`Expires in ${diff} days`, level:"warn" };
+      return { label:`Active until ${exp}`, level:"good" };
+    }
+
+    function complianceStatusFor(worker){
+      const compliance = worker.compliance || {};
+      const docs = compliance.documents || {};
+      const workerType = worker.workerType || worker.classification || compliance.workerType || worker.role || "";
+      const required = requiredDocsFor(workerType);
+      const missing = required.filter(type => !hasDoc(docs, type));
+      const pending = required.filter(type => complianceDocStatus(docs, type) === "pending_review");
+      const rejected = required.filter(type => complianceDocStatus(docs, type) === "rejected");
+      const manual = compliance.status || worker.complianceStatus || "";
+
+      if (manual === "active") return { label:"Active", key:"active", level:"good", missing, pending, rejected };
+      if (manual === "hold") return { label:"Hold", key:"hold", level:"bad", missing, pending, rejected };
+      if (rejected.length) return { label:"Needs Update", key:"pending_documents", level:"bad", missing, pending, rejected };
+      if (missing.length) return { label:"Missing Docs", key:"pending_documents", level:"warn", missing, pending, rejected };
+      if (pending.length) return { label:"Pending Review", key:"pending_review", level:"warn", missing, pending, rejected };
+      return { label:"Ready for Activation", key:"pending_review", level:"good", missing, pending, rejected };
+    }
+
+    function docReviewCard(uid, docs, type){
+      const item = docs?.[type] || {};
+      const files = Array.isArray(item.files) ? item.files : (item.url ? [{url:item.url, name:item.name || type}] : []);
+      const status = complianceDocStatus(docs, type);
+      const titleMap = {
+        id:"ID",
+        w9:"W-9",
+        coi:"COI",
+        w4:"W-4",
+        i9:"I-9",
+        agreement:"Agreement Packet",
+        portfolio:"Portfolio"
+      };
+
+      const links = files.length
+        ? files.map((f,i)=>`<a class="doc-link" href="${f.url}" target="_blank" rel="noopener">${f.name || `${titleMap[type]} ${i+1}`}</a>`).join("<br>")
+        : `<span class="small">No file uploaded.</span>`;
+
+      return `
+        <div class="doc-review-card">
+          <strong>${titleMap[type] || readable(type)}</strong>
+          <span class="status-pill">${readable(status)}</span>
+          ${type === "coi" && item.expiration ? `<span class="small">Expires: ${item.expiration}</span>` : ""}
+          <div>${links}</div>
+          <div class="actions">
+            <button class="btn btn-outline" data-doc-action="approve" data-uid="${uid}" data-doc-type="${type}">Approve</button>
+            <button class="btn btn-danger" data-doc-action="reject" data-uid="${uid}" data-doc-type="${type}">Reject</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function workerComplianceCard(worker){
+      const compliance = worker.compliance || {};
+      const docs = compliance.documents || {};
+      const workerType = worker.workerType || worker.classification || compliance.workerType || worker.role || "contractor_1099";
+      const required = requiredDocsFor(workerType);
+      const status = complianceStatusFor(worker);
+      const coi = docs.coi || {};
+      const coiWarn = coiWarning(coi);
+      const serviceTypes = Array.isArray(worker.serviceTypes) ? worker.serviceTypes.join(", ") : "Not selected";
+
+      return `
+        <div class="card" data-uid="${worker.id}">
+          <div class="toprow">
+            <strong>${worker.displayName || worker.legalName || worker.email || worker.id}</strong>
+            <span class="status-pill status-${status.level}">${status.label}</span>
+          </div>
+
+          <div class="meta">
+            ${worker.email ? `<span>📧 ${worker.email}</span>` : ""}
+            <span>Type: ${workerTypeDisplay(workerType)}</span>
+            <span>Services: ${serviceTypes}</span>
+            <span>COI: ${coiWarn.label}</span>
+          </div>
+
+          <div class="quote-box">
+            <strong>Compliance Snapshot</strong><br>
+            Required: <strong>${required.map(readable).join(", ")}</strong><br>
+            Missing: <strong>${status.missing.length ? status.missing.map(readable).join(", ") : "None"}</strong><br>
+            Pending Review: <strong>${status.pending.length ? status.pending.map(readable).join(", ") : "None"}</strong><br>
+            Background: <strong>${readable(compliance.background?.status || worker.backgroundStatus || "not_set")}</strong><br>
+            QuickBooks W-9: <strong>${readable(compliance.quickbooksW9Status || "not_invited")}</strong>
+          </div>
+
+          <div class="compliance-controls">
+            <label class="small">Worker Type
+              <select class="admin-select" data-compliance-field="workerType">
+                ${[
+                  ["contractor_1099","1099 Contractor"],
+                  ["employee_w2","W2 Employee"],
+                  ["team_lead","Team Lead"],
+                  ["organizer","Organizer"],
+                  ["decorator","Decorator"],
+                  ["stager","Stager"],
+                  ["walkthrough_specialist","Walkthrough Specialist"],
+                  ["admin_assistant","Admin Assistant"],
+                  ["cleaning_technician","Cleaning Technician"]
+                ].map(([value,label])=>`<option value="${value}" ${normalizeType(workerType)===value ? "selected" : ""}>${label}</option>`).join("")}
+              </select>
+            </label>
+
+            <label class="small">Compliance Status
+              <select class="admin-select" data-compliance-field="status">
+                ${["pending_documents","pending_review","active","hold"].map(value=>`<option value="${value}" ${(compliance.status || "")===value ? "selected" : ""}>${readable(value)}</option>`).join("")}
+              </select>
+            </label>
+
+            <label class="small">Background
+              <select class="admin-select" data-compliance-field="backgroundStatus">
+                ${["not_started","pending","clear","failed","expired"].map(value=>`<option value="${value}" ${(compliance.background?.status || worker.backgroundStatus || "")===value ? "selected" : ""}>${readable(value)}</option>`).join("")}
+              </select>
+            </label>
+
+            <label class="small">QuickBooks W-9
+              <select class="admin-select" data-compliance-field="quickbooksW9Status">
+                ${["not_invited","invited","complete","needs_correction"].map(value=>`<option value="${value}" ${(compliance.quickbooksW9Status || "")===value ? "selected" : ""}>${readable(value)}</option>`).join("")}
+              </select>
+            </label>
+          </div>
+
+          <div class="doc-review-grid">
+            ${["id","w9","coi","w4","i9","agreement","portfolio"].map(type => docReviewCard(worker.id, docs, type)).join("")}
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-solid" data-compliance-action="save-worker" data-uid="${worker.id}">Save Worker Settings</button>
+            <button class="btn btn-outline" data-compliance-action="activate" data-uid="${worker.id}">Activate</button>
+            <button class="btn btn-danger" data-compliance-action="hold" data-uid="${worker.id}">Place On Hold</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateComplianceKpis(list){
+      const total = list.length;
+      let active = 0;
+      let missing = 0;
+      let expiring = 0;
+
+      list.forEach(w => {
+        const status = complianceStatusFor(w);
+        if (status.key === "active" || w.compliance?.status === "active") active++;
+        if (status.missing.length) missing++;
+        const coi = w.compliance?.documents?.coi || {};
+        const warn = coiWarning(coi);
+        if (warn.level === "warn" || warn.level === "bad") expiring++;
+      });
+
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = String(value); };
+      set("kpiWorkers", total);
+      set("kpiActiveWorkers", active);
+      set("kpiMissingDocs", missing);
+      set("kpiExpiringCoi", expiring);
+    }
+
+    function drawCompliance(list){
+      if (!elCompliance) return;
+
+      const q = (complianceSearch?.value || "").trim().toLowerCase();
+      const typeFilter = complianceTypeFilter?.value || "all";
+      const statusFilter = complianceStatusFilter?.value || "all";
+
+      const filtered = list.filter(w => {
+        const workerType = normalizeType(w.workerType || w.classification || w.compliance?.workerType || w.role || "contractor_1099");
+        const status = complianceStatusFor(w);
+        const hay = JSON.stringify(w).toLowerCase();
+
+        const okType = typeFilter === "all" || workerType === typeFilter || String(w.role || "").toLowerCase() === typeFilter;
+        const okStatus = statusFilter === "all" || status.key === statusFilter || w.compliance?.status === statusFilter;
+        const okSearch = !q || hay.includes(q);
+
+        return okType && okStatus && okSearch;
+      });
+
+      updateComplianceKpis(list);
+      elCompliance.innerHTML = filtered.length ? filtered.map(workerComplianceCard).join("") : `<div class="empty">No workers match this compliance filter.</div>`;
+      hookComplianceActions(elCompliance);
+    }
+
+    async function updateWorkerCompliance(uid, patch){
+      await setDoc(doc(db, "users", uid), {
+        ...patch,
+        compliance: {
+          ...(patch.compliance || {}),
+          updatedAt: serverTimestamp()
+        },
+        updatedAt: serverTimestamp()
+      }, { merge:true });
+    }
+
+    function hookComplianceActions(container){
+      container.querySelectorAll('[data-compliance-action="save-worker"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-uid]");
+          const uid = btn.dataset.uid;
+          const workerType = card.querySelector('[data-compliance-field="workerType"]')?.value || "contractor_1099";
+          const status = card.querySelector('[data-compliance-field="status"]')?.value || "pending_documents";
+          const backgroundStatus = card.querySelector('[data-compliance-field="backgroundStatus"]')?.value || "not_started";
+          const quickbooksW9Status = card.querySelector('[data-compliance-field="quickbooksW9Status"]')?.value || "not_invited";
+
+          try {
+            await updateWorkerCompliance(uid, {
+              workerType,
+              classification: workerType,
+              complianceStatus: status,
+              compliance: {
+                workerType,
+                status,
+                quickbooksW9Status,
+                background: { status: backgroundStatus }
+              }
+            });
+            alert("Worker compliance settings saved.");
+          } catch(e) {
+            console.warn(e);
+            alert("Could not save worker settings.");
+          }
+        });
+      });
+
+      container.querySelectorAll('[data-compliance-action="activate"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          try {
+            await updateWorkerCompliance(btn.dataset.uid, { complianceStatus:"active", compliance:{ status:"active" } });
+            alert("Worker activated.");
+          } catch(e) { console.warn(e); alert("Could not activate worker."); }
+        });
+      });
+
+      container.querySelectorAll('[data-compliance-action="hold"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Place this worker on hold? They should not be assigned jobs while on hold.")) return;
+          try {
+            await updateWorkerCompliance(btn.dataset.uid, { complianceStatus:"hold", compliance:{ status:"hold" } });
+            alert("Worker placed on hold.");
+          } catch(e) { console.warn(e); alert("Could not place worker on hold."); }
+        });
+      });
+
+      container.querySelectorAll('[data-doc-action]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const uid = btn.dataset.uid;
+          const type = btn.dataset.docType;
+          const action = btn.dataset.docAction;
+          const status = action === "approve" ? "approved" : "rejected";
+
+          try {
+            await setDoc(doc(db, "users", uid), {
+              compliance: {
+                documents: {
+                  [type]: {
+                    adminStatus: status,
+                    reviewedAt: serverTimestamp()
+                  }
+                },
+                updatedAt: serverTimestamp()
+              },
+              updatedAt: serverTimestamp()
+            }, { merge:true });
+            alert(`${readable(type)} marked ${status}.`);
+          } catch(e) {
+            console.warn(e);
+            alert("Could not update document status.");
+          }
+        });
+      });
+    }
+
+    function wireComplianceFilters(){
+      complianceSearch?.addEventListener("input", () => drawCompliance(lastComplianceWorkers));
+      complianceTypeFilter?.addEventListener("change", () => drawCompliance(lastComplianceWorkers));
+      complianceStatusFilter?.addEventListener("change", () => drawCompliance(lastComplianceWorkers));
+    }
+
+
     function hookJobActions(container, jobs){
       const byId = new Map(jobs.map(j=>[j.id,j]));
       container.querySelectorAll(".card .actions").forEach(row=>{
@@ -2138,10 +2627,21 @@
         err => console.warn("quotes listener error:", err)
       );
 
+
+      onSnapshot(
+        query(collection(db,"users"), where("role","in",["contractor","admin","organizer","decorator","stager","walkthrough_specialist","admin_assistant","team_lead","cleaning_technician"])),
+        snap => {
+          lastComplianceWorkers = snap.docs.map(d=>({id:d.id, ...d.data()}));
+          drawCompliance(lastComplianceWorkers);
+        },
+        err => console.warn("compliance listener error:", err)
+      );
+
       // Wire features
       wireCreateForm();
       wireEstimator();
       wireAdminHelp();
+      wireComplianceFilters();
 
       // Default to Open tab (safety)
       setTab("open");
