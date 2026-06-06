@@ -534,6 +534,7 @@
     }
     .tabbtn[data-tab="open"]::before{content:"⌂"}
     .tabbtn[data-tab="all"]::before{content:"☷"}
+    .tabbtn[data-tab="workflow"]::before{content:"✓"}
     .tabbtn[data-tab="create"]::before{content:"+"}
     .tabbtn[data-tab="walkthroughs"]::before{content:"◷"}
     .tabbtn[data-tab="quotes"]::before{content:"$"}
@@ -762,6 +763,80 @@
     .status-warn{color:#8a5b00;background:#fff8e8;border-color:#f1d99c}
     .status-bad{color:#7f1d1d;background:#fff1f1;border-color:#f1c5c5}
 
+
+    /* === Job Workflow Center === */
+    .workflow-hero{
+      margin-bottom:14px;
+      border-radius:30px;
+      padding:18px;
+      background:linear-gradient(135deg,rgba(255,241,243,.95),rgba(255,253,251,.96));
+      border:1px solid var(--portal-line);
+      box-shadow:var(--portal-shadow-soft);
+    }
+    .workflow-hero h2{
+      margin:0;
+      font-family:"Playfair Display",serif;
+      font-size:clamp(1.35rem,2.2vw,2rem);
+      color:var(--portal-ink);
+    }
+    .workflow-hero p{margin:6px 0 0;color:#61554f;font-weight:700;line-height:1.45}
+    .workflow-kpis{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:10px;
+      margin-top:14px;
+    }
+    .workflow-kpi{
+      background:rgba(255,253,251,.86);
+      border:1px solid #f1dce1;
+      border-radius:20px;
+      padding:12px;
+    }
+    .workflow-kpi strong{display:block;font-size:1.35rem;color:var(--portal-ink)}
+    .workflow-kpi span{display:block;margin-top:4px;color:var(--portal-muted);font-weight:900;font-size:.78rem}
+    .workflow-controls{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .workflow-progress{
+      height:11px;
+      background:#f3e8e4;
+      border:1px solid #eadfd8;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:6px;
+    }
+    .workflow-progress span{
+      display:block;
+      height:100%;
+      width:0%;
+      background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));
+      border-radius:999px;
+    }
+    .workflow-detail{
+      margin-top:8px;
+      padding:12px;
+      border-radius:18px;
+      background:#fffdfb;
+      border:1px solid #f1dce1;
+      color:#61554f;
+      font-weight:800;
+      line-height:1.45;
+    }
+    .workflow-select{
+      border:1px solid var(--portal-line);
+      border-radius:999px;
+      padding:.62rem .82rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      font-family:inherit;
+      font-weight:900;
+      max-width:100%;
+    }
+
+
   </style>
 
 </head>
@@ -802,6 +877,7 @@
     <div class="tabs" role="tablist" aria-label="Admin sections">
       <button class="tabbtn active" data-tab="open">Job Inbox</button>
       <button class="tabbtn" data-tab="all">All Jobs</button>
+      <button class="tabbtn" data-tab="workflow">Job Workflow Center</button>
       <button class="tabbtn" data-tab="create">Create Job</button>
       <button class="tabbtn" data-tab="walkthroughs">Walkthroughs</button>
       <button class="tabbtn" data-tab="quotes">Quote Queue</button>
@@ -833,6 +909,72 @@
 
       <section id="panel-all" class="panel" aria-live="polite">
         <div id="listAll" class="grid"></div>
+      </section>
+
+
+      <section id="panel-workflow" class="panel" aria-live="polite">
+        <div class="workflow-hero">
+          <div class="toprow">
+            <div>
+              <h2>Job Workflow Center</h2>
+              <p>Track every accepted job from assignment through check-in, photos, checklist completion, admin review, client package, payout, and closeout.</p>
+            </div>
+            <span class="rolepill">Operations Pipeline</span>
+          </div>
+          <div class="workflow-kpis">
+            <div class="workflow-kpi"><strong id="wfTotal">0</strong><span>Total Jobs</span></div>
+            <div class="workflow-kpi"><strong id="wfActive">0</strong><span>Active Workflow</span></div>
+            <div class="workflow-kpi"><strong id="wfNeedsReview">0</strong><span>Needs Admin Review</span></div>
+            <div class="workflow-kpi"><strong id="wfNeedsRework">0</strong><span>Needs Rework</span></div>
+            <div class="workflow-kpi"><strong id="wfPayout">0</strong><span>Payout Pending</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Workflow Filters</strong>
+            <span class="rolepill">AI Scheduling Ready</span>
+          </div>
+          <div class="workflow-controls">
+            <label class="small">Workflow Status
+              <select id="workflowStatusFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="pending_assignment">Pending Assignment</option>
+                <option value="assigned">Assigned</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="en_route">En Route</option>
+                <option value="checked_in">Checked In</option>
+                <option value="before_photos_submitted">Before Photos Submitted</option>
+                <option value="in_progress">In Progress</option>
+                <option value="checklist_completed">Checklist Completed</option>
+                <option value="after_photos_submitted">After Photos Submitted</option>
+                <option value="submitted_for_review">Submitted For Review</option>
+                <option value="needs_rework">Needs Rework</option>
+                <option value="approved">Approved</option>
+                <option value="completion_package_sent">Completion Package Sent</option>
+                <option value="payout_pending">Payout Pending</option>
+                <option value="paid">Paid</option>
+                <option value="completed">Completed</option>
+              </select>
+            </label>
+            <label class="small">Worker Type / Assignment
+              <select id="workflowAssignmentFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="unassigned">Unassigned</option>
+                <option value="assigned">Assigned</option>
+                <option value="solo_contractor">Solo Contractor</option>
+                <option value="contractor_company">Contractor Company</option>
+                <option value="team_lead">Team Lead</option>
+                <option value="w2_employee">W2 Employee</option>
+              </select>
+            </label>
+            <label class="small">Search Workflow
+              <input id="workflowSearch" class="admin-input" placeholder="Client, ZIP, service, status, notes..." />
+            </label>
+          </div>
+        </div>
+
+        <div id="listWorkflow" class="grid"></div>
       </section>
 
       <section id="panel-create" class="panel">
@@ -1241,6 +1383,7 @@
     const panels = Array.from(document.querySelectorAll(".panel"));
     const elOpen = document.getElementById('listOpen');
     const elAll  = document.getElementById('listAll');
+    const elWorkflow = document.getElementById('listWorkflow');
     const elCons = document.getElementById('listContractors');
     const elClients = document.getElementById('listClients');
     const elApps = document.getElementById('listApps');
@@ -1250,9 +1393,13 @@
     const complianceSearch = document.getElementById('complianceSearch');
     const complianceTypeFilter = document.getElementById('complianceTypeFilter');
     const complianceStatusFilter = document.getElementById('complianceStatusFilter');
+    const workflowStatusFilter = document.getElementById('workflowStatusFilter');
+    const workflowAssignmentFilter = document.getElementById('workflowAssignmentFilter');
+    const workflowSearch = document.getElementById('workflowSearch');
 
     let activeType = "all";
     let searchTerm = "";
+    let workflowSearchTerm = "";
     let lastOpen = [], lastAll = [];
     let lastComplianceWorkers = [];
 
@@ -1269,13 +1416,13 @@
         b.type = "button";
         b.className = "chip" + (t===activeType ? " active" : "");
         b.textContent = t==="all" ? "All" : (t[0].toUpperCase()+t.slice(1));
-        b.addEventListener("click", () => { activeType = t; drawOpen(lastOpen); drawAll(lastAll); });
+        b.addEventListener("click", () => { activeType = t; drawOpen(lastOpen); drawAll(lastAll); drawWorkflow(lastAll); });
         chipsWrap.appendChild(b);
       });
     }
 
-    searchBox.addEventListener("input", () => { searchTerm = searchBox.value.trim().toLowerCase(); drawOpen(lastOpen); drawAll(lastAll); });
-    clearSearch.addEventListener("click", () => { searchBox.value=""; searchTerm=""; drawOpen(lastOpen); drawAll(lastAll); });
+    searchBox.addEventListener("input", () => { searchTerm = searchBox.value.trim().toLowerCase(); drawOpen(lastOpen); drawAll(lastAll); drawWorkflow(lastAll); });
+    clearSearch.addEventListener("click", () => { searchBox.value=""; searchTerm=""; drawOpen(lastOpen); drawAll(lastAll); drawWorkflow(lastAll); });
 
     // ---- Helpers ----
     function cap(s){ return s ? (s[0].toUpperCase()+s.slice(1)) : ""; }
@@ -2135,6 +2282,222 @@
     }
 
 
+    // ---- Job Workflow Center ----
+    const WORKFLOW_STEPS = [
+      "pending_assignment",
+      "assigned",
+      "scheduled",
+      "en_route",
+      "checked_in",
+      "before_photos_submitted",
+      "in_progress",
+      "checklist_completed",
+      "after_photos_submitted",
+      "submitted_for_review",
+      "needs_rework",
+      "approved",
+      "completion_package_sent",
+      "payout_pending",
+      "paid",
+      "completed"
+    ];
+
+    function workflowStatusFor(job){
+      const explicit = String(job.workflowStatus || "").trim();
+      if (explicit) return explicit;
+      const status = String(job.status || "open").toLowerCase();
+      if (status === "open") return "pending_assignment";
+      if (status === "claimed") return "assigned";
+      if (status === "in_progress") return "in_progress";
+      if (status === "submitted") return "submitted_for_review";
+      if (status === "approved") return "approved";
+      if (status === "paid") return "paid";
+      return status || "pending_assignment";
+    }
+
+    function workflowPercent(status){
+      const index = WORKFLOW_STEPS.indexOf(status);
+      if (index < 0) return 8;
+      return Math.round(((index + 1) / WORKFLOW_STEPS.length) * 100);
+    }
+
+    function workflowStageLabel(status){
+      return readable(status || "pending_assignment");
+    }
+
+    function assignmentTypeFor(job){
+      if (job.assignedToType) return String(job.assignedToType).toLowerCase();
+      if (job.contractorCompanyId) return "contractor_company";
+      if (job.teamLeadId) return "team_lead";
+      if (Array.isArray(job.contractorIds) && job.contractorIds.length) return "solo_contractor";
+      if (job.contractorId) return "solo_contractor";
+      return "unassigned";
+    }
+
+    function workflowMatches(job){
+      const status = workflowStatusFor(job);
+      const statusFilter = workflowStatusFilter?.value || "all";
+      const assignFilter = workflowAssignmentFilter?.value || "all";
+      const type = (job.serviceType || "").toLowerCase();
+      const assignment = assignmentTypeFor(job);
+      const ids = Array.isArray(job.contractorIds) ? job.contractorIds : (job.contractorId ? [job.contractorId] : []);
+
+      if (activeType !== "all" && type !== activeType) return false;
+      if (statusFilter !== "all" && status !== statusFilter) return false;
+      if (assignFilter === "unassigned" && ids.length) return false;
+      if (assignFilter === "assigned" && !ids.length) return false;
+      if (!["all","unassigned","assigned"].includes(assignFilter) && assignment !== assignFilter) return false;
+
+      const q = (workflowSearchTerm || searchTerm || "").trim().toLowerCase();
+      if (!q) return true;
+      return JSON.stringify(job).toLowerCase().includes(q) || status.toLowerCase().includes(q) || assignment.toLowerCase().includes(q);
+    }
+
+    function updateWorkflowKpis(list){
+      const jobs = Array.isArray(list) ? list : [];
+      const active = jobs.filter(j => !["paid","completed"].includes(workflowStatusFor(j))).length;
+      const needsReview = jobs.filter(j => workflowStatusFor(j) === "submitted_for_review").length;
+      const needsRework = jobs.filter(j => workflowStatusFor(j) === "needs_rework").length;
+      const payout = jobs.filter(j => workflowStatusFor(j) === "payout_pending").length;
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = String(value); };
+      set("wfTotal", jobs.length);
+      set("wfActive", active);
+      set("wfNeedsReview", needsReview);
+      set("wfNeedsRework", needsRework);
+      set("wfPayout", payout);
+    }
+
+    function workflowJobCard(job){
+      const status = workflowStatusFor(job);
+      const pct = workflowPercent(status);
+      const assignType = assignmentTypeFor(job);
+      const ids = Array.isArray(job.contractorIds) ? job.contractorIds : (job.contractorId ? [job.contractorId] : []);
+      const dt = fmtDate(job.serviceDate);
+      const zip = job.zip || job.area || job.city || "";
+      const title = cap(job.serviceType || "job");
+      const pay = job.contractorPay || job.payEach || job.contractorPayEach || job.payPerContractor || "";
+
+      return `
+        <div class="card" data-workflow-id="${job.id}">
+          <div class="toprow">
+            <strong>${title}</strong>
+            <span class="status-pill">${workflowStageLabel(status)}</span>
+          </div>
+          <div class="workflow-progress" aria-label="Workflow progress"><span style="width:${pct}%"></span></div>
+          <div class="meta">
+            ${zip ? `<span>📍 ${zip}</span>` : ""}
+            ${dt.date ? `<span>🗓️ ${dt.date}</span>` : ""}
+            ${dt.time ? `<span>🕘 ${dt.time}</span>` : ""}
+            ${job.estimatedTeamHours ? `<span>⏱️ ${job.estimatedTeamHours} hrs</span>` : ""}
+            ${job.flatRate != null ? `<span>Client: <strong>${fmt(job.flatRate)}</strong></span>` : ""}
+            ${pay ? `<span>Payout: <strong>${fmt(pay)}</strong></span>` : ""}
+          </div>
+          <div class="workflow-detail">
+            <strong>Assignment:</strong> ${readable(assignType)}<br>
+            <strong>Assigned IDs:</strong> ${ids.length ? ids.join(", ") : "Not assigned"}<br>
+            <strong>Photo Requirements:</strong> Before ${job.beforePhotosRequired === false ? "optional" : "required"} • After ${job.afterPhotosRequired === false ? "optional" : "required"}<br>
+            <strong>GPS:</strong> ${job.gpsCheckInRequired === false ? "Optional" : "Required"}<br>
+            <strong>Checklist:</strong> ${readable(job.checklistType || job.serviceType || "standard")}
+          </div>
+          ${job.summary ? `<div>${job.summary}</div>` : ""}
+          ${job.notes ? `<div class="small" style="opacity:.82">${job.notes}</div>` : ""}
+          <div class="actions">
+            <select class="workflow-select" data-workflow-action="status">
+              ${WORKFLOW_STEPS.map(s=>`<option value="${s}" ${s===status ? "selected" : ""}>${workflowStageLabel(s)}</option>`).join("")}
+            </select>
+            <button class="btn btn-outline" data-workflow-action="scheduled">Mark Scheduled</button>
+            <button class="btn btn-outline" data-workflow-action="review">Needs Review</button>
+            <button class="btn btn-danger" data-workflow-action="rework">Request Rework</button>
+            <button class="btn btn-solid" data-workflow-action="approve">Approve Job</button>
+            <button class="btn btn-outline" data-workflow-action="package">Package Sent</button>
+            <button class="btn btn-outline" data-workflow-action="payout">Payout Pending</button>
+            <button class="btn btn-solid" data-workflow-action="complete">Complete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawWorkflow(list){
+      if (!elWorkflow) return;
+      const jobs = Array.isArray(list) ? list : [];
+      updateWorkflowKpis(jobs);
+      const filtered = jobs.filter(workflowMatches);
+      elWorkflow.innerHTML = filtered.length ? filtered.map(workflowJobCard).join("") : `<div class="empty">No jobs match this workflow view.</div>`;
+      hookWorkflowActions(elWorkflow);
+    }
+
+    async function updateWorkflowStatus(jobId, workflowStatus){
+      const statusMap = {
+        pending_assignment:"open",
+        assigned:"claimed",
+        scheduled:"claimed",
+        en_route:"claimed",
+        checked_in:"in_progress",
+        before_photos_submitted:"in_progress",
+        in_progress:"in_progress",
+        checklist_completed:"in_progress",
+        after_photos_submitted:"submitted",
+        submitted_for_review:"submitted",
+        needs_rework:"submitted",
+        approved:"approved",
+        completion_package_sent:"approved",
+        payout_pending:"approved",
+        paid:"paid",
+        completed:"paid"
+      };
+      const patch = {
+        workflowStatus,
+        status: statusMap[workflowStatus] || workflowStatus,
+        updatedAt: serverTimestamp(),
+        workflowUpdatedAt: serverTimestamp()
+      };
+      if (workflowStatus === "checked_in") patch.checkedInAt = serverTimestamp();
+      if (workflowStatus === "submitted_for_review") patch.submittedForReviewAt = serverTimestamp();
+      if (workflowStatus === "approved") patch.approvedAt = serverTimestamp();
+      if (workflowStatus === "completion_package_sent") patch.completionPackageSentAt = serverTimestamp();
+      if (workflowStatus === "paid") patch.paidAt = serverTimestamp();
+      if (workflowStatus === "completed") patch.completedAt = serverTimestamp();
+      await updateDoc(doc(db,"jobs",jobId), patch);
+    }
+
+    function hookWorkflowActions(container){
+      container.querySelectorAll('[data-workflow-action="status"]').forEach(sel => {
+        sel.addEventListener("change", async () => {
+          const jobId = sel.closest("[data-workflow-id]")?.dataset.workflowId;
+          if (!jobId) return;
+          try { await updateWorkflowStatus(jobId, sel.value); }
+          catch(e){ console.warn(e); alert("Could not update workflow status."); }
+        });
+      });
+      const actionMap = {
+        scheduled:"scheduled",
+        review:"submitted_for_review",
+        rework:"needs_rework",
+        approve:"approved",
+        package:"completion_package_sent",
+        payout:"payout_pending",
+        complete:"completed"
+      };
+      container.querySelectorAll('[data-workflow-action]').forEach(btn => {
+        if (btn.tagName === "SELECT") return;
+        btn.addEventListener("click", async () => {
+          const jobId = btn.closest("[data-workflow-id]")?.dataset.workflowId;
+          const next = actionMap[btn.dataset.workflowAction];
+          if (!jobId || !next) return;
+          if (next === "needs_rework" && !confirm("Request rework for this job?")) return;
+          try { await updateWorkflowStatus(jobId, next); alert(`Workflow updated: ${workflowStageLabel(next)}.`); }
+          catch(e){ console.warn(e); alert("Could not update workflow."); }
+        });
+      });
+    }
+
+    function wireWorkflowFilters(){
+      workflowSearch?.addEventListener("input", () => { workflowSearchTerm = workflowSearch.value.trim().toLowerCase(); drawWorkflow(lastAll); });
+      workflowStatusFilter?.addEventListener("change", () => drawWorkflow(lastAll));
+      workflowAssignmentFilter?.addEventListener("change", () => drawWorkflow(lastAll));
+    }
+
+
     function hookJobActions(container, jobs){
       const byId = new Map(jobs.map(j=>[j.id,j]));
       container.querySelectorAll(".card .actions").forEach(row=>{
@@ -2279,6 +2642,12 @@
           arriveEarlyMinutes: 15,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago",
           reminderFlags: { dayBefore: false, dayOf: false },
+          workflowStatus: (data.status === "open") ? "pending_assignment" : ((data.status === "claimed") ? "assigned" : (data.status || "pending_assignment")),
+          checklistType: (data.serviceType || "cleaning").toLowerCase(),
+          beforePhotosRequired: true,
+          afterPhotosRequired: true,
+          gpsCheckInRequired: true,
+          clientCompletionPackageStatus: "not_started",
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         };
@@ -2599,7 +2968,7 @@
       );
       onSnapshot(
         query(collection(db,"jobs"), orderBy("createdAt","desc"), limit(200)),
-        snap => { lastAll = snap.docs.map(d=>({id:d.id, ...d.data()})); drawAll(lastAll); }
+        snap => { lastAll = snap.docs.map(d=>({id:d.id, ...d.data()})); drawAll(lastAll); drawWorkflow(lastAll); }
       );
       onSnapshot(
         query(collection(db,"users"), where("role","in",["contractor","admin"])),
@@ -2642,6 +3011,7 @@
       wireEstimator();
       wireAdminHelp();
       wireComplianceFilters();
+      wireWorkflowFilters();
 
       // Default to Open tab (safety)
       setTab("open");
