@@ -1,2371 +1,1431 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contractor Dashboard – The Finishing Touch</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&family=Allura&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-
-  <style>
-    :root{
-      --portal-bg:#fbf7f4;
-      --portal-card:#fffdfb;
-      --portal-ink:#2f2926;
-      --portal-muted:#7a6f68;
-      --portal-line:#eadfd8;
-      --portal-blush:#f2d8dc;
-      --portal-blush-strong:#e8b9c2;
-      --portal-blush-soft:#fff1f3;
-      --portal-taupe:#d2bda9;
-      --portal-shadow:0 18px 45px rgba(68, 54, 45, .10);
-      --portal-shadow-soft:0 10px 28px rgba(68, 54, 45, .08);
-    }
-
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top left, rgba(242,216,220,.75), transparent 34%),
-        radial-gradient(circle at bottom right, rgba(210,189,169,.34), transparent 32%),
-        var(--portal-bg);
-      color:var(--portal-ink);
-      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    }
-
-    .portal-shell{
-      width:min(1280px,96%);
-      margin:22px auto 56px;
-      display:grid;
-      grid-template-columns:260px minmax(0,1fr);
-      gap:18px;
-      align-items:start;
-    }
-
-    .sidebar{
-      position:sticky;
-      top:18px;
-      min-height:calc(100vh - 44px);
-      background:rgba(255,253,251,.82);
-      backdrop-filter:blur(18px);
-      border:1px solid rgba(234,223,216,.9);
-      border-radius:28px;
-      padding:18px;
-      box-shadow:var(--portal-shadow);
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
-
-    .brand-panel{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      padding:10px 8px 14px;
-      border-bottom:1px solid var(--portal-line);
-    }
-
-    .brand-panel .vase-logo{
-      width:34px;
-      height:44px;
-      background:url("logo-vase.png") center/contain no-repeat;
-      display:block;
-      flex:0 0 auto;
-    }
-
-    .brand-text strong{
-      display:block;
-      font-family:"Playfair Display",serif;
-      font-size:1.1rem;
-      line-height:1.05;
-      color:var(--portal-ink);
-    }
-
-    .brand-text span{
-      display:block;
-      margin-top:3px;
-      color:var(--portal-muted);
-      font-size:.82rem;
-      font-weight:700;
-    }
-
-    .rolepill{
-      width:max-content;
-      font-size:.76rem;
-      padding:.28rem .7rem;
-      border-radius:999px;
-      background:var(--portal-blush-soft);
-      border:1px solid var(--portal-blush);
-      color:#7d4f59;
-      font-weight:800;
-      margin-top:7px;
-    }
-
-    .side-nav{display:grid; gap:8px}
-
-    .side-link{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      width:100%;
-      border:1px solid transparent;
-      background:transparent;
-      color:var(--portal-muted);
-      text-decoration:none;
-      border-radius:18px;
-      padding:11px 12px;
-      font-weight:800;
-      cursor:pointer;
-      text-align:left;
-      font-family:inherit;
-      font-size:.94rem;
-    }
-
-    .side-link span.icon{
-      width:30px;
-      height:30px;
-      border-radius:12px;
-      display:inline-grid;
-      place-items:center;
-      background:#fff;
-      box-shadow:0 6px 18px rgba(68,54,45,.08);
-      flex:0 0 auto;
-    }
-
-    .side-link.active,
-    .side-link:hover{
-      color:var(--portal-ink);
-      background:linear-gradient(135deg, var(--portal-blush-soft), #fff);
-      border-color:var(--portal-blush);
-    }
-
-    .side-footer{
-      margin-top:auto;
-      display:grid;
-      gap:8px;
-      padding-top:14px;
-      border-top:1px solid var(--portal-line);
-    }
-
-    .main-area{min-width:0; display:grid; gap:16px}
-
-    .topbar{
-      background:rgba(255,253,251,.82);
-      backdrop-filter:blur(18px);
-      border:1px solid rgba(234,223,216,.9);
-      border-radius:28px;
-      padding:18px 20px;
-      box-shadow:var(--portal-shadow-soft);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      flex-wrap:wrap;
-    }
-
-    .welcome h1{
-      margin:0;
-      font-family:"Playfair Display",serif;
-      font-size:clamp(1.55rem,2.6vw,2.25rem);
-      line-height:1.05;
-      color:var(--portal-ink);
-    }
-
-    .welcome p{
-      margin:6px 0 0;
-      color:var(--portal-muted);
-      font-weight:600;
-      font-size:.94rem;
-    }
-
-    .top-actions{display:flex; gap:9px; align-items:center; flex-wrap:wrap}
-
-    .whoami{
-      color:var(--portal-muted);
-      font-size:.86rem;
-      font-weight:700;
-      max-width:240px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-    }
-
-    .hero-card{
-      position:relative;
-      overflow:hidden;
-      border-radius:32px;
-      padding:22px;
-      background:
-        linear-gradient(135deg, rgba(242,216,220,.95), rgba(255,253,251,.95) 54%, rgba(210,189,169,.42)),
-        #fff;
-      border:1px solid rgba(234,223,216,.95);
-      box-shadow:var(--portal-shadow);
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:16px;
-      align-items:center;
-    }
-
-    .hero-card::after{
-      content:"";
-      position:absolute;
-      width:230px;
-      height:230px;
-      border-radius:999px;
-      background:rgba(255,255,255,.38);
-      right:-70px;
-      top:-70px;
-      pointer-events:none;
-    }
-
-    .hero-copy{position:relative; z-index:1}
-
-    .script-kicker{
-      font-family:"Allura",cursive;
-      color:#925e69;
-      font-size:2rem;
-      line-height:1;
-      margin:0 0 4px;
-    }
-
-    .hero-copy h2{
-      margin:0;
-      font-family:"Playfair Display",serif;
-      color:var(--portal-ink);
-      font-size:clamp(1.4rem,2.4vw,2.1rem);
-    }
-
-    .hero-copy p{
-      margin:8px 0 0;
-      max-width:680px;
-      color:#61554f;
-      font-weight:600;
-    }
-
-    .stats-row{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:10px;
-      position:relative;
-      z-index:1;
-    }
-
-    .stat{
-      background:rgba(255,253,251,.76);
-      border:1px solid rgba(234,223,216,.82);
-      border-radius:22px;
-      padding:14px;
-      box-shadow:0 10px 24px rgba(68,54,45,.07);
-    }
-
-    .stat strong{
-      display:block;
-      font-size:1.4rem;
-      line-height:1;
-      color:var(--portal-ink);
-    }
-
-    .stat span{
-      display:block;
-      margin-top:5px;
-      color:var(--portal-muted);
-      font-weight:800;
-      font-size:.78rem;
-    }
-
-    .toolbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      background:rgba(255,253,251,.76);
-      border:1px solid var(--portal-line);
-      border-radius:24px;
-      padding:12px;
-      box-shadow:var(--portal-shadow-soft);
-      margin-bottom:14px;
-    }
-
-    .tabs{display:flex; gap:8px; flex-wrap:wrap}
-
-    .tabbtn{
-      border:1px solid var(--portal-line);
-      background:#fff;
-      color:var(--portal-muted);
-      border-radius:999px;
-      padding:.62rem .92rem;
-      font-weight:900;
-      cursor:pointer;
-      white-space:nowrap;
-      font-family:inherit;
-    }
-
-    .tabbtn.active{
-      background:#2f2926;
-      color:#fff;
-      border-color:#2f2926;
-      box-shadow:0 10px 22px rgba(47,41,38,.18);
-    }
-
-    .filters{display:flex; gap:8px; flex-wrap:wrap}
-
-    .chip{
-      border:1px solid var(--portal-line);
-      background:#fffdfb;
-      color:var(--portal-muted);
-      border-radius:999px;
-      padding:.45rem .78rem;
-      cursor:pointer;
-      font-weight:900;
-      font-size:.86rem;
-      white-space:nowrap;
-      font-family:inherit;
-    }
-
-    .chip.active{
-      background:var(--portal-blush-soft);
-      border-color:var(--portal-blush-strong);
-      color:#7d4f59;
-    }
-
-    .main{display:grid; gap:14px}
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-      gap:14px;
-    }
-
-    .card{
-      background:rgba(255,253,251,.95);
-      border:1px solid var(--portal-line);
-      border-radius:26px;
-      box-shadow:var(--portal-shadow-soft);
-      padding:17px;
-      display:flex;
-      flex-direction:column;
-      gap:11px;
-    }
-
-    .job-card{position:relative; overflow:hidden}
-
-    .job-card::before{
-      content:"";
-      position:absolute;
-      inset:0 auto 0 0;
-      width:6px;
-      background:linear-gradient(180deg,var(--portal-blush-strong),var(--portal-taupe));
-      border-radius:999px;
-      opacity:.9;
-    }
-
-    .toprow{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-      padding-left:4px;
-    }
-
-    .toprow strong{
-      font-family:"Playfair Display",serif;
-      font-size:1.18rem;
-      color:var(--portal-ink);
-    }
-
-    .muted{
-      color:var(--portal-muted);
-      font-weight:700;
-      font-size:.9rem;
-    }
-
-    .meta{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      font-size:.9rem;
-      color:#61554f;
-      font-weight:700;
-    }
-
-    .meta span{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:#fff7f8;
-      border:1px solid #f1dce1;
-      border-radius:999px;
-      padding:.32rem .6rem;
-    }
-
-    .pay{color:#2f2926; font-weight:900}
-
-    .actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:2px;
-      padding-left:4px;
-    }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:7px;
-      padding:.62rem .9rem;
-      border-radius:999px;
-      font-weight:900;
-      text-decoration:none;
-      cursor:pointer;
-      font-family:inherit;
-      border:0;
-      transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
-    }
-
-    .btn:hover{transform:translateY(-1px)}
-
-    .btn-outline{
-      border:1.5px solid #2f2926;
-      background:#fffdfb;
-      color:#2f2926;
-    }
-
-    .btn-solid{
-      background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));
-      color:#2f2926;
-      box-shadow:0 10px 22px rgba(232,185,194,.34);
-    }
-
-    .btn-soft{
-      background:var(--portal-blush-soft);
-      color:#7d4f59;
-      border:1px solid var(--portal-blush);
-    }
-
-    .empty{
-      text-align:center;
-      padding:28px;
-      background:rgba(255,253,251,.9);
-      border-radius:26px;
-      border:1px dashed #e3cfd4;
-      color:var(--portal-muted);
-      font-weight:800;
-    }
-
-    .gate{margin-top:14px}
-    .hidden{display:none !important}
-
-    .placeholder-panel{display:none}
-    .placeholder-panel.active{display:block}
-
-    .placeholder-card h3{
-      margin:0;
-      font-family:"Playfair Display",serif;
-      color:var(--portal-ink);
-    }
-
-    .placeholder-card p{
-      margin:0;
-      color:var(--portal-muted);
-      font-weight:600;
-    }
-
-    .toast{
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:18px;
-      background:#2f2926;
-      color:#fff;
-      padding:11px 16px;
-      border-radius:999px;
-      box-shadow:0 14px 30px rgba(0,0,0,.25);
-      z-index:99999;
-      font-weight:900;
-      display:none;
-    }
-
-
-    .portal-form{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-      margin-top:12px;
-    }
-
-    .portal-form label{
-      display:grid;
-      gap:6px;
-      font-weight:900;
-      color:var(--portal-ink);
-    }
-
-    .portal-form input,
-    .portal-form select,
-    .portal-form textarea{
-      border:1px solid var(--portal-line);
-      border-radius:16px;
-      padding:.72rem .8rem;
-      background:#fffdfb;
-      color:var(--portal-ink);
-      outline:none;
-      font-family:inherit;
-    }
-
-    .portal-form textarea{
-      min-height:92px;
-      resize:vertical;
-    }
-
-    .portal-form input:focus,
-    .portal-form select:focus,
-    .portal-form textarea:focus{
-      border-color:var(--portal-blush-strong);
-      box-shadow:0 0 0 4px rgba(232,185,194,.18);
-    }
-
-    .form-full{
-      grid-column:1/-1;
-    }
-
-    .success-note{
-      color:#466b4f;
-      font-weight:900;
-    }
-
-    .feature-card{
-      background:#fff7f8;
-      border-color:#f1dce1;
-    }
-
-    .soft-list{
-      display:grid;
-      gap:8px;
-      margin:10px 0 0;
-      padding:0;
-      list-style:none;
-    }
-
-    .soft-list li{
-      background:#fffdfb;
-      border:1px solid #f1dce1;
-      border-radius:16px;
-      padding:10px 12px;
-      color:#61554f;
-      font-weight:800;
-    }
-
-
-    .upload-hint{
-      font-size:.86rem;
-      color:var(--portal-muted);
-      font-weight:700;
-      margin-top:-2px;
-    }
-
-    .walkthrough-result{
-      margin-top:10px;
-      padding:12px;
-      border:1px solid #f1dce1;
-      border-radius:18px;
-      background:#fff7f8;
-      color:#61554f;
-      font-weight:800;
-    }
-
-
-    .compliance-progress{height:12px;background:#f3e8e4;border-radius:999px;overflow:hidden;border:1px solid #eadfd8}
-    .compliance-progress>span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));border-radius:999px;transition:width .2s ease}
-    .doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}
-    .doc-card{border:1px solid #f1dce1;background:#fffdfb;border-radius:20px;padding:13px;display:grid;gap:9px}
-    .doc-card h4{margin:0;font-family:"Playfair Display",serif;color:var(--portal-ink);font-size:1.05rem}
-    .doc-status{width:max-content;max-width:100%;font-size:.78rem;padding:.28rem .65rem;border-radius:999px;background:#fff7f8;border:1px solid #f1dce1;color:#7d4f59;font-weight:900}
-    .doc-card input[type="file"]{width:100%}
-    .doc-card .small-note{color:var(--portal-muted);font-size:.85rem;font-weight:700;line-height:1.35}
-    .compliance-note{padding:12px;border:1px solid #f1dce1;background:#fff7f8;border-radius:18px;color:#61554f;font-weight:800;line-height:1.45}
-
-
-    /* === Job Workflow Center: Contractor Phase 1 === */
-    .workflow-box{
-      border:1px solid #f1dce1;
-      background:#fff7f8;
-      border-radius:20px;
-      padding:12px;
-      display:grid;
-      gap:10px;
-    }
-
-    .workflow-head{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .workflow-head strong{
-      font-family:"Playfair Display",serif;
-      color:var(--portal-ink);
-      font-size:1.05rem;
-    }
-
-    .workflow-status{
-      width:max-content;
-      max-width:100%;
-      padding:.28rem .7rem;
-      border-radius:999px;
-      background:#fffdfb;
-      border:1px solid #f1dce1;
-      color:#7d4f59;
-      font-size:.78rem;
-      font-weight:900;
-    }
-
-    .workflow-steps{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-    }
-
-    .workflow-step{
-      border:1px solid #f1dce1;
-      background:#fffdfb;
-      color:#61554f;
-      border-radius:999px;
-      padding:.25rem .55rem;
-      font-size:.76rem;
-      font-weight:900;
-    }
-
-    .workflow-step.done{
-      color:#466b4f;
-      background:#f4fbf4;
-      border-color:#cfe6d0;
-    }
-
-    .workflow-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-      gap:10px;
-    }
-
-    .workflow-mini{
-      border:1px solid #f1dce1;
-      background:#fffdfb;
-      border-radius:16px;
-      padding:10px;
-      display:grid;
-      gap:7px;
-    }
-
-    .workflow-mini label{
-      display:grid;
-      gap:6px;
-      color:var(--portal-ink);
-      font-weight:900;
-      font-size:.88rem;
-    }
-
-    .workflow-mini input[type="file"],
-    .workflow-mini textarea{
-      width:100%;
-      border:1px solid var(--portal-line);
-      border-radius:14px;
-      background:#fffdfb;
-      padding:.62rem .7rem;
-      font-family:inherit;
-      color:var(--portal-ink);
-    }
-
-    .workflow-mini textarea{
-      min-height:76px;
-      resize:vertical;
-    }
-
-    .checklist-mini{
-      display:grid;
-      gap:7px;
-      color:#61554f;
-      font-weight:800;
-      font-size:.88rem;
-    }
-
-    .checkline{
-      display:flex;
-      gap:8px;
-      align-items:flex-start;
-    }
-
-    .checkline input{
-      margin-top:3px;
-    }
-
-    .workflow-actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-
-
-    .compliance-lock-banner{
-      display:none;
-      padding:13px;
-      border:1px solid #f1dce1;
-      border-radius:18px;
-      background:#fff7f8;
-      color:#61554f;
-      font-weight:800;
-      line-height:1.45;
-    }
-
-    .compliance-locked .compliance-lock-banner{display:block}
-    .compliance-locked .hero-card,
-    .compliance-locked .feature-card,
-    .compliance-locked #dashboardPanel{display:none !important}
-    .side-link.locked{
-      opacity:.45;
-      cursor:not-allowed;
-      filter:grayscale(.2);
-    }
-    .side-link.locked:hover{
-      background:transparent;
-      border-color:transparent;
-      color:var(--portal-muted);
-    }
-
-    @media (max-width:920px){
-      .portal-shell{grid-template-columns:1fr}
-      .sidebar{position:relative; top:auto; min-height:auto}
-      .side-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .hero-card{grid-template-columns:1fr}
-      .stats-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-    }
-
-    @media (max-width:620px){
-      .portal-shell{
-        width:min(100% - 18px,1280px);
-        margin-top:10px;
-      }
-      .topbar,.hero-card,.toolbar,.sidebar{border-radius:22px}
-      .side-nav{grid-template-columns:1fr}
-      .stats-row{grid-template-columns:1fr}
-      .top-actions{width:100%}
-      .btn{width:100%}
-      .portal-form{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Contractor App – The Finishing Touch</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/>
+
+<style>
+:root{
+  --bg:#fbf7f4;
+  --card:#fffdfb;
+  --ink:#2f2926;
+  --muted:#7a6f68;
+  --line:#eadfd8;
+  --blush:#f2d8dc;
+  --blush-strong:#e8b9c2;
+  --blush-soft:#fff1f3;
+  --taupe:#d2bda9;
+  --green:#466b4f;
+  --amber:#8a5b00;
+  --red:#9d4242;
+  --shadow:0 18px 45px rgba(68,54,45,.10);
+  --shadow-soft:0 10px 28px rgba(68,54,45,.08);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, rgba(242,216,220,.78), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(210,189,169,.34), transparent 30%),
+    var(--bg);
+  color:var(--ink);
+  font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.app-shell{
+  width:min(1360px,96%);
+  margin:20px auto 90px;
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr);
+  gap:18px;
+}
+.sidebar{
+  position:sticky;
+  top:18px;
+  min-height:calc(100vh - 40px);
+  background:rgba(255,253,251,.84);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(234,223,216,.92);
+  border-radius:30px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.brand{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:10px 8px 15px;
+  border-bottom:1px solid var(--line);
+}
+.logo-vase{width:36px;height:46px;background:url("logo-vase.png") center/contain no-repeat;display:block;flex:0 0 auto}
+.brand strong{display:block;font-family:"Playfair Display",serif;font-size:1.12rem;line-height:1.05}
+.brand span{display:block;margin-top:3px;color:var(--muted);font-size:.82rem;font-weight:800}
+.role-pill,.status-pill{
+  display:inline-flex;
+  width:max-content;
+  max-width:100%;
+  align-items:center;
+  gap:6px;
+  font-size:.76rem;
+  padding:.3rem .7rem;
+  border-radius:999px;
+  background:var(--blush-soft);
+  border:1px solid var(--blush);
+  color:#7d4f59;
+  font-weight:900;
+}
+.role-pill{margin-top:8px}
+.nav{display:grid;gap:8px}
+.nav button,.bottom-nav button{
+  font-family:inherit;
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--muted);
+  border-radius:18px;
+  padding:11px 12px;
+  font-weight:900;
+  text-align:left;
+  cursor:pointer;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.nav button[disabled],.bottom-nav button[disabled]{opacity:.46;cursor:not-allowed}
+.icon{
+  width:31px;height:31px;
+  border-radius:13px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  box-shadow:0 6px 18px rgba(68,54,45,.08);
+  flex:0 0 auto;
+}
+.nav button.active,.nav button:hover:not([disabled]){
+  color:var(--ink);
+  background:linear-gradient(135deg,var(--blush-soft),#fff);
+  border-color:var(--blush);
+}
+.sidebar-foot{
+  margin-top:auto;
+  display:grid;
+  gap:8px;
+  border-top:1px solid var(--line);
+  padding-top:14px;
+}
+.main{min-width:0;display:grid;gap:16px}
+.topbar,.hero,.card,.app-panel,.toolbar{
+  background:rgba(255,253,251,.88);
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:var(--shadow-soft);
+}
+.topbar{
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.welcome h1{margin:0;font-family:"Playfair Display",serif;font-size:clamp(1.55rem,2.5vw,2.25rem);line-height:1.05}
+.welcome p{margin:6px 0 0;color:var(--muted);font-weight:700}
+.whoami{color:var(--muted);font-weight:800;font-size:.86rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero{
+  overflow:hidden;
+  position:relative;
+  padding:24px;
+  background:linear-gradient(135deg, rgba(242,216,220,.95), rgba(255,253,251,.96) 56%, rgba(210,189,169,.42));
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:16px;
+  align-items:center;
+}
+.script{font-family:Allura,cursive;color:#925e69;font-size:2.15rem;line-height:1;margin:0 0 4px}
+.hero h2{font-family:"Playfair Display",serif;font-size:clamp(1.45rem,2.4vw,2.1rem);margin:0}
+.hero p{margin:8px 0 0;color:#61554f;font-weight:700;max-width:720px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:rgba(255,253,251,.76);border:1px solid rgba(234,223,216,.82);border-radius:22px;padding:14px}
+.stat strong{display:block;font-size:1.42rem;line-height:1}
+.stat span{display:block;margin-top:5px;color:var(--muted);font-size:.78rem;font-weight:900}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.card,.app-panel{padding:18px}
+.card{display:grid;gap:11px}
+.card h3,.app-panel h3{margin:0;font-family:"Playfair Display",serif;font-size:1.25rem}
+.card p,.app-panel p{margin:0;color:var(--muted);font-weight:700;line-height:1.45}
+.btn{
+  display:inline-flex;justify-content:center;align-items:center;gap:7px;
+  border:0;border-radius:999px;
+  padding:.68rem .95rem;
+  font-family:inherit;font-weight:900;
+  cursor:pointer;text-decoration:none;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-solid{background:linear-gradient(135deg,var(--blush-strong),var(--taupe));color:var(--ink);box-shadow:0 10px 22px rgba(232,185,194,.34)}
+.btn-outline{background:#fffdfb;border:1.5px solid var(--ink);color:var(--ink)}
+.btn-soft{background:var(--blush-soft);border:1px solid var(--blush);color:#7d4f59}
+.btn-danger{background:#fff5f5;border:1px solid #f0c5c5;color:var(--red)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.hidden{display:none!important}
+.empty{
+  padding:28px;
+  text-align:center;
+  border:1px dashed #e3cfd4;
+  border-radius:24px;
+  background:rgba(255,253,251,.72);
+  color:var(--muted);
+  font-weight:900;
+}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:.9rem;color:#61554f;font-weight:800}
+.meta span{display:inline-flex;gap:6px;align-items:center;background:#fff7f8;border:1px solid #f1dce1;border-radius:999px;padding:.32rem .6rem}
+.form{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.form label{display:grid;gap:6px;color:var(--ink);font-weight:900}
+.form input,.form select,.form textarea{
+  width:100%;
+  border:1px solid var(--line);
+  background:#fffdfb;
+  color:var(--ink);
+  border-radius:16px;
+  padding:.74rem .82rem;
+  outline:none;
+  font-family:inherit;
+}
+.form textarea{min-height:96px;resize:vertical}
+.form input:focus,.form select:focus,.form textarea:focus{border-color:var(--blush-strong);box-shadow:0 0 0 4px rgba(232,185,194,.18)}
+.full{grid-column:1/-1}
+.small{font-size:.86rem;color:var(--muted);font-weight:700;line-height:1.35}
+.success{color:var(--green);font-weight:900}
+.warn{color:var(--amber);font-weight:900}
+.danger{color:var(--red);font-weight:900}
+.progress{
+  height:12px;
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:#f3e8e4;
+}
+.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush-strong),var(--taupe));border-radius:999px;transition:width .25s ease}
+.step-list{display:grid;gap:10px}
+.step{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid #f1dce1;
+  background:#fffdfb;
+  border-radius:20px;
+  padding:12px;
+}
+.step-num{
+  width:34px;height:34px;border-radius:14px;
+  display:grid;place-items:center;
+  background:var(--blush-soft);
+  border:1px solid var(--blush);
+  font-weight:900;color:#7d4f59;
+}
+.step strong{display:block}
+.step small{display:block;color:var(--muted);font-weight:800;margin-top:2px}
+.lock-note{
+  padding:13px;
+  border:1px solid #f1dce1;
+  border-radius:20px;
+  background:#fff7f8;
+  color:#61554f;
+  font-weight:800;
+  line-height:1.45;
+}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px}
+.doc-card{display:grid;gap:9px;background:#fffdfb;border:1px solid #f1dce1;border-radius:21px;padding:14px}
+.doc-card h4{margin:0;font-family:"Playfair Display",serif;font-size:1.05rem}
+.doc-card input[type=file]{width:100%}
+.agreement-box{
+  max-height:300px;
+  overflow:auto;
+  border:1px solid #f1dce1;
+  background:#fffdfb;
+  border-radius:20px;
+  padding:14px;
+  display:grid;
+  gap:12px;
+  color:#61554f;
+  font-weight:750;
+  line-height:1.5;
+}
+.checkline{display:flex;gap:9px;align-items:flex-start;font-weight:850;color:#61554f}
+.checkline input{margin-top:4px}
+.job-card{position:relative;overflow:hidden}
+.job-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:999px;background:linear-gradient(180deg,var(--blush-strong),var(--taupe))}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.row strong{font-family:"Playfair Display",serif;font-size:1.18rem}
+.workflow-box{border:1px solid #f1dce1;background:#fff7f8;border-radius:20px;padding:12px;display:grid;gap:10px}
+.workflow-steps{display:flex;gap:6px;flex-wrap:wrap}
+.workflow-step{border:1px solid #f1dce1;background:#fffdfb;color:#61554f;border-radius:999px;padding:.25rem .55rem;font-size:.76rem;font-weight:900}
+.workflow-step.done{color:var(--green);background:#f4fbf4;border-color:#cfe6d0}
+.workflow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.workflow-mini{border:1px solid #f1dce1;background:#fffdfb;border-radius:16px;padding:10px;display:grid;gap:7px}
+.workflow-mini textarea,.workflow-mini input[type=file]{width:100%;border:1px solid var(--line);border-radius:14px;background:#fffdfb;padding:.62rem .7rem;font-family:inherit}
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#2f2926;color:#fff;border-radius:999px;
+  padding:11px 16px;box-shadow:0 14px 30px rgba(0,0,0,.25);
+  z-index:99999;font-weight:900;display:none;
+}
+.bottom-nav{display:none}
+@media(max-width:920px){
+  .app-shell{grid-template-columns:1fr;margin-top:10px}
+  .sidebar{position:relative;min-height:auto}
+  .nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .app-shell{width:min(100% - 18px,1360px);margin-bottom:96px}
+  .sidebar{display:none}
+  .hero,.topbar,.card,.app-panel,.toolbar{border-radius:22px}
+  .stats{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}
+  .btn{width:100%}
+  .bottom-nav{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    position:fixed;
+    z-index:9999;
+    left:10px;right:10px;bottom:10px;
+    background:rgba(255,253,251,.92);
+    backdrop-filter:blur(18px);
+    border:1px solid var(--line);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    padding:8px;
+    gap:4px;
+  }
+  .bottom-nav button{padding:8px 4px;border-radius:16px;justify-content:center;text-align:center;font-size:.72rem;display:grid;gap:2px}
+  .bottom-nav .icon{margin:auto;width:28px;height:28px}
+}
+</style>
 </head>
 
 <body>
-  <div class="portal-shell">
-    <aside class="sidebar" aria-label="Contractor portal navigation">
-      <div class="brand-panel">
-        <span class="vase-logo" aria-hidden="true"></span>
-        <div class="brand-text">
-          <strong>The Finishing Touch</strong>
-          <span>Contractor Portal</span>
-          <div id="rolePill" class="rolepill">Checking role…</div>
-        </div>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="logo-vase" aria-hidden="true"></span>
+      <div>
+        <strong>The Finishing Touch</strong>
+        <span>Contractor App</span>
+        <div id="rolePill" class="role-pill">Checking…</div>
       </div>
+    </div>
 
-      <nav class="side-nav">
-        <button class="side-link active" type="button" data-side="dashboard"><span class="icon">⌂</span>Dashboard</button>
-        <button class="side-link" type="button" data-side="jobs"><span class="icon">✦</span>Jobs / Assignments</button>
-        <button class="side-link" type="button" data-side="availability"><span class="icon">📅</span>Availability</button>
-        <button class="side-link" type="button" data-side="territory"><span class="icon">📍</span>Territory</button>
-        <button class="side-link" type="button" data-side="capacity"><span class="icon">⚙</span>Capacity</button>
-        <button class="side-link" type="button" data-side="walkthroughs"><span class="icon">◷</span>Walkthroughs</button>
-        <button class="side-link" type="button" data-side="estimates"><span class="icon">♢</span>My Estimates</button>
-        <button class="side-link" type="button" data-side="messages"><span class="icon">✉</span>Messages</button>
-        <button class="side-link" type="button" data-side="documents"><span class="icon">☑</span>Documents</button>
-        <button class="side-link" type="button" data-side="resources"><span class="icon">♡</span>Resources</button>
-        <button class="side-link" type="button" data-side="payments"><span class="icon">$</span>Payments</button>
-      </nav>
+    <nav class="nav" id="sideNav">
+      <button class="active" type="button" data-route="home"><span class="icon">⌂</span>Home</button>
+      <button type="button" data-route="jobs"><span class="icon">✦</span>Jobs</button>
+      <button type="button" data-route="availability"><span class="icon">📅</span>Availability</button>
+      <button type="button" data-route="territory"><span class="icon">📍</span>Territory</button>
+      <button type="button" data-route="capacity"><span class="icon">⚙</span>Capacity</button>
+      <button type="button" data-route="walkthroughs"><span class="icon">◷</span>Walkthroughs</button>
+      <button type="button" data-route="documents"><span class="icon">☑</span>Onboarding</button>
+      <button type="button" data-route="messages"><span class="icon">✉</span>Messages</button>
+      <button type="button" data-route="payments"><span class="icon">$</span>Payments</button>
+      <button type="button" data-route="resources"><span class="icon">♡</span>Resources</button>
+    </nav>
 
-      <div class="side-footer">
-        <a class="btn btn-outline" href="index.html">Home</a>
-        <a id="adminIntakeBtn" class="btn btn-solid" href="admin.html" hidden style="display:none">Manual Intake</a>
-        <a id="signOutBtn" class="btn btn-soft" href="#" aria-label="Sign out">Sign out</a>
+    <div class="sidebar-foot">
+      <a class="btn btn-outline" href="index.html">Home Website</a>
+      <a id="adminIntakeBtn" class="btn btn-solid hidden" href="admin.html">Admin Intake</a>
+      <button id="signOutBtn" class="btn btn-soft" type="button">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="topbar">
+      <div class="welcome">
+        <h1 id="topTitle">Contractor App</h1>
+        <p id="topSubtitle">Your TFT work hub, onboarding, assignments, and workflow in one place.</p>
       </div>
-    </aside>
+      <div class="whoami" id="whoami"></div>
+    </section>
 
-    <main class="main-area">
-      <section class="topbar">
-        <div class="welcome">
-          <h1>Welcome back</h1>
-          <p>View open opportunities, manage claimed jobs, and keep your availability flowing beautifully.</p>
-        </div>
-        <div class="top-actions">
-          <span id="whoami" class="whoami"></span>
-        </div>
-      </section>
+    <section class="hero" id="heroSection">
+      <div>
+        <p class="script">Welcome</p>
+        <h2 id="heroHeadline">Let’s get you set up.</h2>
+        <p id="heroText">Complete onboarding first. Once TFT reviews and activates your profile, the full contractor app unlocks.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="statOne">0%</strong><span id="statOneLabel">Onboarding</span></div>
+        <div class="stat"><strong id="statTwo">0</strong><span>Open Jobs</span></div>
+        <div class="stat"><strong id="statThree">Locked</strong><span>App Access</span></div>
+      </div>
+    </section>
 
-      <section class="hero-card">
-        <div class="hero-copy">
-          <p class="script-kicker">Today’s touchpoints</p>
-          <h2>Your contractor command center</h2>
-          <p>Claim available work, update TFT-only availability, set ZIP preferences, manage capacity, and prepare for walkthrough estimates, photos, videos, and completion checklists.</p>
-        </div>
+    <section id="gateSignedOut" class="card">
+      <h3>Private Contractor App</h3>
+      <p>Please sign in with the account connected to your TFT contractor profile.</p>
+      <div class="actions">
+        <a class="btn btn-solid" href="login.html?next=contractor-dashboard.html">Sign in</a>
+        <a class="btn btn-outline" href="index.html">Return Home</a>
+      </div>
+    </section>
 
-        <div class="stats-row" aria-label="Contractor overview">
-          <div class="stat">
-            <strong id="statOpen">0</strong>
-            <span>Open Jobs</span>
-          </div>
-          <div class="stat">
-            <strong id="statMine">0</strong>
-            <span>My Jobs</span>
-          </div>
-          <div class="stat">
-            <strong id="statService">All</strong>
-            <span>Work Focus</span>
-          </div>
-        </div>
-      </section>
+    <section id="gatePending" class="card hidden">
+      <h3>Account Pending Review</h3>
+      <p>Your contractor account is pending review. Once approved for onboarding access, you’ll be able to complete documents and electronic agreements here.</p>
+      <a class="btn btn-outline" href="index.html">Return Home</a>
+    </section>
 
-      <section id="gate-signedout" class="card gate">
-        <p><strong>Private contractor portal.</strong></p>
-        <p class="muted">Please <a href="login.html?next=contractor-dashboard.html"><strong>sign in</strong></a> with the email The Finishing Touch approved for portal access.</p>
-        <p class="muted">Contractor applications and approvals are handled separately before portal access is granted.</p>
-      </section>
+    <section id="gateNoAccess" class="card hidden">
+      <h3>Access Not Approved</h3>
+      <p>This account is not approved for the contractor app. Contact The Finishing Touch if you believe this is incorrect.</p>
+      <a class="btn btn-outline" href="index.html">Return Home</a>
+    </section>
 
-      <section id="gate-notapplied" class="card gate hidden">
-        <p><strong>Portal access has not been approved for this account.</strong></p>
-        <p class="muted">Please contact The Finishing Touch if you believe this is an error.</p>
-        <div>
-          <a class="btn btn-outline" href="index.html">Return Home</a>
-        </div>
-      </section>
-
-      <section id="gate-pending" class="card gate hidden" aria-live="polite">
-        <p class="muted"><strong>Your account is pending admin review.</strong></p>
-        <p class="muted">You will receive portal access only after The Finishing Touch approves your account.</p>
-      </section>
-
-      <section id="dashboardPanel">
-        <div id="portal-ui" class="hidden toolbar">
-          <div class="tabs" role="tablist" aria-label="Job views">
-            <button id="tabOpen" class="tabbtn active" type="button" role="tab" aria-selected="true" aria-controls="panelOpen">Open Jobs</button>
-            <button id="tabMine" class="tabbtn" type="button" role="tab" aria-selected="false" aria-controls="panelMine">My Jobs</button>
-          </div>
-          <div class="filters" id="filterChips" aria-label="Filters"></div>
-        </div>
-
-        <section id="panelOpen" class="main" role="tabpanel" aria-labelledby="tabOpen">
-          <div id="openJobs" class="grid" aria-live="polite"></div>
-        </section>
-
-        <section id="panelMine" class="main" role="tabpanel" aria-labelledby="tabMine" hidden>
-          <div id="myJobs" class="grid" aria-live="polite"></div>
-        </section>
-      </section>
-
-      
-      <section class="card feature-card">
-        <div class="toprow">
-          <strong style="font-family:Playfair Display,serif;">Contractor Portal 2.1</strong>
-          <div class="rolepill">1099 Active • W2 Hidden Ready</div>
-        </div>
-        <div class="meta">
-          <span>📅 Availability Mode</span>
-          <span>📍 Territory Rules</span>
-          <span>⚙ Capacity Settings</span>
-          <span>🤖 Scheduling AI Ready</span>
-        </div>
-      </section>
-
-      <section id="availabilityPanel" class="placeholder-panel">
-        <article class="card placeholder-card">
-          <h3>Availability</h3>
-          <p>Share the TFT-only openings you want available for scheduling. This does not expose your outside business or personal calendar.</p>
-
-          <form id="availabilityForm" class="portal-form">
-            <label>Availability Type
-              <select id="availabilityType">
-                <option value="manual" selected>Manual TFT Slots</option>
-                <option value="recurring">Recurring Weekly Pattern</option>
-                <option value="calendar_sync_future">Calendar Sync Later</option>
-              </select>
-            </label>
-
-            <label>Preferred Start Times
-              <input id="preferredStartTimes" placeholder="Example: 8:30 AM, 11:15 AM" />
-            </label>
-
-            <label class="form-full">Available Days / Slots
-              <textarea id="availableSlots" placeholder="Example: Week of June 10: Tue 8:30, Thu 11:15, Fri 8:30 only"></textarea>
-            </label>
-
-            <label class="form-full">Blocked Days / Unavailable Dates
-              <textarea id="blockedDays" placeholder="Example: unavailable June 14-18, no Fridays after 12"></textarea>
-            </label>
-
-            <div class="form-full actions">
-              <button class="btn btn-solid" type="submit">Save Availability</button>
-              <span id="availabilityMsg" class="success-note"></span>
-            </div>
-          </form>
-        </article>
-      </section>
-
-      <section id="territoryPanel" class="placeholder-panel">
-        <article class="card placeholder-card">
-          <h3>Territory + ZIP Preferences</h3>
-          <p>Tell TFT where you prefer to work and which areas make sense on certain days.</p>
-
-          <form id="territoryForm" class="portal-form">
-            <label class="form-full">Preferred ZIP Codes / Cities
-              <textarea id="preferredZips" placeholder="Example: 77573, 77539, League City, Dickinson, Friendswood"></textarea>
-            </label>
-
-            <label class="form-full">ZIP / Area Preferences by Day
-              <textarea id="dayZipRules" placeholder="Example: Mon-Wed League City/Friendswood, Thu Dickinson, Fri Galveston only"></textarea>
-            </label>
-
-            <label>Max Travel Radius
-              <select id="travelRadius">
-                <option value="10">10 miles</option>
-                <option value="15" selected>15 miles</option>
-                <option value="20">20 miles</option>
-                <option value="30">30 miles</option>
-                <option value="custom">Custom / ask me first</option>
-              </select>
-            </label>
-
-            <label>Avoid Areas
-              <input id="avoidAreas" placeholder="Optional" />
-            </label>
-
-            <div class="form-full actions">
-              <button class="btn btn-solid" type="submit">Save Territory Rules</button>
-              <span id="territoryMsg" class="success-note"></span>
-            </div>
-          </form>
-        </article>
-      </section>
-
-      <section id="capacityPanel" class="placeholder-panel">
-        <article class="card placeholder-card">
-          <h3>Capacity Settings</h3>
-          <p>Help TFT schedule realistic days based on what you can truly accomplish.</p>
-
-          <form id="capacityForm" class="portal-form">
-            <label>Worker Type
-              <select id="workerType">
-                <option value="1099_contractor" selected>1099 Contractor</option>
-                <option value="w2_employee_hidden">W2 Employee - Hidden/Future</option>
-              </select>
-            </label>
-
-            <label>Preferred Work Style
-              <select id="workStyle">
-                <option value="solo">Solo</option>
-                <option value="team">With Team</option>
-                <option value="either" selected>Either</option>
-              </select>
-            </label>
-
-            <label>Max Homes Per Day
-              <input id="maxHomesPerDay" type="number" min="1" max="6" value="2" />
-            </label>
-
-            <label>Max Labor Hours Per Day
-              <input id="maxHoursPerDay" type="number" min="1" max="12" step=".5" value="6" />
-            </label>
-
-            <label>Preferred Job Size
-              <input id="preferredJobSize" placeholder="Example: 1200–2500 sq ft" />
-            </label>
-
-            <label>Heavy Clean / Move-Out Willing?
-              <select id="heavyCleanWilling">
-                <option value="yes">Yes</option>
-                <option value="case_by_case" selected>Case by case</option>
-                <option value="no">No</option>
-              </select>
-            </label>
-
-            <label class="form-full">Service Types You Can Handle
-              <textarea id="serviceCapabilities" placeholder="Example: standard cleans, deep cleans, move-outs, organizing, staging installs, holiday decor"></textarea>
-            </label>
-
-            <label class="form-full">Notes / Limits
-              <textarea id="capacityNotes" placeholder="Example: prefer no homes over 3000 sq ft, no high ladder work, only 1 heavy clean per day"></textarea>
-            </label>
-
-            <div class="form-full actions">
-              <button class="btn btn-solid" type="submit">Save Capacity</button>
-              <span id="capacityMsg" class="success-note"></span>
-            </div>
-          </form>
-        </article>
-      </section>
-
-
-      <section id="walkthroughPanel" class="placeholder-panel">
-        <article class="card placeholder-card">
-          <h3>New Walkthrough</h3>
-          <p>Submit walkthrough details, photos/videos, and your estimate recommendation to The Finishing Touch for admin review.</p>
-
-          <form id="walkthroughForm" class="portal-form">
-            <label>Client Name
-              <input id="walkClientName" placeholder="Client first name or full name" required />
-            </label>
-
-            <label>Property Address
-              <input id="walkAddress" placeholder="Street, city, ZIP" required />
-            </label>
-
-            <label>Service Type
-              <select id="walkServiceType" required>
-                <option value="standard_clean">Standard Clean</option>
-                <option value="initial_clean">Initial Clean</option>
-                <option value="deep_clean">Deep Clean</option>
-                <option value="move_in_out">Move-In / Move-Out</option>
-                <option value="organizing">Organizing</option>
-                <option value="staging">Staging</option>
-                <option value="decorating">Interior Decorating</option>
-                <option value="holiday_decor">Holiday/Event Decorating</option>
-                <option value="airbnb">Airbnb Turnover</option>
-                <option value="commercial">Commercial</option>
-              </select>
-            </label>
-
-            <label>Condition Rating
-              <select id="walkCondition" required>
-                <option value="clean_well_maintained">Clean / Well Maintained</option>
-                <option value="moderate_lived_in">Moderate / Lived In</option>
-                <option value="heavy_buildup">Heavy Buildup</option>
-                <option value="very_dirty_major_impact">Very Dirty / Major Impact</option>
-              </select>
-            </label>
-
-            <label>Square Footage
-              <input id="walkSqft" type="number" min="0" step="10" placeholder="Example: 1800" />
-            </label>
-
-            <label>Bedrooms
-              <input id="walkBeds" type="number" min="0" step="1" placeholder="3" />
-            </label>
-
-            <label>Bathrooms
-              <input id="walkBaths" type="number" min="0" step=".5" placeholder="2" />
-            </label>
-
-            <label>Stories
-              <select id="walkStories">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3_plus">3+</option>
-              </select>
-            </label>
-
-            <label class="form-full">Pets / Pet Impact
-              <input id="walkPets" placeholder="Example: 2 dogs, heavy shedding, litter box, etc." />
-            </label>
-
-            <label>Recommended Service
-              <input id="walkRecommendedService" placeholder="Example: Initial clean + oven add-on" />
-            </label>
-
-            <label>Recommended Hours
-              <input id="walkRecommendedHours" type="number" min="0" step=".5" placeholder="Example: 4.5" />
-            </label>
-
-            <label>Recommended Team Size
-              <input id="walkTeamSize" type="number" min="1" step="1" placeholder="Example: 2" />
-            </label>
-
-            <label>Contractor Estimate
-              <input id="walkEstimate" type="number" min="0" step="1" placeholder="Example: 255" required />
-            </label>
-
-            <label class="form-full">Photos
-              <input id="walkPhotos" type="file" accept="image/*" multiple />
-              <span class="upload-hint">Upload clear room photos, close-ups of buildup, floors, bathrooms, kitchen, and any special areas.</span>
-            </label>
-
-            <label class="form-full">Videos
-              <input id="walkVideos" type="file" accept="video/*" multiple />
-              <span class="upload-hint">Optional, but helpful for layout, clutter level, pet hair, and overall condition.</span>
-            </label>
-
-            <label class="form-full">Walkthrough Notes
-              <textarea id="walkNotes" placeholder="Overall condition, client concerns, access notes, areas to focus on, anything unusual."></textarea>
-            </label>
-
-            <label class="form-full">Add-ons Recommended
-              <textarea id="walkAddons" placeholder="Example: inside oven, inside fridge, inside cabinets, blinds, heavy floor scrub, interior windows."></textarea>
-            </label>
-
-            <label class="form-full">Concerns / Damage Notes
-              <textarea id="walkConcerns" placeholder="Example: broken items, stains, areas that may not fully restore, safety concerns."></textarea>
-            </label>
-
-            <div class="form-full actions">
-              <button id="walkSubmitBtn" class="btn btn-solid" type="submit">Submit Walkthrough</button>
-              <span id="walkthroughMsg" class="success-note"></span>
-            </div>
-          </form>
-
-          <div id="walkthroughResult" class="walkthrough-result" style="display:none"></div>
-        </article>
-      </section>
-
-
-      <section id="documentsPanel" class="placeholder-panel">
-        <article class="card placeholder-card">
-          <h3>Documents & Compliance</h3>
-          <p>Complete your onboarding documents first. The rest of the contractor portal unlocks only after The Finishing Touch reviews your paperwork and marks your profile active.</p>
-
-          <div id="complianceLockBanner" class="compliance-lock-banner">
-            <strong>Action required before portal access:</strong><br>
-            Please read your paperwork, sign and upload the required agreement packet, upload your required documents, and wait for admin approval. Uploading documents does not automatically verify your account.
-          </div>
-
-          <div class="compliance-note">
-            <strong>Worker Classification:</strong>
-            <span id="docWorkerType">Assigned by The Finishing Touch</span><br>
-            <span class="upload-hint">Required documents are based on the worker type assigned by admin. 1099 contractors require ID, W-9, COI, and signed agreement packet. Future W2 employees require payroll documents instead.</span><br><br>
-            <strong>Payment Setup:</strong><br>
-            <span class="upload-hint">Current 1099 contractors are paid through Square. Future W2 employees will be paid through QuickBooks Payroll. No payment preference is needed in this portal.</span>
-          </div>
-
+    <section id="route-home" class="route hidden">
+      <div id="onboardingHome" class="app-panel hidden">
+        <div class="row">
           <div>
-            <div class="toprow">
-              <strong style="font-family:Playfair Display,serif;">Compliance Progress</strong>
-              <span id="docProgressLabel" class="rolepill">0% Complete</span>
+            <h3>Complete Your Onboarding</h3>
+            <p>This is your required app setup before job access unlocks.</p>
+          </div>
+          <span id="onboardingStatusPill" class="status-pill">Action Needed</span>
+        </div>
+        <div style="display:grid;gap:10px;margin:14px 0">
+          <div class="row">
+            <strong>Progress</strong>
+            <span id="progressLabel" class="role-pill">0% Complete</span>
+          </div>
+          <div class="progress"><span id="progressBar"></span></div>
+        </div>
+
+        <div class="step-list" id="stepList"></div>
+
+        <div class="lock-note" style="margin-top:14px">
+          <strong>Locked until active:</strong> Jobs, walkthroughs, availability, territory, capacity, resources, messages, and payments stay locked until your required onboarding is submitted and TFT marks your profile active.
+        </div>
+
+        <div class="actions" style="margin-top:14px">
+          <button class="btn btn-solid" type="button" data-jump-docs>Continue Onboarding</button>
+        </div>
+      </div>
+
+      <div id="activeHome" class="hidden">
+        <div class="grid">
+          <article class="card">
+            <h3>Today</h3>
+            <p>Review jobs, check workflow needs, and keep your availability current.</p>
+            <div class="actions">
+              <button class="btn btn-solid" type="button" data-route-jump="jobs">View Jobs</button>
+              <button class="btn btn-outline" type="button" data-route-jump="availability">Update Availability</button>
             </div>
-            <div class="compliance-progress"><span id="docProgressBar"></span></div>
+          </article>
+          <article class="card">
+            <h3>Action Needed</h3>
+            <p id="actionNeededText">No urgent action right now.</p>
+            <span id="activeCompliancePill" class="status-pill">Active</span>
+          </article>
+          <article class="card">
+            <h3>Payments</h3>
+            <p>Current 1099 contractors are paid through Square. Future W2 employees will be paid through QuickBooks Payroll.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="route-jobs" class="route hidden">
+      <div class="toolbar">
+        <div class="actions">
+          <button id="tabOpen" class="btn btn-solid" type="button">Open Opportunities</button>
+          <button id="tabMine" class="btn btn-outline" type="button">My Assignments</button>
+        </div>
+        <div id="filterChips" class="actions"></div>
+      </div>
+      <div id="openJobs" class="grid"></div>
+      <div id="myJobs" class="grid hidden"></div>
+    </section>
+
+    <section id="route-availability" class="route hidden">
+      <article class="app-panel">
+        <h3>Availability</h3>
+        <p>Share the TFT-only openings you want available for scheduling. This does not expose your outside business or personal calendar.</p>
+        <form id="availabilityForm" class="form">
+          <label>Availability Type
+            <select id="availabilityType">
+              <option value="manual">Manual TFT Slots</option>
+              <option value="recurring">Recurring Weekly Pattern</option>
+              <option value="calendar_sync_future">Calendar Sync Later</option>
+            </select>
+          </label>
+          <label>Preferred Start Times
+            <input id="preferredStartTimes" placeholder="Example: 8:30 AM, 11:15 AM"/>
+          </label>
+          <label class="full">Available Days / Slots
+            <textarea id="availableSlots" placeholder="Example: Week of June 10: Tue 8:30, Thu 11:15, Fri 8:30 only"></textarea>
+          </label>
+          <label class="full">Blocked Days / Unavailable Dates
+            <textarea id="blockedDays" placeholder="Example: unavailable June 14-18, no Fridays after 12"></textarea>
+          </label>
+          <div class="full actions">
+            <button class="btn btn-solid" type="submit">Save Availability</button>
+            <span id="availabilityMsg" class="success"></span>
+          </div>
+        </form>
+      </article>
+    </section>
+
+    <section id="route-territory" class="route hidden">
+      <article class="app-panel">
+        <h3>Territory + ZIP Preferences</h3>
+        <p>Tell TFT where you prefer to work and which areas make sense on certain days.</p>
+        <form id="territoryForm" class="form">
+          <label class="full">Preferred ZIP Codes / Cities
+            <textarea id="preferredZips" placeholder="Example: 77573, 77539, League City, Dickinson, Friendswood"></textarea>
+          </label>
+          <label class="full">ZIP / Area Preferences by Day
+            <textarea id="dayZipRules" placeholder="Example: Mon-Wed League City/Friendswood, Thu Dickinson, Fri Galveston only"></textarea>
+          </label>
+          <label>Max Travel Radius
+            <select id="travelRadius">
+              <option value="10">10 miles</option>
+              <option value="15" selected>15 miles</option>
+              <option value="20">20 miles</option>
+              <option value="30">30 miles</option>
+              <option value="custom">Custom / ask me first</option>
+            </select>
+          </label>
+          <label>Avoid Areas
+            <input id="avoidAreas" placeholder="Optional"/>
+          </label>
+          <div class="full actions">
+            <button class="btn btn-solid" type="submit">Save Territory</button>
+            <span id="territoryMsg" class="success"></span>
+          </div>
+        </form>
+      </article>
+    </section>
+
+    <section id="route-capacity" class="route hidden">
+      <article class="app-panel">
+        <h3>Capacity Settings</h3>
+        <p>Help TFT schedule realistic days based on what you can truly accomplish.</p>
+        <form id="capacityForm" class="form">
+          <label>Worker Type
+            <select id="workerType">
+              <option value="1099_contractor">1099 Contractor</option>
+              <option value="w2_employee_hidden">W2 Employee - Hidden/Future</option>
+            </select>
+          </label>
+          <label>Preferred Work Style
+            <select id="workStyle">
+              <option value="solo">Solo</option>
+              <option value="team">With Team</option>
+              <option value="either" selected>Either</option>
+            </select>
+          </label>
+          <label>Max Homes Per Day <input id="maxHomesPerDay" type="number" min="1" max="6" value="2"/></label>
+          <label>Max Labor Hours Per Day <input id="maxHoursPerDay" type="number" min="1" max="12" step=".5" value="6"/></label>
+          <label>Preferred Job Size <input id="preferredJobSize" placeholder="Example: 1200–2500 sq ft"/></label>
+          <label>Heavy Clean / Move-Out Willing?
+            <select id="heavyCleanWilling">
+              <option value="yes">Yes</option>
+              <option value="case_by_case" selected>Case by case</option>
+              <option value="no">No</option>
+            </select>
+          </label>
+          <label class="full">Service Types You Can Handle
+            <textarea id="serviceCapabilities" placeholder="Example: standard cleans, deep cleans, move-outs, organizing, staging installs, holiday decor"></textarea>
+          </label>
+          <label class="full">Notes / Limits
+            <textarea id="capacityNotes" placeholder="Example: prefer no homes over 3000 sq ft, no high ladder work, only 1 heavy clean per day"></textarea>
+          </label>
+          <div class="full actions">
+            <button class="btn btn-solid" type="submit">Save Capacity</button>
+            <span id="capacityMsg" class="success"></span>
+          </div>
+        </form>
+      </article>
+    </section>
+
+    <section id="route-walkthroughs" class="route hidden">
+      <article class="app-panel">
+        <h3>New Walkthrough</h3>
+        <p>Submit walkthrough details, photos/videos, and your estimate recommendation to The Finishing Touch for admin review.</p>
+        <form id="walkthroughForm" class="form">
+          <label>Client Name <input id="walkClientName" required placeholder="Client first name or full name"/></label>
+          <label>Property Address <input id="walkAddress" required placeholder="Street, city, ZIP"/></label>
+          <label>Service Type
+            <select id="walkServiceType" required>
+              <option value="standard_clean">Standard Clean</option>
+              <option value="initial_clean">Initial Clean</option>
+              <option value="deep_clean">Deep Clean</option>
+              <option value="move_in_out">Move-In / Move-Out</option>
+              <option value="organizing">Organizing</option>
+              <option value="staging">Staging</option>
+              <option value="decorating">Interior Decorating</option>
+              <option value="holiday_decor">Holiday/Event Decorating</option>
+              <option value="airbnb">Airbnb Turnover</option>
+              <option value="commercial">Commercial</option>
+            </select>
+          </label>
+          <label>Condition Rating
+            <select id="walkCondition" required>
+              <option value="clean_well_maintained">Clean / Well Maintained</option>
+              <option value="moderate_lived_in">Moderate / Lived In</option>
+              <option value="heavy_buildup">Heavy Buildup</option>
+              <option value="very_dirty_major_impact">Very Dirty / Major Impact</option>
+            </select>
+          </label>
+          <label>Square Footage <input id="walkSqft" type="number" min="0" step="10" placeholder="1800"/></label>
+          <label>Bedrooms <input id="walkBeds" type="number" min="0" step="1"/></label>
+          <label>Bathrooms <input id="walkBaths" type="number" min="0" step=".5"/></label>
+          <label>Stories
+            <select id="walkStories"><option value="1">1</option><option value="2">2</option><option value="3_plus">3+</option></select>
+          </label>
+          <label class="full">Pets / Pet Impact <input id="walkPets" placeholder="Example: 2 dogs, heavy shedding"/></label>
+          <label>Recommended Service <input id="walkRecommendedService" placeholder="Initial clean + oven"/></label>
+          <label>Recommended Hours <input id="walkRecommendedHours" type="number" min="0" step=".5"/></label>
+          <label>Recommended Team Size <input id="walkTeamSize" type="number" min="1" step="1"/></label>
+          <label>Contractor Estimate <input id="walkEstimate" type="number" min="0" step="1" required/></label>
+          <label class="full">Photos <input id="walkPhotos" type="file" accept="image/*" multiple/><span class="small">Upload clear room photos, close-ups, floors, bathrooms, kitchen, and special areas.</span></label>
+          <label class="full">Videos <input id="walkVideos" type="file" accept="video/*" multiple/><span class="small">Optional, helpful for layout and condition.</span></label>
+          <label class="full">Walkthrough Notes <textarea id="walkNotes"></textarea></label>
+          <label class="full">Add-ons Recommended <textarea id="walkAddons"></textarea></label>
+          <label class="full">Concerns / Damage Notes <textarea id="walkConcerns"></textarea></label>
+          <div class="full actions">
+            <button id="walkSubmitBtn" class="btn btn-solid" type="submit">Submit Walkthrough</button>
+            <span id="walkthroughMsg" class="success"></span>
+          </div>
+        </form>
+        <div id="walkthroughResult" class="lock-note hidden" style="margin-top:12px"></div>
+      </article>
+    </section>
+
+    <section id="route-documents" class="route hidden">
+      <article class="app-panel">
+        <div class="row">
+          <div>
+            <h3>Onboarding & Compliance</h3>
+            <p>Complete your profile, required uploads, and electronic agreement. TFT must approve your profile before job access unlocks.</p>
+          </div>
+          <span id="docWorkerType" class="status-pill">Worker Type</span>
+        </div>
+
+        <div class="lock-note" style="margin-top:12px">
+          <strong>Payment setup:</strong> Current 1099 contractors are paid through Square. Future W2 employees will be paid through QuickBooks Payroll. No payment preference is needed in this portal.
+        </div>
+
+        <div style="display:grid;gap:10px;margin:14px 0">
+          <div class="row">
+            <strong>Onboarding Progress</strong>
+            <span id="docProgressLabel" class="role-pill">0% Complete</span>
+          </div>
+          <div class="progress"><span id="docProgressBar"></span></div>
+        </div>
+
+        <form id="documentsForm" class="form">
+          <label>Legal Name <input id="docLegalName" placeholder="Full legal name"/></label>
+          <label>Business Name, if applicable <input id="docBusinessName" placeholder="Business / DBA name"/></label>
+          <label>Phone <input id="docPhone" placeholder="Phone number"/></label>
+          <label>Mailing Address <input id="docMailingAddress" placeholder="Street, city, state, ZIP"/></label>
+          <label class="full">Emergency Contact <input id="docEmergencyContact" placeholder="Name, relationship, phone number"/></label>
+          <div class="full actions">
+            <button class="btn btn-solid" type="submit">Save Profile Info</button>
+            <span id="documentsMsg" class="success"></span>
+          </div>
+        </form>
+
+        <div class="doc-grid">
+          <div class="doc-card">
+            <h4>Identity Verification</h4>
+            <span id="status-id" class="status-pill">Not Uploaded</span>
+            <input id="upload-id" type="file" accept="image/*,.pdf" multiple/>
+            <button class="btn btn-solid" type="button" data-upload-doc="id">Upload ID Front & Back</button>
+            <div class="small">Upload clear front and back images of your driver’s license or state ID.</div>
           </div>
 
-          <form id="documentsForm" class="portal-form">
-            <label>Legal Name <input id="docLegalName" placeholder="Full legal name" /></label>
-            <label>Business Name, if applicable <input id="docBusinessName" placeholder="Business / DBA name" /></label>
-            <label>Phone <input id="docPhone" placeholder="Phone number" /></label>
-            <label>Mailing Address <input id="docMailingAddress" placeholder="Street, city, state, ZIP" /></label>
-            <label class="form-full">Emergency Contact <input id="docEmergencyContact" placeholder="Name, relationship, phone number" /></label>
-            <div class="form-full actions">
-              <button class="btn btn-solid" type="submit">Save Worker Info</button>
-              <span id="documentsMsg" class="success-note"></span>
+          <div class="doc-card">
+            <h4>W-9 / Tax Info</h4>
+            <span id="status-w9" class="status-pill">Required for 1099</span>
+            <input id="upload-w9" type="file" accept="image/*,.pdf"/>
+            <button class="btn btn-solid" type="button" data-upload-doc="w9">Upload W-9</button>
+            <div class="small">For 1099 contractors. TFT may also send a QuickBooks W-9 request.</div>
+          </div>
+
+          <div class="doc-card">
+            <h4>Certificate of Insurance</h4>
+            <span id="status-coi" class="status-pill">Required for 1099</span>
+            <input id="upload-coi" type="file" accept="image/*,.pdf"/>
+            <label>Policy Expiration <input id="coiExpiration" type="date"/></label>
+            <button class="btn btn-solid" type="button" data-upload-doc="coi">Upload COI</button>
+            <div class="small">1099 contractors must keep active insurance on file.</div>
+          </div>
+
+          <div class="doc-card">
+            <h4>W-4</h4>
+            <span id="status-w4" class="status-pill">W2 Only</span>
+            <input id="upload-w4" type="file" accept="image/*,.pdf"/>
+            <button class="btn btn-solid" type="button" data-upload-doc="w4">Upload W-4</button>
+            <div class="small">For future W2 employees only.</div>
+          </div>
+
+          <div class="doc-card">
+            <h4>I-9</h4>
+            <span id="status-i9" class="status-pill">W2 Only</span>
+            <input id="upload-i9" type="file" accept="image/*,.pdf"/>
+            <button class="btn btn-solid" type="button" data-upload-doc="i9">Upload I-9</button>
+            <div class="small">For future W2 employees only.</div>
+          </div>
+
+          <div class="doc-card">
+            <h4>Portfolio / Work Samples</h4>
+            <span id="status-portfolio" class="status-pill">Optional</span>
+            <input id="upload-portfolio" type="file" accept="image/*,.pdf" multiple/>
+            <button class="btn btn-solid" type="button" data-upload-doc="portfolio">Upload Work Samples</button>
+            <div class="small">Before/after photos, organizing projects, decorating/staging examples, or certifications.</div>
+          </div>
+        </div>
+
+        <article class="card" style="margin-top:14px">
+          <div class="row">
+            <h3>Electronic Agreement & Acknowledgment</h3>
+            <span id="status-agreement" class="status-pill">Not Signed</span>
+          </div>
+          <div class="agreement-box">
+            <p><strong>The Finishing Touch Contractor Agreement Summary</strong></p>
+            <p>This electronic agreement confirms you understand that any work assigned through The Finishing Touch must be completed according to TFT standards, client privacy expectations, safety procedures, and approved scope of work.</p>
+            <p>You agree not to contact, solicit, move, or accept direct work from TFT clients outside of the approved TFT process. You also agree to protect client addresses, access details, photos, and private information.</p>
+            <p>You agree to submit accurate availability, arrive on time, communicate issues promptly, upload required job photos when requested, report damages/incidents immediately, and wait for admin approval before assuming a job is completed.</p>
+            <p>You understand that submitting this electronic acknowledgment does not automatically activate your account. TFT will review your profile, documents, and agreement before marking you active.</p>
+            <p class="small">Replace this summary with your final attorney-reviewed contractor agreement/policy text when ready.</p>
+          </div>
+
+          <form id="agreementForm" class="form">
+            <label class="full checkline"><input id="ackAgreement" type="checkbox"/> I have read and agree to the contractor agreement, policies, standards, and acknowledgments above.</label>
+            <label class="full checkline"><input id="ackClientPrivacy" type="checkbox"/> I agree to protect client privacy and not solicit or contact TFT clients outside the approved TFT process.</label>
+            <label class="full checkline"><input id="ackNotAutoActive" type="checkbox"/> I understand my account is not active until The Finishing Touch reviews and approves my onboarding.</label>
+            <label class="full">Electronic Signature
+              <input id="signatureName" placeholder="Type your full legal name"/>
+              <span class="small">Typing your legal name and submitting this form creates an electronic acknowledgment for TFT review.</span>
+            </label>
+            <div class="full actions">
+              <button class="btn btn-solid" type="submit">Submit Electronic Agreement</button>
+              <span id="agreementMsg" class="success"></span>
             </div>
           </form>
-
-          <div class="doc-grid">
-            <div class="doc-card"><h4>Identity Verification — Front & Back Required</h4><span id="status-id" class="doc-status">Not Uploaded</span><input id="upload-id" type="file" accept="image/*,.pdf" multiple /><button class="btn btn-solid" type="button" data-upload-doc="id">Upload ID Front & Back</button><div class="small-note">Upload clear images/PDFs of both the front and back of your current driver’s license or state ID. Details must be readable and not cut off.</div></div>
-            <div class="doc-card"><h4>W-9 / Tax Info</h4><span id="status-w9" class="doc-status">QuickBooks Preferred</span><input id="upload-w9" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="w9">Upload W-9</button><div class="small-note">For 1099 contractors. Admin may also send a QuickBooks W-9 request.</div></div>
-            <div class="doc-card"><h4>Certificate of Insurance</h4><span id="status-coi" class="doc-status">Required for 1099</span><input id="upload-coi" type="file" accept="image/*,.pdf" /><label>Policy Expiration <input id="coiExpiration" type="date" /></label><button class="btn btn-solid" type="button" data-upload-doc="coi">Upload COI</button><div class="small-note">1099 contractors must keep active insurance on file.</div></div>
-            <div class="doc-card"><h4>W-4</h4><span id="status-w4" class="doc-status">W2 Only</span><input id="upload-w4" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="w4">Upload W-4</button><div class="small-note">For future W2 employees only.</div></div>
-            <div class="doc-card"><h4>I-9</h4><span id="status-i9" class="doc-status">W2 Only</span><input id="upload-i9" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="i9">Upload I-9</button><div class="small-note">For future W2 employees only.</div></div>
-            <div class="doc-card"><h4>Signed Agreement Packet</h4><span id="status-agreement" class="doc-status">Not Uploaded</span><input id="upload-agreement" type="file" accept="image/*,.pdf" /><button class="btn btn-solid" type="button" data-upload-doc="agreement">Upload Signed Packet</button><div class="small-note">Read, sign, and upload the contractor agreement, policies, acknowledgments, and service standards packet.</div></div>
-            <div class="doc-card"><h4>Portfolio / Work Samples</h4><span id="status-portfolio" class="doc-status">Optional</span><input id="upload-portfolio" type="file" accept="image/*,.pdf" multiple /><button class="btn btn-solid" type="button" data-upload-doc="portfolio">Upload Work Samples</button><div class="small-note">Before/after photos, organizing projects, decorating/staging examples, or certifications.</div></div>
-            <div class="doc-card"><h4>TFT Academy</h4><span class="doc-status">Coming Soon</span><div class="small-note">Future certifications: Foundations, Cleaning Specialist, Organization Specialist, Styling Specialist, Holiday Decor, Staging, Walkthrough Specialist, and Lead Specialist.</div></div>
-          </div>
         </article>
-      </section>
+      </article>
+    </section>
 
-      <section id="placeholderPanel" class="placeholder-panel">
-        <article class="card placeholder-card">
-          <h3 id="placeholderTitle">Coming Soon</h3>
-          <p id="placeholderText">This section is ready for the next build phase.</p>
-        </article>
-      </section>
+    <section id="route-messages" class="route hidden">
+      <article class="card">
+        <h3>Messages</h3>
+        <p>Brand-safe messaging is coming soon for scheduling, arrival updates, and job questions.</p>
+      </article>
+    </section>
 
-    </main>
-  </div>
+    <section id="route-payments" class="route hidden">
+      <article class="card">
+        <h3>Payments</h3>
+        <p>Current 1099 contractors are paid through Square. Future W2 employees will be paid through QuickBooks Payroll.</p>
+      </article>
+    </section>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <section id="route-resources" class="route hidden">
+      <article class="card">
+        <h3>Resources</h3>
+        <p>Cleaning checklists, product guides, photo requirements, and TFT standards will be organized here.</p>
+      </article>
+    </section>
+  </main>
+</div>
 
-  <script type="module">
+<nav class="bottom-nav" id="bottomNav">
+  <button class="active" type="button" data-route="home"><span class="icon">⌂</span>Home</button>
+  <button type="button" data-route="jobs"><span class="icon">✦</span>Jobs</button>
+  <button type="button" data-route="documents"><span class="icon">☑</span>Setup</button>
+  <button type="button" data-route="availability"><span class="icon">📅</span>Avail.</button>
+  <button type="button" data-route="payments"><span class="icon">$</span>Pay</button>
+</nav>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
 import { auth, db, storage } from "./ft-firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import {
-      collection, query, where, onSnapshot, addDoc,
-      doc, getDoc, setDoc, updateDoc, serverTimestamp, runTransaction
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import {
+  collection, query, where, onSnapshot, addDoc,
+  doc, getDoc, setDoc, updateDoc, serverTimestamp, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
-    import {
-      ref as storageRef,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+const $ = (id)=>document.getElementById(id);
+const rolePill=$("rolePill"), whoami=$("whoami"), signOutBtn=$("signOutBtn"), toastEl=$("toast");
+const adminIntakeBtn=$("adminIntakeBtn");
+const gateSignedOut=$("gateSignedOut"), gatePending=$("gatePending"), gateNoAccess=$("gateNoAccess");
+const routeEls=Array.from(document.querySelectorAll(".route"));
+const navButtons=Array.from(document.querySelectorAll("[data-route]"));
+const jumpButtons=()=>Array.from(document.querySelectorAll("[data-route-jump]"));
+const protectedRoutes=["jobs","availability","territory","capacity","walkthroughs","messages","payments","resources"];
 
-    const rolePill   = document.getElementById('rolePill');
-    const whoami     = document.getElementById('whoami');
-    const btnSignOut = document.getElementById('signOutBtn');
-    const chipsWrap  = document.getElementById('filterChips');
-    const adminBtn   = document.getElementById('adminIntakeBtn');
+let me=null, meRole="", userData={}, appUnlocked=false, activeRoute="home";
+let lastOpenJobs=[], lastMyJobs=[], activeJobTab="open", activeFilter="all", meServices=[];
+let unsubOpen=null, unsubMineA=null, unsubMineB=null;
+const ALL_TYPES=['cleaning','organizing','staging','decor','holiday','airbnb','commercial','carpet','staging_vendor'];
 
-    const tabOpen    = document.getElementById('tabOpen');
-    theTabListeners();
-    const tabMine    = document.getElementById('tabMine');
-    const panelOpen  = document.getElementById('panelOpen');
-    const panelMine  = document.getElementById('panelMine');
+function cap(s){return s?String(s).replaceAll("_"," ").replace(/\b\w/g,c=>c.toUpperCase()):""}
+function lower(s){return String(s||"").toLowerCase()}
+function showToast(msg, ms=1900){toastEl.textContent=msg;toastEl.style.display="block";setTimeout(()=>toastEl.style.display="none",ms)}
+function cleanFileName(name){return String(name||"file").replace(/[^a-zA-Z0-9._-]/g,"_")}
+function money(n){const x=Number(n);return Number.isFinite(x)?`$${Math.round(x)}`:""}
+function dateText(d){try{const date=d?.toDate?d.toDate():new Date(d);return date.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})}catch{return ""}}
 
-    const openJobsEl = document.getElementById('openJobs');
-    const myJobsEl   = document.getElementById('myJobs');
-    const toastEl    = document.getElementById('toast');
+function hideGates(){[gateSignedOut,gatePending,gateNoAccess].forEach(x=>x.classList.add("hidden"))}
+function showGate(name){
+  hideGates();
+  routeEls.forEach(r=>r.classList.add("hidden"));
+  if(name==="signedout") gateSignedOut.classList.remove("hidden");
+  if(name==="pending") gatePending.classList.remove("hidden");
+  if(name==="noaccess") gateNoAccess.classList.remove("hidden");
+}
 
-    const gateSignedOut  = document.getElementById('gate-signedout');
-    const gateNotApplied = document.getElementById('gate-notapplied');
-    const gatePending    = document.getElementById('gate-pending');
-    const portalUI       = document.getElementById('portal-ui');
+function statusValue(data){
+  const c=data.compliance||{};
+  return lower(data.contractorStatus || data.accountStatus || data.status || c.overallStatus || c.adminStatus || "");
+}
+function isActiveAccount(data){
+  const v=statusValue(data);
+  return ["active","verified","approved"].includes(v);
+}
+function workerType(data){
+  const c=data.compliance||{};
+  return data.workerType || data.classification || c.workerType || "1099_contractor";
+}
+function isW2(data){
+  const wt=lower(workerType(data));
+  return wt.includes("w2") || wt.includes("employee");
+}
+function requiredDocs(data){
+  return isW2(data) ? ["id","w4","i9","agreement"] : ["id","w9","coi","agreement"];
+}
+function docObj(type){
+  const c=userData.compliance||{};
+  const docs=c.documents||{};
+  if(type==="agreement") return c.electronicAgreement || docs.agreement || null;
+  return docs[type] || null;
+}
+function isSubmitted(type){
+  const d=docObj(type);
+  if(!d) return false;
+  if(type==="agreement") return !!(d.signedAt || d.signatureName || d.type==="electronic_signature");
+  return !!(d.url || d.path || (Array.isArray(d.files)&&d.files.length));
+}
+function isApproved(type){
+  const d=docObj(type);
+  return lower(d?.adminStatus || d?.status) === "approved";
+}
+function onboardingPct(data=userData){
+  const req=requiredDocs(data);
+  let submitted=req.filter(isSubmitted).length;
+  const profileOk=!!(data.legalName || data.compliance?.legalName);
+  const total=req.length+1;
+  return Math.round(((submitted + (profileOk?1:0))/total)*100);
+}
+function docStatusLabel(type){
+  const d=docObj(type);
+  if(!d) return type==="agreement" ? "Not Signed" : "Not Uploaded";
+  const admin=lower(d.adminStatus || d.status || "");
+  if(admin==="approved") return "Approved";
+  if(admin==="rejected" || admin==="needs_update") return "Needs Update";
+  return type==="agreement" ? "Signed - Pending Review" : "Uploaded - Pending Review";
+}
 
-    let me = null;
-    let meRole = '';
-    let meServices = [];
-    let activeFilter = 'all';
-    let lastOpenJobs = [], lastMyJobs = [];
-    let portalUnlocked = false;
+function setLockedNavigation(){
+  navButtons.forEach(btn=>{
+    const r=btn.dataset.route;
+    const locked=!appUnlocked && protectedRoutes.includes(r);
+    btn.disabled=locked;
+    btn.title=locked ? "Complete onboarding and wait for TFT approval first." : "";
+  });
+}
 
-    function isPortalActive(data){
-      const compliance = data?.compliance || {};
-      const status = String(compliance.status || data?.complianceStatus || data?.contractorStatus || data?.portalAccess || "").toLowerCase();
-      return meRole === 'admin' || status === 'active' || status === 'approved' || status === 'verified';
-    }
+function navigate(route){
+  if(!appUnlocked && protectedRoutes.includes(route)){
+    showToast("Complete onboarding first");
+    route="documents";
+  }
+  activeRoute=route;
+  hideGates();
+  routeEls.forEach(r=>r.classList.toggle("hidden", r.id !== `route-${route}`));
+  navButtons.forEach(btn=>btn.classList.toggle("active", btn.dataset.route===route));
+  const titles={
+    home:["Contractor App", appUnlocked?"Your TFT work hub is active.":"Complete onboarding to unlock your contractor dashboard."],
+    jobs:["Jobs","Open opportunities and your assigned job workflow."],
+    availability:["Availability","Share your TFT-only scheduling openings."],
+    territory:["Territory","Manage preferred ZIP codes, cities, and travel radius."],
+    capacity:["Capacity","Set realistic workload and service limits."],
+    walkthroughs:["Walkthroughs","Submit estimates, notes, photos, and videos for admin review."],
+    documents:["Onboarding","Complete required profile, documents, and electronic agreement."],
+    messages:["Messages","Communication tools coming soon."],
+    payments:["Payments","Square contractor payout notes and future QuickBooks Payroll status."],
+    resources:["Resources","TFT standards, checklists, and training resources."]
+  };
+  $("topTitle").textContent=titles[route]?.[0]||"Contractor App";
+  $("topSubtitle").textContent=titles[route]?.[1]||"";
+  if(route==="documents") loadComplianceProfile();
+}
+navButtons.forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.route)));
+document.addEventListener("click",(e)=>{
+  const jump=e.target.closest("[data-route-jump]");
+  if(jump) navigate(jump.dataset.routeJump);
+  if(e.target.closest("[data-jump-docs]")) navigate("documents");
+});
 
-    function setComplianceLockedUI(locked){
-      document.body.classList.toggle('compliance-locked', !!locked);
-      document.querySelectorAll('[data-side]').forEach(btn => {
-        const allowed = btn.dataset.side === 'documents';
-        btn.classList.toggle('locked', !!locked && !allowed);
-        btn.setAttribute('aria-disabled', String(!!locked && !allowed));
+function updateHero(){
+  const pct=onboardingPct();
+  $("statOne").textContent=appUnlocked ? "Active" : `${pct}%`;
+  $("statOneLabel").textContent=appUnlocked ? "Profile" : "Onboarding";
+  $("statTwo").textContent=String(lastOpenJobs.length || 0);
+  $("statThree").textContent=appUnlocked ? "Open" : "Locked";
+  $("heroHeadline").textContent=appUnlocked ? "Your contractor app is unlocked." : "Let’s get you set up.";
+  $("heroText").textContent=appUnlocked
+    ? "View jobs, manage workflow, update availability, and keep your TFT work organized."
+    : "Complete onboarding first. Once TFT reviews and activates your profile, the full contractor app unlocks.";
+}
+
+function renderHome(){
+  const onboard=$("onboardingHome"), active=$("activeHome");
+  onboard.classList.toggle("hidden", appUnlocked);
+  active.classList.toggle("hidden", !appUnlocked);
+  updateOnboardingUI();
+  updateHero();
+}
+
+function updateOnboardingUI(){
+  const pct=onboardingPct();
+  $("progressLabel").textContent=`${pct}% Complete`;
+  $("progressBar").style.width=`${pct}%`;
+  $("docProgressLabel").textContent=`${pct}% Complete`;
+  $("docProgressBar").style.width=`${pct}%`;
+
+  const req=requiredDocs();
+  const profileOk=!!(userData.legalName || userData.compliance?.legalName);
+  const steps=[
+    ["Profile Info", profileOk, "Legal name, phone, address, emergency contact"],
+    ["Identity Verification", isSubmitted("id"), "Driver’s license or state ID front and back"],
+    [isW2(userData) ? "Payroll Documents" : "Tax Info", isW2(userData) ? (isSubmitted("w4") && isSubmitted("i9")) : isSubmitted("w9"), isW2(userData) ? "W-4 and I-9" : "W-9 / tax setup"],
+    ["Insurance", isW2(userData) ? true : isSubmitted("coi"), isW2(userData) ? "Not required for W2 onboarding here" : "COI for 1099 contractors"],
+    ["Electronic Agreement", isSubmitted("agreement"), "Read, acknowledge, and electronically sign"],
+    ["Admin Review", appUnlocked, "TFT marks account Active after review"]
+  ];
+  $("stepList").innerHTML=steps.map((s,i)=>`
+    <div class="step">
+      <div class="step-num">${s[1] ? "✓" : i+1}</div>
+      <div><strong>${s[0]}</strong><small>${s[2]}</small></div>
+      <span class="status-pill">${s[1] ? "Done" : "Needed"}</span>
+    </div>
+  `).join("");
+  $("onboardingStatusPill").textContent=appUnlocked ? "Active" : (pct>=100 ? "Pending Admin Review" : "Action Needed");
+}
+
+function renderDocStatuses(){
+  ["id","w9","coi","w4","i9","portfolio","agreement"].forEach(type=>{
+    const el=$(`status-${type}`);
+    if(el) el.textContent= type==="portfolio" ? (isSubmitted(type) ? docStatusLabel(type) : "Optional") : docStatusLabel(type);
+  });
+  const wt=workerType(userData);
+  $("docWorkerType").textContent=isW2(userData) ? "W2 Employee" : "1099 Independent Contractor";
+  const exp=$("coiExpiration");
+  const coi=docObj("coi");
+  if(exp && coi?.expiration) exp.value=coi.expiration;
+}
+
+async function loadComplianceProfile(){
+  if(!me) return;
+  const snap=await getDoc(doc(db,"users",me.uid));
+  userData=snap.exists()?snap.data():{};
+  appUnlocked=meRole==="admin" || (meRole==="contractor" && isActiveAccount(userData));
+  const c=userData.compliance||{};
+  const fields={
+    docLegalName:userData.legalName || c.legalName || "",
+    docBusinessName:userData.businessName || c.businessName || "",
+    docPhone:userData.phone || c.phone || "",
+    docMailingAddress:c.mailingAddress || "",
+    docEmergencyContact:c.emergencyContact || "",
+    signatureName:c.electronicAgreement?.signatureName || ""
+  };
+  Object.entries(fields).forEach(([id,val])=>{const el=$(id); if(el) el.value=val||""});
+  ["ackAgreement","ackClientPrivacy","ackNotAutoActive"].forEach(id=>{
+    const el=$(id); if(el) el.checked=!!c.electronicAgreement?.acknowledgments?.[id];
+  });
+  renderDocStatuses();
+  updateOnboardingUI();
+  setLockedNavigation();
+  renderHome();
+}
+
+function cleanup(){
+  try{unsubOpen&&unsubOpen()}catch{}
+  try{unsubMineA&&unsubMineA()}catch{}
+  try{unsubMineB&&unsubMineB()}catch{}
+  unsubOpen=unsubMineA=unsubMineB=null;
+}
+
+onAuthStateChanged(auth, async (user)=>{
+  cleanup();
+  if(!user){
+    me=null;meRole="";whoami.textContent="";rolePill.textContent="Signed out";adminIntakeBtn.classList.add("hidden");
+    showGate("signedout");
+    return;
+  }
+  me=user;whoami.textContent=user.email||user.uid;rolePill.textContent="Checking…";
+  try{
+    const snap=await getDoc(doc(db,"users",user.uid));
+    if(!snap.exists()){rolePill.textContent="No Access";showGate("noaccess");return}
+    userData=snap.data();
+    meRole=lower(userData.role);
+    meServices=Array.isArray(userData.serviceTypes)?userData.serviceTypes.map(s=>lower(s)):[];
+    rolePill.textContent=meRole?cap(meRole):"No Access";
+    adminIntakeBtn.classList.toggle("hidden", meRole!=="admin");
+
+    if(meRole==="pending"){showGate("pending");return}
+    if(meRole!=="contractor" && meRole!=="admin"){showGate("noaccess");return}
+
+    appUnlocked=meRole==="admin" || (meRole==="contractor" && isActiveAccount(userData));
+    setLockedNavigation();
+    renderChips();
+    hideGates();
+    renderHome();
+    navigate(appUnlocked ? "home" : "documents");
+    if(appUnlocked) startListeners();
+  }catch(err){
+    console.warn(err);
+    rolePill.textContent="Error";
+    showGate("noaccess");
+  }
+});
+
+signOutBtn.addEventListener("click",async()=>{
+  try{await signOut(auth)}finally{location.href="index.html"}
+});
+
+function renderChips(){
+  const wrap=$("filterChips");
+  if(!wrap) return;
+  const allowed=(meServices&&meServices.length)?meServices:ALL_TYPES;
+  const types=["all",...allowed];
+  wrap.innerHTML=types.map(t=>`<button class="btn ${t===activeFilter?'btn-solid':'btn-soft'}" type="button" data-filter="${t}">${t==="all"?"All":cap(t)}</button>`).join("");
+  wrap.querySelectorAll("[data-filter]").forEach(btn=>btn.addEventListener("click",()=>{
+    activeFilter=btn.dataset.filter;
+    renderChips();drawOpenJobs(lastOpenJobs);drawMyJobs(lastMyJobs);
+  }));
+}
+$("tabOpen").addEventListener("click",()=>{activeJobTab="open";$("openJobs").classList.remove("hidden");$("myJobs").classList.add("hidden");$("tabOpen").className="btn btn-solid";$("tabMine").className="btn btn-outline"});
+$("tabMine").addEventListener("click",()=>{activeJobTab="mine";$("myJobs").classList.remove("hidden");$("openJobs").classList.add("hidden");$("tabMine").className="btn btn-solid";$("tabOpen").className="btn btn-outline"});
+
+function startListeners(){
+  cleanup();
+  unsubOpen=onSnapshot(query(collection(db,"jobs"),where("status","==","open")),(snap)=>{
+    lastOpenJobs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+    drawOpenJobs(lastOpenJobs);updateHero();
+  },err=>console.warn("open jobs",err));
+  unsubMineA=onSnapshot(query(collection(db,"jobs"),where("contractorId","==",me?.uid||"")),(snap)=>mergeMine(snap.docs.map(d=>({id:d.id,...d.data()}))),err=>console.warn("mine A",err));
+  unsubMineB=onSnapshot(query(collection(db,"jobs"),where("contractorIds","array-contains",me?.uid||"")),(snap)=>mergeMine(snap.docs.map(d=>({id:d.id,...d.data()}))),err=>console.warn("mine B",err));
+}
+function mergeMine(list){
+  const map=new Map(lastMyJobs.map(j=>[j.id,j]));
+  list.forEach(j=>map.set(j.id,j));
+  lastMyJobs=Array.from(map.values()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+  drawMyJobs(lastMyJobs);updateHero();
+}
+function slotsLeft(j){
+  const need=Number(j.contractorsNeeded||1);
+  const have=Array.isArray(j.contractorIds)?j.contractorIds.length:(j.contractorId?1:0);
+  return {need,have,left:Math.max(0,need-have)};
+}
+function payLine(j){
+  const p=j.payEach ?? j.contractorPayEach ?? j.payPerContractor ?? j.contractorPay ?? null;
+  return p!=null?`Your pay est: ${money(p)}`:"";
+}
+function currentWorkflowStatus(j){return j.workflowStatus || (j.status==="claimed"?"assigned":j.status)||"assigned"}
+function readableStatus(v){return cap(v)}
+function workflowStepHTML(j){
+  const wf=currentWorkflowStatus(j);
+  const fields={
+    checked_in:!!j.checkedInAt,
+    before_photos_submitted:!!j.beforePhotosSubmittedAt||Number(j.beforePhotosCount||0)>0,
+    in_progress:["in_progress","checklist_completed","after_photos_submitted","submitted_for_review","approved","paid","completed"].includes(wf)||j.status==="in_progress",
+    checklist_completed:!!j.checklistCompletedAt,
+    after_photos_submitted:!!j.afterPhotosSubmittedAt||Number(j.afterPhotosCount||0)>0,
+    submitted_for_review:wf==="submitted_for_review"||j.status==="submitted"
+  };
+  const steps=[["checked_in","Check-In"],["before_photos_submitted","Before Photos"],["in_progress","In Progress"],["checklist_completed","Checklist"],["after_photos_submitted","After Photos"],["submitted_for_review","Submitted"]];
+  return `<div class="workflow-steps">${steps.map(([k,l])=>`<span class="workflow-step ${fields[k]?'done':''}">${l}</span>`).join("")}</div>`;
+}
+function jobWorkflowHTML(j){
+  return `<div class="workflow-box">
+    <div class="row"><strong>Job Workflow</strong><span class="status-pill">${readableStatus(currentWorkflowStatus(j))}</span></div>
+    ${workflowStepHTML(j)}
+    <div class="workflow-grid">
+      <div class="workflow-mini"><label><strong>Before Photos</strong><input type="file" accept="image/*" multiple data-before-files></label><span class="small">Required before work begins when requested.</span></div>
+      <div class="workflow-mini"><label><strong>After Photos</strong><input type="file" accept="image/*" multiple data-after-files></label><span class="small">Upload final room photos before review.</span></div>
+      <div class="workflow-mini"><strong>Completion Checklist</strong>
+        <label class="checkline"><input type="checkbox" data-checklist-item="walkthrough">Arrival walkthrough completed</label>
+        <label class="checkline"><input type="checkbox" data-checklist-item="scope">Assigned scope completed</label>
+        <label class="checkline"><input type="checkbox" data-checklist-item="touchups">Final touch-ups checked</label>
+        <label class="checkline"><input type="checkbox" data-checklist-item="trash">Trash/debris handled as applicable</label>
+        <label class="checkline"><input type="checkbox" data-checklist-item="locked">Property secured before leaving</label>
+      </div>
+      <div class="workflow-mini"><label><strong>Incident / Damage Note</strong><textarea data-incident-note placeholder="Report damage, access issue, client concern, or anything admin should review."></textarea></label></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-outline" type="button" data-workflow-act="gps">GPS Check-In</button>
+      <button class="btn btn-outline" type="button" data-workflow-act="before">Upload Before</button>
+      <button class="btn btn-solid" type="button" data-workflow-act="start">Start Work</button>
+      <button class="btn btn-outline" type="button" data-workflow-act="checklist">Save Checklist</button>
+      <button class="btn btn-outline" type="button" data-workflow-act="after">Upload After</button>
+      <button class="btn btn-outline" type="button" data-workflow-act="incident">Report Incident</button>
+      <button class="btn btn-solid" type="button" data-workflow-act="submit">Submit for Review</button>
+    </div>
+  </div>`;
+}
+function jobCardHTML(j,inMine=false){
+  const type=lower(j.serviceType||"");
+  const {need,left}=slotsLeft(j);
+  const dt=j.serviceDate?.toDate?j.serviceDate.toDate():null;
+  const when=dt?`${dt.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})} • ${dt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}`:(j.window||j.date||"");
+  const leftTxt=need>1?`${left} of ${need} slots left`:"";
+  return `<article class="card job-card" data-jobid="${j.id}">
+    <div class="row"><strong>${type?cap(type):"Job"}</strong>${payLine(j)?`<span class="status-pill">${payLine(j)}</span>`:""}</div>
+    <div class="meta">
+      ${j.zip||j.area||j.city?`<span>📍 ${j.zip||j.area||j.city}</span>`:""}
+      ${when?`<span>🗓️ ${when}</span>`:""}
+      ${j.beds||j.baths?`<span>🛏️ ${j.beds||0} bd / ${j.baths||0} ba</span>`:""}
+      ${j.estimatedTeamHours||j.teamHours?`<span>⏱️ ${j.estimatedTeamHours||j.teamHours} hrs</span>`:""}
+      ${leftTxt?`<span>👥 ${leftTxt}</span>`:""}
+      ${inMine?`<span>Workflow: ${readableStatus(currentWorkflowStatus(j))}</span>`:""}
+    </div>
+    ${j.summary?`<p>${j.summary}</p>`:(j.notes?`<p>${j.notes}</p>`:"")}
+    ${inMine?jobWorkflowHTML(j):""}
+    <div class="actions"></div>
+  </article>`;
+}
+function drawOpenJobs(list){
+  $("statTwo").textContent=String(list.length);
+  const allowed=(meServices&&meServices.length)?meServices:ALL_TYPES;
+  const filtered=list.filter(j=>{
+    const type=lower(j.serviceType||"");
+    return allowed.includes(type) && (activeFilter==="all" || type===activeFilter);
+  });
+  $("openJobs").innerHTML=filtered.length?filtered.map(j=>jobCardHTML(j,false)).join(""):`<div class="empty">No open jobs right now.</div>`;
+  filtered.forEach(j=>injectOpenActions(j));
+}
+function drawMyJobs(list){
+  $("myJobs").innerHTML=list.length?list.map(j=>jobCardHTML(j,true)).join(""):`<div class="empty">You haven’t claimed any jobs yet.</div>`;
+  list.forEach(j=>injectMineActions(j));
+}
+function injectOpenActions(j){
+  const card=$("openJobs").querySelector(`[data-jobid="${j.id}"]`);
+  const actions=card?.querySelector(".actions");
+  if(!actions)return;
+  const btn=document.createElement("button");
+  btn.className="btn btn-solid";
+  btn.textContent=slotsLeft(j).left>1?"Claim a slot":"Claim this job";
+  btn.addEventListener("click",()=>claimJob(j.id,btn));
+  actions.appendChild(btn);
+  const msg=document.createElement("button");
+  msg.className="btn btn-outline";msg.type="button";msg.textContent="Message Admin";
+  msg.addEventListener("click",()=>alert("Messaging coming soon."));
+  actions.appendChild(msg);
+}
+async function claimJob(jobId,button){
+  if(!appUnlocked){alert("Complete onboarding and wait for admin approval before claiming jobs.");return}
+  button.disabled=true;button.textContent="Claiming…";
+  try{
+    await runTransaction(db,async(tx)=>{
+      const ref=doc(db,"jobs",jobId);
+      const snap=await tx.get(ref);
+      if(!snap.exists())throw new Error("Job not found.");
+      const j=snap.data();
+      if((j.status||"open")!=="open")throw new Error("Already claimed.");
+      const need=Number(j.contractorsNeeded||1);
+      const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:(j.contractorId?[j.contractorId]:[]);
+      if(ids.includes(me.uid))return;
+      if(ids.length>=need)throw new Error("No slots left.");
+      ids.push(me.uid);
+      const emails=Array.isArray(j.contractorEmails)?[...j.contractorEmails]:[];
+      if(me.email&&!emails.includes(me.email))emails.push(me.email);
+      tx.update(ref,{
+        contractorIds:ids,
+        contractorEmails:emails,
+        workflowStatus:ids.length>=need?"assigned":"pending_assignment",
+        assignedAt:serverTimestamp(),
+        status:ids.length>=need?"claimed":"open",
+        claimedAt:ids.length>=need?serverTimestamp():j.claimedAt||null,
+        updatedAt:serverTimestamp()
       });
-      if (typeof window.setContractorPortalLocked === 'function') window.setContractorPortalLocked(!!locked);
-      if (locked && typeof window.showContractorSection === 'function') window.showContractorSection('documents');
-    }
-
-    const ALL_TYPES = ['cleaning','organizing','staging','decor','holiday','airbnb','commercial','carpet','staging_vendor'];
-
-    function showGate(which){
-      if (which !== 'portal') setComplianceLockedUI(false);
-      // hide all gates + portal
-      [gateSignedOut, gateNotApplied, gatePending].forEach(x => x.classList.add('hidden'));
-      portalUI.classList.add('hidden');
-      panelOpen.style.display = 'none';
-      panelMine.style.display = 'none';
-
-      switch(which){
-        case 'signedout': gateSignedOut.classList.remove('hidden'); break;
-        case 'notapplied': gateNotApplied.classList.remove('hidden'); break;
-        case 'pending': gatePending.classList.remove('hidden'); break;
-        case 'portal':
-          portalUI.classList.remove('hidden');
-          panelOpen.style.display = '';
-          panelMine.style.display = '';
-          break;
-      }
-    }
-
-    function showToast(msg, ms=1900){
-      toastEl.textContent = msg;
-      toastEl.style.display = 'block';
-      setTimeout(()=> toastEl.style.display = 'none', ms);
-    }
-    function cap(s){ return s ? (s[0].toUpperCase() + s.slice(1)) : ''; }
-    function fmtPay(n){
-      if (typeof n === 'number' && !isNaN(n)) return `$${Math.round(n)}`;
-      const x = Number(n); return isFinite(x) ? `$${Math.round(x)}` : '';
-    }
-    function fmtDate(d){
-      try { return new Date(d).toLocaleDateString([], { month:'short', day:'numeric' }); } catch { return d || ''; }
-    }
-    function payForContractor(j){
-      const p = j.payEach ?? j.contractorPayEach ?? j.payPerContractor ?? j.contractorPay ?? null;
-      return p != null ? `Your pay est: <span class="pay">${fmtPay(p)}</span>` : '';
-    }
-    function slotsLeft(j){
-      const need = Number(j.contractorsNeeded || 1);
-      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
-      const left = Math.max(0, need - have);
-      return { need, have, left };
-    }
-    function canClaimRole(){ return meRole === 'contractor' || meRole === 'admin'; }
-
-    function setTab(which){
-      const open = which === 'open';
-      tabOpen.classList.toggle('active', open);
-      tabMine.classList.toggle('active', !open);
-      tabOpen.setAttribute('aria-selected', String(open));
-      tabMine.setAttribute('aria-selected', String(!open));
-      panelOpen.hidden = !open;
-      panelMine.hidden = open;
-    }
-    function theTabListeners(){
-      // keep function hoisted in top, attach after DOM refs exist
-      document.addEventListener('click', (e)=>{
-        if (e.target?.id === 'tabOpen') setTab('open');
-        if (e.target?.id === 'tabMine') setTab('mine');
-      });
-    }
-
-    function renderChips(){
-      const allowed = (meServices && meServices.length)
-        ? meServices.map(s => String(s).toLowerCase())
-        : ALL_TYPES;
-      const types = ['all', ...allowed];
-      chipsWrap.innerHTML = '';
-      types.forEach(t => {
-        const b = document.createElement('button');
-        b.className = 'chip' + (t === activeFilter ? ' active' : '');
-        b.type = 'button';
-        b.textContent = t === 'all' ? 'All' : (t[0].toUpperCase() + t.slice(1));
-        b.addEventListener('click', () => {
-          activeFilter = t;
-          const statService = document.getElementById("statService");
-          if (statService) statService.textContent = t === "all" ? "All" : cap(t);
-          renderChips();
-          drawOpenJobs(lastOpenJobs);
-          drawMyJobs(lastMyJobs);
-        });
-        chipsWrap.appendChild(b);
-      });
-    }
-
-    btnSignOut.addEventListener('click', async (e) => {
-      e.preventDefault();
-      try { await signOut(auth); } finally { location.href = 'index.html'; }
     });
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        whoami.textContent = '';
-        rolePill.textContent = 'Signed out';
-        // admin button stays hidden
-        adminBtn.hidden = true;
-        adminBtn.style.display = 'none';
-        showGate('signedout');
-        return;
-      }
-
-      me = user;
-      whoami.textContent = user.email || user.uid;
-      rolePill.textContent = 'Checking role…';
-      // default hidden (prevents flash)
-      adminBtn.hidden = true;
-      adminBtn.style.display = 'none';
-
-      // Get the user doc to determine role
-      const uref = doc(db, 'users', user.uid);
-      try {
-        const snap = await getDoc(uref);
-        if (!snap.exists()) {
-          meRole = '';
-          meServices = [];
-          rolePill.textContent = 'No role yet';
-          showGate('notapplied');
-          return;
-        }
-
-        const data = snap.data();
-        meRole = (data.role || '').toLowerCase();
-        meServices = Array.isArray(data.serviceTypes) ? data.serviceTypes.map(s=>String(s).toLowerCase()) : [];
-        rolePill.textContent = meRole ? cap(meRole) : 'No role yet';
-
-        // Only admins see Manual Intake (no flicker)
-        if (meRole === 'admin') {
-          adminBtn.hidden = false;
-          adminBtn.style.display = '';
-        } else {
-          adminBtn.hidden = true;
-          adminBtn.style.display = 'none';
-        }
-
-        if (meRole === 'pending') {
-          showGate('pending');
-          return;
-        }
-
-        if (meRole === 'contractor' || meRole === 'admin') {
-          showGate('portal');
-          await loadComplianceProfile(data);
-          portalUnlocked = isPortalActive(data);
-          setComplianceLockedUI(!portalUnlocked);
-
-          if (!portalUnlocked) {
-            rolePill.textContent = meRole === 'admin' ? 'Admin' : 'Docs Required';
-            return;
-          }
-
-          renderChips();
-          const statService = document.getElementById("statService");
-          if (statService) statService.textContent = activeFilter === "all" ? "All" : cap(activeFilter);
-          startListeners();     // <-- only start now (prevents permission-denied)
-          return;
-        }
-
-        // Unknown/empty role
-        showGate('notapplied');
-      } catch (e) {
-        console.warn('Role check error:', e);
-        rolePill.textContent = 'Unknown role';
-        showGate('notapplied');
-      }
-    });
-
-    let unsubOpen = null, unsubMineA = null, unsubMineB = null;
-    function cleanup(){
-      try { unsubOpen && unsubOpen(); } catch {}
-      try { unsubMineA && unsubMineA(); } catch {}
-      try { unsubMineB && unsubMineB(); } catch {}
-      unsubOpen = unsubMineA = unsubMineB = null;
-    }
-
-    function startListeners(){
-      cleanup();
-
-      // Open jobs (contractor/admin can read per rules)
-      unsubOpen = onSnapshot(
-        query(collection(db, 'jobs'), where('status', '==', 'open')),
-        (snap) => {
-          const byCreatedDesc = (a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0);
-          lastOpenJobs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort(byCreatedDesc);
-          drawOpenJobs(lastOpenJobs);
-        },
-        (err) => console.warn('open jobs listener error:', err)
-      );
-
-      // My jobs — legacy single-assignee
-      unsubMineA = onSnapshot(
-        query(collection(db, 'jobs'), where('contractorId', '==', (me?.uid || ''))),
-        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
-        (err) => console.warn('my jobs (A) listener error:', err)
-      );
-
-      // My jobs — new multi-assignee
-      unsubMineB = onSnapshot(
-        query(collection(db, 'jobs'), where('contractorIds', 'array-contains', (me?.uid || ''))),
-        (snap) => mergeMine(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
-        (err) => console.warn('my jobs (B) listener error:', err)
-      );
-    }
-
-    function mergeMine(list){
-      const map = new Map(lastMyJobs.map(j => [j.id, j]));
-      list.forEach(j => map.set(j.id, j));
-      lastMyJobs = Array.from(map.values());
-      drawMyJobs(lastMyJobs);
-    }
-
-
-    function readableStatus(value){
-      return String(value || "")
-        .replaceAll("_", " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
-    }
-
-    function currentWorkflowStatus(j){
-      return j.workflowStatus || (j.status === "claimed" ? "assigned" : j.status) || "assigned";
-    }
-
-    function workflowStepHTML(j){
-      const wf = currentWorkflowStatus(j);
-      const completed = new Set(Array.isArray(j.workflowCompletedSteps) ? j.workflowCompletedSteps : []);
-      const fields = {
-        checked_in: !!j.checkedInAt,
-        before_photos_submitted: !!j.beforePhotosSubmittedAt || Number(j.beforePhotosCount || 0) > 0,
-        in_progress: ["in_progress","checklist_completed","after_photos_submitted","submitted_for_review","approved","paid","completed"].includes(wf) || j.status === "in_progress",
-        checklist_completed: !!j.checklistCompletedAt,
-        after_photos_submitted: !!j.afterPhotosSubmittedAt || Number(j.afterPhotosCount || 0) > 0,
-        submitted_for_review: wf === "submitted_for_review" || j.status === "submitted"
-      };
-
-      const steps = [
-        ["checked_in", "Check-In"],
-        ["before_photos_submitted", "Before Photos"],
-        ["in_progress", "In Progress"],
-        ["checklist_completed", "Checklist"],
-        ["after_photos_submitted", "After Photos"],
-        ["submitted_for_review", "Submitted"]
-      ];
-
-      return `<div class="workflow-steps">${steps.map(([key,label]) => `<span class="workflow-step ${(fields[key] || completed.has(key)) ? "done" : ""}">${label}</span>`).join("")}</div>`;
-    }
-
-    function jobWorkflowHTML(j){
-      const wf = currentWorkflowStatus(j);
-      return `
-        <div class="workflow-box">
-          <div class="workflow-head">
-            <strong>Job Workflow</strong>
-            <span class="workflow-status">${readableStatus(wf)}</span>
-          </div>
-          ${workflowStepHTML(j)}
-          <div class="workflow-grid">
-            <div class="workflow-mini">
-              <label>Before Photos
-                <input type="file" accept="image/*" multiple data-before-files>
-              </label>
-              <span class="upload-hint">Required before work begins when marked by admin.</span>
-            </div>
-            <div class="workflow-mini">
-              <label>After Photos
-                <input type="file" accept="image/*" multiple data-after-files>
-              </label>
-              <span class="upload-hint">Upload final room photos before submitting for review.</span>
-            </div>
-            <div class="workflow-mini">
-              <strong style="font-family:Playfair Display,serif;">Completion Checklist</strong>
-              <div class="checklist-mini">
-                <label class="checkline"><input type="checkbox" data-checklist-item="walkthrough"> Arrival walkthrough completed</label>
-                <label class="checkline"><input type="checkbox" data-checklist-item="scope"> Assigned scope completed</label>
-                <label class="checkline"><input type="checkbox" data-checklist-item="touchups"> Final touch-ups checked</label>
-                <label class="checkline"><input type="checkbox" data-checklist-item="trash"> Trash/debris handled as applicable</label>
-                <label class="checkline"><input type="checkbox" data-checklist-item="locked"> Property secured before leaving</label>
-              </div>
-            </div>
-            <div class="workflow-mini">
-              <label>Incident / Damage Note
-                <textarea data-incident-note placeholder="Report damage, access issue, client concern, missing supplies, or anything admin should review."></textarea>
-              </label>
-            </div>
-          </div>
-          <div class="workflow-actions">
-            <button class="btn btn-outline" type="button" data-workflow-act="gps">GPS Check-In</button>
-            <button class="btn btn-outline" type="button" data-workflow-act="before">Upload Before Photos</button>
-            <button class="btn btn-solid" type="button" data-workflow-act="start">Start Work</button>
-            <button class="btn btn-outline" type="button" data-workflow-act="checklist">Save Checklist</button>
-            <button class="btn btn-outline" type="button" data-workflow-act="after">Upload After Photos</button>
-            <button class="btn btn-outline" type="button" data-workflow-act="incident">Report Incident</button>
-            <button class="btn btn-solid" type="button" data-workflow-act="submit">Submit for Admin Review</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function jobCardHTML(j, inMine=false){
-      const type  = (j.serviceType || '').toLowerCase();
-      const title = type ? cap(type) : 'Job';
-      const zip   = j.zip || j.postal || j.postcode || j.area || j.city || '';
-      const dt = j.serviceDate?.toDate ? j.serviceDate.toDate() : null;
-      const when  = dt ? dt.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' }) + ' • ' + dt.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) : (j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || ''));
-      const bb    = (j.beds || j.baths) ? `${j.beds||0} bd / ${j.baths||0} ba` : '';
-      const hours = j.estimatedTeamHours || j.teamHours || j.eta || '';
-      const { need, left } = slotsLeft(j);
-      const leftTxt = need > 1 ? `${left} of ${need} slots left` : '';
-      const payLine = payForContractor(j);
-      const workflow = currentWorkflowStatus(j);
-      const statusChip = j.status ? `<span>Status: ${j.status}</span>` : '';
-      const workflowChip = inMine ? `<span>Workflow: ${readableStatus(workflow)}</span>` : '';
-
-      return `
-        <div class="card job-card" data-jobid="${j.id}">
-          <div class="toprow">
-            <strong>${title}</strong>
-            ${payLine ? `<div class="muted">${payLine}</div>` : ''}
-          </div>
-          <div class="meta">
-            ${zip   ? `<span>📍 <span>${zip}</span></span>` : ''}
-            ${when  ? `<span>🗓️ <span>${when}</span></span>` : ''}
-            ${bb    ? `<span>🛏️ <span>${bb}</span></span>` : ''}
-            ${hours ? `<span>⏱️ <span>${hours}</span></span>` : ''}
-            ${leftTxt ? `<span>👥 <span>${leftTxt}</span></span>` : ''}
-            ${statusChip}
-            ${workflowChip}
-          </div>
-          ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : '')}
-          ${inMine ? jobWorkflowHTML(j) : ''}
-          <div class="actions"></div>
-        </div>
-      `;
-    }
-
-    function drawOpenJobs(list){
-      const statOpen = document.getElementById("statOpen");
-      if (statOpen) statOpen.textContent = String(list.length);
-      const allowed = (meServices && meServices.length) ? meServices : ALL_TYPES;
-      const filtered = list.filter(j => {
-        const type = (j.serviceType || '').toLowerCase();
-        const okType = allowed.includes(type);
-        const chipOk = (activeFilter === 'all') ? true : (type === activeFilter);
-        return okType && chipOk;
-      });
-
-      if (!filtered.length){
-        openJobsEl.innerHTML = `<div class="empty">No open jobs right now.</div>`;
-        return;
-      }
-      openJobsEl.innerHTML = filtered.map(j => jobCardHTML(j, false)).join('');
-      filtered.forEach(j => injectOpenActions(j));
-    }
-
-    function drawMyJobs(list){
-      const statMine = document.getElementById("statMine");
-      if (statMine) statMine.textContent = String(list.length);
-      if (!list.length){
-        myJobsEl.innerHTML = `<div class="empty">You haven’t claimed any jobs yet.</div>`;
-        return;
-      }
-      myJobsEl.innerHTML = list.map(j => jobCardHTML(j, true)).join('');
-      list.forEach(j => injectMineActions(j));
-    }
-
-    /* ---------- new helpers for compliance & private address ---------- */
-    async function getMyUserDoc() {
-      if (!me) return null;
-      const snap = await getDoc(doc(db, 'users', me.uid));
-      return snap.exists() ? snap.data() : null;
-    }
-
-    function isCompliant(u) {
-      const c = u?.compliance || {};
-      const status = String(c.status || u?.complianceStatus || u?.contractorStatus || u?.portalAccess || "").toLowerCase();
-      if (status === "active" || status === "approved" || status === "verified") return true;
-      const bgClear = (c.background?.status === 'clear');
-      const insVerified = (c.insurance?.status === 'verified' || c.insurance?.status === 'active');
-      return !!(bgClear && insVerified);
-    }
-
-    async function ensureCompliantOrExplain() {
-      const u = await getMyUserDoc();
-      if (isCompliant(u)) return true;
-      alert(
-        "Almost there!\n\n" +
-        "• Complete your Checkr background check (status must be Clear).\n" +
-        "• Upload insurance and list us as Certificate Holder (status must be Verified).\n\n" +
-        "Once both are verified, you can claim jobs."
-      );
-      return false;
-    }
-
-    async function fetchPrivateFullAddress(jobId) {
-      try {
-        const ref = doc(db, 'jobs', jobId, 'private', 'main');
-        const snap = await getDoc(ref);
-        const full = snap.exists() ? (snap.data().fullAddress || '') : '';
-        return (full || '').trim();
-      } catch {
-        return '';
+    showToast("Job claimed");
+    $("tabMine").click();
+  }catch(err){console.warn(err);alert(err.message||"Could not claim job.");}
+  finally{button.disabled=false;button.textContent="Claim this job"}
+}
+async function fetchPrivateFullAddress(jobId){
+  try{const snap=await getDoc(doc(db,"jobs",jobId,"private","main"));return snap.exists()?(snap.data().fullAddress||"").trim():""}catch{return""}
+}
+function getCard(jobId){return $("myJobs").querySelector(`[data-jobid="${jobId}"]`)}
+function getGeoPosition(){
+  return new Promise(resolve=>{
+    if(!navigator.geolocation){resolve(null);return}
+    navigator.geolocation.getCurrentPosition(
+      pos=>resolve({lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy}),
+      ()=>resolve(null),
+      {enableHighAccuracy:true,timeout:9000,maximumAge:0}
+    );
+  });
+}
+async function updateJobWorkflow(jobId,patch){
+  await updateDoc(doc(db,"jobs",jobId),{...patch,updatedAt:serverTimestamp()});
+  await setDoc(doc(db,"jobs",jobId,"workflow","main"),{...patch,updatedAt:serverTimestamp()},{merge:true});
+}
+async function uploadJobFiles(jobId,fileList,photoType){
+  const files=Array.from(fileList||[]);
+  if(!files.length)throw new Error("Please choose at least one photo first.");
+  const uploaded=[];
+  for(const file of files){
+    const path=`jobs/${jobId}/${photoType}/${Date.now()}-${cleanFileName(file.name)}`;
+    const fileRef=storageRef(storage,path);
+    await uploadBytes(fileRef,file);
+    const url=await getDownloadURL(fileRef);
+    await addDoc(collection(db,"jobs",jobId,"photos"),{uploadedByUid:me.uid,uploadedByEmail:me.email||"",photoType,name:file.name,type:file.type,size:file.size,path,url,createdAt:serverTimestamp()});
+    uploaded.push({name:file.name,path,url});
+  }
+  await updateJobWorkflow(jobId, photoType==="before" ? {
+    beforePhotosSubmittedAt:serverTimestamp(),beforePhotosCount:uploaded.length,workflowStatus:"before_photos_submitted",status:"claimed",beforePhotosLastUploadedBy:me.email||me.uid
+  } : {
+    afterPhotosSubmittedAt:serverTimestamp(),afterPhotosCount:uploaded.length,workflowStatus:"after_photos_submitted",status:"in_progress",afterPhotosLastUploadedBy:me.email||me.uid
+  });
+  return uploaded;
+}
+async function injectMineActions(j){
+  const card=getCard(j.id); if(!card)return;
+  const iAmOnThis=Array.isArray(j.contractorIds)?j.contractorIds.includes(me.uid):(j.contractorId===me.uid);
+  if(iAmOnThis){
+    const full=await fetchPrivateFullAddress(j.id);
+    if(full){
+      const meta=card.querySelector(".meta");
+      if(meta&&!meta.querySelector(".fulladdr")){
+        const span=document.createElement("span");span.className="fulladdr";span.textContent=`📍 ${full}`;meta.appendChild(span);
       }
     }
-    /* ------------------------------------------------------------------ */
+  }
+  card.querySelector('[data-workflow-act="gps"]')?.addEventListener("click",async(e)=>{
+    e.currentTarget.disabled=true;
+    try{const geo=await getGeoPosition();await updateJobWorkflow(j.id,{status:"claimed",workflowStatus:"checked_in",checkedInAt:serverTimestamp(),checkedInByUid:me.uid,checkedInByEmail:me.email||"",gpsCheckIn:geo||{unavailable:true}});showToast(geo?"GPS check-in saved":"Check-in saved without GPS")}
+    catch(err){console.warn(err);alert("Could not save check-in.")}
+    finally{e.currentTarget.disabled=false}
+  });
+  card.querySelector('[data-workflow-act="before"]')?.addEventListener("click",async(e)=>{
+    const input=card.querySelector("[data-before-files]");e.currentTarget.disabled=true;
+    try{const files=await uploadJobFiles(j.id,input?.files,"before");showToast(`${files.length} before photo(s) uploaded`);if(input)input.value=""}
+    catch(err){console.warn(err);alert(err.message||"Could not upload before photos.")}
+    finally{e.currentTarget.disabled=false}
+  });
+  card.querySelector('[data-workflow-act="start"]')?.addEventListener("click",async(e)=>{
+    e.currentTarget.disabled=true;
+    try{await updateJobWorkflow(j.id,{status:"in_progress",workflowStatus:"in_progress",workStartedAt:serverTimestamp(),workStartedByUid:me.uid,workStartedByEmail:me.email||""});showToast("Marked in progress")}
+    catch(err){console.warn(err);alert("Could not start work.")}
+    finally{e.currentTarget.disabled=false}
+  });
+  card.querySelector('[data-workflow-act="checklist"]')?.addEventListener("click",async(e)=>{
+    e.currentTarget.disabled=true;
+    try{const checked=Array.from(card.querySelectorAll("[data-checklist-item]:checked")).map(x=>x.dataset.checklistItem);await updateJobWorkflow(j.id,{workflowStatus:"checklist_completed",checklistCompletedAt:serverTimestamp(),checklistCompletedByUid:me.uid,checklistCompletedByEmail:me.email||"",checklistItemsCompleted:checked});showToast("Checklist saved")}
+    catch(err){console.warn(err);alert("Could not save checklist.")}
+    finally{e.currentTarget.disabled=false}
+  });
+  card.querySelector('[data-workflow-act="after"]')?.addEventListener("click",async(e)=>{
+    const input=card.querySelector("[data-after-files]");e.currentTarget.disabled=true;
+    try{const files=await uploadJobFiles(j.id,input?.files,"after");showToast(`${files.length} after photo(s) uploaded`);if(input)input.value=""}
+    catch(err){console.warn(err);alert(err.message||"Could not upload after photos.")}
+    finally{e.currentTarget.disabled=false}
+  });
+  card.querySelector('[data-workflow-act="incident"]')?.addEventListener("click",async(e)=>{
+    e.currentTarget.disabled=true;
+    try{const note=card.querySelector("[data-incident-note]")?.value?.trim()||"";if(!note){alert("Please add an incident or damage note first.");return}await addDoc(collection(db,"jobs",j.id,"incidents"),{note,reportedByUid:me.uid,reportedByEmail:me.email||"",createdAt:serverTimestamp(),status:"reported"});await updateJobWorkflow(j.id,{hasIncident:true,lastIncidentAt:serverTimestamp(),workflowStatus:"issue_reported"});card.querySelector("[data-incident-note]").value="";showToast("Incident reported")}
+    catch(err){console.warn(err);alert("Could not report incident.")}
+    finally{e.currentTarget.disabled=false}
+  });
+  card.querySelector('[data-workflow-act="submit"]')?.addEventListener("click",async(e)=>{
+    if(!confirm("Submit this job for admin review?"))return;
+    e.currentTarget.disabled=true;
+    try{await updateJobWorkflow(j.id,{status:"submitted",workflowStatus:"submitted_for_review",submittedForReviewAt:serverTimestamp(),submittedByUid:me.uid,submittedByEmail:me.email||""});showToast("Submitted for admin review")}
+    catch(err){console.warn(err);alert("Could not submit job.")}
+    finally{e.currentTarget.disabled=false}
+  });
+}
 
-    function injectOpenActions(j){
-      const card = openJobsEl.querySelector(`[data-jobid="${j.id}"]`);
-      if (!card) return;
-      const actions = card.querySelector('.actions');
+async function saveContractorPortalSettings(section,payload){
+  if(!me){alert("Please sign in first.");return}
+  await setDoc(doc(db,"users",me.uid,"contractorSettings",section),{...payload,updatedAt:serverTimestamp()},{merge:true});
+}
+$("availabilityForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();$("availabilityMsg").textContent="Saving…";
+  try{await saveContractorPortalSettings("availability",{availabilityType:$("availabilityType").value,preferredStartTimes:$("preferredStartTimes").value.trim(),availableSlots:$("availableSlots").value.trim(),blockedDays:$("blockedDays").value.trim()});$("availabilityMsg").textContent="Saved.";showToast("Availability saved")}
+  catch(err){console.warn(err);$("availabilityMsg").textContent="Could not save."}
+});
+$("territoryForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();$("territoryMsg").textContent="Saving…";
+  try{await saveContractorPortalSettings("territory",{preferredZips:$("preferredZips").value.trim(),dayZipRules:$("dayZipRules").value.trim(),travelRadius:$("travelRadius").value,avoidAreas:$("avoidAreas").value.trim()});$("territoryMsg").textContent="Saved.";showToast("Territory saved")}
+  catch(err){console.warn(err);$("territoryMsg").textContent="Could not save."}
+});
+$("capacityForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();$("capacityMsg").textContent="Saving…";
+  try{await saveContractorPortalSettings("capacity",{workerType:$("workerType").value,workStyle:$("workStyle").value,maxHomesPerDay:Number($("maxHomesPerDay").value||0),maxHoursPerDay:Number($("maxHoursPerDay").value||0),preferredJobSize:$("preferredJobSize").value.trim(),heavyCleanWilling:$("heavyCleanWilling").value,serviceCapabilities:$("serviceCapabilities").value.trim(),capacityNotes:$("capacityNotes").value.trim()});$("capacityMsg").textContent="Saved.";showToast("Capacity saved")}
+  catch(err){console.warn(err);$("capacityMsg").textContent="Could not save."}
+});
 
-      if (canClaimRole()){
-        const { left } = slotsLeft(j);
-        const claim = document.createElement('button');
-        claim.className = 'btn btn-solid';
-        claim.textContent = left > 1 ? 'Claim a slot' : 'Claim this job';
-        claim.addEventListener('click', () => claimJob(j.id, claim));
-        actions.appendChild(claim);
-      }
+$("documentsForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  if(!me)return;
+  $("documentsMsg").textContent="Saving…";
+  try{
+    const payload={
+      legalName:$("docLegalName").value.trim(),
+      businessName:$("docBusinessName").value.trim(),
+      phone:$("docPhone").value.trim(),
+      compliance:{
+        legalName:$("docLegalName").value.trim(),
+        businessName:$("docBusinessName").value.trim(),
+        phone:$("docPhone").value.trim(),
+        mailingAddress:$("docMailingAddress").value.trim(),
+        emergencyContact:$("docEmergencyContact").value.trim(),
+        updatedAt:serverTimestamp()
+      },
+      updatedAt:serverTimestamp()
+    };
+    await setDoc(doc(db,"users",me.uid),payload,{merge:true});
+    $("documentsMsg").textContent="Saved.";
+    showToast("Profile info saved");
+    await loadComplianceProfile();
+  }catch(err){console.warn(err);$("documentsMsg").textContent="Could not save."}
+});
 
-      const msg = document.createElement('a');
-      msg.className = 'btn btn-outline';
-      msg.textContent = 'Message Admin';
-      msg.href = '#';
-      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
-      actions.appendChild(msg);
+async function uploadComplianceDocument(type){
+  if(!me){alert("Please sign in first.");return}
+  const input=$(`upload-${type}`);
+  if(!input||!input.files||!input.files.length){alert("Please choose a file first.");return}
+  if(type==="id" && input.files.length<2){alert("Please upload both the front and back of the ID.");return}
+  const statusEl=$(`status-${type}`); if(statusEl)statusEl.textContent="Uploading…";
+  try{
+    const files=Array.from(input.files), uploaded=[];
+    for(const file of files){
+      const path=`users/${me.uid}/compliance/${type}/${Date.now()}-${cleanFileName(file.name)}`;
+      const fileRef=storageRef(storage,path);
+      await uploadBytes(fileRef,file);
+      const url=await getDownloadURL(fileRef);
+      uploaded.push({name:file.name,type:file.type,size:file.size,path,url,uploadedAt:new Date().toISOString()});
     }
-
-    async function updateJobWorkflow(jobId, patch){
-      await updateDoc(doc(db, 'jobs', jobId), { ...patch, updatedAt: serverTimestamp() });
-      await setDoc(doc(db, 'jobs', jobId, 'workflow', 'main'), { ...patch, updatedAt: serverTimestamp() }, { merge:true });
-    }
-
-    function getCard(jobId){
-      return myJobsEl.querySelector(`[data-jobid="${jobId}"]`);
-    }
-
-    function getGeoPosition(){
-      return new Promise((resolve) => {
-        if (!navigator.geolocation) { resolve(null); return; }
-        navigator.geolocation.getCurrentPosition(
-          pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
-          () => resolve(null),
-          { enableHighAccuracy:true, timeout:9000, maximumAge:0 }
-        );
-      });
-    }
-
-    async function uploadJobFiles(jobId, fileList, photoType){
-      if (!me) throw new Error('Please sign in first.');
-      const files = Array.from(fileList || []);
-      if (!files.length) throw new Error('Please choose at least one photo first.');
-      const uploaded = [];
-
-      for (const file of files) {
-        const path = `jobs/${jobId}/${photoType}/${Date.now()}-${cleanFileName(file.name)}`;
-        const fileRef = storageRef(storage, path);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-        const payload = {
-          uploadedByUid: me.uid,
-          uploadedByEmail: me.email || '',
-          photoType,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          path,
-          url,
-          createdAt: serverTimestamp()
-        };
-        await addDoc(collection(db, 'jobs', jobId, 'photos'), payload);
-        uploaded.push({ name:file.name, type:file.type, size:file.size, path, url });
-      }
-
-      const statusPatch = photoType === 'before'
-        ? { beforePhotosSubmittedAt: serverTimestamp(), beforePhotosCount: uploaded.length, workflowStatus:'before_photos_submitted', status:'claimed' }
-        : { afterPhotosSubmittedAt: serverTimestamp(), afterPhotosCount: uploaded.length, workflowStatus:'after_photos_submitted', status:'in_progress' };
-
-      await updateJobWorkflow(jobId, {
-        ...statusPatch,
-        [`${photoType}PhotosLastUploadedBy`]: me.email || me.uid
-      });
-
-      return uploaded;
-    }
-
-    async function handleGpsCheckIn(jobId){
-      const geo = await getGeoPosition();
-      await updateJobWorkflow(jobId, {
-        status:'claimed',
-        workflowStatus:'checked_in',
-        checkedInAt: serverTimestamp(),
-        checkedInByUid: me?.uid || '',
-        checkedInByEmail: me?.email || '',
-        gpsCheckIn: geo || { unavailable:true }
-      });
-      showToast(geo ? 'GPS check-in saved' : 'Check-in saved without GPS');
-    }
-
-    async function handleStartWork(jobId){
-      await updateJobWorkflow(jobId, {
-        status:'in_progress',
-        workflowStatus:'in_progress',
-        workStartedAt: serverTimestamp(),
-        workStartedByUid: me?.uid || '',
-        workStartedByEmail: me?.email || ''
-      });
-      showToast('Marked in progress');
-    }
-
-    async function handleChecklist(jobId){
-      const card = getCard(jobId);
-      const checked = Array.from(card?.querySelectorAll('[data-checklist-item]:checked') || []).map(x => x.dataset.checklistItem);
-      if (!checked.length && !confirm('No checklist items are checked. Save anyway?')) return;
-
-      await updateJobWorkflow(jobId, {
-        workflowStatus:'checklist_completed',
-        checklistCompletedAt: serverTimestamp(),
-        checklistCompletedByUid: me?.uid || '',
-        checklistCompletedByEmail: me?.email || '',
-        checklistItemsCompleted: checked
-      });
-      showToast('Checklist saved');
-    }
-
-    async function handleIncident(jobId){
-      const card = getCard(jobId);
-      const note = card?.querySelector('[data-incident-note]')?.value?.trim() || '';
-      if (!note) { alert('Please add an incident or damage note first.'); return; }
-      await addDoc(collection(db, 'jobs', jobId, 'incidents'), {
-        note,
-        reportedByUid: me?.uid || '',
-        reportedByEmail: me?.email || '',
-        createdAt: serverTimestamp(),
-        status:'reported'
-      });
-      await updateJobWorkflow(jobId, {
-        hasIncident:true,
-        lastIncidentAt: serverTimestamp(),
-        workflowStatus:'issue_reported'
-      });
-      card.querySelector('[data-incident-note]').value = '';
-      showToast('Incident reported');
-    }
-
-    async function handleSubmitForReview(jobId){
-      if (!confirm('Submit this job for admin review? Make sure checklist and after photos are complete.')) return;
-      await updateJobWorkflow(jobId, {
-        status:'submitted',
-        workflowStatus:'submitted_for_review',
-        submittedForReviewAt: serverTimestamp(),
-        submittedByUid: me?.uid || '',
-        submittedByEmail: me?.email || ''
-      });
-      showToast('Submitted for admin review');
-    }
-
-    async function injectMineActions(j){
-      const card = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
-      if (!card) return;
-      const actions = card.querySelector('.actions');
-
-      // If I’m on this job, reveal full address from private subdoc (but never client name)
-      const iAmOnThis = Array.isArray(j.contractorIds) ? j.contractorIds.includes(me?.uid) : (j.contractorId === me?.uid);
-      if (iAmOnThis) {
-        const full = await fetchPrivateFullAddress(j.id);
-        if (full) {
-          const meta = card.querySelector('.meta');
-          if (meta && !meta.querySelector('.fulladdr')) {
-            const span = document.createElement('span');
-            span.className = 'fulladdr';
-            span.innerHTML = `📍 <span>${full}</span>`;
-            meta.appendChild(span);
-          }
-        }
-      }
-
-      card.querySelector('[data-workflow-act="gps"]')?.addEventListener('click', async (e) => {
-        e.currentTarget.disabled = true;
-        try { await handleGpsCheckIn(j.id); }
-        catch(err){ console.warn(err); alert('Could not save check-in.'); }
-        finally { e.currentTarget.disabled = false; }
-      });
-
-      card.querySelector('[data-workflow-act="before"]')?.addEventListener('click', async (e) => {
-        const input = card.querySelector('[data-before-files]');
-        e.currentTarget.disabled = true;
-        try { const files = await uploadJobFiles(j.id, input?.files, 'before'); showToast(`${files.length} before photo(s) uploaded`); if(input) input.value=''; }
-        catch(err){ console.warn(err); alert(err.message || 'Could not upload before photos.'); }
-        finally { e.currentTarget.disabled = false; }
-      });
-
-      card.querySelector('[data-workflow-act="start"]')?.addEventListener('click', async (e) => {
-        e.currentTarget.disabled = true;
-        try { await handleStartWork(j.id); }
-        catch(err){ console.warn(err); alert('Could not start work.'); }
-        finally { e.currentTarget.disabled = false; }
-      });
-
-      card.querySelector('[data-workflow-act="checklist"]')?.addEventListener('click', async (e) => {
-        e.currentTarget.disabled = true;
-        try { await handleChecklist(j.id); }
-        catch(err){ console.warn(err); alert('Could not save checklist.'); }
-        finally { e.currentTarget.disabled = false; }
-      });
-
-      card.querySelector('[data-workflow-act="after"]')?.addEventListener('click', async (e) => {
-        const input = card.querySelector('[data-after-files]');
-        e.currentTarget.disabled = true;
-        try { const files = await uploadJobFiles(j.id, input?.files, 'after'); showToast(`${files.length} after photo(s) uploaded`); if(input) input.value=''; }
-        catch(err){ console.warn(err); alert(err.message || 'Could not upload after photos.'); }
-        finally { e.currentTarget.disabled = false; }
-      });
-
-      card.querySelector('[data-workflow-act="incident"]')?.addEventListener('click', async (e) => {
-        e.currentTarget.disabled = true;
-        try { await handleIncident(j.id); }
-        catch(err){ console.warn(err); alert('Could not report incident.'); }
-        finally { e.currentTarget.disabled = false; }
-      });
-
-      card.querySelector('[data-workflow-act="submit"]')?.addEventListener('click', async (e) => {
-        e.currentTarget.disabled = true;
-        try { await handleSubmitForReview(j.id); }
-        catch(err){ console.warn(err); alert('Could not submit job for review.'); }
-        finally { e.currentTarget.disabled = false; }
-      });
-
-      const msg = document.createElement('a');
-      msg.className = 'btn btn-outline';
-      msg.textContent = 'Message Admin';
-      msg.href = '#';
-      msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
-      actions.appendChild(msg);
-    }
-
-    async function claimJob(jobId, buttonEl){
-      if (!me) return;
-
-      // NEW: block claim if not compliant
-      const ok = await ensureCompliantOrExplain();
-      if (!ok) return;
-
-      if (buttonEl) { buttonEl.disabled = true; buttonEl.textContent = 'Claiming…'; }
-
-      try {
-        await runTransaction(db, async (tx) => {
-          const ref = doc(db, 'jobs', jobId);
-          const snap = await tx.get(ref);
-          if (!snap.exists()) throw new Error('Job not found.');
-          const j = snap.data();
-
-          if ((j.status || 'open') !== 'open') throw new Error('Already claimed.');
-
-          const need = Number(j.contractorsNeeded || 1);
-          const ids = Array.isArray(j.contractorIds) ? [...j.contractorIds]
-                    : (j.contractorId ? [j.contractorId] : []);
-          if (ids.includes(me.uid)) return;
-          if (ids.length >= need) throw new Error('No slots left.');
-
-          ids.push(me.uid);
-          const emails = Array.isArray(j.contractorEmails) ? [...j.contractorEmails] : [];
-          const myEmail = me.email || '';
-          if (myEmail && !emails.includes(myEmail)) emails.push(myEmail);
-
-          const update = {
-            contractorIds: ids,
-            contractorEmails: emails,
-            workflowStatus: ids.length >= need ? 'assigned' : 'pending_assignment',
-            assignedAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          };
-          if (ids.length >= need) {
-            update.status = 'claimed';
-            update.claimedAt = serverTimestamp();
-          } else {
-            update.status = 'open';
-          }
-          tx.update(ref, update);
-        });
-
-        showToast('Job claimed');
-        setTab('mine');
-      } catch (e) {
-        console.warn(e);
-        const msg = (e && e.code === 'permission-denied')
-          ? 'Permission denied claiming. Your account may still be pending.'
-          : (e.message || 'Could not claim. It may have just been taken.');
-        alert(msg);
-      } finally {
-        if (buttonEl) { buttonEl.disabled = false; buttonEl.textContent = 'Claim this job'; }
-      }
-    }
-
-
-    function cleanFileName(name){
-      return String(name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
-    }
-
-    async function uploadWalkthroughFiles(walkthroughId, fileList, folderName){
-      const files = Array.from(fileList || []);
-      const uploaded = [];
-
-      for (const file of files) {
-        const path = `walkthroughs/${walkthroughId}/${folderName}/${Date.now()}-${cleanFileName(file.name)}`;
-        const fileRef = storageRef(storage, path);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-
-        uploaded.push({
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          path,
-          url
-        });
-      }
-
-      return uploaded;
-    }
-
-    function getWalkNumber(id, fallback=0){
-      const el = document.getElementById(id);
-      const n = Number(el?.value || fallback);
-      return Number.isFinite(n) ? n : fallback;
-    }
-
-    function wireWalkthroughForm(){
-      const form = document.getElementById("walkthroughForm");
-      if (!form) return;
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        if (!me) {
-          alert("Please sign in first.");
-          return;
-        }
-
-        const btn = document.getElementById("walkSubmitBtn");
-        const msg = document.getElementById("walkthroughMsg");
-        const result = document.getElementById("walkthroughResult");
-
-        btn.disabled = true;
-        msg.textContent = "Submitting walkthrough…";
-        result.style.display = "none";
-        result.textContent = "";
-
-        try {
-          const contractorEstimate = getWalkNumber("walkEstimate", 0);
-          const tftClientQuote = Math.round(contractorEstimate * 1.30);
-
-          const payload = {
-            status: "pending_admin_review",
-            submittedByUid: me.uid,
-            submittedByEmail: me.email || "",
-            clientName: document.getElementById("walkClientName").value.trim(),
-            propertyAddress: document.getElementById("walkAddress").value.trim(),
-            serviceType: document.getElementById("walkServiceType").value,
-            conditionRating: document.getElementById("walkCondition").value,
-            sqft: getWalkNumber("walkSqft", 0),
-            beds: getWalkNumber("walkBeds", 0),
-            baths: getWalkNumber("walkBaths", 0),
-            stories: document.getElementById("walkStories").value,
-            pets: document.getElementById("walkPets").value.trim(),
-            recommendedService: document.getElementById("walkRecommendedService").value.trim(),
-            recommendedHours: getWalkNumber("walkRecommendedHours", 0),
-            recommendedTeamSize: getWalkNumber("walkTeamSize", 1),
-            contractorEstimate,
-            tftClientQuote,
-            notes: document.getElementById("walkNotes").value.trim(),
-            addOnsRecommended: document.getElementById("walkAddons").value.trim(),
-            concerns: document.getElementById("walkConcerns").value.trim(),
-            photos: [],
-            videos: [],
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          };
-
-          const docRef = await addDoc(collection(db, "walkthroughs"), payload);
-
-          const photos = await uploadWalkthroughFiles(docRef.id, document.getElementById("walkPhotos").files, "photos");
-          const videos = await uploadWalkthroughFiles(docRef.id, document.getElementById("walkVideos").files, "videos");
-
-          await updateDoc(doc(db, "walkthroughs", docRef.id), {
-            photos,
-            videos,
-            updatedAt: serverTimestamp()
-          });
-
-          form.reset();
-          msg.textContent = "Submitted.";
-          result.style.display = "block";
-          result.innerHTML = `
-            <strong>Walkthrough submitted for admin review.</strong><br>
-            Contractor estimate: <strong>$${contractorEstimate}</strong><br>
-            TFT +30% draft client quote: <strong>$${tftClientQuote}</strong><br>
-            Photos uploaded: <strong>${photos.length}</strong> • Videos uploaded: <strong>${videos.length}</strong>
-          `;
-          showToast("Walkthrough submitted");
-        } catch (err) {
-          console.warn(err);
-          msg.textContent = "Could not submit.";
-          alert("Could not submit walkthrough. Please check required fields and try again.");
-        } finally {
-          btn.disabled = false;
-        }
-      });
-    }
-
-
-
-    function workerTypeLabel(type){
-      const t = String(type || "").toLowerCase();
-      if (t.includes("w2") || t.includes("employee")) return "W2 Employee";
-      if (t.includes("1099") || t.includes("contractor")) return "1099 Independent Contractor";
-      return "Assigned by The Finishing Touch";
-    }
-
-    function docStatusLabel(doc){
-      if (!doc) return "Not Uploaded";
-      return doc.adminStatus ? cap(String(doc.adminStatus).replaceAll("_"," ")) : "Uploaded - Pending Review";
-    }
-
-    async function loadComplianceProfile(prefetchedData=null){
-      if (!me) return;
-      try {
-        let data = prefetchedData;
-        if (!data) {
-          const snap = await getDoc(doc(db, "users", me.uid));
-          data = snap.exists() ? snap.data() : {};
-        }
-        const compliance = data.compliance || {};
-        const docs = compliance.documents || {};
-        const workerType = data.workerType || data.classification || compliance.workerType || data.role || "";
-        const workerTypeEl = document.getElementById("docWorkerType");
-        if (workerTypeEl) workerTypeEl.textContent = workerTypeLabel(workerType);
-
-        const fields = {
-          docLegalName: data.legalName || compliance.legalName || "",
-          docBusinessName: data.businessName || compliance.businessName || "",
-          docPhone: data.phone || compliance.phone || "",
-          docMailingAddress: compliance.mailingAddress || "",
-          docEmergencyContact: compliance.emergencyContact || ""
-        };
-        Object.entries(fields).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.value = value || ""; });
-        ["id","w9","coi","w4","i9","agreement","portfolio"].forEach(type => {
-          const statusEl = document.getElementById(`status-${type}`);
-          if (statusEl) statusEl.textContent = docStatusLabel(docs[type]);
-        });
-        if (docs.coi?.expiration) { const exp = document.getElementById("coiExpiration"); if (exp) exp.value = docs.coi.expiration; }
-        const required = String(workerType).toLowerCase().includes("w2") || String(workerType).toLowerCase().includes("employee") ? ["id","w4","i9","agreement"] : ["id","w9","coi","agreement"];
-        const completed = required.filter(type => {
-          const item = docs[type] || {};
-          return item.adminStatus === "approved";
-        }).length;
-        const pct = required.length ? Math.round((completed / required.length) * 100) : 0;
-        const bar = document.getElementById("docProgressBar");
-        const label = document.getElementById("docProgressLabel");
-        if (bar) bar.style.width = `${pct}%`;
-        if (label) {
-          const complianceStatus = String(compliance.status || data.complianceStatus || "").toLowerCase();
-          label.textContent = complianceStatus === "active" ? "Active" : `${pct}% Approved`;
-        }
-      } catch (err) { console.warn("Could not load compliance profile", err); }
-    }
-
-    async function uploadComplianceDocument(type){
-      if (!me) { alert("Please sign in first."); return; }
-      const input = document.getElementById(`upload-${type}`);
-      if (!input || !input.files || !input.files.length) { alert("Please choose a file first."); return; }
-      if (type === "id" && input.files.length < 2) { alert("Please upload both the front and back of the driver's license or state ID."); return; }
-      const statusEl = document.getElementById(`status-${type}`);
-      if (statusEl) statusEl.textContent = "Uploading…";
-      try {
-        const files = Array.from(input.files);
-        const uploaded = [];
-        for (const file of files) {
-          const path = `users/${me.uid}/compliance/${type}/${Date.now()}-${cleanFileName(file.name)}`;
-          const fileRef = storageRef(storage, path);
-          await uploadBytes(fileRef, file);
-          const url = await getDownloadURL(fileRef);
-          uploaded.push({ name:file.name, type:file.type, size:file.size, path, url, uploadedAt:new Date().toISOString() });
-        }
-        const first = uploaded[0] || {};
-        const docPayload = { adminStatus:"pending_review", uploadedAt:serverTimestamp(), files:uploaded, url:first.url || "", path:first.path || "" };
-        if (type === "coi") docPayload.expiration = document.getElementById("coiExpiration")?.value || "";
-        await setDoc(doc(db, "users", me.uid), {
-          compliance: { documents: { [type]: docPayload }, updatedAt: serverTimestamp() },
-          updatedAt: serverTimestamp()
-        }, { merge:true });
-        input.value = "";
-        if (statusEl) statusEl.textContent = "Uploaded - Pending Review";
-        showToast("Document uploaded");
-        await loadComplianceProfile();
-      } catch (err) {
-        console.warn(err);
-        if (statusEl) statusEl.textContent = "Upload Failed";
-        alert("Could not upload document. Please try again.");
-      }
-    }
-
-    function wireDocumentsCenter(){
-      const form = document.getElementById("documentsForm");
-      if (form) {
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
-          if (!me) { alert("Please sign in first."); return; }
-          const msg = document.getElementById("documentsMsg");
-          msg.textContent = "Saving…";
-          try {
-            await setDoc(doc(db, "users", me.uid), {
-              legalName: document.getElementById("docLegalName").value.trim(),
-              businessName: document.getElementById("docBusinessName").value.trim(),
-              phone: document.getElementById("docPhone").value.trim(),
-              compliance: {
-                legalName: document.getElementById("docLegalName").value.trim(),
-                businessName: document.getElementById("docBusinessName").value.trim(),
-                phone: document.getElementById("docPhone").value.trim(),
-                mailingAddress: document.getElementById("docMailingAddress").value.trim(),
-                emergencyContact: document.getElementById("docEmergencyContact").value.trim(),
-                updatedAt: serverTimestamp()
-              },
-              updatedAt: serverTimestamp()
-            }, { merge:true });
-            msg.textContent = "Saved.";
-            showToast("Worker info saved");
-            await loadComplianceProfile();
-          } catch (err) { console.warn(err); msg.textContent = "Could not save."; }
-        });
-      }
-      document.querySelectorAll("[data-upload-doc]").forEach(btn => btn.addEventListener("click", () => uploadComplianceDocument(btn.dataset.uploadDoc)));
-    }
-
-
-    async function saveContractorPortalSettings(section, payload){
-      if (!me) {
-        alert("Please sign in first.");
-        return;
-      }
-
-      const ref = doc(db, "users", me.uid, "contractorSettings", section);
-      await setDoc(ref, {
-        ...payload,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-    }
-
-    function wireContractorSettingsForms(){
-      const availabilityForm = document.getElementById("availabilityForm");
-      const territoryForm = document.getElementById("territoryForm");
-      const capacityForm = document.getElementById("capacityForm");
-
-      availabilityForm?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const msg = document.getElementById("availabilityMsg");
-        msg.textContent = "Saving…";
-        try {
-          await saveContractorPortalSettings("availability", {
-            availabilityType: document.getElementById("availabilityType").value,
-            preferredStartTimes: document.getElementById("preferredStartTimes").value.trim(),
-            availableSlots: document.getElementById("availableSlots").value.trim(),
-            blockedDays: document.getElementById("blockedDays").value.trim()
-          });
-          msg.textContent = "Saved.";
-          showToast("Availability saved");
-        } catch (err) {
-          console.warn(err);
-          msg.textContent = "Could not save.";
-        }
-      });
-
-      territoryForm?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const msg = document.getElementById("territoryMsg");
-        msg.textContent = "Saving…";
-        try {
-          await saveContractorPortalSettings("territory", {
-            preferredZips: document.getElementById("preferredZips").value.trim(),
-            dayZipRules: document.getElementById("dayZipRules").value.trim(),
-            travelRadius: document.getElementById("travelRadius").value,
-            avoidAreas: document.getElementById("avoidAreas").value.trim()
-          });
-          msg.textContent = "Saved.";
-          showToast("Territory rules saved");
-        } catch (err) {
-          console.warn(err);
-          msg.textContent = "Could not save.";
-        }
-      });
-
-      capacityForm?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const msg = document.getElementById("capacityMsg");
-        msg.textContent = "Saving…";
-        try {
-          await saveContractorPortalSettings("capacity", {
-            workerType: document.getElementById("workerType").value,
-            workStyle: document.getElementById("workStyle").value,
-            maxHomesPerDay: Number(document.getElementById("maxHomesPerDay").value || 0),
-            maxHoursPerDay: Number(document.getElementById("maxHoursPerDay").value || 0),
-            preferredJobSize: document.getElementById("preferredJobSize").value.trim(),
-            heavyCleanWilling: document.getElementById("heavyCleanWilling").value,
-            serviceCapabilities: document.getElementById("serviceCapabilities").value.trim(),
-            capacityNotes: document.getElementById("capacityNotes").value.trim()
-          });
-          msg.textContent = "Saved.";
-          showToast("Capacity settings saved");
-        } catch (err) {
-          console.warn(err);
-          msg.textContent = "Could not save.";
-        }
-      });
-    }
-
-    wireContractorSettingsForms();
-    wireWalkthroughForm();
-    wireDocumentsCenter();
-    loadComplianceProfile();
-
-  </script>
-
-  <script>
-    (function(){
-      const links = Array.from(document.querySelectorAll("[data-side]"));
-      const dashboard = document.getElementById("dashboardPanel");
-      const placeholder = document.getElementById("placeholderPanel");
-      const title = document.getElementById("placeholderTitle");
-      const text = document.getElementById("placeholderText");
-
-      const copy = {
-        dashboard: {
-          title: "Dashboard",
-          text: "View open jobs and manage claimed work."
-        },
-        jobs: {
-          title: "Jobs / Assignments",
-          text: "View assigned work, GPS check-in, upload required photos, complete your checklist, report issues, and submit jobs for admin review."
-        },
-        availability: {
-          title: "Availability",
-          text: "Submit TFT-only availability slots for scheduling."
-        },
-        territory: {
-          title: "Territory + ZIP Preferences",
-          text: "Save ZIP preferences, travel radius, and day-by-day territory rules."
-        },
-        capacity: {
-          title: "Capacity Settings",
-          text: "Save realistic workload limits, preferred job size, and service capabilities."
-        },
-        walkthroughs: {
-          title: "Walkthroughs",
-          text: "Submit walkthrough details, photos/videos, recommended hours, team size, and contractor estimate for admin review."
-        },
-        estimates: {
-          title: "My Estimates",
-          text: "Soon you’ll be able to review submitted estimates and track whether they were approved, revised, or scheduled."
-        },
-        messages: {
-          title: "Messages",
-          text: "Brand-safe messaging is coming soon for scheduling, arrival updates, and job questions."
-        },
-        documents: {
-          title: "Documents & Compliance",
-          text: "Upload ID, tax documents, COI, signed agreements, payroll information, and future certification documents."
-        },
-        resources: {
-          title: "Resources",
-          text: "Cleaning checklists, product guides, photo requirements, and TFT standards will be organized here."
-        },
-        payments: {
-          title: "Payments",
-          text: "Payment status, completed job records, and payout notes will be added in a later phase."
-        }
-      };
-
-      
-      function show(section){
-        if (window.__CONTRACTOR_PORTAL_LOCKED__ && section !== "documents") {
-          section = "documents";
-        }
-        links.forEach(link => link.classList.toggle("active", link.dataset.side === section));
-
-        const realPanels = {
-          availability: document.getElementById("availabilityPanel"),
-          territory: document.getElementById("territoryPanel"),
-          capacity: document.getElementById("capacityPanel"),
-          walkthroughs: document.getElementById("walkthroughPanel"),
-          documents: document.getElementById("documentsPanel")
-        };
-
-        Object.values(realPanels).forEach(panel => panel?.classList.remove("active"));
-
-        if (section === "dashboard" || section === "jobs") {
-          dashboard.style.display = "";
-          placeholder.classList.remove("active");
-          return;
-        }
-
-        dashboard.style.display = "none";
-
-        if (realPanels[section]) {
-          placeholder.classList.remove("active");
-          realPanels[section].classList.add("active");
-          return;
-        }
-
-        placeholder.classList.add("active");
-        title.textContent = copy[section]?.title || "Coming Soon";
-        text.textContent = copy[section]?.text || "This section is ready for the next build phase.";
-      }
-
-
-      window.showContractorSection = show;
-      window.setContractorPortalLocked = function(locked){
-        window.__CONTRACTOR_PORTAL_LOCKED__ = !!locked;
-        if (locked) show("documents");
-      };
-
-      links.forEach(link => {
-        link.addEventListener("click", () => show(link.dataset.side));
-      });
-
-      show("dashboard");
-    })();
-  </script>
+    const first=uploaded[0]||{};
+    const docPayload={adminStatus:"pending_review",uploadedAt:serverTimestamp(),files:uploaded,url:first.url||"",path:first.path||""};
+    if(type==="coi")docPayload.expiration=$("coiExpiration")?.value||"";
+    await setDoc(doc(db,"users",me.uid),{compliance:{documents:{[type]:docPayload},updatedAt:serverTimestamp()},updatedAt:serverTimestamp()},{merge:true});
+    input.value="";
+    showToast("Document uploaded");
+    await loadComplianceProfile();
+  }catch(err){console.warn(err);if(statusEl)statusEl.textContent="Upload Failed";alert("Could not upload document.")}
+}
+document.querySelectorAll("[data-upload-doc]").forEach(btn=>btn.addEventListener("click",()=>uploadComplianceDocument(btn.dataset.uploadDoc)));
+
+$("agreementForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  if(!me)return;
+  const signature=$("signatureName").value.trim();
+  const ackAgreement=$("ackAgreement").checked;
+  const ackClientPrivacy=$("ackClientPrivacy").checked;
+  const ackNotAutoActive=$("ackNotAutoActive").checked;
+  if(!ackAgreement||!ackClientPrivacy||!ackNotAutoActive){alert("Please check all acknowledgments before submitting.");return}
+  if(signature.length<3){alert("Please type your full legal name as your electronic signature.");return}
+  $("agreementMsg").textContent="Saving…";
+  try{
+    const agreement={
+      type:"electronic_signature",
+      signatureName:signature,
+      acknowledgments:{ackAgreement,ackClientPrivacy,ackNotAutoActive},
+      signedByUid:me.uid,
+      signedByEmail:me.email||"",
+      signedAt:serverTimestamp(),
+      adminStatus:"pending_review"
+    };
+    await setDoc(doc(db,"users",me.uid),{
+      compliance:{
+        electronicAgreement:agreement,
+        documents:{agreement},
+        updatedAt:serverTimestamp()
+      },
+      updatedAt:serverTimestamp()
+    },{merge:true});
+    $("agreementMsg").textContent="Submitted for review.";
+    showToast("Agreement submitted");
+    await loadComplianceProfile();
+  }catch(err){console.warn(err);$("agreementMsg").textContent="Could not save.";alert("Could not save electronic agreement.")}
+});
+
+function getWalkNumber(id,fallback=0){const n=Number($(id)?.value||fallback);return Number.isFinite(n)?n:fallback}
+async function uploadWalkthroughFiles(walkthroughId,fileList,folderName){
+  const files=Array.from(fileList||[]), uploaded=[];
+  for(const file of files){
+    const path=`walkthroughs/${walkthroughId}/${folderName}/${Date.now()}-${cleanFileName(file.name)}`;
+    const fileRef=storageRef(storage,path);
+    await uploadBytes(fileRef,file);
+    const url=await getDownloadURL(fileRef);
+    uploaded.push({name:file.name,type:file.type,size:file.size,path,url});
+  }
+  return uploaded;
+}
+$("walkthroughForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  if(!appUnlocked){alert("Walkthrough tools unlock after onboarding is approved.");return}
+  const btn=$("walkSubmitBtn"), msg=$("walkthroughMsg"), result=$("walkthroughResult");
+  btn.disabled=true;msg.textContent="Submitting…";result.classList.add("hidden");
+  try{
+    const contractorEstimate=getWalkNumber("walkEstimate",0);
+    const tftClientQuote=Math.round(contractorEstimate*1.30);
+    const payload={
+      status:"pending_admin_review",
+      submittedByUid:me.uid,submittedByEmail:me.email||"",
+      clientName:$("walkClientName").value.trim(),
+      propertyAddress:$("walkAddress").value.trim(),
+      serviceType:$("walkServiceType").value,
+      conditionRating:$("walkCondition").value,
+      sqft:getWalkNumber("walkSqft",0),beds:getWalkNumber("walkBeds",0),baths:getWalkNumber("walkBaths",0),
+      stories:$("walkStories").value,pets:$("walkPets").value.trim(),
+      recommendedService:$("walkRecommendedService").value.trim(),
+      recommendedHours:getWalkNumber("walkRecommendedHours",0),
+      recommendedTeamSize:getWalkNumber("walkTeamSize",1),
+      contractorEstimate,tftClientQuote,
+      notes:$("walkNotes").value.trim(),addOnsRecommended:$("walkAddons").value.trim(),concerns:$("walkConcerns").value.trim(),
+      photos:[],videos:[],createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+    };
+    const docRef=await addDoc(collection(db,"walkthroughs"),payload);
+    const photos=await uploadWalkthroughFiles(docRef.id,$("walkPhotos").files,"photos");
+    const videos=await uploadWalkthroughFiles(docRef.id,$("walkVideos").files,"videos");
+    await updateDoc(doc(db,"walkthroughs",docRef.id),{photos,videos,updatedAt:serverTimestamp()});
+    e.target.reset();
+    msg.textContent="Submitted.";
+    result.classList.remove("hidden");
+    result.innerHTML=`<strong>Walkthrough submitted for admin review.</strong><br>Contractor estimate: <strong>$${contractorEstimate}</strong><br>TFT +30% draft client quote: <strong>$${tftClientQuote}</strong><br>Photos: <strong>${photos.length}</strong> • Videos: <strong>${videos.length}</strong>`;
+    showToast("Walkthrough submitted");
+  }catch(err){console.warn(err);msg.textContent="Could not submit.";alert("Could not submit walkthrough.")}
+  finally{btn.disabled=false}
+});
+</script>
 </body>
 </html>
