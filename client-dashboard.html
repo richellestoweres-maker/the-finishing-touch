@@ -76,6 +76,9 @@ font-weight:800;
 border:1px solid transparent;
 background:transparent;
 color:var(--portal-muted);
+font-family:inherit;
+text-align:left;
+width:100%;
 }
 
 .side-link:hover,.side-link.active{
@@ -92,18 +95,18 @@ box-shadow:0 6px 18px rgba(68,54,45,.08)
 
 .side-footer{margin-top:auto;display:grid;gap:8px;padding-top:14px;border-top:1px solid var(--portal-line)}
 
-.main-area{display:grid;gap:16px}
+.main-area{display:grid;gap:16px;min-width:0}
 
-.topbar,.hero-card,.toolbar,.card{
+.topbar,.hero-card,.toolbar,.card,.panel-shell{
 background:rgba(255,253,251,.86);
 border:1px solid var(--portal-line);
 border-radius:28px;
 box-shadow:var(--portal-shadow-soft);
 }
 
-.topbar{padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.topbar{padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .welcome h1{margin:0;font-family:Playfair Display,serif;font-size:2rem}
-.welcome p{margin:6px 0 0;color:var(--portal-muted)}
+.welcome p{margin:6px 0 0;color:var(--portal-muted);font-weight:700}
 
 .hero-card{
 padding:24px;
@@ -115,28 +118,158 @@ gap:18px;
 
 .script-kicker{font-family:Allura,cursive;color:#925e69;font-size:2rem;margin:0}
 .hero-card h2{font-family:Playfair Display,serif;margin:0;font-size:2rem}
+.hero-card p{color:#61554f;font-weight:700}
 
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .stat{background:rgba(255,253,251,.76);border:1px solid rgba(234,223,216,.82);border-radius:22px;padding:14px}
 .stat strong{display:block;font-size:1.4rem}
-.stat span{font-size:.78rem;color:var(--portal-muted);font-weight:800}
+.stat span{font-size:.78rem;color:var(--portal-muted);font-weight:900}
 
 .toolbar{padding:12px}
 .cards,.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 
-.card{padding:18px;display:flex;flex-direction:column;gap:10px}
+.card{padding:18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
 
-.btn{display:inline-flex;justify-content:center;align-items:center;padding:.62rem .9rem;border-radius:999px;font-weight:900;text-decoration:none;cursor:pointer}
+.card.accent::before{
+content:"";
+position:absolute;
+inset:0 auto 0 0;
+width:6px;
+background:linear-gradient(180deg,var(--portal-blush-strong),var(--portal-taupe));
+border-radius:999px;
+opacity:.85;
+}
+
+.card h3{
+margin:0;
+font-family:Playfair Display,serif;
+font-size:1.25rem;
+}
+
+.card p{margin:0;color:var(--portal-muted);font-weight:700;line-height:1.45}
+
+.small{
+font-size:.9rem;
+color:var(--portal-muted);
+font-weight:700;
+}
+
+.meta{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+font-size:.9rem;
+color:#61554f;
+font-weight:700;
+}
+
+.meta span{
+display:inline-flex;
+align-items:center;
+gap:6px;
+background:#fff7f8;
+border:1px solid #f1dce1;
+border-radius:999px;
+padding:.32rem .6rem;
+}
+
+.status-pill{
+width:max-content;
+max-width:100%;
+font-size:.76rem;
+padding:.3rem .72rem;
+border-radius:999px;
+background:var(--portal-blush-soft);
+border:1px solid var(--portal-blush);
+color:#7d4f59;
+font-weight:900;
+}
+
+.btn{
+display:inline-flex;
+justify-content:center;
+align-items:center;
+gap:7px;
+padding:.62rem .9rem;
+border-radius:999px;
+font-weight:900;
+text-decoration:none;
+cursor:pointer;
+font-family:inherit;
+border:0;
+}
+
 .btn-outline{border:1.5px solid #2f2926;background:#fffdfb;color:#2f2926}
-.btn-solid{background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));color:#2f2926}
+.btn-solid{background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));color:#2f2926;box-shadow:0 10px 22px rgba(232,185,194,.34)}
+.btn-soft{background:var(--portal-blush-soft);border:1px solid var(--portal-blush);color:#7d4f59}
 
-.empty{padding:28px;text-align:center;border:1px dashed #e3cfd4;border-radius:26px}
+.empty{padding:28px;text-align:center;border:1px dashed #e3cfd4;border-radius:26px;background:rgba(255,253,251,.72);color:var(--portal-muted);font-weight:800}
 
 .hidden{display:none!important}
+
+.panel-shell{padding:18px}
+.client-panel{display:none}
+.client-panel.active{display:block}
+
+.portal-form{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:12px;
+margin-top:10px;
+}
+
+.portal-form label{
+display:grid;
+gap:6px;
+font-weight:900;
+color:var(--portal-ink);
+}
+
+.portal-form input,
+.portal-form select,
+.portal-form textarea{
+border:1px solid var(--portal-line);
+border-radius:16px;
+padding:.72rem .8rem;
+background:#fffdfb;
+color:var(--portal-ink);
+outline:none;
+font-family:inherit;
+width:100%;
+}
+
+.portal-form textarea{
+min-height:96px;
+resize:vertical;
+}
+
+.portal-form input:focus,
+.portal-form select:focus,
+.portal-form textarea:focus{
+border-color:var(--portal-blush-strong);
+box-shadow:0 0 0 4px rgba(232,185,194,.18);
+}
+
+.form-full{grid-column:1/-1}
+.success-note{color:#466b4f;font-weight:900}
+.warn-note{color:#8a5b00;font-weight:900}
+
+.request-box{
+background:#fff7f8;
+border:1px solid #f1dce1;
+border-radius:20px;
+padding:13px;
+font-weight:800;
+color:#61554f;
+line-height:1.5;
+}
+
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
 
 @media(max-width:920px){
 .portal-shell{grid-template-columns:1fr}
 .sidebar{position:relative;min-height:auto}
+.side-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
 .hero-card{grid-template-columns:1fr}
 }
 
@@ -144,6 +277,9 @@ gap:18px;
 .portal-shell{width:min(100% - 18px,1280px)}
 .btn{width:100%}
 .stats-row{grid-template-columns:1fr}
+.side-nav{grid-template-columns:1fr}
+.portal-form{grid-template-columns:1fr}
+.topbar,.hero-card,.toolbar,.card,.panel-shell,.sidebar{border-radius:22px}
 }
 </style>
 </head>
@@ -160,13 +296,14 @@ gap:18px;
 </div>
 </div>
 
-<nav class="side-nav">
-<div class="side-link active"><span class="icon">⌂</span>Dashboard</div>
-<div class="side-link"><span class="icon">✦</span>Bookings</div>
-<div class="side-link"><span class="icon">♡</span>Membership & Perks</div>
-<div class="side-link"><span class="icon">✉</span>Messages</div>
-<div class="side-link"><span class="icon">☑</span>Invoices</div>
-<div class="side-link"><span class="icon">⚙</span>Profile</div>
+<nav class="side-nav" aria-label="Client portal navigation">
+<button class="side-link active" type="button" data-side="dashboard"><span class="icon">⌂</span>Dashboard</button>
+<button class="side-link" type="button" data-side="bookings"><span class="icon">✦</span>Bookings</button>
+<button class="side-link" type="button" data-side="scheduling"><span class="icon">📅</span>Scheduling Requests</button>
+<button class="side-link" type="button" data-side="messages"><span class="icon">✉</span>Messages</button>
+<button class="side-link" type="button" data-side="perks"><span class="icon">♡</span>Membership & Perks</button>
+<button class="side-link" type="button" data-side="invoices"><span class="icon">☑</span>Invoices</button>
+<button class="side-link" type="button" data-side="profile"><span class="icon">⚙</span>Profile</button>
 </nav>
 
 <div class="side-footer">
@@ -180,7 +317,7 @@ gap:18px;
 <section class="topbar">
 <div class="welcome">
 <h1 id="heroName">Welcome back</h1>
-<p>Manage your home services, bookings, and perks beautifully.</p>
+<p>Manage your home services, scheduling requests, and completion details beautifully.</p>
 </div>
 </section>
 
@@ -188,7 +325,7 @@ gap:18px;
 <div>
 <p class="script-kicker">The Finishing Touch</p>
 <h2>Your home concierge experience</h2>
-<p>Book services, review estimates, and manage your home care all in one elevated place.</p>
+<p>Request services, ask to schedule or reschedule, review job status, and keep your home care in one elevated place.</p>
 </div>
 
 <div class="stats-row">
@@ -197,49 +334,179 @@ gap:18px;
 <span>Bookings</span>
 </div>
 <div class="stat">
+<strong id="requestCount">0</strong>
+<span>Requests</span>
+</div>
+<div class="stat">
 <strong>VIP</strong>
 <span>Future Membership</span>
 </div>
-<div class="stat">
-<strong>24/7</strong>
-<span>Portal Access</span>
-</div>
 </div>
 </section>
 
-<section class="toolbar">
-<div class="cards">
+<section id="dashboardPanel" class="client-panel active">
+  <section class="toolbar">
+    <div class="cards">
 
-<article class="card">
-<h3>Start a New Intake</h3>
-<p>Choose a service and begin your quote.</p>
-<select id="qaService">
-<option value="intake-cleaning.html">Cleaning</option>
-<option value="intake-organizing.html">Organizing</option>
-<option value="intake-decor.html">Interior Decorating</option>
-<option value="intake-holiday.html">Holiday & Events</option>
-</select>
-<a id="qaGo" class="btn btn-solid" href="#">Start</a>
-</article>
+      <article class="card accent">
+        <h3>Start a New Intake</h3>
+        <p>Choose a service and begin your quote request. We’ll review the details before confirming scheduling.</p>
+        <select id="qaService">
+          <option value="intake-cleaning.html">Cleaning</option>
+          <option value="intake-organizing.html">Organizing</option>
+          <option value="intake-decor.html">Interior Decorating</option>
+          <option value="intake-holiday.html">Holiday & Events</option>
+        </select>
+        <a id="qaGo" class="btn btn-solid" href="#">Start Intake</a>
+      </article>
 
-<article class="card">
-<h3>Book Calendar</h3>
-<p>View live Square availability.</p>
-<a class="btn btn-outline" target="_blank" href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9">Open Calendar</a>
-</article>
+      <article class="card accent">
+        <h3>Request Scheduling</h3>
+        <p>Need to book, reschedule, or ask about availability? Send a request and our team will confirm the best option.</p>
+        <button class="btn btn-solid" type="button" data-jump-scheduling>Request Scheduling</button>
+      </article>
 
-<article class="card">
-<h3>Client Perks</h3>
-<p>Future loyalty rewards, birthday gifts, seasonal specials, and member benefits.</p>
-<a class="btn btn-outline" href="#">Coming Soon</a>
-</article>
+      <article class="card">
+        <h3>Client Perks</h3>
+        <p>Future loyalty rewards, birthday gifts, seasonal specials, and member benefits.</p>
+        <button class="btn btn-outline" type="button" data-side-jump="perks">Coming Soon</button>
+      </article>
 
-</div>
+    </div>
+  </section>
+
+  <section>
+    <h2 style="font-family:Playfair Display,serif;margin:8px 4px 10px">My Jobs</h2>
+    <div id="jobList" class="grid"></div>
+  </section>
 </section>
 
-<section>
-<h2 style="font-family:Playfair Display,serif;margin:8px 4px 10px">My Jobs</h2>
-<div id="jobList" class="grid"></div>
+<section id="bookingsPanel" class="client-panel">
+  <div class="panel-shell">
+    <h2 style="font-family:Playfair Display,serif;margin:0 0 10px">Bookings</h2>
+    <p class="small" style="margin-top:0">Your scheduled and requested services will appear here. Final appointment times are confirmed by The Finishing Touch after reviewing team availability.</p>
+    <div id="bookingList" class="grid"></div>
+  </div>
+</section>
+
+<section id="schedulingPanel" class="client-panel">
+  <div class="panel-shell">
+    <h2 style="font-family:Playfair Display,serif;margin:0">Scheduling Requests</h2>
+    <p class="small">Use this instead of self-booking. This protects your appointment from being scheduled on a day or time that does not work for the assigned contractor/team.</p>
+
+    <div class="request-box">
+      <strong>How it works:</strong><br>
+      Send your preferred dates and time window. Our team reviews the request, checks contractor/team availability, then confirms or offers the closest options.
+    </div>
+
+    <form id="scheduleRequestForm" class="portal-form">
+      <label>Request Type
+        <select id="requestType" required>
+          <option value="new_booking">Book a new service</option>
+          <option value="reschedule">Reschedule an existing service</option>
+          <option value="ask_availability">Ask about availability</option>
+          <option value="cancel_or_move">Cancel / move an appointment</option>
+          <option value="service_question">Question about my service</option>
+        </select>
+      </label>
+
+      <label>Service
+        <select id="requestService" required>
+          <option value="cleaning">Cleaning</option>
+          <option value="organizing">Organizing</option>
+          <option value="decor">Interior Decorating</option>
+          <option value="holiday">Holiday/Event Decorating</option>
+          <option value="airbnb">Airbnb Turnover</option>
+          <option value="commercial">Commercial</option>
+          <option value="other">Other / not sure</option>
+        </select>
+      </label>
+
+      <label>Preferred Date
+        <input id="preferredDate" type="date" />
+      </label>
+
+      <label>Preferred Time Window
+        <select id="preferredWindow">
+          <option value="">Flexible</option>
+          <option value="morning">Morning</option>
+          <option value="8:30 AM">8:30 AM</option>
+          <option value="11:15 AM">11:15 AM</option>
+          <option value="afternoon">Afternoon</option>
+          <option value="specific">Specific time in notes</option>
+        </select>
+      </label>
+
+      <label class="form-full">Related Job, if any
+        <select id="relatedJobId">
+          <option value="">No existing job / not sure</option>
+        </select>
+      </label>
+
+      <label class="form-full">Message / Notes
+        <textarea id="requestNotes" placeholder="Example: I need to reschedule my move-out clean, or I’m hoping for early next week if possible."></textarea>
+      </label>
+
+      <div class="form-full actions">
+        <button id="scheduleRequestBtn" class="btn btn-solid" type="submit">Send Scheduling Request</button>
+        <span id="scheduleRequestMsg" class="success-note"></span>
+      </div>
+    </form>
+
+    <h3 style="font-family:Playfair Display,serif;margin:18px 0 10px">My Scheduling Requests</h3>
+    <div id="requestList" class="grid"></div>
+  </div>
+</section>
+
+<section id="messagesPanel" class="client-panel">
+  <div class="panel-shell">
+    <h2 style="font-family:Playfair Display,serif;margin:0 0 10px">Messages</h2>
+    <div class="card">
+      <h3>Concierge Messaging</h3>
+      <p>Direct client-to-admin and client-to-team messaging will be added here. For now, use Scheduling Requests for booking or rescheduling needs.</p>
+      <button class="btn btn-solid" type="button" data-jump-scheduling>Send Scheduling Request</button>
+    </div>
+  </div>
+</section>
+
+<section id="perksPanel" class="client-panel">
+  <div class="panel-shell">
+    <h2 style="font-family:Playfair Display,serif;margin:0 0 10px">Membership & Perks</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>VIP Home Care</h3>
+        <p>Future recurring client perks, seasonal add-ons, priority scheduling requests, birthday gifts, and exclusive offers will live here.</p>
+        <span class="status-pill">Coming Soon</span>
+      </article>
+      <article class="card">
+        <h3>Seasonal Touches</h3>
+        <p>Holiday styling, refresh reminders, organization resets, and special occasion services can eventually be offered here.</p>
+        <span class="status-pill">Coming Soon</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="invoicesPanel" class="client-panel">
+  <div class="panel-shell">
+    <h2 style="font-family:Playfair Display,serif;margin:0 0 10px">Invoices</h2>
+    <div class="card">
+      <h3>Invoices & Payments</h3>
+      <p>Invoice history, payment status, deposits, and receipts will be added in a future phase.</p>
+      <span class="status-pill">Future Stripe / Square Sync</span>
+    </div>
+  </div>
+</section>
+
+<section id="profilePanel" class="client-panel">
+  <div class="panel-shell">
+    <h2 style="font-family:Playfair Display,serif;margin:0 0 10px">Profile</h2>
+    <div class="card">
+      <h3>Client Profile</h3>
+      <p>Your saved contact details, home notes, pets, access preferences, and recurring service preferences will be managed here later.</p>
+      <span id="profileEmail" class="status-pill">Signed in</span>
+    </div>
+  </div>
 </section>
 
 </main>
@@ -247,198 +514,408 @@ gap:18px;
 
 <script type="module">
 import { auth, db } from "./ft-firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { collection, query, where, orderBy, onSnapshot, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import {
+  collection, query, where, orderBy, onSnapshot, getDoc, doc,
+  addDoc, serverTimestamp, limit
+} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const el = {
-      heroName: document.getElementById('heroName'),
-      jobList: document.getElementById('jobList'),
-      signOut: document.getElementById('btnSignOut'),
-      qaService: document.getElementById('qaService'),
-      qaGo: document.getElementById('qaGo')
-    };
+const el = {
+  heroName: document.getElementById('heroName'),
+  jobList: document.getElementById('jobList'),
+  bookingList: document.getElementById('bookingList'),
+  requestList: document.getElementById('requestList'),
+  signOut: document.getElementById('btnSignOut'),
+  qaService: document.getElementById('qaService'),
+  qaGo: document.getElementById('qaGo'),
+  jobCount: document.getElementById('jobCount'),
+  requestCount: document.getElementById('requestCount'),
+  relatedJobId: document.getElementById('relatedJobId'),
+  scheduleRequestForm: document.getElementById('scheduleRequestForm'),
+  scheduleRequestBtn: document.getElementById('scheduleRequestBtn'),
+  scheduleRequestMsg: document.getElementById('scheduleRequestMsg'),
+  profileEmail: document.getElementById('profileEmail')
+};
 
-    const money = (n)=> (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : "";
-    const cap = (s)=> s ? s[0].toUpperCase()+s.slice(1) : "";
+let currentUser = null;
+let lastJobs = [];
 
-    // Sign out
-    el.signOut.addEventListener('click', async (e)=>{ e.preventDefault(); await signOut(auth); location.href = "index.html"; });
+const money = (n)=> (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : "";
+const cap = (s)=> s ? String(s).replaceAll("_"," ").replace(/\b\w/g, c => c.toUpperCase()) : "";
+const dateText = (tsOrString)=>{
+  try{
+    if (tsOrString?.toDate) {
+      return tsOrString.toDate().toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+    }
+    if (typeof tsOrString === "string" && tsOrString) {
+      return new Date(tsOrString + "T00:00:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+    }
+  }catch{}
+  return "";
+};
 
-    // “Go” button for quick intake
-    const setHref = ()=> { el.qaGo.href = el.qaService.value; };
-    el.qaService.addEventListener('change', setHref); setHref();
+function setPanel(key){
+  document.querySelectorAll("[data-side]").forEach(btn => btn.classList.toggle("active", btn.dataset.side === key));
+  document.querySelectorAll(".client-panel").forEach(panel => panel.classList.remove("active"));
+  const panel = document.getElementById(`${key}Panel`);
+  if (panel) panel.classList.add("active");
+}
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user){ location.href = "login.html?next=" + encodeURIComponent("client-dashboard.html"); return; }
+document.querySelectorAll("[data-side]").forEach(btn => {
+  btn.addEventListener("click", () => setPanel(btn.dataset.side));
+});
 
-      // Friendly greeting
-      try {
-        const snap = await getDoc(doc(db,"users",user.uid));
-        const name = snap.exists() ? (snap.data().fullName || snap.data().displayName) : "";
-        el.heroName.textContent = name ? `Hi, ${name.split(" ")[0]}` : "Your Client Portal";
-      } catch { /* noop */ }
+document.querySelectorAll("[data-jump-scheduling]").forEach(btn => {
+  btn.addEventListener("click", () => setPanel("scheduling"));
+});
 
-      // Jobs owned by client
-      const q = query(collection(db,"jobs"), where("clientId","==",user.uid), orderBy("createdAt","desc"));
-      onSnapshot(q, (snap) => {
-        if (snap.empty){
-          el.jobList.innerHTML = `
-            <div class="empty">
-              No jobs yet. Start a new intake above to get a quote and book your time.
-            </div>`;
-          return;
-        }
-        el.jobList.innerHTML = snap.docs.map(d => {
-          const j = { id:d.id, ...d.data() };
-          const title = cap(j.serviceType || "Job");
-          const when  = j.window || "";
-          const hours = j.estimatedTeamHours || j.teamHours || "";
-          const price = (j.flatRate!=null) ? `· Est: <strong>${money(j.flatRate)}</strong>` : "";
-          const area  = j.zip || j.area || "";
-          const status = j.status || "";
+document.querySelectorAll("[data-side-jump]").forEach(btn => {
+  btn.addEventListener("click", () => setPanel(btn.dataset.sideJump));
+});
 
-          return `
-            <article class="card">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-                <strong>${title}</strong>
-                <span class="small">Status: <code>${status}</code></span>
-              </div>
-              <div class="meta">
-                ${area?`<span>📍 ${area}</span>`:""}
-                ${when?`<span>🗓️ ${when}</span>`:""}
-                ${hours?`<span>⏱️ ${hours} hrs</span>`:""}
-                ${price}
-              </div>
-              ${j.summary ? `<div>${j.summary}</div>` : ""}
-              ${j.notes   ? `<div class="small" style="opacity:.85">${j.notes}</div>` : ""}
-            </article>
-          `;
-        }).join("");
-      });
+el.signOut.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  await signOut(auth);
+  location.href = "index.html";
+});
+
+const setHref = ()=> { el.qaGo.href = el.qaService.value; };
+el.qaService.addEventListener('change', setHref);
+setHref();
+
+function jobStatusLabel(j){
+  const status = j.workflowStatus || j.status || "request_received";
+  return cap(status);
+}
+
+function jobCard(j){
+  const title = cap(j.serviceType || "Job");
+  const when = dateText(j.serviceDate) || j.window || j.arrivalWindow || "";
+  const hours = j.estimatedTeamHours || j.teamHours || "";
+  const price = (j.flatRate!=null) ? `Est: ${money(j.flatRate)}` : "";
+  const area = j.zip || j.area || j.city || "";
+  const packageStatus = j.clientCompletionPackageStatus || "";
+  const status = jobStatusLabel(j);
+
+  return `
+    <article class="card accent">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+        <strong style="font-family:Playfair Display,serif;font-size:1.18rem">${title}</strong>
+        <span class="status-pill">${status}</span>
+      </div>
+      <div class="meta">
+        ${area?`<span>📍 ${area}</span>`:""}
+        ${when?`<span>🗓️ ${when}</span>`:""}
+        ${hours?`<span>⏱️ ${hours} hrs</span>`:""}
+        ${price?`<span>${price}</span>`:""}
+        ${packageStatus?`<span>Package: ${cap(packageStatus)}</span>`:""}
+      </div>
+      ${j.summary ? `<div>${j.summary}</div>` : ""}
+      ${j.notes ? `<div class="small" style="opacity:.85">${j.notes}</div>` : ""}
+      <div class="actions">
+        <button class="btn btn-outline" type="button" data-request-for-job="${j.id}">Ask to Reschedule</button>
+        ${packageStatus === "sent" ? `<button class="btn btn-solid" type="button" data-package-job="${j.id}">View Completion Package</button>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function drawJobs(list){
+  lastJobs = list;
+  el.jobCount.textContent = String(list.length);
+  populateRelatedJobs(list);
+
+  if (!list.length){
+    el.jobList.innerHTML = `
+      <div class="empty">
+        No jobs yet. Start a new intake above or send a scheduling request.
+      </div>`;
+    el.bookingList.innerHTML = `
+      <div class="empty">
+        No bookings yet. Once your service is scheduled, it will appear here.
+      </div>`;
+    return;
+  }
+
+  const html = list.map(jobCard).join("");
+  el.jobList.innerHTML = html;
+  el.bookingList.innerHTML = html;
+
+  document.querySelectorAll("[data-request-for-job]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      setPanel("scheduling");
+      document.getElementById("requestType").value = "reschedule";
+      el.relatedJobId.value = btn.dataset.requestForJob || "";
+      document.getElementById("requestNotes").focus();
     });
+  });
+
+  document.querySelectorAll("[data-package-job]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      alert("Completion Package viewer is coming next. For now, this confirms the package is marked sent.");
+    });
+  });
+}
+
+function populateRelatedJobs(list){
+  if (!el.relatedJobId) return;
+  const currentValue = el.relatedJobId.value;
+  el.relatedJobId.innerHTML = `<option value="">No existing job / not sure</option>`;
+  list.forEach(j => {
+    const opt = document.createElement("option");
+    opt.value = j.id;
+    opt.textContent = `${cap(j.serviceType || "Job")} ${dateText(j.serviceDate) ? "— " + dateText(j.serviceDate) : ""}`;
+    el.relatedJobId.appendChild(opt);
+  });
+  if (currentValue) el.relatedJobId.value = currentValue;
+}
+
+function requestCard(r){
+  const preferred = dateText(r.preferredDate);
+  return `
+    <article class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+        <strong style="font-family:Playfair Display,serif;font-size:1.12rem">${cap(r.requestType || "Scheduling Request")}</strong>
+        <span class="status-pill">${cap(r.status || "new")}</span>
+      </div>
+      <div class="meta">
+        ${r.serviceType?`<span>Service: ${cap(r.serviceType)}</span>`:""}
+        ${preferred?`<span>Preferred: ${preferred}</span>`:""}
+        ${r.preferredWindow?`<span>${cap(r.preferredWindow)}</span>`:""}
+      </div>
+      ${r.notes ? `<div class="small">${r.notes}</div>` : ""}
+    </article>
+  `;
+}
+
+function drawRequests(list){
+  el.requestCount.textContent = String(list.length);
+  if (!list.length){
+    el.requestList.innerHTML = `<div class="empty">No scheduling requests yet.</div>`;
+    return;
+  }
+  el.requestList.innerHTML = list.map(requestCard).join("");
+}
+
+el.scheduleRequestForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!currentUser) {
+    alert("Please sign in first.");
+    return;
+  }
+
+  el.scheduleRequestBtn.disabled = true;
+  el.scheduleRequestMsg.textContent = "Sending…";
+
+  const requestType = document.getElementById("requestType").value;
+  const serviceType = document.getElementById("requestService").value;
+  const preferredDate = document.getElementById("preferredDate").value;
+  const preferredWindow = document.getElementById("preferredWindow").value;
+  const relatedJobId = document.getElementById("relatedJobId").value;
+  const notes = document.getElementById("requestNotes").value.trim();
+
+  try {
+    await addDoc(collection(db, "bookingRequests"), {
+      requestKind: "scheduling_request",
+      requestType,
+      serviceType,
+      preferredDate,
+      preferredWindow,
+      relatedJobId,
+      notes,
+      status: "new",
+      clientUid: currentUser.uid,
+      clientId: currentUser.uid,
+      clientEmail: currentUser.email || "",
+      source: "client_dashboard",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    el.scheduleRequestForm.reset();
+    el.scheduleRequestMsg.textContent = "Sent. We’ll review and confirm options.";
+    setTimeout(()=> el.scheduleRequestMsg.textContent = "", 3500);
+  } catch (err) {
+    console.warn(err);
+    el.scheduleRequestMsg.textContent = "Could not send.";
+    alert("Could not send scheduling request. Please try again or message us directly.");
+  } finally {
+    el.scheduleRequestBtn.disabled = false;
+  }
+});
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user){
+    location.href = "login.html?next=" + encodeURIComponent("client-dashboard.html");
+    return;
+  }
+
+  currentUser = user;
+  if (el.profileEmail) el.profileEmail.textContent = user.email || "Signed in";
+
+  try {
+    const snap = await getDoc(doc(db,"users",user.uid));
+    const name = snap.exists() ? (snap.data().fullName || snap.data().displayName) : "";
+    el.heroName.textContent = name ? `Hi, ${name.split(" ")[0]}` : "Your Client Portal";
+  } catch {}
+
+  const jobsQ = query(collection(db,"jobs"), where("clientId","==",user.uid), orderBy("createdAt","desc"));
+  onSnapshot(jobsQ, (snap) => {
+    drawJobs(snap.docs.map(d => ({ id:d.id, ...d.data() })));
+  }, (err) => {
+    console.warn("client jobs listener error:", err);
+    el.jobList.innerHTML = `<div class="empty">Could not load jobs.</div>`;
+  });
+
+  const reqQ = query(collection(db,"bookingRequests"), where("clientUid","==",user.uid), orderBy("createdAt","desc"), limit(50));
+  onSnapshot(reqQ, (snap) => {
+    const requests = snap.docs
+      .map(d => ({ id:d.id, ...d.data() }))
+      .filter(r => r.requestKind === "scheduling_request");
+    drawRequests(requests);
+  }, (err) => {
+    console.warn("scheduling requests listener error:", err);
+    el.requestList.innerHTML = `<div class="empty">Could not load scheduling requests.</div>`;
+  });
+});
 </script>
 
 <!-- === Finishing Touch — AI Concierge Chat (guarded) === -->
-  <style>
-    #ftt-chat-launcher{position:fixed;right:18px;bottom:18px;width:54px;height:54px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#2e2a27;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.18)}
-    #ftt-chat{position:fixed;right:18px;bottom:84px;width:340px;max-width:calc(100vw - 36px);background:#fff;border:1px solid #e8ddd1;border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.18);display:none;font-family:Manrope,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-    .ftt-chat-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0e9e2;background:#fffdfb}
-    .ftt-title{font-weight:800;color:#2e2a27}.ftt-subtitle{font-size:.9rem;color:#7b746e}
-    .ftt-close{border:0;background:#fff;font-size:22px;cursor:pointer;line-height:1}
-    .ftt-thread{height:300px;overflow:auto;padding:12px}
-    .ftt-bubble{max-width:85%;padding:10px 12px;border-radius:12px;margin:8px 0;line-height:1.3}
-    .ftt-bubble.bot{background:#fbf8f4;color:#2e2a27}.ftt-bubble.me{background:#2e2a27;color:#fff;margin-left:auto}
-    .ftt-inputbar{display:flex;gap:8px;border-top:1px solid #f0e9e2;padding:10px}
-    .ftt-inputbar input{flex:1;border:1px solid #e3d9ce;border-radius:999px;padding:.65rem .9rem;background:#fffdfb}
-    .ftt-inputbar button{border:0;border-radius:999px;padding:.65rem .95rem;font-weight:800;background:#d2bda9;color:#2a2624;cursor:pointer}
-    .ftt-quick{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-top:1px solid #f0e9e2}
-    .ftt-quick button{border:1px solid #e3d9ce;background:#fff;border-radius:999px;padding:.35rem .7rem;cursor:pointer;font-weight:700}
-    @media(max-width:420px){.ftt-thread{height:48vh}}
-  </style>
+<style>
+#ftt-chat-launcher{position:fixed;right:18px;bottom:18px;width:54px;height:54px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#2e2a27;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.18);z-index:9999}
+#ftt-chat{position:fixed;right:18px;bottom:84px;width:340px;max-width:calc(100vw - 36px);background:#fff;border:1px solid #e8ddd1;border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.18);display:none;font-family:Manrope,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;z-index:9999}
+.ftt-chat-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0e9e2;background:#fffdfb}
+.ftt-title{font-weight:800;color:#2e2a27}.ftt-subtitle{font-size:.9rem;color:#7b746e}
+.ftt-close{border:0;background:#fff;font-size:22px;cursor:pointer;line-height:1}
+.ftt-thread{height:300px;overflow:auto;padding:12px}
+.ftt-bubble{max-width:85%;padding:10px 12px;border-radius:12px;margin:8px 0;line-height:1.3}
+.ftt-bubble.bot{background:#fbf8f4;color:#2e2a27}.ftt-bubble.me{background:#2e2a27;color:#fff;margin-left:auto}
+.ftt-inputbar{display:flex;gap:8px;border-top:1px solid #f0e9e2;padding:10px}
+.ftt-inputbar input{flex:1;border:1px solid #e3d9ce;border-radius:999px;padding:.65rem .9rem;background:#fffdfb}
+.ftt-inputbar button{border:0;border-radius:999px;padding:.65rem .95rem;font-weight:800;background:#d2bda9;color:#2a2624;cursor:pointer}
+.ftt-quick{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-top:1px solid #f0e9e2}
+.ftt-quick button{border:1px solid #e3d9ce;background:#fff;border-radius:999px;padding:.35rem .7rem;cursor:pointer;font-weight:700}
+@media(max-width:420px){.ftt-thread{height:48vh}}
+</style>
 
-  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
-    <div class="ftt-chat-header">
-      <div>
-        <div class="ftt-title">The Finishing Touch</div>
-        <div class="ftt-subtitle">AI Concierge • human on request</div>
-      </div>
-      <button class="ftt-close" aria-label="Close chat">×</button>
+<div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+<div id="ftt-chat" aria-live="polite" aria-label="Chat window">
+  <div class="ftt-chat-header">
+    <div>
+      <div class="ftt-title">The Finishing Touch</div>
+      <div class="ftt-subtitle">AI Concierge • scheduling by request</div>
     </div>
-    <div id="ftt-thread" class="ftt-thread"></div>
-    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
-      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
-      <button class="ftt-send" type="submit">Send</button>
-    </form>
-    <div class="ftt-quick">
-      <button data-q="pricing">Pricing</button>
-      <button data-q="availability">Availability</button>
-      <button data-q="services">Services</button>
-      <button data-q="book">Book now</button>
-      <button data-q="human">Talk to a person</button>
-      <button data-q="help">Help me choose</button>
-    </div>
+    <button class="ftt-close" aria-label="Close chat">×</button>
   </div>
+  <div id="ftt-thread" class="ftt-thread"></div>
+  <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+    <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, services, or scheduling…" aria-label="Type your message" required />
+    <button class="ftt-send" type="submit">Send</button>
+  </form>
+  <div class="ftt-quick">
+    <button data-q="pricing">Pricing</button>
+    <button data-q="availability">Availability</button>
+    <button data-q="services">Services</button>
+    <button data-q="book">Request scheduling</button>
+    <button data-q="human">Talk to a person</button>
+    <button data-q="help">Help me choose</button>
+  </div>
+</div>
 
-  <script>
-    (function(){
-      if (window.__FTT_CHAT_READY__) return;
-      window.__FTT_CHAT_READY__ = true;
+<script>
+(function(){
+  if (window.__FTT_CHAT_READY__) return;
+  window.__FTT_CHAT_READY__ = true;
 
-      const CFG = {
-        timezone:"America/Chicago",
-        intakeAnchor:"intake-cleaning.html",
-        bookUrl:"https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
-        email:"contact.thefinishingtouch.tx@gmail.com",
-        messenger:"https://m.me/thefinishingtouch.tx",
-        hours:{days:[1,2,3,4,5],open:"09:00",close:"17:00"}
-      };
+  const CFG = {
+    timezone:"America/Chicago",
+    intakeAnchor:"intake-cleaning.html",
+    email:"contact.thefinishingtouch.tx@gmail.com",
+    messenger:"https://m.me/thefinishingtouch.tx",
+    hours:{days:[1,2,3,4,5],open:"09:00",close:"17:00"}
+  };
 
-      const panel=document.getElementById("ftt-chat");
-      const thread=document.getElementById("ftt-thread");
-      const input=document.getElementById("ftt-input");
-      const form=document.getElementById("ftt-inputbar");
-      const quick=document.querySelector(".ftt-quick");
-      const closeBtn=document.querySelector(".ftt-close");
-      const launcher=document.getElementById("ftt-chat-launcher");
+  const panel=document.getElementById("ftt-chat");
+  const thread=document.getElementById("ftt-thread");
+  const input=document.getElementById("ftt-input");
+  const form=document.getElementById("ftt-inputbar");
+  const quick=document.querySelector(".ftt-quick");
+  const closeBtn=document.querySelector(".ftt-close");
+  const launcher=document.getElementById("ftt-chat-launcher");
 
-      function add(html,who="bot"){const b=document.createElement("div");b.className=`ftt-bubble ${who}`;b.innerHTML=html;thread.appendChild(b);thread.scrollTop=thread.scrollHeight;}
-      function greet(){add("Hi! I’m your AI concierge. Ask me about pricing, availability, or services. Say “human” anytime.","bot");}
-      function openPanel(){panel.style.display="block"; if(!thread.dataset.greeted){greet();thread.dataset.greeted="1";} input.focus();}
-      function closePanel(){panel.style.display="none";}
-      function hoursNow(){
-        try{
-          const now=new Date();
-          const opt={timeZone:CFG.timezone,hour12:false,weekday:"short",hour:"2-digit",minute:"2-digit"};
-          const parts=new Intl.DateTimeFormat("en-US",opt).formatToParts(now);
-          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
-          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
-          const dShort=parts.find(p=>p.type==="weekday")?.value||"";
-          const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-          const wd=map[dShort] ?? now.getDay();
-          const [oH,oM]=CFG.hours.open.split(":").map(Number);
-          const [cH,cM]=CFG.hours.close.split(":").map(Number);
-          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
-          return CFG.hours.days.includes(wd)&&after&&before;
-        }catch{return false;}
-      }
-      function detect(t){
-        t=t.toLowerCase();
-        if(/human|person|agent|representative|call|talk/.test(t))return"human";
-        if(/price|pricing|cost|rate|how much/.test(t))return"pricing";
-        if(/avail|slot|appointment|when|schedule|open/.test(t))return"availability";
-        if(/service|decor|holiday|organize|clean|what do you do/.test(t))return"services";
-        if(/book|booking|schedule now/.test(t))return"book";
-        if(/which|help|recommend|not sure|choose/.test(t))return"recommend";
-        return"fallback";
-      }
-      function answer(intent){
-        const intake=`<a href="${CFG.intakeAnchor}">Start Intake</a>`;
-        const book=`<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
-        switch(intent){
-          case"pricing":return["Get an instant quote by starting an intake.",intake+" • or "+book,"We’ll email you a copy."].join("<br>");
-          case"availability":return["Availability is live in Square.",book+" to see current openings, or "+intake+" first."].join("<br>");
-          case"services":return["We offer Cleaning, Organizing, Interior Decorating, and Indoor Holiday installs.","Each intake gives a tailored ballpark.","Start here: "+intake+" • Or jump to "+book+"."].join("<br>");
-          case"book":return"Perfect—"+book+" (opens in a new tab), or "+intake+" for a tailored estimate first.";
-          case"human":return hoursNow()
-            ? `Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`
-            : `We’re offline; you can still <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a>.`;
-          case"recommend":return["<strong>Happy to help you choose!</strong> Small: single area. Medium: a room plus accents. Large: multiple areas or deep setup.",`Ready to book? ${book} • Or ${intake} first.`].join("<br>");
-          default:return["I can help with pricing, availability, and services.","Try “what’s your pricing?” or “do you have Friday slots?”","Say “human” to talk to a person."].join("<br>");
-        }
-      }
+  function add(html,who="bot"){const b=document.createElement("div");b.className=`ftt-bubble ${who}`;b.innerHTML=html;thread.appendChild(b);thread.scrollTop=thread.scrollHeight;}
+  function greet(){add("Hi! I’m your AI concierge. I can help with pricing, services, or sending a scheduling request. We confirm appointments after checking team availability.","bot");}
+  function openPanel(){panel.style.display="block"; if(!thread.dataset.greeted){greet();thread.dataset.greeted="1";} input.focus();}
+  function closePanel(){panel.style.display="none";}
+  function hoursNow(){
+    try{
+      const now=new Date();
+      const opt={timeZone:CFG.timezone,hour12:false,weekday:"short",hour:"2-digit",minute:"2-digit"};
+      const parts=new Intl.DateTimeFormat("en-US",opt).formatToParts(now);
+      const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+      const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+      const dShort=parts.find(p=>p.type==="weekday")?.value||"";
+      const map={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+      const wd=map[dShort] ?? now.getDay();
+      const [oH,oM]=CFG.hours.open.split(":").map(Number);
+      const [cH,cM]=CFG.hours.close.split(":").map(Number);
+      const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+      return CFG.hours.days.includes(wd)&&after&&before;
+    }catch{return false;}
+  }
+  function detect(t){
+    t=t.toLowerCase();
+    if(/human|person|agent|representative|call|talk/.test(t))return"human";
+    if(/price|pricing|cost|rate|how much/.test(t))return"pricing";
+    if(/avail|slot|appointment|when|schedule|open|book|booking|reschedule/.test(t))return"availability";
+    if(/service|decor|holiday|organize|clean|what do you do/.test(t))return"services";
+    if(/which|help|recommend|not sure|choose/.test(t))return"recommend";
+    return"fallback";
+  }
+  function goScheduling(){
+    const btn = document.querySelector('[data-side="scheduling"]');
+    if (btn) btn.click();
+  }
+  function answer(intent){
+    const intake=`<a href="${CFG.intakeAnchor}">Start Intake</a>`;
+    switch(intent){
+      case"pricing":return["Get started with an intake so we can quote accurately.",intake,"Scheduling is confirmed after team availability is reviewed."].join("<br>");
+      case"availability":return["To book, reschedule, or ask about openings, use <strong>Scheduling Requests</strong> in your portal.","I can open that section for you now."].join("<br>");
+      case"services":return["We offer Cleaning, Organizing, Interior Decorating, Holiday/Event installs, and select specialty services.","Start here: "+intake+" or use Scheduling Requests if you already know what you need."].join("<br>");
+      case"human":return hoursNow()
+        ? `Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`
+        : `We’re offline; you can still <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a>.`;
+      case"recommend":return["<strong>Happy to help you choose!</strong> Cleaning is best for home reset, organizing for spaces/systems, decorating for styling, and holiday/event for seasonal setups.",`Start with ${intake} if you want a quote.`].join("<br>");
+      default:return["I can help with pricing, services, or scheduling requests.","Try “I need to reschedule” or “what service should I choose?”","Say “human” to talk to a person."].join("<br>");
+    }
+  }
 
-      launcher.addEventListener("click",openPanel);
-      closeBtn.addEventListener("click",closePanel);
-      form.addEventListener("submit",(e)=>{e.preventDefault();const t=input.value.trim();if(!t)return;add(t,"me");input.value="";setTimeout(()=>add(answer(detect(t)),"bot"),120);});
-      quick.addEventListener("click",(e)=>{if(e.target.matches("button[data-q]")){const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};const intent=map[e.target.getAttribute("data-q")]||"fallback";add(e.target.textContent,"me");setTimeout(()=>add(answer(intent),"bot"),80);}});
-    })();
-  </script>
-
-  
-
-<script type="module">
-import { auth } from "./ft-firebase.js";
+  launcher.addEventListener("click",openPanel);
+  closeBtn.addEventListener("click",closePanel);
+  form.addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const t=input.value.trim();
+    if(!t)return;
+    const intent = detect(t);
+    add(t,"me");
+    input.value="";
+    setTimeout(()=>{
+      add(answer(intent),"bot");
+      if(intent === "availability") setTimeout(goScheduling, 250);
+    },120);
+  });
+  quick.addEventListener("click",(e)=>{
+    if(e.target.matches("button[data-q]")){
+      const map={pricing:"pricing",availability:"availability",services:"services",book:"availability",human:"human",help:"recommend"};
+      const intent=map[e.target.getAttribute("data-q")]||"fallback";
+      add(e.target.textContent,"me");
+      setTimeout(()=>{
+        add(answer(intent),"bot");
+        if(intent === "availability") setTimeout(goScheduling, 250);
+      },80);
+    }
+  });
+})();
 </script>
 
 </body>
