@@ -589,6 +589,128 @@
     .doc-card .small-note{color:var(--portal-muted);font-size:.85rem;font-weight:700;line-height:1.35}
     .compliance-note{padding:12px;border:1px solid #f1dce1;background:#fff7f8;border-radius:18px;color:#61554f;font-weight:800;line-height:1.45}
 
+
+    /* === Job Workflow Center: Contractor Phase 1 === */
+    .workflow-box{
+      border:1px solid #f1dce1;
+      background:#fff7f8;
+      border-radius:20px;
+      padding:12px;
+      display:grid;
+      gap:10px;
+    }
+
+    .workflow-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .workflow-head strong{
+      font-family:"Playfair Display",serif;
+      color:var(--portal-ink);
+      font-size:1.05rem;
+    }
+
+    .workflow-status{
+      width:max-content;
+      max-width:100%;
+      padding:.28rem .7rem;
+      border-radius:999px;
+      background:#fffdfb;
+      border:1px solid #f1dce1;
+      color:#7d4f59;
+      font-size:.78rem;
+      font-weight:900;
+    }
+
+    .workflow-steps{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .workflow-step{
+      border:1px solid #f1dce1;
+      background:#fffdfb;
+      color:#61554f;
+      border-radius:999px;
+      padding:.25rem .55rem;
+      font-size:.76rem;
+      font-weight:900;
+    }
+
+    .workflow-step.done{
+      color:#466b4f;
+      background:#f4fbf4;
+      border-color:#cfe6d0;
+    }
+
+    .workflow-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+      gap:10px;
+    }
+
+    .workflow-mini{
+      border:1px solid #f1dce1;
+      background:#fffdfb;
+      border-radius:16px;
+      padding:10px;
+      display:grid;
+      gap:7px;
+    }
+
+    .workflow-mini label{
+      display:grid;
+      gap:6px;
+      color:var(--portal-ink);
+      font-weight:900;
+      font-size:.88rem;
+    }
+
+    .workflow-mini input[type="file"],
+    .workflow-mini textarea{
+      width:100%;
+      border:1px solid var(--portal-line);
+      border-radius:14px;
+      background:#fffdfb;
+      padding:.62rem .7rem;
+      font-family:inherit;
+      color:var(--portal-ink);
+    }
+
+    .workflow-mini textarea{
+      min-height:76px;
+      resize:vertical;
+    }
+
+    .checklist-mini{
+      display:grid;
+      gap:7px;
+      color:#61554f;
+      font-weight:800;
+      font-size:.88rem;
+    }
+
+    .checkline{
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+    }
+
+    .checkline input{
+      margin-top:3px;
+    }
+
+    .workflow-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
     @media (max-width:920px){
       .portal-shell{grid-template-columns:1fr}
       .sidebar{position:relative; top:auto; min-height:auto}
@@ -1276,17 +1398,106 @@ import { auth, db, storage } from "./ft-firebase.js";
       drawMyJobs(lastMyJobs);
     }
 
+
+    function readableStatus(value){
+      return String(value || "")
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function currentWorkflowStatus(j){
+      return j.workflowStatus || (j.status === "claimed" ? "assigned" : j.status) || "assigned";
+    }
+
+    function workflowStepHTML(j){
+      const wf = currentWorkflowStatus(j);
+      const completed = new Set(Array.isArray(j.workflowCompletedSteps) ? j.workflowCompletedSteps : []);
+      const fields = {
+        checked_in: !!j.checkedInAt,
+        before_photos_submitted: !!j.beforePhotosSubmittedAt || Number(j.beforePhotosCount || 0) > 0,
+        in_progress: ["in_progress","checklist_completed","after_photos_submitted","submitted_for_review","approved","paid","completed"].includes(wf) || j.status === "in_progress",
+        checklist_completed: !!j.checklistCompletedAt,
+        after_photos_submitted: !!j.afterPhotosSubmittedAt || Number(j.afterPhotosCount || 0) > 0,
+        submitted_for_review: wf === "submitted_for_review" || j.status === "submitted"
+      };
+
+      const steps = [
+        ["checked_in", "Check-In"],
+        ["before_photos_submitted", "Before Photos"],
+        ["in_progress", "In Progress"],
+        ["checklist_completed", "Checklist"],
+        ["after_photos_submitted", "After Photos"],
+        ["submitted_for_review", "Submitted"]
+      ];
+
+      return `<div class="workflow-steps">${steps.map(([key,label]) => `<span class="workflow-step ${(fields[key] || completed.has(key)) ? "done" : ""}">${label}</span>`).join("")}</div>`;
+    }
+
+    function jobWorkflowHTML(j){
+      const wf = currentWorkflowStatus(j);
+      return `
+        <div class="workflow-box">
+          <div class="workflow-head">
+            <strong>Job Workflow</strong>
+            <span class="workflow-status">${readableStatus(wf)}</span>
+          </div>
+          ${workflowStepHTML(j)}
+          <div class="workflow-grid">
+            <div class="workflow-mini">
+              <label>Before Photos
+                <input type="file" accept="image/*" multiple data-before-files>
+              </label>
+              <span class="upload-hint">Required before work begins when marked by admin.</span>
+            </div>
+            <div class="workflow-mini">
+              <label>After Photos
+                <input type="file" accept="image/*" multiple data-after-files>
+              </label>
+              <span class="upload-hint">Upload final room photos before submitting for review.</span>
+            </div>
+            <div class="workflow-mini">
+              <strong style="font-family:Playfair Display,serif;">Completion Checklist</strong>
+              <div class="checklist-mini">
+                <label class="checkline"><input type="checkbox" data-checklist-item="walkthrough"> Arrival walkthrough completed</label>
+                <label class="checkline"><input type="checkbox" data-checklist-item="scope"> Assigned scope completed</label>
+                <label class="checkline"><input type="checkbox" data-checklist-item="touchups"> Final touch-ups checked</label>
+                <label class="checkline"><input type="checkbox" data-checklist-item="trash"> Trash/debris handled as applicable</label>
+                <label class="checkline"><input type="checkbox" data-checklist-item="locked"> Property secured before leaving</label>
+              </div>
+            </div>
+            <div class="workflow-mini">
+              <label>Incident / Damage Note
+                <textarea data-incident-note placeholder="Report damage, access issue, client concern, missing supplies, or anything admin should review."></textarea>
+              </label>
+            </div>
+          </div>
+          <div class="workflow-actions">
+            <button class="btn btn-outline" type="button" data-workflow-act="gps">GPS Check-In</button>
+            <button class="btn btn-outline" type="button" data-workflow-act="before">Upload Before Photos</button>
+            <button class="btn btn-solid" type="button" data-workflow-act="start">Start Work</button>
+            <button class="btn btn-outline" type="button" data-workflow-act="checklist">Save Checklist</button>
+            <button class="btn btn-outline" type="button" data-workflow-act="after">Upload After Photos</button>
+            <button class="btn btn-outline" type="button" data-workflow-act="incident">Report Incident</button>
+            <button class="btn btn-solid" type="button" data-workflow-act="submit">Submit for Admin Review</button>
+          </div>
+        </div>
+      `;
+    }
+
     function jobCardHTML(j, inMine=false){
       const type  = (j.serviceType || '').toLowerCase();
       const title = type ? cap(type) : 'Job';
       const zip   = j.zip || j.postal || j.postcode || j.area || j.city || '';
-      const when  = j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || '');
+      const dt = j.serviceDate?.toDate ? j.serviceDate.toDate() : null;
+      const when  = dt ? dt.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' }) + ' • ' + dt.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) : (j.date ? fmtDate(j.date) + (j.timeWindow ? ` • ${j.timeWindow}` : '') : (j.window || ''));
       const bb    = (j.beds || j.baths) ? `${j.beds||0} bd / ${j.baths||0} ba` : '';
       const hours = j.estimatedTeamHours || j.teamHours || j.eta || '';
       const { need, left } = slotsLeft(j);
       const leftTxt = need > 1 ? `${left} of ${need} slots left` : '';
       const payLine = payForContractor(j);
-      const statusChip = j.status ? `<span>• ${j.status}</span>` : '';
+      const workflow = currentWorkflowStatus(j);
+      const statusChip = j.status ? `<span>Status: ${j.status}</span>` : '';
+      const workflowChip = inMine ? `<span>Workflow: ${readableStatus(workflow)}</span>` : '';
 
       return `
         <div class="card job-card" data-jobid="${j.id}">
@@ -1301,8 +1512,10 @@ import { auth, db, storage } from "./ft-firebase.js";
             ${hours ? `<span>⏱️ <span>${hours}</span></span>` : ''}
             ${leftTxt ? `<span>👥 <span>${leftTxt}</span></span>` : ''}
             ${statusChip}
+            ${workflowChip}
           </div>
           ${j.summary ? `<div style="font-size:.98rem;">${j.summary}</div>` : (j.notes ? `<div style="font-size:.98rem;">${j.notes}</div>` : '')}
+          ${inMine ? jobWorkflowHTML(j) : ''}
           <div class="actions"></div>
         </div>
       `;
@@ -1328,6 +1541,8 @@ import { auth, db, storage } from "./ft-firebase.js";
     }
 
     function drawMyJobs(list){
+      const statMine = document.getElementById("statMine");
+      if (statMine) statMine.textContent = String(list.length);
       if (!list.length){
         myJobsEl.innerHTML = `<div class="empty">You haven’t claimed any jobs yet.</div>`;
         return;
@@ -1396,6 +1611,135 @@ import { auth, db, storage } from "./ft-firebase.js";
       actions.appendChild(msg);
     }
 
+    async function updateJobWorkflow(jobId, patch){
+      await updateDoc(doc(db, 'jobs', jobId), { ...patch, updatedAt: serverTimestamp() });
+      await setDoc(doc(db, 'jobs', jobId, 'workflow', 'main'), { ...patch, updatedAt: serverTimestamp() }, { merge:true });
+    }
+
+    function getCard(jobId){
+      return myJobsEl.querySelector(`[data-jobid="${jobId}"]`);
+    }
+
+    function getGeoPosition(){
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) { resolve(null); return; }
+        navigator.geolocation.getCurrentPosition(
+          pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
+          () => resolve(null),
+          { enableHighAccuracy:true, timeout:9000, maximumAge:0 }
+        );
+      });
+    }
+
+    async function uploadJobFiles(jobId, fileList, photoType){
+      if (!me) throw new Error('Please sign in first.');
+      const files = Array.from(fileList || []);
+      if (!files.length) throw new Error('Please choose at least one photo first.');
+      const uploaded = [];
+
+      for (const file of files) {
+        const path = `jobs/${jobId}/${photoType}/${Date.now()}-${cleanFileName(file.name)}`;
+        const fileRef = storageRef(storage, path);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        const payload = {
+          uploadedByUid: me.uid,
+          uploadedByEmail: me.email || '',
+          photoType,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          path,
+          url,
+          createdAt: serverTimestamp()
+        };
+        await addDoc(collection(db, 'jobs', jobId, 'photos'), payload);
+        uploaded.push({ name:file.name, type:file.type, size:file.size, path, url });
+      }
+
+      const statusPatch = photoType === 'before'
+        ? { beforePhotosSubmittedAt: serverTimestamp(), beforePhotosCount: uploaded.length, workflowStatus:'before_photos_submitted', status:'claimed' }
+        : { afterPhotosSubmittedAt: serverTimestamp(), afterPhotosCount: uploaded.length, workflowStatus:'after_photos_submitted', status:'in_progress' };
+
+      await updateJobWorkflow(jobId, {
+        ...statusPatch,
+        [`${photoType}PhotosLastUploadedBy`]: me.email || me.uid
+      });
+
+      return uploaded;
+    }
+
+    async function handleGpsCheckIn(jobId){
+      const geo = await getGeoPosition();
+      await updateJobWorkflow(jobId, {
+        status:'claimed',
+        workflowStatus:'checked_in',
+        checkedInAt: serverTimestamp(),
+        checkedInByUid: me?.uid || '',
+        checkedInByEmail: me?.email || '',
+        gpsCheckIn: geo || { unavailable:true }
+      });
+      showToast(geo ? 'GPS check-in saved' : 'Check-in saved without GPS');
+    }
+
+    async function handleStartWork(jobId){
+      await updateJobWorkflow(jobId, {
+        status:'in_progress',
+        workflowStatus:'in_progress',
+        workStartedAt: serverTimestamp(),
+        workStartedByUid: me?.uid || '',
+        workStartedByEmail: me?.email || ''
+      });
+      showToast('Marked in progress');
+    }
+
+    async function handleChecklist(jobId){
+      const card = getCard(jobId);
+      const checked = Array.from(card?.querySelectorAll('[data-checklist-item]:checked') || []).map(x => x.dataset.checklistItem);
+      if (!checked.length && !confirm('No checklist items are checked. Save anyway?')) return;
+
+      await updateJobWorkflow(jobId, {
+        workflowStatus:'checklist_completed',
+        checklistCompletedAt: serverTimestamp(),
+        checklistCompletedByUid: me?.uid || '',
+        checklistCompletedByEmail: me?.email || '',
+        checklistItemsCompleted: checked
+      });
+      showToast('Checklist saved');
+    }
+
+    async function handleIncident(jobId){
+      const card = getCard(jobId);
+      const note = card?.querySelector('[data-incident-note]')?.value?.trim() || '';
+      if (!note) { alert('Please add an incident or damage note first.'); return; }
+      await addDoc(collection(db, 'jobs', jobId, 'incidents'), {
+        note,
+        reportedByUid: me?.uid || '',
+        reportedByEmail: me?.email || '',
+        createdAt: serverTimestamp(),
+        status:'reported'
+      });
+      await updateJobWorkflow(jobId, {
+        hasIncident:true,
+        lastIncidentAt: serverTimestamp(),
+        workflowStatus:'issue_reported'
+      });
+      card.querySelector('[data-incident-note]').value = '';
+      showToast('Incident reported');
+    }
+
+    async function handleSubmitForReview(jobId){
+      if (!confirm('Submit this job for admin review? Make sure checklist and after photos are complete.')) return;
+      await updateJobWorkflow(jobId, {
+        status:'submitted',
+        workflowStatus:'submitted_for_review',
+        submittedForReviewAt: serverTimestamp(),
+        submittedByUid: me?.uid || '',
+        submittedByEmail: me?.email || ''
+      });
+      showToast('Submitted for admin review');
+    }
+
     async function injectMineActions(j){
       const card = myJobsEl.querySelector(`[data-jobid="${j.id}"]`);
       if (!card) return;
@@ -1416,30 +1760,63 @@ import { auth, db, storage } from "./ft-firebase.js";
         }
       }
 
+      card.querySelector('[data-workflow-act="gps"]')?.addEventListener('click', async (e) => {
+        e.currentTarget.disabled = true;
+        try { await handleGpsCheckIn(j.id); }
+        catch(err){ console.warn(err); alert('Could not save check-in.'); }
+        finally { e.currentTarget.disabled = false; }
+      });
+
+      card.querySelector('[data-workflow-act="before"]')?.addEventListener('click', async (e) => {
+        const input = card.querySelector('[data-before-files]');
+        e.currentTarget.disabled = true;
+        try { const files = await uploadJobFiles(j.id, input?.files, 'before'); showToast(`${files.length} before photo(s) uploaded`); if(input) input.value=''; }
+        catch(err){ console.warn(err); alert(err.message || 'Could not upload before photos.'); }
+        finally { e.currentTarget.disabled = false; }
+      });
+
+      card.querySelector('[data-workflow-act="start"]')?.addEventListener('click', async (e) => {
+        e.currentTarget.disabled = true;
+        try { await handleStartWork(j.id); }
+        catch(err){ console.warn(err); alert('Could not start work.'); }
+        finally { e.currentTarget.disabled = false; }
+      });
+
+      card.querySelector('[data-workflow-act="checklist"]')?.addEventListener('click', async (e) => {
+        e.currentTarget.disabled = true;
+        try { await handleChecklist(j.id); }
+        catch(err){ console.warn(err); alert('Could not save checklist.'); }
+        finally { e.currentTarget.disabled = false; }
+      });
+
+      card.querySelector('[data-workflow-act="after"]')?.addEventListener('click', async (e) => {
+        const input = card.querySelector('[data-after-files]');
+        e.currentTarget.disabled = true;
+        try { const files = await uploadJobFiles(j.id, input?.files, 'after'); showToast(`${files.length} after photo(s) uploaded`); if(input) input.value=''; }
+        catch(err){ console.warn(err); alert(err.message || 'Could not upload after photos.'); }
+        finally { e.currentTarget.disabled = false; }
+      });
+
+      card.querySelector('[data-workflow-act="incident"]')?.addEventListener('click', async (e) => {
+        e.currentTarget.disabled = true;
+        try { await handleIncident(j.id); }
+        catch(err){ console.warn(err); alert('Could not report incident.'); }
+        finally { e.currentTarget.disabled = false; }
+      });
+
+      card.querySelector('[data-workflow-act="submit"]')?.addEventListener('click', async (e) => {
+        e.currentTarget.disabled = true;
+        try { await handleSubmitForReview(j.id); }
+        catch(err){ console.warn(err); alert('Could not submit job for review.'); }
+        finally { e.currentTarget.disabled = false; }
+      });
+
       const msg = document.createElement('a');
       msg.className = 'btn btn-outline';
       msg.textContent = 'Message Admin';
       msg.href = '#';
       msg.addEventListener('click', (e)=>{ e.preventDefault(); alert('Messaging coming soon.'); });
       actions.appendChild(msg);
-
-      const mark = document.createElement('button');
-      mark.className = 'btn btn-solid';
-      mark.textContent = j.status === 'in_progress' ? 'Mark Submitted'
-                      : (j.status === 'claimed' ? 'Start Work'
-                      : (j.status === 'submitted' ? 'Submitted' : 'Update Status'));
-      mark.disabled = (j.status === 'submitted' || j.status === 'approved' || j.status === 'paid');
-      mark.addEventListener('click', async () => {
-        try {
-          const newStatus = j.status === 'claimed' ? 'in_progress' : 'submitted';
-          await updateDoc(doc(db, 'jobs', j.id), { status: newStatus, updatedAt: serverTimestamp() });
-          showToast(newStatus === 'in_progress' ? 'Marked in progress' : 'Marked submitted');
-        } catch (e) {
-          console.warn(e);
-          alert('Could not update status.');
-        }
-      });
-      actions.appendChild(mark);
     }
 
     async function claimJob(jobId, buttonEl){
@@ -1474,6 +1851,8 @@ import { auth, db, storage } from "./ft-firebase.js";
           const update = {
             contractorIds: ids,
             contractorEmails: emails,
+            workflowStatus: ids.length >= need ? 'assigned' : 'pending_assignment',
+            assignedAt: serverTimestamp(),
             updatedAt: serverTimestamp()
           };
           if (ids.length >= need) {
@@ -1835,7 +2214,7 @@ import { auth, db, storage } from "./ft-firebase.js";
         },
         jobs: {
           title: "Jobs / Assignments",
-          text: "This will become your detailed job board with assigned work, arrival details, service notes, and completion steps."
+          text: "View assigned work, GPS check-in, upload required photos, complete your checklist, report issues, and submit jobs for admin review."
         },
         availability: {
           title: "Availability",
