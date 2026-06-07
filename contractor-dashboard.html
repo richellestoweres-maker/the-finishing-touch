@@ -130,11 +130,11 @@ function renderProfile(){ const c=userData.compliance||{}; $('stepProfile').inne
 <label class="field full">Emergency Contact<input id="pEmergency" value="${c.emergencyContact||''}" placeholder="Name, relationship, phone number"></label>
 </div>`; }
 function renderDocs(){ $('stepDocs').innerHTML=`<div class="doc-stack">
-  <div class="doc-item"><div class="doc-head"><h3>Identity Verification</h3><span class="status-pill">${docStatus('id')}</span></div><div class="hint">Upload clear front and back images of your driver’s license or state ID.</div><input id="upload-id" type="file" accept="image/*,.pdf" multiple><button class="btn btn-primary" type="button" data-upload="id">Upload ID Front & Back</button></div>
+  <div class="doc-item"><div class="doc-head"><h3>Identity Verification</h3><span class="status-pill">${docStatus('id')}</span></div><div class="hint">Upload two separate files: one clear image/PDF of the front of your driver’s license or state ID, and one clear image/PDF of the back.</div><label class="field">Front of ID<input id="upload-id-front" type="file" accept="image/*,.pdf"></label><label class="field">Back of ID<input id="upload-id-back" type="file" accept="image/*,.pdf"></label><button class="btn btn-primary" type="button" data-upload="id">Upload ID Front + Back</button></div>
   <div class="doc-item"><div class="doc-head"><h3>W-9 / Tax Info</h3><span class="status-pill">${docStatus('w9')}</span></div><div class="hint">A completed IRS Form W-9 is required before payment can be issued.</div><input id="upload-w9" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="w9">Upload W-9</button></div>
   <div class="doc-item"><div class="doc-head"><h3>Certificate of Insurance</h3><span class="status-pill">${docStatus('coi')}</span></div><div class="hint">COI must list Johnnie and Jane Boutique, LLC DBA The Finishing Touch as Certificate Holder.</div><label class="field">Policy Expiration<input id="coiExpiration" type="date" value="${docs().coi?.expiration||''}"></label><input id="upload-coi" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="coi">Upload COI</button></div>
   <div class="doc-item"><div class="doc-head"><h3>Portfolio / Work Samples</h3><span class="status-pill">${docStatus('portfolio')||'Optional'}</span></div><div class="hint">Optional: before/after photos, organizing, decorating, staging examples, or certifications.</div><input id="upload-portfolio" type="file" accept="image/*,.pdf" multiple><button class="btn btn-soft" type="button" data-upload="portfolio">Upload Work Samples</button></div>
-</div>`; document.querySelectorAll('[data-upload]').forEach(b=>b.addEventListener('click',()=>uploadDoc(b.dataset.upload))); }
+</div>`; document.querySelectorAll('[data-upload]').forEach(b=>b.addEventListener('click',()=>uploadDoc(b.dataset.upload,b))); }
 function renderAgreement(){ const a=agreement(); const initials=a.initials||{}; const checks=a.acknowledgments||{}; $('stepAgreement').innerHTML=`<div class="agreement-shell"><div class="agreement-toolbar"><strong>Hiring Packet & Agreement</strong><span class="status-pill">${agreementComplete()?'Complete':'Not Complete'}</span></div><div class="agreement-scroll">
 ${clauses.map(cl=>`<div class="clause-card"><h4>${cl.title}</h4><p>${cl.text}</p><div class="initial-line"><div class="hint">Type your initials to acknowledge this section.</div><label class="field">Initials<input data-initial="${cl.key}" maxlength="6" value="${initials[cl.key]||''}" placeholder="Initial"></label></div></div>`).join('')}
 <div class="clause-card"><h4>Additional Required Acknowledgments</h4><div class="consent-box">
@@ -153,7 +153,79 @@ function renderAllSteps(){ renderWelcome(); renderProfile(); renderDocs(); rende
 async function saveProfile(){ if(!me)return; await setDoc(doc(db,'users',me.uid),{ compliance:{ legalName:$('pLegal')?.value.trim()||'', businessEntityType:$('pEntity')?.value.trim()||'', mailingAddress:$('pAddress')?.value.trim()||'', phone:$('pPhone')?.value.trim()||'', email:$('pEmail')?.value.trim()||'', emergencyContact:$('pEmergency')?.value.trim()||'', workerType:'1099_independent_contractor', updatedAt:serverTimestamp() }, legalName:$('pLegal')?.value.trim()||'', phone:$('pPhone')?.value.trim()||'', updatedAt:serverTimestamp() },{merge:true}); await reloadUser(); }
 async function saveAgreement(){ if(!me)return; const initials={}; document.querySelectorAll('[data-initial]').forEach(i=>initials[i.dataset.initial]=i.value.trim()); const acknowledgments={}; document.querySelectorAll('[data-ack]').forEach(i=>acknowledgments[i.dataset.ack]=i.checked); await setDoc(doc(db,'users',me.uid),{ compliance:{ agreement:{ adminStatus:'pending_review', effectiveDate:$('aDate')?.value||'', printedNameTitle:$('aPrinted')?.value.trim()||'', signatureName:$('aSignature')?.value.trim()||'', initials, acknowledgments, signedAt:serverTimestamp(), signedByUid:me.uid, signedByEmail:me.email||'', version:'TFT Hiring Packet contractor-only app v2' }, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true}); await reloadUser(); }
 async function reloadUser(){ if(!me)return; const snap=await getDoc(doc(db,'users',me.uid)); userData=snap.exists()?snap.data():{}; renderAllSteps(); }
-async function uploadDoc(type){ if(!me)return; const input=$(`upload-${type}`); if(!input?.files?.length){alert('Please choose a file first.');return;} if(type==='id' && input.files.length<2){alert('Please upload both the front and back of the ID.');return;} try{ const uploaded=[]; for(const file of Array.from(input.files)){ const path=`users/${me.uid}/compliance/${type}/${Date.now()}-${cleanName(file.name)}`; const r=storageRef(storage,path); await uploadBytes(r,file); const url=await getDownloadURL(r); uploaded.push({name:file.name,type:file.type,size:file.size,path,url,uploadedAt:new Date().toISOString()}); } const first=uploaded[0]||{}; const payload={adminStatus:'pending_review',files:uploaded,url:first.url||'',path:first.path||'',uploadedAt:serverTimestamp()}; if(type==='coi') payload.expiration=$('coiExpiration')?.value||''; await setDoc(doc(db,'users',me.uid),{ compliance:{ documents:{[type]:payload}, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true}); toast('Uploaded'); await reloadUser(); showStep(currentStep); }catch(err){console.warn(err); alert('Could not upload. Please try again.');}}
+async function uploadDoc(type, buttonEl){
+  if(!me){ alert('Please sign in first.'); return; }
+  const statusText = (txt)=>{ const pill = document.querySelector(`[data-upload="${type}"]`)?.closest('.doc-item')?.querySelector('.status-pill'); if(pill) pill.textContent = txt; };
+  const setBusy = (busy, label)=>{ if(buttonEl){ buttonEl.disabled = busy; if(label) buttonEl.textContent = label; } };
+  let files = [];
+  let idFrontMeta = null;
+  let idBackMeta = null;
+
+  if(type === 'id'){
+    const frontInput = $('upload-id-front');
+    const backInput = $('upload-id-back');
+    const front = frontInput?.files?.[0] || null;
+    const back = backInput?.files?.[0] || null;
+    if(!front || !back){ alert('Please choose two separate files: front of ID and back of ID.'); return; }
+    files = [{file:front, side:'front'}, {file:back, side:'back'}];
+  } else {
+    const input=$(`upload-${type}`);
+    if(!input?.files?.length){ alert('Please choose a file first.'); return; }
+    files = Array.from(input.files).map(file=>({file, side:''}));
+  }
+
+  try{
+    setBusy(true, 'Uploading…');
+    statusText('Uploading…');
+    const uploaded=[];
+
+    for(const item of files){
+      const file = item.file;
+      const sideFolder = item.side ? `/${item.side}` : '';
+      const path=`users/${me.uid}/compliance/${type}${sideFolder}/${Date.now()}-${cleanName(file.name)}`;
+      const r=storageRef(storage,path);
+      await uploadBytes(r,file);
+      const url=await getDownloadURL(r);
+      const meta={name:file.name,type:file.type,size:file.size,path,url,uploadedAt:new Date().toISOString(), side:item.side || undefined};
+      uploaded.push(meta);
+      if(type === 'id' && item.side === 'front') idFrontMeta = meta;
+      if(type === 'id' && item.side === 'back') idBackMeta = meta;
+    }
+
+    const first=uploaded[0]||{};
+    const payload={adminStatus:'pending_review',files:uploaded,url:first.url||'',path:first.path||'',uploadedAt:serverTimestamp()};
+    if(type === 'id'){
+      payload.front = idFrontMeta || null;
+      payload.back = idBackMeta || null;
+    }
+    if(type==='coi') payload.expiration=$('coiExpiration')?.value||'';
+
+    await setDoc(doc(db,'users',me.uid),{ compliance:{ documents:{[type]:payload}, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true});
+
+    if(type === 'id'){
+      if($('upload-id-front')) $('upload-id-front').value='';
+      if($('upload-id-back')) $('upload-id-back').value='';
+    } else if($(`upload-${type}`)) {
+      $(`upload-${type}`).value='';
+    }
+
+    toast(type === 'id' ? 'ID front and back uploaded' : 'Document uploaded');
+    statusText('Uploaded - Pending Review');
+    await reloadUser();
+    showStep(currentStep);
+  }catch(err){
+    console.warn('Upload failed:', err);
+    statusText('Upload Failed');
+    let msg = 'Could not upload. Please try again.';
+    if(err?.code === 'storage/unauthorized') msg = 'Upload blocked by Firebase Storage rules. Publish the updated storage.rules file in Firebase Storage > Rules.';
+    if(err?.code === 'storage/canceled') msg = 'Upload canceled.';
+    if(err?.code === 'storage/retry-limit-exceeded') msg = 'Upload timed out. Check internet connection and try again.';
+    alert(msg);
+  } finally {
+    const labels = {id:'Upload ID Front + Back', w9:'Upload W-9', coi:'Upload COI', portfolio:'Upload Work Samples'};
+    setBusy(false, labels[type] || 'Upload');
+  }
+}
 async function saveCurrentStep(){ if(steps[currentStep]==='profile') await saveProfile(); if(steps[currentStep]==='agreement') await saveAgreement(); }
 async function next(){ try{ await saveCurrentStep(); if(currentStep<steps.length-1){ showStep(currentStep+1); return;} if(!profileComplete()){alert('Profile info is incomplete.');showStep(1);return;} if(!requiredDocs.every(docDone)){alert('Required documents are incomplete.');showStep(2);return;} if(!agreementComplete()){alert('Agreement initials, acknowledgments, or signature are incomplete.');showStep(3);return;} await setDoc(doc(db,'users',me.uid),{ contractorStatus:'pending_admin_review', compliance:{ onboarding:{submittedAt:serverTimestamp(), status:'pending_admin_review'}, overallStatus:'pending_admin_review', updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true}); toast('Submitted for admin review'); await reloadUser(); showStep(0); }catch(e){console.warn(e); alert('Could not save. Please try again.');}}
 $('nextStep').addEventListener('click', next); $('backStep').addEventListener('click',()=>showStep(currentStep-1)); $('signOutBtn').addEventListener('click',async e=>{e.preventDefault(); await signOut(auth); location.href='index.html';});
