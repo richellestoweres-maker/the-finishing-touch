@@ -70,7 +70,7 @@ button,input,textarea,select{font:inherit} button{cursor:pointer}.hidden{display
 import { auth, db, storage } from "./ft-firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 import { collection, query, where, onSnapshot, doc, getDoc, setDoc, updateDoc, addDoc, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
 const $ = (id)=>document.getElementById(id);
 const screens = { signedOut:$('signedOutScreen'), pending:$('pendingScreen'), onboarding:$('onboardingScreen'), app:$('appScreen') };
@@ -107,7 +107,25 @@ function docs(){ return userData.compliance?.documents || {}; }
 function agreement(){ return userData.compliance?.agreement || {}; }
 function onboarding(){ return userData.compliance?.onboarding || {}; }
 function docDone(type){ const d=docs()[type]; return !!(d?.url || (Array.isArray(d?.files)&&d.files.length)); }
-function docStatus(type){ const d=docs()[type]; if(!d) return 'Not Uploaded'; return d.adminStatus ? cap(d.adminStatus) : 'Uploaded - Pending Review'; }
+function docStatus(type){
+  const d = docs()[type];
+  if(!d) return 'Not Uploaded';
+  const hasFiles = !!(d.url || d.path || (Array.isArray(d.files) && d.files.length));
+  const status = String(d.adminStatus || '').toLowerCase();
+  if(hasFiles && (!status || status === 'pending_review' || status === 'pending review')) return 'Uploaded - Pending Review';
+  if(status === 'approved' || status === 'verified' || status === 'active') return 'Approved';
+  if(status === 'rejected' || status === 'needs_update' || status === 'needs update') return 'Needs Update';
+  if(hasFiles) return cap(status || 'Uploaded - Pending Review');
+  return 'Not Uploaded';
+}
+function portfolioStatus(){ const d=docs().portfolio; const count=Array.isArray(d?.files)?d.files.length:0; return count ? `${count} File${count===1?'':'s'} Uploaded` : 'Optional'; }
+function uploadSummary(type){
+  const d = docs()[type];
+  const count = Array.isArray(d?.files) ? d.files.length : (d?.url ? 1 : 0);
+  if(!count) return '';
+  if(type === 'id') return `<div class="hint"><strong>Uploaded:</strong> ${d.front ? 'Front received' : 'Front received'} + ${d.back ? 'Back received' : 'Back received'} — pending admin review.</div>`;
+  return `<div class="hint"><strong>Uploaded:</strong> ${count} file${count===1?'':'s'} received — pending admin review.</div>`;
+}
 function profileComplete(){ const c=userData.compliance||{}; return !!(c.legalName && c.phone && c.mailingAddress && c.emergencyContact); }
 function agreementComplete(){ const a=agreement(); const initials=a.initials||{}; const allInitialed=clauseKeys.every(k=>String(initials[k]||'').trim()); const checks=a.acknowledgments||{}; return !!(a.signatureName && allInitialed && checks.fullAgreement && checks.w9 && checks.coi && checks.photoPolicy && checks.electronicSignature); }
 function pct(){ let done=0; if(profileComplete()) done++; if(requiredDocs.every(docDone)) done++; if(agreementComplete()) done++; if(submitted(userData)) done++; return Math.round((done/4)*100); }
@@ -130,10 +148,10 @@ function renderProfile(){ const c=userData.compliance||{}; $('stepProfile').inne
 <label class="field full">Emergency Contact<input id="pEmergency" value="${c.emergencyContact||''}" placeholder="Name, relationship, phone number"></label>
 </div>`; }
 function renderDocs(){ $('stepDocs').innerHTML=`<div class="doc-stack">
-  <div class="doc-item"><div class="doc-head"><h3>Identity Verification</h3><span class="status-pill">${docStatus('id')}</span></div><div class="hint">Upload two separate files: one clear image/PDF of the front of your driver’s license or state ID, and one clear image/PDF of the back.</div><label class="field">Front of ID<input id="upload-id-front" type="file" accept="image/*,.pdf"></label><label class="field">Back of ID<input id="upload-id-back" type="file" accept="image/*,.pdf"></label><button class="btn btn-primary" type="button" data-upload="id">Upload ID Front + Back</button></div>
-  <div class="doc-item"><div class="doc-head"><h3>W-9 / Tax Info</h3><span class="status-pill">${docStatus('w9')}</span></div><div class="hint">A completed IRS Form W-9 is required before payment can be issued.</div><input id="upload-w9" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="w9">Upload W-9</button></div>
-  <div class="doc-item"><div class="doc-head"><h3>Certificate of Insurance</h3><span class="status-pill">${docStatus('coi')}</span></div><div class="hint">COI must list Johnnie and Jane Boutique, LLC DBA The Finishing Touch as Certificate Holder.</div><label class="field">Policy Expiration<input id="coiExpiration" type="date" value="${docs().coi?.expiration||''}"></label><input id="upload-coi" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="coi">Upload COI</button></div>
-  <div class="doc-item"><div class="doc-head"><h3>Portfolio / Work Samples</h3><span class="status-pill">${docStatus('portfolio')||'Optional'}</span></div><div class="hint">Optional: before/after photos, organizing, decorating, staging examples, or certifications.</div><input id="upload-portfolio" type="file" accept="image/*,.pdf" multiple><button class="btn btn-soft" type="button" data-upload="portfolio">Upload Work Samples</button></div>
+  <div class="doc-item"><div class="doc-head"><h3>Identity Verification</h3><span class="status-pill">${docStatus('id')}</span></div><div class="hint">Upload two separate files: one clear image/PDF of the front of your driver’s license or state ID, and one clear image/PDF of the back.</div><label class="field">Front of ID<input id="upload-id-front" type="file" accept="image/*,.pdf"></label><label class="field">Back of ID<input id="upload-id-back" type="file" accept="image/*,.pdf"></label><button class="btn btn-primary" type="button" data-upload="id">Upload ID Front + Back</button>${uploadSummary('id')}</div>
+  <div class="doc-item"><div class="doc-head"><h3>W-9 / Tax Info</h3><span class="status-pill">${docStatus('w9')}</span></div><div class="hint">A completed IRS Form W-9 is required before payment can be issued.</div><input id="upload-w9" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="w9">Upload W-9</button>${uploadSummary('w9')}</div>
+  <div class="doc-item"><div class="doc-head"><h3>Certificate of Insurance</h3><span class="status-pill">${docStatus('coi')}</span></div><div class="hint">COI must list Johnnie and Jane Boutique, LLC DBA The Finishing Touch as Certificate Holder.</div><label class="field">Policy Expiration<input id="coiExpiration" type="date" value="${docs().coi?.expiration||''}"></label><input id="upload-coi" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="coi">Upload COI</button>${uploadSummary('coi')}</div>
+  <div class="doc-item"><div class="doc-head"><h3>Portfolio / Work Samples</h3><span class="status-pill">${portfolioStatus()}</span></div><div class="hint">Optional: upload multiple before/after photos, organizing projects, decorating/staging examples, or certifications. This is separate from required compliance documents.</div><label class="field">Portfolio Photos<input id="upload-portfolio-photos" type="file" accept="image/*" multiple></label><label class="field">Certifications / PDF Work Samples<input id="upload-portfolio-docs" type="file" accept="image/*,.pdf" multiple></label><button class="btn btn-soft" type="button" data-upload="portfolio">Add Portfolio Files</button><div class="hint">You can select more than one photo at a time. New portfolio uploads will be added to your file, not replace the previous ones.</div>${uploadSummary('portfolio')}</div>
 </div>`; document.querySelectorAll('[data-upload]').forEach(b=>b.addEventListener('click',()=>uploadDoc(b.dataset.upload,b))); }
 function renderAgreement(){ const a=agreement(); const initials=a.initials||{}; const checks=a.acknowledgments||{}; $('stepAgreement').innerHTML=`<div class="agreement-shell"><div class="agreement-toolbar"><strong>Hiring Packet & Agreement</strong><span class="status-pill">${agreementComplete()?'Complete':'Not Complete'}</span></div><div class="agreement-scroll">
 ${clauses.map(cl=>`<div class="clause-card"><h4>${cl.title}</h4><p>${cl.text}</p><div class="initial-line"><div class="hint">Type your initials to acknowledge this section.</div><label class="field">Initials<input data-initial="${cl.key}" maxlength="6" value="${initials[cl.key]||''}" placeholder="Initial"></label></div></div>`).join('')}
@@ -153,9 +171,48 @@ function renderAllSteps(){ renderWelcome(); renderProfile(); renderDocs(); rende
 async function saveProfile(){ if(!me)return; await setDoc(doc(db,'users',me.uid),{ compliance:{ legalName:$('pLegal')?.value.trim()||'', businessEntityType:$('pEntity')?.value.trim()||'', mailingAddress:$('pAddress')?.value.trim()||'', phone:$('pPhone')?.value.trim()||'', email:$('pEmail')?.value.trim()||'', emergencyContact:$('pEmergency')?.value.trim()||'', workerType:'1099_independent_contractor', updatedAt:serverTimestamp() }, legalName:$('pLegal')?.value.trim()||'', phone:$('pPhone')?.value.trim()||'', updatedAt:serverTimestamp() },{merge:true}); await reloadUser(); }
 async function saveAgreement(){ if(!me)return; const initials={}; document.querySelectorAll('[data-initial]').forEach(i=>initials[i.dataset.initial]=i.value.trim()); const acknowledgments={}; document.querySelectorAll('[data-ack]').forEach(i=>acknowledgments[i.dataset.ack]=i.checked); await setDoc(doc(db,'users',me.uid),{ compliance:{ agreement:{ adminStatus:'pending_review', effectiveDate:$('aDate')?.value||'', printedNameTitle:$('aPrinted')?.value.trim()||'', signatureName:$('aSignature')?.value.trim()||'', initials, acknowledgments, signedAt:serverTimestamp(), signedByUid:me.uid, signedByEmail:me.email||'', version:'TFT Hiring Packet contractor-only app v2' }, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true}); await reloadUser(); }
 async function reloadUser(){ if(!me)return; const snap=await getDoc(doc(db,'users',me.uid)); userData=snap.exists()?snap.data():{}; renderAllSteps(); }
+function uploadFileWithProgress(fileRef, file, onProgress){
+  return new Promise((resolve, reject) => {
+    const maxBytes = 50 * 1024 * 1024;
+    if(file.size > maxBytes){
+      reject(new Error(`${file.name} is too large. Please upload a file under 50MB.`));
+      return;
+    }
+
+    const task = uploadBytesResumable(fileRef, file);
+    const timer = setTimeout(() => {
+      try { task.cancel(); } catch {}
+      reject(new Error('Upload timed out. Please check your connection and try again.'));
+    }, 120000);
+
+    task.on('state_changed',
+      (snapshot) => {
+        const pct = snapshot.totalBytes ? Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100) : 0;
+        onProgress?.(pct, snapshot.bytesTransferred, snapshot.totalBytes);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+      async () => {
+        clearTimeout(timer);
+        try {
+          const url = await getDownloadURL(task.snapshot.ref);
+          resolve(url);
+        } catch (error) {
+          reject(error);
+        }
+      }
+    );
+  });
+}
+
 async function uploadDoc(type, buttonEl){
   if(!me){ alert('Please sign in first.'); return; }
-  const statusText = (txt)=>{ const pill = document.querySelector(`[data-upload="${type}"]`)?.closest('.doc-item')?.querySelector('.status-pill'); if(pill) pill.textContent = txt; };
+  if(!storage){ alert('Firebase Storage is not initialized. Check ft-firebase.js.'); return; }
+
+  const docItem = buttonEl?.closest('.doc-item');
+  const statusText = (txt)=>{ const pill = docItem?.querySelector('.status-pill'); if(pill) pill.textContent = txt; };
   const setBusy = (busy, label)=>{ if(buttonEl){ buttonEl.disabled = busy; if(label) buttonEl.textContent = label; } };
   let files = [];
   let idFrontMeta = null;
@@ -167,33 +224,49 @@ async function uploadDoc(type, buttonEl){
     const front = frontInput?.files?.[0] || null;
     const back = backInput?.files?.[0] || null;
     if(!front || !back){ alert('Please choose two separate files: front of ID and back of ID.'); return; }
-    files = [{file:front, side:'front'}, {file:back, side:'back'}];
+    files = [{file:front, side:'front', label:'Front'}, {file:back, side:'back', label:'Back'}];
+  } else if(type === 'portfolio'){
+    const photoInput = $('upload-portfolio-photos');
+    const docInput = $('upload-portfolio-docs');
+    const photoFiles = Array.from(photoInput?.files || []).map(file=>({file, side:'photos', label:'Photo'}));
+    const docFiles = Array.from(docInput?.files || []).map(file=>({file, side:'docs', label:'File'}));
+    files = [...photoFiles, ...docFiles];
+    if(!files.length){ alert('Please choose one or more portfolio photos or files first.'); return; }
   } else {
     const input=$(`upload-${type}`);
     if(!input?.files?.length){ alert('Please choose a file first.'); return; }
-    files = Array.from(input.files).map(file=>({file, side:''}));
+    files = Array.from(input.files).map(file=>({file, side:'', label:cap(type)}));
   }
 
   try{
-    setBusy(true, 'Uploading…');
+    setBusy(true, 'Starting upload…');
     statusText('Uploading…');
     const uploaded=[];
 
-    for(const item of files){
+    for(let i=0; i<files.length; i++){
+      const item = files[i];
       const file = item.file;
       const sideFolder = item.side ? `/${item.side}` : '';
       const path=`users/${me.uid}/compliance/${type}${sideFolder}/${Date.now()}-${cleanName(file.name)}`;
       const r=storageRef(storage,path);
-      await uploadBytes(r,file);
-      const url=await getDownloadURL(r);
+
+      const url = await uploadFileWithProgress(r, file, (pct)=>{
+        const label = files.length > 1 ? `${item.label} ${i+1}/${files.length}` : item.label;
+        setBusy(true, `${label}: ${pct}%`);
+        statusText(`${pct}% Uploaded`);
+      });
+
       const meta={name:file.name,type:file.type,size:file.size,path,url,uploadedAt:new Date().toISOString(), side:item.side || undefined};
       uploaded.push(meta);
       if(type === 'id' && item.side === 'front') idFrontMeta = meta;
       if(type === 'id' && item.side === 'back') idBackMeta = meta;
     }
 
+    setBusy(true, 'Saving…');
+    statusText('Saving…');
     const first=uploaded[0]||{};
-    const payload={adminStatus:'pending_review',files:uploaded,url:first.url||'',path:first.path||'',uploadedAt:serverTimestamp()};
+    const existingFiles = Array.isArray(docs()[type]?.files) ? docs()[type].files : [];
+    const payload={adminStatus:'pending_review',files:type === 'portfolio' ? [...existingFiles, ...uploaded] : uploaded,url:first.url||'',path:first.path||'',uploadedAt:serverTimestamp()};
     if(type === 'id'){
       payload.front = idFrontMeta || null;
       payload.back = idBackMeta || null;
@@ -202,27 +275,34 @@ async function uploadDoc(type, buttonEl){
 
     await setDoc(doc(db,'users',me.uid),{ compliance:{ documents:{[type]:payload}, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true});
 
+    userData.compliance = userData.compliance || {};
+    userData.compliance.documents = userData.compliance.documents || {};
+    userData.compliance.documents[type] = payload;
+
     if(type === 'id'){
       if($('upload-id-front')) $('upload-id-front').value='';
       if($('upload-id-back')) $('upload-id-back').value='';
+    } else if(type === 'portfolio') {
+      if($('upload-portfolio-photos')) $('upload-portfolio-photos').value='';
+      if($('upload-portfolio-docs')) $('upload-portfolio-docs').value='';
     } else if($(`upload-${type}`)) {
       $(`upload-${type}`).value='';
     }
 
-    toast(type === 'id' ? 'ID front and back uploaded' : 'Document uploaded');
+    toast(type === 'id' ? 'ID front and back uploaded' : type === 'portfolio' ? 'Portfolio files added' : 'Document uploaded');
     statusText('Uploaded - Pending Review');
     await reloadUser();
     showStep(currentStep);
   }catch(err){
     console.warn('Upload failed:', err);
     statusText('Upload Failed');
-    let msg = 'Could not upload. Please try again.';
+    let msg = err?.message || 'Could not upload. Please try again.';
     if(err?.code === 'storage/unauthorized') msg = 'Upload blocked by Firebase Storage rules. Publish the updated storage.rules file in Firebase Storage > Rules.';
-    if(err?.code === 'storage/canceled') msg = 'Upload canceled.';
+    if(err?.code === 'storage/canceled') msg = 'Upload canceled or timed out. Please try again with a smaller file or stronger connection.';
     if(err?.code === 'storage/retry-limit-exceeded') msg = 'Upload timed out. Check internet connection and try again.';
     alert(msg);
   } finally {
-    const labels = {id:'Upload ID Front + Back', w9:'Upload W-9', coi:'Upload COI', portfolio:'Upload Work Samples'};
+    const labels = {id:'Upload ID Front + Back', w9:'Upload W-9', coi:'Upload COI', portfolio:'Add Portfolio Files'};
     setBusy(false, labels[type] || 'Upload');
   }
 }
@@ -237,7 +317,7 @@ function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if
 function renderJobs(){ const box=$('view-jobs'); box.innerHTML=`<p class="mini-kicker">Jobs</p><h2 class="screen-title">Opportunities & Assignments</h2><div class="grid"><div><h3>Open Jobs</h3><div id="openJobList"></div></div><div><h3>My Jobs</h3><div id="myJobList"></div></div></div>`; $('openJobList').innerHTML=openJobs.length?openJobs.map(jobCard).join(''):'<div class="empty">No open jobs right now.</div>'; $('myJobList').innerHTML=myJobs.length?myJobs.map(jobCard).join(''):'<div class="empty">No accepted jobs yet.</div>'; document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>claimJob(b.dataset.claim,b))); document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>downloadICS(myJobs.find(j=>j.id===b.dataset.ics)))); }
 function jobCard(j){ const dt=j.serviceDate?.toDate?.(); const when=dt?dt.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):(j.date||j.window||''); const mine=(Array.isArray(j.contractorIds)&&j.contractorIds.includes(me?.uid))||j.contractorId===me?.uid; return `<div class="job-card"><strong>${cap(j.serviceType||'Job')}</strong><div class="meta">${j.zip?`<span>📍 ${j.zip}</span>`:''}${when?`<span>🗓️ ${when}</span>`:''}${j.flatRate?`<span>$${Math.round(Number(j.flatRate))}</span>`:''}<span>${cap(j.status||'open')}</span></div>${j.summary?`<p class="hint">${j.summary}</p>`:''}<div class="actions">${!mine?`<button class="btn btn-primary" data-claim="${j.id}">Claim</button>`:`<button class="btn btn-outline" data-ics="${j.id}">Add to Calendar</button>`}<button class="btn btn-soft" type="button" onclick="alert('Messaging coming soon')">Message Admin</button></div></div>`; }
 function renderAvailability(){ $('view-availability').innerHTML=`<p class="mini-kicker">Availability</p><h2 class="screen-title">TFT-only availability</h2><p class="screen-copy">Save the days and windows you want available for scheduling.</p><div class="form-grid"><label class="field full">Available Slots<textarea id="availSlots" placeholder="Example: Tue 8:30, Thu 11:15"></textarea></label><label class="field full">Blocked Days<textarea id="blockedDays" placeholder="Example: unavailable June 14-18"></textarea></label></div><div class="actions"><button class="btn btn-primary" id="saveAvail">Save Availability</button></div>`; $('saveAvail')?.addEventListener('click',async()=>{await setDoc(doc(db,'users',me.uid,'contractorSettings','availability'),{availableSlots:$('availSlots').value.trim(),blockedDays:$('blockedDays').value.trim(),updatedAt:serverTimestamp()},{merge:true});toast('Availability saved');}); }
-function renderDocumentsView(){ $('view-documents').innerHTML=`<p class="mini-kicker">Documents</p><h2 class="screen-title">Compliance File</h2><div class="review-grid"><div class="review-row"><span>ID</span><strong>${docStatus('id')}</strong></div><div class="review-row"><span>W-9</span><strong>${docStatus('w9')}</strong></div><div class="review-row"><span>COI</span><strong>${docStatus('coi')}</strong></div><div class="review-row"><span>Agreement</span><strong>${agreementComplete()?'Signed / Pending Review':'Not Complete'}</strong></div><div class="review-row"><span>Overall</span><strong>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'not active')}</strong></div></div>`; }
+function renderDocumentsView(){ $('view-documents').innerHTML=`<p class="mini-kicker">Documents</p><h2 class="screen-title">Compliance File</h2><div class="review-grid"><div class="review-row"><span>ID</span><strong>${docStatus('id')}</strong></div><div class="review-row"><span>W-9</span><strong>${docStatus('w9')}</strong></div><div class="review-row"><span>COI</span><strong>${docStatus('coi')}</strong></div><div class="review-row"><span>Agreement</span><strong>${agreementComplete()?'Signed / Pending Review':'Not Complete'}</strong></div><div class="review-row"><span>Portfolio</span><strong>${portfolioStatus()}</strong></div><div class="review-row"><span>Overall</span><strong>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'not active')}</strong></div></div>`; }
 function renderResources(){ $('view-resources').innerHTML=`<p class="mini-kicker">Resources</p><h2 class="screen-title">Resources coming soon</h2><p class="screen-copy">This area will hold training, product standards, and job-specific instructions later. Cleaning checklists are intentionally not part of onboarding.</p>`; }
 function startJobListeners(){ unsubs.forEach(u=>{try{u()}catch{}}); unsubs=[]; unsubs.push(onSnapshot(query(collection(db,'jobs'),where('status','==','open')),snap=>{openJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); unsubs.push(onSnapshot(query(collection(db,'jobs'),where('contractorIds','array-contains',me.uid)),snap=>{myJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); }
 async function claimJob(id,b){ if(!isActive(userData)){toast('Account must be active first');return;} b.disabled=true; try{ await runTransaction(db,async tx=>{const ref=doc(db,'jobs',id); const s=await tx.get(ref); if(!s.exists())throw new Error('Job not found'); const j=s.data(); const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:(j.contractorId?[j.contractorId]:[]); if(!ids.includes(me.uid)) ids.push(me.uid); tx.update(ref,{contractorIds:ids,contractorEmails:[...new Set([...(j.contractorEmails||[]),me.email||''])],status:'claimed',workflowStatus:'assigned',claimedAt:serverTimestamp(),updatedAt:serverTimestamp()}); }); toast('Job claimed'); }catch(e){console.warn(e);alert('Could not claim job.');} finally{b.disabled=false;} }
