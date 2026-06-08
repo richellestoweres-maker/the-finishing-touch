@@ -1,245 +1,532 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Apply to be a Contractor – The Finishing Touch</title>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Contractor Application – The Finishing Touch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600;700&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/>
+<style>
+:root{
+  --bg:#fbf7f4;--card:#fffdfb;--ink:#2f2926;--muted:#7a6f68;--line:#eadfd8;
+  --blush:#f2d8dc;--blush-strong:#e8b9c2;--soft:#fff1f3;--taupe:#d2bda9;
+  --shadow:0 18px 45px rgba(68,54,45,.10);--shadow-soft:0 10px 28px rgba(68,54,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(242,216,220,.75),transparent 34%),radial-gradient(circle at bottom right,rgba(210,189,169,.34),transparent 30%),var(--bg);font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+a{color:inherit}
+.app{width:min(980px,94%);margin:24px auto 70px;display:grid;gap:16px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(255,253,251,.86);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:28px;padding:14px 16px;box-shadow:var(--shadow-soft)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900}.vase-logo{width:34px;height:44px;background:url("logo-vase.png") center/contain no-repeat;display:inline-block}
+.brand-title{font-family:"Playfair Display",serif;font-size:1.2rem;line-height:1}.brand-sub{font-size:.78rem;color:var(--muted);font-weight:800;margin-top:3px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:.75rem 1rem;font-weight:900;text-decoration:none;cursor:pointer;font-family:inherit}
+.btn-solid{background:linear-gradient(135deg,var(--blush-strong),var(--taupe));color:var(--ink);box-shadow:0 10px 22px rgba(232,185,194,.34)}
+.btn-outline{background:#fffdfb;color:var(--ink);border:1.5px solid var(--ink)}
+.btn-soft{background:var(--soft);border:1px solid var(--blush);color:#7d4f59}
+.card{background:rgba(255,253,251,.95);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow-soft);padding:18px}
+.hero{display:grid;gap:10px;text-align:center;padding:26px 18px;background:linear-gradient(135deg,rgba(242,216,220,.95),rgba(255,253,251,.95) 55%,rgba(210,189,169,.42));border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow)}
+.script{font-family:Allura,cursive;font-size:2.2rem;color:#925e69;margin:0}
+h1,h2,h3{font-family:"Playfair Display",serif;margin:.15rem 0;color:var(--ink)}
+p{color:#61554f;font-weight:650;line-height:1.55}
+.muted{color:var(--muted);font-weight:750;font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.choice-card{display:grid;gap:10px;min-height:250px}
+.badge{width:max-content;max-width:100%;border-radius:999px;background:var(--soft);border:1px solid var(--blush);color:#7d4f59;font-size:.78rem;font-weight:900;padding:.28rem .68rem}
+.field{display:grid;gap:6px;font-weight:900;color:var(--ink)}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:16px;background:#fffdfb;color:var(--ink);padding:.78rem .85rem;font-family:inherit;outline:none}
+textarea{min-height:100px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--blush-strong);box-shadow:0 0 0 4px rgba(232,185,194,.18)}
+.hidden{display:none!important}
+.stepper{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap}.dot{height:9px;border-radius:999px;background:#eadfd8;width:38px}.dot.active{background:linear-gradient(135deg,var(--blush-strong),var(--taupe))}
+.actionbar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:14px}
+.checkrow{display:flex;align-items:flex-start;gap:9px;padding:10px;border:1px solid #f1dce1;border-radius:16px;background:#fff7f8;font-weight:800;color:#61554f}
+.checkrow input{width:auto;margin-top:3px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #f1dce1;background:#fff;border-radius:999px;padding:.52rem .75rem;font-weight:900}.pill input{width:auto}
+.progress{height:10px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush-strong),var(--taupe));transition:width .2s ease}
+.section-title{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.question-block{display:grid;gap:12px;margin-top:10px}
+.alert{padding:12px 14px;border-radius:18px;background:#fff7f8;border:1px solid #f1dce1;color:#61554f;font-weight:800}
+@media(max-width:640px){.app{width:min(100% - 18px,980px);margin-top:10px}.hero,.card,.topbar{border-radius:22px}.btn{width:100%}.actionbar{display:grid}.dot{width:28px}}
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css"/>
-
-  <style>
-    body{background:#fbf8f4}
-    .wrap{width:min(780px,94%);margin:40px auto 80px;background:#fff;padding:26px;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
-    h1{font-family:"Playfair Display",serif;margin:0 0 .25rem;color:#2e2a27;text-align:center}
-    .sub{font-family:"Allura",cursive;font-size:1.75rem;color:#524a46;text-align:center;margin:0 0 12px}
-    form{display:grid;gap:14px}
-    .grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
-    .grid-1{display:grid;gap:12px}
-    label{display:grid;gap:6px;font-weight:700;color:#2e2a27}
-    input,select,textarea{border:1px solid #e3d9ce;border-radius:12px;padding:.8rem .9rem;background:#fffdfb;color:#2e2a27}
-    .checkrow{display:flex;flex-wrap:wrap;gap:10px}
-    .pill{display:inline-flex;gap:.45rem;align-items:center;border:1px solid #e3d9ce;background:#fff;padding:.45rem .6rem;border-radius:999px}
-    .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0}
-    .btn{display:inline-block;padding:.6rem 1rem;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer}
-    .btn-solid{background:#d2bda9;color:#2a2624;border:0}
-    .btn-outline{border:1.5px solid #2e2a27;background:#fff;color:#2e2a27}
-    .note{font-size:.95rem;opacity:.85}
-    .center{text-align:center}
-    .ok{color:#116b43;font-weight:700}
-    .warn{color:#b00020;font-weight:700}
-    .card{background:#fff;border:1px solid #e8ddd1;border-radius:12px;padding:14px}
-    .hidden{display:none !important}
-  </style>
+.app{max-width:1040px}
+.step{display:none}.step.active{display:block}
+textarea.short{min-height:76px}
+.upload-list{display:grid;gap:7px;margin-top:8px}
+.upload-item{font-size:.86rem;color:#61554f;font-weight:800;background:#fff7f8;border:1px solid #f1dce1;border-radius:14px;padding:8px 10px}
+.ai-box{display:grid;gap:8px;background:#fff7f8;border:1px solid #f1dce1;border-radius:20px;padding:13px;color:#61554f;font-weight:800}
+.score{font-size:1.8rem;font-weight:950;color:#2f2926}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="row">
-      <a class="btn btn-outline" href="index.html">← Back home</a>
-      <a class="btn btn-outline" href="login.html?next=contractor-apply.html">Sign in</a>
+<main class="app">
+  <section class="topbar">
+    <div class="brand"><span class="vase-logo"></span><div><div class="brand-title">The Finishing Touch</div><div class="brand-sub">Contractor Application</div></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn btn-outline" href="join-our-team.html">Back</a>
+      <a class="btn btn-soft" href="login.html?next=contractor-apply.html">Sign in</a>
     </div>
+  </section>
 
-    <h1>Apply to be a Contractor</h1>
-    <div class="sub">Work with The Finishing Touch</div>
+  <section class="hero">
+    <p class="script">Contractor Interview</p>
+    <h1>Apply to Work Independently</h1>
+    <p>This application is the first interview round. If approved, you’ll unlock onboarding inside the contractor portal.</p>
+  </section>
 
-    <!-- Gate states -->
-    <div id="gate-signedout" class="card center">
-      <p>Please <a href="login.html?next=contractor-apply.html"><strong>sign in or create an account</strong></a> to apply.</p>
-      <p class="note">We’ll keep your application in “pending” until approved. You’ll get an email.</p>
-    </div>
+  <section id="gateSignedOut" class="card">
+    <h2>Sign in or create an account first</h2>
+    <p>Applications are connected to a secure profile so your answers, portfolio, and review status stay organized.</p>
+    <a class="btn btn-solid" href="login.html?next=contractor-apply.html">Sign in / Create account</a>
+  </section>
 
-    <div id="gate-pending" class="card hidden" aria-live="polite">
-      <p class="ok">Thanks—your application is submitted and marked <strong>pending review</strong>.</p>
-      <p class="note">We’ll email you once approved. This page will automatically unlock your portal when your role is updated.</p>
-      <div id="verifyBlock" class="note hidden">
-        <hr>
-        <p><strong>Verify your email</strong> to speed things up.</p>
-        <button id="sendVerify" class="btn btn-outline">Send verification email</button>
-        <span id="sentMsg" class="ok hidden">Sent! Check your inbox.</span>
+  <section id="gateSubmitted" class="card hidden">
+    <h2>Application submitted</h2>
+    <p>Your application is in admin review. If approved for onboarding, your contractor portal will unlock the onboarding steps.</p>
+    <a class="btn btn-outline" href="contractor-dashboard.html">Open Contractor Portal</a>
+  </section>
+
+  <form id="applyForm" class="hidden">
+    <div class="card">
+      <div class="section-title">
+        <strong class="badge" id="stepLabel">Step 1 of 6</strong>
+        <span class="muted" id="stepName">Basic Info</span>
       </div>
+      <div class="stepper" id="stepper" style="margin-top:12px"></div>
     </div>
 
-    <div id="gate-approved" class="card hidden">
-      <p class="ok">You’re approved! Head to your portal.</p>
-      <p><a class="btn btn-solid" href="contractor.html">Go to Contractor Portal</a></p>
-    </div>
-
-    <!-- Application form -->
-    <form id="applyForm" class="grid-1 hidden" novalidate>
+    <section class="card step active" data-step="0">
+      <h2>Basic Info</h2>
       <div class="grid">
-        <label>Full Name
-          <input name="fullName" placeholder="First Last" required>
-        </label>
-        <label>Primary Email
-          <input name="email" type="email" required>
-        </label>
+        <label class="field">Full Name <input name="fullName" required></label>
+        <label class="field">Email <input name="email" type="email" required></label>
+        <label class="field">Phone <input name="phone" required></label>
+        <label class="field">City <input name="city" required placeholder="League City"></label>
+        <label class="field">Primary ZIP <input name="zip" required placeholder="77573"></label>
+        <label class="field">Business Name, if applicable <input name="businessName" placeholder="Optional"></label>
       </div>
-
-      <div class="grid">
-        <label>City
-          <input name="city" placeholder="e.g., League City" required>
-        </label>
-        <label>Primary ZIP
-          <input name="zip" placeholder="e.g., 77573" required>
-        </label>
-      </div>
-
-      <label>What services can you take? (pick all that apply)</label>
-      <div class="checkrow" role="group" aria-label="Service types">
-        <label class="pill"><input type="checkbox" name="serviceTypes" value="cleaning"> Cleaning</label>
-        <label class="pill"><input type="checkbox" name="serviceTypes" value="organizing"> Organizing</label>
-        <label class="pill"><input type="checkbox" name="serviceTypes" value="decor"> Interior Decor</label>
-        <label class="pill"><input type="checkbox" name="serviceTypes" value="holiday"> Holiday</label>
-      </div>
-
-      <label>Tell us a bit about your experience (optional)
-        <textarea name="bio" rows="3" placeholder="Years of experience, specialties, etc."></textarea>
+      <label class="field" style="margin-top:12px">Why do you want to work with The Finishing Touch?
+        <textarea name="whyTFT" required></textarea>
       </label>
+    </section>
 
-      <label class="pill" style="margin-top:4px;">
-        <input type="checkbox" name="agree" required>
-        I agree to The Finishing Touch independent contractor terms.
-      </label>
-
-      <div class="row">
-        <span class="note">After you submit: your account is <strong>pending</strong>. Once approved, your portal unlocks automatically.</span>
-        <button class="btn btn-solid" type="submit">Submit Application</button>
+    <section class="card step" data-step="1">
+      <h2>Service Areas + Contractor Basics</h2>
+      <p class="muted">Select every category you are applying for. Additional interview sections will appear based on your selections.</p>
+      <div class="pills" role="group" aria-label="Services applying for">
+        <label class="pill"><input type="checkbox" id="allServices"> All of the above</label>
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="cleaning"> Cleaning Services</label>
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="organizing"> Home Organizing</label>
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="decor"> Interior Decorating / Styling</label>
+        <label class="pill"><input type="checkbox" name="serviceTypes" value="holiday"> Holiday Decorating</label>
       </div>
+      <div class="grid" style="margin-top:14px">
+        <label class="field">Years of related experience <input name="yearsExperience" type="number" min="0" step=".5" required></label>
+        <label class="field">Do you have reliable transportation?
+          <select name="transportation" required><option value="">Select</option><option>Yes</option><option>No</option></select>
+        </label>
+        <label class="field">Are you currently insured?
+          <select name="insured" required><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option><option value="in_progress">In progress</option></select>
+        </label>
+        <label class="field">Are you willing to complete background check requirements if applicable?
+          <select name="backgroundOk" required><option value="">Select</option><option>Yes</option><option>No</option></select>
+        </label>
+      </div>
+      <label class="field" style="margin-top:12px">ZIP codes / cities you are willing to service
+        <textarea name="serviceAreas" required placeholder="Example: 77573, 77539, League City, Dickinson, Friendswood"></textarea>
+      </label>
+      <label class="field">Availability / preferred schedule
+        <textarea name="availability" required placeholder="Example: Mon-Fri mornings, weekends only, etc."></textarea>
+      </label>
+    </section>
 
-      <p id="applyMsg" class="note" aria-live="polite"></p>
-    </form>
-  </div>
+    <section class="card step" data-step="2">
+      <h2>Portfolio / Previous Work</h2>
+      <p class="muted">Upload before/after photos, organizing projects, styling work, holiday installs, or other examples. This is part of the first interview review, not onboarding.</p>
+      <label class="field">Portfolio photos or PDFs
+        <input id="portfolioFiles" type="file" accept="image/*,.pdf" multiple>
+      </label>
+      <div class="progress"><span id="portfolioProgress"></span></div>
+      <button id="uploadPortfolioBtn" class="btn btn-outline" type="button">Upload Portfolio Files</button>
+      <div id="portfolioStatus" class="muted">No files uploaded yet.</div>
+      <div id="portfolioList" class="upload-list"></div>
+    </section>
 
-  <script type="module">
-    import { auth, db } from "./ft-firebase.js";
-    import {
-      onAuthStateChanged, sendEmailVerification
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import {
-      doc, getDoc, setDoc, serverTimestamp, onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    <section class="card step" data-step="3">
+      <h2>Cleaning Interview</h2>
+      <div id="cleaningQuestions" class="question-block service-section" data-service="cleaning"></div>
+      <div class="alert no-service hidden">Select Cleaning Services in Step 2 to complete this section.</div>
+    </section>
 
-    const el = {
-      signedOut: document.getElementById('gate-signedout'),
-      pending:   document.getElementById('gate-pending'),
-      approved:  document.getElementById('gate-approved'),
-      form:      document.getElementById('applyForm'),
-      msg:       document.getElementById('applyMsg'),
-      verifyBlk: document.getElementById('verifyBlock'),
-      sendVerify:document.getElementById('sendVerify'),
-      sentMsg:   document.getElementById('sentMsg')
-    };
+    <section class="card step" data-step="4">
+      <h2>Organizing / Decorating / Holiday Interview</h2>
+      <div id="organizingQuestions" class="question-block service-section" data-service="organizing"></div>
+      <div id="decorQuestions" class="question-block service-section" data-service="decor"></div>
+      <div id="holidayQuestions" class="question-block service-section" data-service="holiday"></div>
+      <div id="noCreativeServices" class="alert hidden">Select Organizing, Interior Decorating, or Holiday Decorating in Step 2 to complete this section.</div>
+    </section>
 
-    function show(id){
-      // hide all “gates” + form
-      el.signedOut.classList.add('hidden');
-      el.pending.classList.add('hidden');
-      el.approved.classList.add('hidden');
-      el.form.classList.add('hidden');
-      // show the requested thing
-      (id === 'signedOut') ? el.signedOut.classList.remove('hidden')
-      : (id === 'pending') ? el.pending.classList.remove('hidden')
-      : (id === 'approved') ? el.approved.classList.remove('hidden')
-      : (id === 'form') ? el.form.classList.remove('hidden') : null;
+    <section class="card step" data-step="5">
+      <h2>Review + Submit</h2>
+      <div id="aiPreview" class="ai-box">
+        <span class="badge">AI-style screening preview</span>
+        <div class="score" id="scorePreview">--</div>
+        <div id="screeningPreview">Complete the application to generate a screening summary.</div>
+      </div>
+      <label class="checkrow" style="margin-top:12px">
+        <input type="checkbox" name="truthful" required>
+        <span>I certify that the information I provided is accurate. I understand this is an application review and does not guarantee work or onboarding approval.</span>
+      </label>
+      <label class="checkrow">
+        <input type="checkbox" name="brandAgree" required>
+        <span>I understand that if approved for onboarding, jobs accepted through The Finishing Touch are performed under The Finishing Touch brand standards and communication policies.</span>
+      </label>
+      <p id="applyMsg" class="muted" aria-live="polite"></p>
+    </section>
+
+    <div class="card actionbar">
+      <button id="backBtn" class="btn btn-outline" type="button">Back</button>
+      <button id="nextBtn" class="btn btn-solid" type="button">Save & Continue</button>
+      <button id="submitBtn" class="btn btn-solid hidden" type="submit">Submit Application</button>
+    </div>
+  </form>
+</main>
+
+<script type="module">
+import { auth, db, storage } from "./ft-firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
+
+const questions = {
+  cleaning: [
+    "What cleaning products and chemicals are you most familiar with, and how do you use them safely?",
+    "How do you treat different materials like wood, marble, or granite differently?",
+    "Can you describe your step-by-step process for cleaning a bathroom?",
+    "How do you prioritize tasks when you have a large area to clean in a limited time?",
+    "What do you do if you realize you won’t finish everything on the schedule?",
+    "How do you handle repetitive tasks without losing focus or quality?",
+    "How do you feel about cleaning while customers or staff are present?",
+    "How would you handle a client who is unhappy with your cleaning?",
+    "If you found a personal or valuable item while cleaning, what would you do?",
+    "What makes you a reliable cleaning professional?"
+  ],
+  organizing: [
+    "How do you handle clients who have a hard time letting go of items due to sentimental value?",
+    "What is your strategy for dealing with a client who feels overwhelmed or anxious about the organizing process?",
+    "How do you adapt your systems for neurodivergent clients, clients with ADHD, disabilities, or special needs?",
+    "How do you balance a Pinterest-perfect aesthetic with daily habits and functionality?",
+    "Walk me through your process from initial consultation to final reveal.",
+    "How do you determine what storage solutions, labels, or containers are appropriate?",
+    "What is your process for handling trash, donations, and consignment drop-offs?",
+    "How do you recommend getting started with a massively disorganized room?",
+    "How do you charge for your services, hourly or flat-rate project fees?",
+    "How do you manage your time when a project takes longer than anticipated?",
+    "What are your policies regarding client privacy, confidentiality, and before/after photography?"
+  ],
+  decor: [
+    "How would you describe your personal design style in 3-4 adjectives, and how do you adapt when a client’s taste is different?",
+    "Walk me through your design process when starting a new project from scratch.",
+    "Tell me about a time a client’s requested aesthetic clashed with your personal preference. How did you handle it?",
+    "How do you translate a vague mood board into a cohesive room design?",
+    "Can you share examples that show versatility across different design styles?",
+    "How do you balance aesthetics with functionality in a high-traffic space?",
+    "Describe a project where you worked within a tight budget. What sourcing strategies did you use?",
+    "How do you handle delays, backorders, damaged items, or vendor mistakes?",
+    "How do you communicate your design vision to tradespeople or installers?",
+    "Which brands, vendors, trade resources, design software, or rendering tools are you comfortable using?"
+  ],
+  holiday: [
+    "Walk me through your portfolio of past holiday projects, especially similar scale homes or businesses.",
+    "How do you adapt your design style to match existing architecture or brand identity?",
+    "How do you balance holiday trends with a timeless, cohesive look?",
+    "Do you prefer custom design concepts or preset decoration packages?",
+    "Do you provide end-to-end services including installation, maintenance, and teardown?",
+    "What is your availability for installations and takedowns during busy holiday seasons?",
+    "Are you comfortable with heights, ladders, complex rooflines, or exterior displays?",
+    "How do you handle maintenance if lights go out or decorations are damaged by weather?",
+    "How do you pack, label, inventory, and store holiday items for future seasons?",
+    "What is included in your base pricing, and what triggers additional fees or change orders?",
+    "Are you applying for residential, commercial, interior styling, exterior lighting, or all of these?"
+  ]
+};
+
+let user = null;
+let step = 0;
+const totalSteps = 6;
+let portfolio = [];
+
+const form = document.getElementById("applyForm");
+const gateSignedOut = document.getElementById("gateSignedOut");
+const gateSubmitted = document.getElementById("gateSubmitted");
+const stepper = document.getElementById("stepper");
+const stepLabel = document.getElementById("stepLabel");
+const stepName = document.getElementById("stepName");
+const names = ["Basic Info","Services","Portfolio","Cleaning","Specialties","Submit"];
+
+function cleanFileName(name){ return String(name||"file").replace(/[^a-zA-Z0-9._-]/g,"_"); }
+function selectedServices(){ return Array.from(form.querySelectorAll('input[name="serviceTypes"]:checked')).map(x=>x.value); }
+
+function renderQuestions(){
+  Object.entries(questions).forEach(([service, list]) => {
+    const target = document.getElementById(service + "Questions");
+    if (!target) return;
+    target.innerHTML = `<h3>${service === "decor" ? "Interior Decorating" : service[0].toUpperCase()+service.slice(1)} Questions</h3>` + list.map((q,i)=>`
+      <label class="field">${q}
+        <textarea class="short" name="${service}_q${i+1}" data-question="${q.replaceAll('"','&quot;')}"></textarea>
+      </label>
+    `).join("");
+  });
+}
+
+function refreshServiceSections(){
+  const services = selectedServices();
+  document.querySelectorAll(".service-section").forEach(sec => {
+    const on = services.includes(sec.dataset.service);
+    sec.classList.toggle("hidden", !on);
+    sec.querySelectorAll("textarea").forEach(t => t.required = on);
+  });
+  document.querySelector("#cleaningQuestions + .no-service")?.classList.toggle("hidden", services.includes("cleaning"));
+  document.getElementById("noCreativeServices").classList.toggle("hidden", services.some(s=>["organizing","decor","holiday"].includes(s)));
+}
+
+function renderStepper(){
+  stepper.innerHTML = "";
+  for(let i=0;i<totalSteps;i++) {
+    const d=document.createElement("span");
+    d.className="dot"+(i<=step?" active":"");
+    stepper.appendChild(d);
+  }
+  document.querySelectorAll(".step").forEach((s,i)=>s.classList.toggle("active", i===step));
+  stepLabel.textContent = `Step ${step+1} of ${totalSteps}`;
+  stepName.textContent = names[step] || "";
+  document.getElementById("backBtn").disabled = step === 0;
+  document.getElementById("nextBtn").classList.toggle("hidden", step === totalSteps-1);
+  document.getElementById("submitBtn").classList.toggle("hidden", step !== totalSteps-1);
+  refreshServiceSections();
+  if(step === totalSteps-1) renderScreening();
+}
+
+function collectAnswers(){
+  const fd = new FormData(form);
+  const answers = {};
+  for (const [k,v] of fd.entries()) {
+    if (k === "serviceTypes") continue;
+    answers[k] = String(v || "").trim();
+  }
+  return answers;
+}
+
+function answerTextFor(service){
+  const fd = new FormData(form);
+  return Object.keys(questions[service] || {}).map((_,idx)=>String(fd.get(`${service}_q${idx+1}`)||"").trim()).join(" ");
+}
+
+function generateScreening(){
+  const fd = new FormData(form);
+  const services = selectedServices();
+  const years = Number(fd.get("yearsExperience")||0);
+  const insured = String(fd.get("insured")||"");
+  const transport = String(fd.get("transportation")||"");
+  const bg = String(fd.get("backgroundOk")||"");
+  let score = 25;
+  const strengths = [];
+  const concerns = [];
+
+  if (services.length) { score += Math.min(20, services.length*5); strengths.push(`Applied for: ${services.join(", ")}`); } else concerns.push("No service category selected.");
+  if (years >= 3) { score += 20; strengths.push("3+ years of related experience."); }
+  else if (years >= 1) { score += 12; strengths.push("Has at least 1 year of experience."); }
+  else concerns.push("Experience is limited or unclear.");
+
+  if (insured === "yes") { score += 15; strengths.push("Insurance marked yes."); }
+  else if (insured === "in_progress") { score += 6; concerns.push("Insurance is still in progress."); }
+  else concerns.push("Insurance not confirmed.");
+
+  if (transport === "Yes") { score += 10; strengths.push("Reliable transportation confirmed."); } else concerns.push("Reliable transportation not confirmed.");
+  if (bg === "Yes") { score += 8; strengths.push("Background check requirements acknowledged."); } else concerns.push("Background check requirements not confirmed.");
+  if (portfolio.length) { score += 12; strengths.push(`${portfolio.length} portfolio file(s) uploaded.`); } else concerns.push("Portfolio/work samples missing.");
+
+  services.forEach(service => {
+    const text = answerTextFor(service);
+    if (text.length > 650) { score += 8; strengths.push(`${service} answers are detailed.`); }
+    else if (text.length > 180) { score += 4; }
+    else concerns.push(`${service} answers may need more detail.`);
+  });
+
+  score = Math.max(0, Math.min(100, score));
+  const recommendation = score >= 78 ? "Strong candidate — consider approving for onboarding." : score >= 55 ? "Needs review — consider follow-up interview before onboarding." : "Likely needs more review before onboarding.";
+  return { score, strengths, concerns, recommendation };
+}
+
+function renderScreening(){
+  const s = generateScreening();
+  document.getElementById("scorePreview").textContent = `${s.score} / 100`;
+  document.getElementById("screeningPreview").innerHTML = `
+    <strong>Recommendation:</strong> ${s.recommendation}<br><br>
+    <strong>Strengths:</strong><br>${s.strengths.length ? s.strengths.map(x=>"• "+x).join("<br>") : "None yet."}<br><br>
+    <strong>Potential concerns:</strong><br>${s.concerns.length ? s.concerns.map(x=>"• "+x).join("<br>") : "None flagged."}
+  `;
+}
+
+function validateCurrentStep(){
+  const active = document.querySelector(".step.active");
+  const fields = Array.from(active.querySelectorAll("input,select,textarea")).filter(el=>!el.disabled && !el.closest(".hidden"));
+  for (const field of fields) {
+    if (field.required && !field.checkValidity()) {
+      field.reportValidity();
+      return false;
     }
+  }
+  if (step === 1 && !selectedServices().length) { alert("Please select at least one service category."); return false; }
+  return true;
+}
 
-    // Auth/role gate
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        show('signedOut');
-        return;
-      }
-      // live-watch your role so “pending → contractor” auto-unlocks
-      const userRef = doc(db, 'users', user.uid);
-      onSnapshot(userRef, (snap)=>{
-        const data = snap.exists() ? snap.data() : {};
-        const role = (data.role || '').toLowerCase();
-        if (role === 'contractor' || role === 'admin') {
-          show('approved');
-        } else if (role === 'pending') {
-          show('pending');
-          // suggest email verification if not verified
-          if (!user.emailVerified) el.verifyBlk.classList.remove('hidden');
-        } else {
-          // no role yet → show form
-          show('form');
-          // prefill email/name
-          const fd = new FormData(el.form);
-          el.form.elements.email.value = user.email || '';
-          if (user.displayName) el.form.elements.fullName.value = user.displayName;
-        }
-      });
+document.getElementById("backBtn").addEventListener("click", ()=>{ if(step>0) { step--; renderStepper(); } });
+document.getElementById("nextBtn").addEventListener("click", ()=>{ if(!validateCurrentStep()) return; if(step<totalSteps-1) { step++; renderStepper(); } });
+
+document.getElementById("allServices").addEventListener("change", e => {
+  form.querySelectorAll('input[name="serviceTypes"]').forEach(cb => cb.checked = e.target.checked);
+  refreshServiceSections();
+});
+form.querySelectorAll('input[name="serviceTypes"]').forEach(cb => cb.addEventListener("change", refreshServiceSections));
+
+function uploadWithProgress(file, path, progressEl, offset=0, scale=100){
+  return new Promise((resolve,reject)=>{
+    const task = uploadBytesResumable(storageRef(storage,path), file);
+    task.on("state_changed", snap=>{
+      const pct = snap.totalBytes ? Math.round((snap.bytesTransferred/snap.totalBytes)*scale)+offset : offset;
+      progressEl.style.width = `${Math.min(100,pct)}%`;
+    }, reject, async()=>{
+      const url = await getDownloadURL(task.snapshot.ref);
+      resolve({ name:file.name || "", type:file.type || "", size:file.size || 0, path, url });
     });
+  });
+}
 
-    // Send verification email (optional, but helpful)
-    if (el.sendVerify){
-      el.sendVerify.addEventListener('click', async ()=>{
-        try{
-          await sendEmailVerification(auth.currentUser);
-          el.sentMsg.classList.remove('hidden');
-        }catch(e){
-          alert('Could not send verification email right now.');
-        }
-      });
+document.getElementById("uploadPortfolioBtn").addEventListener("click", async ()=>{
+  if(!user) return alert("Please sign in first.");
+  const input = document.getElementById("portfolioFiles");
+  const files = Array.from(input.files || []);
+  if(!files.length) return alert("Choose one or more files first.");
+  const bar = document.getElementById("portfolioProgress");
+  const status = document.getElementById("portfolioStatus");
+  const btn = document.getElementById("uploadPortfolioBtn");
+  btn.disabled = true;
+  status.textContent = "Uploading portfolio files…";
+  try {
+    const uploaded = [];
+    for (let i=0; i<files.length; i++) {
+      if (files[i].size > 20*1024*1024) throw new Error("One file is over 20MB. Please choose a smaller file.");
+      const path = `users/${user.uid}/portfolio/application/${Date.now()}-${i}-${cleanFileName(files[i].name)}`;
+      uploaded.push(await uploadWithProgress(files[i], path, bar, Math.round((i/files.length)*100), Math.round(100/files.length)));
     }
+    portfolio = [...portfolio, ...uploaded];
+    input.value = "";
+    status.textContent = `${portfolio.length} portfolio file(s) uploaded.`;
+    document.getElementById("portfolioList").innerHTML = portfolio.map(f=>`<div class="upload-item">${f.name}</div>`).join("");
+  } catch(err) {
+    console.warn(err);
+    alert(err.message || "Could not upload portfolio files.");
+    status.textContent = "Upload failed.";
+  } finally {
+    btn.disabled = false;
+  }
+});
 
-    // Handle application submit
-    el.form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      el.msg.textContent = '';
+onAuthStateChanged(auth, async (u)=>{
+  user = u;
+  if(!u) {
+    gateSignedOut.classList.remove("hidden");
+    form.classList.add("hidden");
+    return;
+  }
+  const snap = await getDoc(doc(db,"users",u.uid));
+  const data = snap.exists() ? snap.data() : {};
+  const role = String(data.role || "").toLowerCase();
+  const appStatus = String(data.applicationStatus || "").toLowerCase();
+  if (role === "pending" || appStatus === "submitted" || appStatus === "needs_review") {
+    gateSignedOut.classList.add("hidden");
+    gateSubmitted.classList.remove("hidden");
+    form.classList.add("hidden");
+    return;
+  }
+  gateSignedOut.classList.add("hidden");
+  gateSubmitted.classList.add("hidden");
+  form.classList.remove("hidden");
+  form.elements.email.value = u.email || "";
+  if (u.displayName) form.elements.fullName.value = u.displayName;
+  renderQuestions();
+  renderStepper();
+});
 
-      const user = auth.currentUser;
-      if (!user) { location.href = "login.html?next=contractor-apply.html"; return; }
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  if(!validateCurrentStep()) return;
+  const fd = new FormData(form);
+  const services = selectedServices();
+  if(!services.length) return alert("Please select at least one service category.");
+  const answers = collectAnswers();
+  const serviceAnswers = {};
+  services.forEach(service => {
+    serviceAnswers[service] = (questions[service] || []).map((question, i)=>({
+      question,
+      answer: String(fd.get(`${service}_q${i+1}`) || "").trim()
+    }));
+  });
+  const screening = generateScreening();
+  const msg = document.getElementById("applyMsg");
+  msg.textContent = "Submitting application…";
 
-      // Gather fields
-      const fd = new FormData(el.form);
-      const fullName = String(fd.get('fullName')||'').trim();
-      const email    = String(fd.get('email')||'').trim() || (user.email||'');
-      const city     = String(fd.get('city')||'').trim();
-      const zip      = String(fd.get('zip')||'').trim();
-      const bio      = String(fd.get('bio')||'').trim();
-      const agree    = !!fd.get('agree');
-      const serviceTypes = fd.getAll('serviceTypes').map(s=>String(s));
+  const payload = {
+    role: "pending",
+    applicationStatus: "submitted",
+    contractorStage: "application_review",
+    fullName: String(fd.get("fullName")||"").trim(),
+    displayName: String(fd.get("fullName")||"").trim(),
+    email: String(fd.get("email")||"").trim() || user.email || "",
+    phone: String(fd.get("phone")||"").trim(),
+    city: String(fd.get("city")||"").trim(),
+    zip: String(fd.get("zip")||"").trim(),
+    businessName: String(fd.get("businessName")||"").trim(),
+    serviceTypes: services,
+    application: {
+      type: "contractor",
+      whyTFT: answers.whyTFT || "",
+      yearsExperience: Number(fd.get("yearsExperience")||0),
+      insured: String(fd.get("insured")||""),
+      transportation: String(fd.get("transportation")||""),
+      backgroundOk: String(fd.get("backgroundOk")||""),
+      serviceAreas: String(fd.get("serviceAreas")||"").trim(),
+      availability: String(fd.get("availability")||"").trim(),
+      portfolio,
+      serviceAnswers,
+      aiScreening: screening,
+      submittedAt: serverTimestamp()
+    },
+    aiScreening: screening,
+    appliedAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  };
 
-      if (!fullName || !email || !city || !zip || !agree || serviceTypes.length===0){
-        el.msg.textContent = 'Please complete required fields (name, email, city, zip, at least one service, terms).';
-        return;
-      }
-
-      const payload = {
-        role: 'pending',
-        fullName, email, city, zip, bio,
-        serviceTypes,
-        appliedAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      };
-
-      try{
-        // Create/merge the user document with role: pending
-        await setDoc(doc(db, 'users', user.uid), payload, { merge: true });
-        show('pending');
-
-        // Notify you via Formspree (so you never miss new applicants)
-        try{
-          const fs = new FormData();
-          fs.append("_subject", "New Contractor Application — The Finishing Touch");
-          fs.append("type", "contractor_application");
-          fs.append("uid", user.uid);
-          fs.append("name", fullName);
-          fs.append("email", email);
-          fs.append("city", city);
-          fs.append("zip", zip);
-          fs.append("services", serviceTypes.join(", "));
-          fs.append("bio", bio);
-          fs.append("_page", location.href);
-          await fetch("https://formspree.io/f/mzzaogbv", { method:"POST", body:fs, headers:{Accept:"application/json"} });
-        }catch(_){ /* silent */ }
-
-      }catch(err){
-        el.msg.textContent = 'Could not submit right now. Please try again.';
-        console.warn(err);
-      }
-    });
-  </script>
+  try {
+    await setDoc(doc(db,"users",user.uid), payload, { merge:true });
+    try {
+      const fs = new FormData();
+      fs.append("_subject","New Contractor Application — The Finishing Touch");
+      fs.append("type","contractor_application");
+      fs.append("uid",user.uid);
+      fs.append("name",payload.fullName);
+      fs.append("email",payload.email);
+      fs.append("services",services.join(", "));
+      fs.append("score",String(screening.score));
+      await fetch("https://formspree.io/f/mzzaogbv", { method:"POST", body:fs, headers:{Accept:"application/json"} });
+    } catch(_e) {}
+    gateSubmitted.classList.remove("hidden");
+    form.classList.add("hidden");
+    window.scrollTo({top:0,behavior:"smooth"});
+  } catch(err) {
+    console.warn(err);
+    msg.textContent = "Could not submit right now. Please try again.";
+  }
+});
+</script>
 </body>
 </html>
