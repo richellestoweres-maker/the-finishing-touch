@@ -16,7 +16,8 @@
 body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(242,216,220,.75),transparent 32%),radial-gradient(circle at 92% 90%,rgba(210,189,169,.38),transparent 34%),var(--bg);font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
 button,input,textarea,select{font:inherit} button{cursor:pointer}.hidden{display:none!important}
 .app-shell{width:min(1120px,96%);margin:22px auto 72px;display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start}
-.app-rail{position:sticky;top:18px;background:rgba(255,253,251,.86);border:1px solid var(--line);border-radius:32px;padding:18px;box-shadow:var(--shadow);min-height:calc(100vh - 44px);display:flex;flex-direction:column;gap:16px}.brand{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:8px 6px 16px}.brand .logo{width:38px;height:48px;background:url("logo-vase.png") center/contain no-repeat;flex:0 0 auto}.brand strong{font-family:Playfair Display,serif;font-size:1.15rem;display:block}.brand span{font-size:.82rem;color:var(--muted);font-weight:800}.status-pill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;font-size:.76rem;font-weight:900;border:1px solid #f0d5da;background:var(--soft);color:#7d4f59;border-radius:999px;padding:.32rem .7rem}.rail-note{color:var(--muted);font-weight:700;line-height:1.45;font-size:.92rem}.rail-nav{display:grid;gap:8px}.navbtn{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:18px;padding:12px;text-align:left;font-weight:900;display:flex;align-items:center;gap:10px}.navbtn .ico{width:30px;height:30px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:0 7px 18px rgba(68,54,45,.08)}.navbtn.active,.navbtn:hover{background:linear-gradient(135deg,var(--soft),#fff);border-color:var(--blush);color:var(--ink)}.navbtn.locked{opacity:.48}.rail-footer{margin-top:auto;display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}.main{display:grid;gap:16px;min-width:0}.topbar{background:rgba(255,253,251,.86);border:1px solid var(--line);border-radius:30px;padding:18px 20px;box-shadow:0 12px 34px rgba(68,54,45,.08);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.topbar h1{font-family:Playfair Display,serif;margin:0;font-size:clamp(1.55rem,2.4vw,2.25rem)}.topbar p{margin:5px 0 0;color:var(--muted);font-weight:700}.who{font-size:.86rem;color:var(--muted);font-weight:800;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.app-card{background:rgba(255,253,251,.94);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);padding:22px;overflow:hidden}.phone-flow{width:min(100%,680px);margin:0 auto}.mini-kicker{font-family:Allura,cursive;font-size:2rem;color:#925e69;margin:0}.screen-title{font-family:Playfair Display,serif;font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.05;margin:0}.screen-copy{color:#61554f;font-weight:700;line-height:1.5}.progress-wrap{display:grid;gap:9px;margin:18px 0}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-weight:900;font-size:.84rem}.progress{height:12px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush2),var(--taupe));transition:width .2s ease}.step-list{display:grid;gap:9px;margin-top:12px}.step-row{border:1px solid #f1dce1;background:#fff7f8;border-radius:18px;padding:12px;display:flex;gap:10px;align-items:flex-start}.step-dot{width:28px;height:28px;border-radius:999px;background:#fff;border:1px solid #f1dce1;display:grid;place-items:center;font-weight:900;color:#7d4f59;flex:0 0 auto}.step-row.done .step-dot{background:#f4fbf4;border-color:#cfe6d0;color:var(--good)}.step-row strong{display:block}.step-row span{display:block;color:var(--muted);font-size:.86rem;font-weight:700;margin-top:2px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px;font-weight:900;color:var(--ink)}.field.full{grid-column:1/-1}.field input,.field textarea,.field select{width:100%;border:1px solid #decfc6;background:#fffdfb;border-radius:18px;padding:.86rem 1rem;outline:none;color:var(--ink)}.field textarea{min-height:92px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blush2);box-shadow:0 0 0 4px rgba(232,185,194,.18)}.hint{color:var(--muted);font-weight:700;font-size:.84rem;line-height:1.4}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:.78rem 1.05rem;text-decoration:none;border:0;font-weight:900}.btn-primary{background:linear-gradient(135deg,var(--blush2),var(--taupe));color:#2f2926;box-shadow:0 12px 26px rgba(232,185,194,.34)}.btn-dark{background:#2f2926;color:white}.btn-outline{background:#fffdfb;border:1.5px solid #2f2926;color:#2f2926}.btn-soft{background:var(--soft);border:1px solid var(--blush);color:#7d4f59}.btn:disabled{opacity:.55;cursor:not-allowed}.doc-stack{display:grid;gap:12px}.doc-item{border:1px solid #f1dce1;border-radius:22px;background:#fffdfb;padding:14px;display:grid;gap:10px}.doc-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.doc-head h3{font-family:Playfair Display,serif;margin:0;font-size:1.15rem}.doc-actions{display:grid;gap:8px}.agreement-shell{border:1px solid var(--line);border-radius:24px;background:#fffdfb;overflow:hidden}.agreement-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,var(--soft),#fff)}.agreement-toolbar strong{font-family:Playfair Display,serif}.agreement-scroll{max-height:430px;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:#d7b8be #fff7f8}.agreement-scroll::-webkit-scrollbar{width:10px}.agreement-scroll::-webkit-scrollbar-track{background:#fff7f8;border-radius:999px}.agreement-scroll::-webkit-scrollbar-thumb{background:#d7b8be;border-radius:999px;border:2px solid #fff7f8}.clause-card{border:1px solid #f1dce1;border-radius:20px;background:#fff;padding:14px;margin-bottom:12px}.clause-card h4{margin:0 0 8px;font-family:Playfair Display,serif}.clause-card p,.clause-card li{color:#5f554f;font-weight:650;line-height:1.48}.clause-card ul{padding-left:20px}.initial-line{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:end;border-top:1px dashed #eadfd8;padding-top:11px;margin-top:10px}.consent-box{border:1px solid #ead1d6;border-radius:22px;padding:14px;background:#fffaf9;display:grid;gap:10px}.checkrow{display:flex;gap:10px;align-items:flex-start;color:#3d3531;font-weight:750;line-height:1.4}.checkrow input{margin-top:4px;transform:scale(1.1)}.review-grid{display:grid;gap:10px}.review-row{display:flex;justify-content:space-between;gap:12px;border:1px solid #f1dce1;background:#fffdfb;border-radius:18px;padding:12px}.review-row span{color:var(--muted);font-weight:800}.review-row strong{text-align:right}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.tile{border:1px solid var(--line);border-radius:24px;background:#fffdfb;padding:16px;box-shadow:0 9px 24px rgba(68,54,45,.06)}.tile h3{font-family:Playfair Display,serif;margin:0 0 6px}.tile p{color:var(--muted);font-weight:700;margin:0;line-height:1.42}.job-card{border:1px solid var(--line);border-radius:24px;background:#fffdfb;padding:16px;display:grid;gap:10px}.meta{display:flex;gap:7px;flex-wrap:wrap}.meta span{display:inline-flex;border:1px solid #f1dce1;background:#fff7f8;border-radius:999px;padding:.32rem .62rem;color:#61554f;font-weight:800;font-size:.86rem}.empty{border:1px dashed #e3cfd4;border-radius:24px;padding:26px;text-align:center;color:var(--muted);font-weight:900;background:rgba(255,253,251,.76)}.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#2f2926;color:#fff;padding:12px 16px;border-radius:999px;box-shadow:0 16px 34px rgba(0,0,0,.24);font-weight:900;z-index:9999;display:none}.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,251,.92);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:24px;padding:8px;box-shadow:0 15px 40px rgba(68,54,45,.18);grid-template-columns:repeat(5,1fr);gap:4px}.bottom-nav button{border:0;background:transparent;border-radius:16px;padding:8px 4px;color:var(--muted);font-size:.72rem;font-weight:900;display:grid;place-items:center;gap:2px}.bottom-nav button.active{background:var(--soft);color:#7d4f59}.bottom-nav .bico{font-size:1.05rem}.screen{display:none}.screen.active{display:block}.auth-box{width:min(100%,520px);margin:0 auto;text-align:center}.auth-box h2{font-family:Playfair Display,serif;font-size:2rem;margin:0 0 8px}.auth-box p{color:var(--muted);font-weight:700;line-height:1.5}.lock-banner{border:1px solid #ead1d6;background:#fff7f8;border-radius:24px;padding:14px;color:#61554f;font-weight:800;line-height:1.45;margin-bottom:14px}@media(max-width:900px){.app-shell{grid-template-columns:1fr;width:min(100% - 16px,760px);margin-top:10px}.app-rail{position:relative;min-height:auto}.rail-nav{grid-template-columns:repeat(2,1fr)}.topbar,.app-card,.app-rail{border-radius:24px}}@media(max-width:640px){body{padding-bottom:86px}.app-shell{width:min(100% - 14px,760px);gap:10px}.app-rail{display:none}.topbar{display:none}.app-card{padding:17px;border-radius:26px}.phone-flow{width:100%}.form-grid{grid-template-columns:1fr}.actions .btn{width:100%}.bottom-nav{display:grid}.agreement-scroll{max-height:58vh}.initial-line{grid-template-columns:1fr}.review-row{display:grid}.review-row strong{text-align:left}.screen-title{font-size:1.7rem}.mini-kicker{font-size:1.75rem}}
+.app-rail{position:sticky;top:18px;background:rgba(255,253,251,.86);border:1px solid var(--line);border-radius:32px;padding:18px;box-shadow:var(--shadow);min-height:calc(100vh - 44px);display:flex;flex-direction:column;gap:16px}.brand{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:8px 6px 16px}.brand .logo{width:38px;height:48px;background:url("logo-vase.png") center/contain no-repeat;flex:0 0 auto}.brand strong{font-family:Playfair Display,serif;font-size:1.15rem;display:block}.brand span{font-size:.82rem;color:var(--muted);font-weight:800}.status-pill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;font-size:.76rem;font-weight:900;border:1px solid #f0d5da;background:var(--soft);color:#7d4f59;border-radius:999px;padding:.32rem .7rem}.rail-note{color:var(--muted);font-weight:700;line-height:1.45;font-size:.92rem}.rail-nav{display:grid;gap:8px}.navbtn{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:18px;padding:12px;text-align:left;font-weight:900;display:flex;align-items:center;gap:10px}.navbtn .ico{width:30px;height:30px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:0 7px 18px rgba(68,54,45,.08)}.navbtn.active,.navbtn:hover{background:linear-gradient(135deg,var(--soft),#fff);border-color:var(--blush);color:var(--ink)}.navbtn.locked{opacity:.48}.rail-footer{margin-top:auto;display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}.main{display:grid;gap:16px;min-width:0}.topbar{background:rgba(255,253,251,.86);border:1px solid var(--line);border-radius:30px;padding:18px 20px;box-shadow:0 12px 34px rgba(68,54,45,.08);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.topbar h1{font-family:Playfair Display,serif;margin:0;font-size:clamp(1.55rem,2.4vw,2.25rem)}.topbar p{margin:5px 0 0;color:var(--muted);font-weight:700}.who{font-size:.86rem;color:var(--muted);font-weight:800;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.app-card{background:rgba(255,253,251,.94);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);padding:22px;overflow:hidden}.phone-flow{width:min(100%,680px);margin:0 auto}.mini-kicker{font-family:Allura,cursive;font-size:2rem;color:#925e69;margin:0}.screen-title{font-family:Playfair Display,serif;font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.05;margin:0}.screen-copy{color:#61554f;font-weight:700;line-height:1.5}.progress-wrap{display:grid;gap:9px;margin:18px 0}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-weight:900;font-size:.84rem}.progress{height:12px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush2),var(--taupe));transition:width .2s ease}.step-list{display:grid;gap:9px;margin-top:12px}.step-row{border:1px solid #f1dce1;background:#fff7f8;border-radius:18px;padding:12px;display:flex;gap:10px;align-items:flex-start}.step-dot{width:28px;height:28px;border-radius:999px;background:#fff;border:1px solid #f1dce1;display:grid;place-items:center;font-weight:900;color:#7d4f59;flex:0 0 auto}.step-row.done .step-dot{background:#f4fbf4;border-color:#cfe6d0;color:var(--good)}.step-row strong{display:block}.step-row span{display:block;color:var(--muted);font-size:.86rem;font-weight:700;margin-top:2px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px;font-weight:900;color:var(--ink)}.field.full{grid-column:1/-1}.field input,.field textarea,.field select{width:100%;border:1px solid #decfc6;background:#fffdfb;border-radius:18px;padding:.86rem 1rem;outline:none;color:var(--ink)}.field textarea{min-height:92px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blush2);box-shadow:0 0 0 4px rgba(232,185,194,.18)}.hint{color:var(--muted);font-weight:700;font-size:.84rem;line-height:1.4}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:.78rem 1.05rem;text-decoration:none;border:0;font-weight:900}.btn-primary{background:linear-gradient(135deg,var(--blush2),var(--taupe));color:#2f2926;box-shadow:0 12px 26px rgba(232,185,194,.34)}.btn-dark{background:#2f2926;color:white}.btn-outline{background:#fffdfb;border:1.5px solid #2f2926;color:#2f2926}.btn-soft{background:var(--soft);border:1px solid var(--blush);color:#7d4f59}.btn:disabled{opacity:.55;cursor:not-allowed}.doc-stack{display:grid;gap:12px}.doc-item{border:1px solid #f1dce1;border-radius:22px;background:#fffdfb;padding:14px;display:grid;gap:10px}.doc-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.doc-head h3{font-family:Playfair Display,serif;margin:0;font-size:1.15rem}.doc-actions{display:grid;gap:8px}.doc-upload-progress{height:12px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden;display:none}.doc-upload-progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush2),var(--taupe));transition:width .18s ease}.doc-upload-caption{display:none;color:var(--muted);font-weight:900;font-size:.84rem}.doc-item.is-uploading .doc-upload-progress,.doc-item.is-uploading .doc-upload-caption{display:block}.agreement-shell{border:1px solid var(--line);border-radius:24px;background:#fffdfb;overflow:hidden}.agreement-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,var(--soft),#fff)}.agreement-toolbar strong{font-family:Playfair Display,serif}.agreement-scroll{max-height:430px;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:#d7b8be #fff7f8}.agreement-scroll::-webkit-scrollbar{width:10px}.agreement-scroll::-webkit-scrollbar-track{background:#fff7f8;border-radius:999px}.agreement-scroll::-webkit-scrollbar-thumb{background:#d7b8be;border-radius:999px;border:2px solid #fff7f8}.clause-card{border:1px solid #f1dce1;border-radius:20px;background:#fff;padding:14px;margin-bottom:12px}.clause-card h4{margin:0 0 8px;font-family:Playfair Display,serif}.clause-card p,.clause-card li{color:#5f554f;font-weight:650;line-height:1.48}.clause-card ul{padding-left:20px}.initial-line{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:end;border-top:1px dashed #eadfd8;padding-top:11px;margin-top:10px}.consent-box{border:1px solid #ead1d6;border-radius:22px;padding:14px;background:#fffaf9;display:grid;gap:10px}.checkrow{display:flex;gap:10px;align-items:flex-start;color:#3d3531;font-weight:750;line-height:1.4}.checkrow input{margin-top:4px;transform:scale(1.1)}.review-grid{display:grid;gap:10px}.review-row{display:flex;justify-content:space-between;gap:12px;border:1px solid #f1dce1;background:#fffdfb;border-radius:18px;padding:12px}.review-row span{color:var(--muted);font-weight:800}.review-row strong{text-align:right}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.tile{border:1px solid var(--line);border-radius:24px;background:#fffdfb;padding:16px;box-shadow:0 9px 24px rgba(68,54,45,.06)}.tile h3{font-family:Playfair Display,serif;margin:0 0 6px}.tile p{color:var(--muted);font-weight:700;margin:0;line-height:1.42}.job-card{border:1px solid var(--line);border-radius:24px;background:#fffdfb;padding:16px;display:grid;gap:10px}.meta{display:flex;gap:7px;flex-wrap:wrap}.meta span{display:inline-flex;border:1px solid #f1dce1;background:#fff7f8;border-radius:999px;padding:.32rem .62rem;color:#61554f;font-weight:800;font-size:.86rem}.empty{border:1px dashed #e3cfd4;border-radius:24px;padding:26px;text-align:center;color:var(--muted);font-weight:900;background:rgba(255,253,251,.76)}.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#2f2926;color:#fff;padding:12px 16px;border-radius:999px;box-shadow:0 16px 34px rgba(0,0,0,.24);font-weight:900;z-index:9999;display:none}.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,251,.92);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:24px;padding:8px;box-shadow:0 15px 40px rgba(68,54,45,.18);grid-template-columns:repeat(5,1fr);gap:4px}.bottom-nav button{border:0;background:transparent;border-radius:16px;padding:8px 4px;color:var(--muted);font-size:.72rem;font-weight:900;display:grid;place-items:center;gap:2px}.bottom-nav button.active{background:var(--soft);color:#7d4f59}.bottom-nav .bico{font-size:1.05rem}.screen{display:none}.screen.active{display:block}.auth-box{width:min(100%,520px);margin:0 auto;text-align:center}.auth-box h2{font-family:Playfair Display,serif;font-size:2rem;margin:0 0 8px}.auth-box p{color:var(--muted);font-weight:700;line-height:1.5}.lock-banner{border:1px solid #ead1d6;background:#fff7f8;border-radius:24px;padding:14px;color:#61554f;font-weight:800;line-height:1.45;margin-bottom:14px}@media(max-width:900px){.app-shell{grid-template-columns:1fr;width:min(100% - 16px,760px);margin-top:10px}.app-rail{position:relative;min-height:auto}.rail-nav{grid-template-columns:repeat(2,1fr)}.topbar,.app-card,.app-rail{border-radius:24px}}@media(max-width:640px){body{padding-bottom:86px}.app-shell{width:min(100% - 14px,760px);gap:10px}.app-rail{display:none}.topbar{display:none}.app-card{padding:17px;border-radius:26px}.phone-flow{width:100%}.form-grid{grid-template-columns:1fr}.actions .btn{width:100%}.bottom-nav{display:grid}.agreement-scroll{max-height:58vh}.initial-line{grid-template-columns:1fr}.review-row{display:grid}.review-row strong{text-align:left}.screen-title{font-size:1.7rem}.mini-kicker{font-size:1.75rem}}
+.upload-summary{margin-top:10px;padding:10px 12px;border-radius:16px;background:#fff7f8;border:1px solid #f1dce1;color:#61554f;font-weight:800;font-size:.9rem}.upload-summary.warn{color:#8a5b00;background:#fff9ed;border-color:#ead9ad}
 </style>
 </head>
 <body>
@@ -107,25 +108,20 @@ function docs(){ return userData.compliance?.documents || {}; }
 function agreement(){ return userData.compliance?.agreement || {}; }
 function onboarding(){ return userData.compliance?.onboarding || {}; }
 function docDone(type){ const d=docs()[type]; return !!(d?.url || (Array.isArray(d?.files)&&d.files.length)); }
-function docStatus(type){
-  const d = docs()[type];
-  if(!d) return 'Not Uploaded';
-  const hasFiles = !!(d.url || d.path || (Array.isArray(d.files) && d.files.length));
-  const status = String(d.adminStatus || '').toLowerCase();
-  if(hasFiles && (!status || status === 'pending_review' || status === 'pending review')) return 'Uploaded - Pending Review';
-  if(status === 'approved' || status === 'verified' || status === 'active') return 'Approved';
-  if(status === 'rejected' || status === 'needs_update' || status === 'needs update') return 'Needs Update';
-  if(hasFiles) return cap(status || 'Uploaded - Pending Review');
-  return 'Not Uploaded';
-}
-function portfolioStatus(){ const d=docs().portfolio; const count=Array.isArray(d?.files)?d.files.length:0; return count ? `${count} File${count===1?'':'s'} Uploaded` : 'Optional'; }
+function docStatus(type){ const d=docs()[type]; if(!d) return 'Not Uploaded'; return d.adminStatus ? cap(d.adminStatus) : 'Uploaded - Pending Review'; }
 function uploadSummary(type){
-  const d = docs()[type];
-  const count = Array.isArray(d?.files) ? d.files.length : (d?.url ? 1 : 0);
-  if(!count) return '';
-  if(type === 'id') return `<div class="hint"><strong>Uploaded:</strong> ${d.front ? 'Front received' : 'Front received'} + ${d.back ? 'Back received' : 'Back received'} — pending admin review.</div>`;
-  return `<div class="hint"><strong>Uploaded:</strong> ${count} file${count===1?'':'s'} received — pending admin review.</div>`;
+  const d=docs()[type];
+  if(!d) return '';
+  if(type==='id'){
+    const f = d.front?.name || d.front?.path || '';
+    const b = d.back?.name || d.back?.path || '';
+    if(f && b) return '<div class="upload-summary">Front received + Back received — pending admin review.</div>';
+    if(f || b) return '<div class="upload-summary warn">Only one side has been received. Upload both front and back.</div>';
+  }
+  const files = Array.isArray(d.files) ? d.files : (d.url ? [d] : []);
+  return files.length ? `<div class="upload-summary">${files.length} file${files.length===1?'':'s'} received — pending admin review.</div>` : '';
 }
+function portfolioStatus(){ const p=docs().portfolio||{}; const files=[...(p.photos||[]),...(p.docs||[]),...(p.files||[])]; return files.length ? `${files.length} Files` : 'Optional'; }
 function profileComplete(){ const c=userData.compliance||{}; return !!(c.legalName && c.phone && c.mailingAddress && c.emergencyContact); }
 function agreementComplete(){ const a=agreement(); const initials=a.initials||{}; const allInitialed=clauseKeys.every(k=>String(initials[k]||'').trim()); const checks=a.acknowledgments||{}; return !!(a.signatureName && allInitialed && checks.fullAgreement && checks.w9 && checks.coi && checks.photoPolicy && checks.electronicSignature); }
 function pct(){ let done=0; if(profileComplete()) done++; if(requiredDocs.every(docDone)) done++; if(agreementComplete()) done++; if(submitted(userData)) done++; return Math.round((done/4)*100); }
@@ -147,11 +143,12 @@ function renderProfile(){ const c=userData.compliance||{}; $('stepProfile').inne
 <label class="field">Email<input id="pEmail" value="${c.email||me?.email||''}" autocomplete="email"></label>
 <label class="field full">Emergency Contact<input id="pEmergency" value="${c.emergencyContact||''}" placeholder="Name, relationship, phone number"></label>
 </div>`; }
+function progressUI(type){ return `<div class="doc-upload-caption" data-upload-caption="${type}">Ready to upload.</div><div class="doc-upload-progress" aria-hidden="true"><span data-upload-bar="${type}"></span></div>`; }
 function renderDocs(){ $('stepDocs').innerHTML=`<div class="doc-stack">
-  <div class="doc-item"><div class="doc-head"><h3>Identity Verification</h3><span class="status-pill">${docStatus('id')}</span></div><div class="hint">Upload two separate files: one clear image/PDF of the front of your driver’s license or state ID, and one clear image/PDF of the back.</div><label class="field">Front of ID<input id="upload-id-front" type="file" accept="image/*,.pdf"></label><label class="field">Back of ID<input id="upload-id-back" type="file" accept="image/*,.pdf"></label><button class="btn btn-primary" type="button" data-upload="id">Upload ID Front + Back</button>${uploadSummary('id')}</div>
-  <div class="doc-item"><div class="doc-head"><h3>W-9 / Tax Info</h3><span class="status-pill">${docStatus('w9')}</span></div><div class="hint">A completed IRS Form W-9 is required before payment can be issued.</div><input id="upload-w9" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="w9">Upload W-9</button>${uploadSummary('w9')}</div>
-  <div class="doc-item"><div class="doc-head"><h3>Certificate of Insurance</h3><span class="status-pill">${docStatus('coi')}</span></div><div class="hint">COI must list Johnnie and Jane Boutique, LLC DBA The Finishing Touch as Certificate Holder.</div><label class="field">Policy Expiration<input id="coiExpiration" type="date" value="${docs().coi?.expiration||''}"></label><input id="upload-coi" type="file" accept="image/*,.pdf"><button class="btn btn-primary" type="button" data-upload="coi">Upload COI</button>${uploadSummary('coi')}</div>
-  <div class="doc-item"><div class="doc-head"><h3>Portfolio / Work Samples</h3><span class="status-pill">${portfolioStatus()}</span></div><div class="hint">Optional: upload multiple before/after photos, organizing projects, decorating/staging examples, or certifications. This is separate from required compliance documents.</div><label class="field">Portfolio Photos<input id="upload-portfolio-photos" type="file" accept="image/*" multiple></label><label class="field">Certifications / PDF Work Samples<input id="upload-portfolio-docs" type="file" accept="image/*,.pdf" multiple></label><button class="btn btn-soft" type="button" data-upload="portfolio">Add Portfolio Files</button><div class="hint">You can select more than one photo at a time. New portfolio uploads will be added to your file, not replace the previous ones.</div>${uploadSummary('portfolio')}</div>
+  <div class="doc-item"><div class="doc-head"><h3>Identity Verification</h3><span class="status-pill">${docStatus('id')}</span></div><div class="hint">Upload two separate files: one clear front image/PDF and one clear back image/PDF.</div><label class="field">Front of ID<input id="upload-id-front" type="file" accept="image/*,.pdf"></label><label class="field">Back of ID<input id="upload-id-back" type="file" accept="image/*,.pdf"></label>${progressUI('id')}<button class="btn btn-primary" type="button" data-upload="id">Upload ID Front + Back</button></div>
+  <div class="doc-item"><div class="doc-head"><h3>W-9 / Tax Info</h3><span class="status-pill">${docStatus('w9')}</span></div><div class="hint">A completed IRS Form W-9 is required before payment can be issued.</div><input id="upload-w9" type="file" accept="image/*,.pdf">${progressUI('w9')}<button class="btn btn-primary" type="button" data-upload="w9">Upload W-9</button></div>
+  <div class="doc-item"><div class="doc-head"><h3>Certificate of Insurance</h3><span class="status-pill">${docStatus('coi')}</span></div><div class="hint">COI must list Johnnie and Jane Boutique, LLC DBA The Finishing Touch as Certificate Holder.</div><label class="field">Policy Expiration<input id="coiExpiration" type="date" value="${docs().coi?.expiration||''}"></label><input id="upload-coi" type="file" accept="image/*,.pdf">${progressUI('coi')}<button class="btn btn-primary" type="button" data-upload="coi">Upload COI</button></div>
+  <div class="doc-item"><div class="doc-head"><h3>Portfolio / Work Samples</h3><span class="status-pill">${portfolioStatus()}</span></div><div class="hint">Optional: upload multiple before/after photos, organizing projects, decorating/staging examples, or certifications. This is separate from required compliance documents.</div><label class="field">Portfolio Photos<input id="upload-portfolio-photos" type="file" accept="image/*" multiple></label><label class="field">Certifications / PDF Work Samples<input id="upload-portfolio-docs" type="file" accept="image/*,.pdf" multiple></label>${progressUI('portfolio')}<button class="btn btn-soft" type="button" data-upload="portfolio">Add Portfolio Files</button></div>
 </div>`; document.querySelectorAll('[data-upload]').forEach(b=>b.addEventListener('click',()=>uploadDoc(b.dataset.upload,b))); }
 function renderAgreement(){ const a=agreement(); const initials=a.initials||{}; const checks=a.acknowledgments||{}; $('stepAgreement').innerHTML=`<div class="agreement-shell"><div class="agreement-toolbar"><strong>Hiring Packet & Agreement</strong><span class="status-pill">${agreementComplete()?'Complete':'Not Complete'}</span></div><div class="agreement-scroll">
 ${clauses.map(cl=>`<div class="clause-card"><h4>${cl.title}</h4><p>${cl.text}</p><div class="initial-line"><div class="hint">Type your initials to acknowledge this section.</div><label class="field">Initials<input data-initial="${cl.key}" maxlength="6" value="${initials[cl.key]||''}" placeholder="Initial"></label></div></div>`).join('')}
@@ -171,40 +168,62 @@ function renderAllSteps(){ renderWelcome(); renderProfile(); renderDocs(); rende
 async function saveProfile(){ if(!me)return; await setDoc(doc(db,'users',me.uid),{ compliance:{ legalName:$('pLegal')?.value.trim()||'', businessEntityType:$('pEntity')?.value.trim()||'', mailingAddress:$('pAddress')?.value.trim()||'', phone:$('pPhone')?.value.trim()||'', email:$('pEmail')?.value.trim()||'', emergencyContact:$('pEmergency')?.value.trim()||'', workerType:'1099_independent_contractor', updatedAt:serverTimestamp() }, legalName:$('pLegal')?.value.trim()||'', phone:$('pPhone')?.value.trim()||'', updatedAt:serverTimestamp() },{merge:true}); await reloadUser(); }
 async function saveAgreement(){ if(!me)return; const initials={}; document.querySelectorAll('[data-initial]').forEach(i=>initials[i.dataset.initial]=i.value.trim()); const acknowledgments={}; document.querySelectorAll('[data-ack]').forEach(i=>acknowledgments[i.dataset.ack]=i.checked); await setDoc(doc(db,'users',me.uid),{ compliance:{ agreement:{ adminStatus:'pending_review', effectiveDate:$('aDate')?.value||'', printedNameTitle:$('aPrinted')?.value.trim()||'', signatureName:$('aSignature')?.value.trim()||'', initials, acknowledgments, signedAt:serverTimestamp(), signedByUid:me.uid, signedByEmail:me.email||'', version:'TFT Hiring Packet contractor-only app v2' }, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true}); await reloadUser(); }
 async function reloadUser(){ if(!me)return; const snap=await getDoc(doc(db,'users',me.uid)); userData=snap.exists()?snap.data():{}; renderAllSteps(); }
-function uploadFileWithProgress(fileRef, file, onProgress){
-  return new Promise((resolve, reject) => {
-    const maxBytes = 50 * 1024 * 1024;
-    if(file.size > maxBytes){
-      reject(new Error(`${file.name} is too large. Please upload a file under 50MB.`));
-      return;
-    }
-
-    const task = uploadBytesResumable(fileRef, file);
-    const timer = setTimeout(() => {
-      try { task.cancel(); } catch {}
-      reject(new Error('Upload timed out. Please check your connection and try again.'));
+function withTimeout(promise, ms, label){
+  let timeoutId;
+  const timeout = new Promise((_, reject)=>{
+    timeoutId = setTimeout(()=>reject(new Error(`${label} is taking too long. This usually means Firebase Storage is blocked, Storage rules were not published, or the connection is stuck.`)), ms);
+  });
+  return Promise.race([promise.finally(()=>clearTimeout(timeoutId)), timeout]);
+}
+async function setUploadProgress(docItem, type, percent, caption){
+  const bar = docItem?.querySelector(`[data-upload-bar="${type}"]`);
+  const cap = docItem?.querySelector(`[data-upload-caption="${type}"]`);
+  if(bar) bar.style.width = `${Math.max(0, Math.min(100, percent || 0))}%`;
+  if(cap) cap.textContent = caption || `${percent || 0}% uploaded`;
+}
+function resetUploadProgress(docItem, type){
+  setUploadProgress(docItem, type, 0, 'Ready to upload.');
+  docItem?.classList.remove('is-uploading');
+}
+function uploadOneFile(path, file, label, onProgress){
+  if(file.size > 20 * 1024 * 1024) throw new Error(`${label} is too large. Please choose a file under 20MB.`);
+  const r = storageRef(storage, path);
+  return new Promise((resolve, reject)=>{
+    const task = uploadBytesResumable(r, file);
+    const timer = setTimeout(()=>{
+      try{ task.cancel(); }catch{}
+      reject(new Error(`${label} is taking too long. Please check your connection, then try again.`));
     }, 120000);
-
     task.on('state_changed',
-      (snapshot) => {
+      snapshot=>{
         const pct = snapshot.totalBytes ? Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100) : 0;
         onProgress?.(pct, snapshot.bytesTransferred, snapshot.totalBytes);
       },
-      (error) => {
+      error=>{
         clearTimeout(timer);
         reject(error);
       },
-      async () => {
+      async()=>{
         clearTimeout(timer);
-        try {
+        try{
           const url = await getDownloadURL(task.snapshot.ref);
-          resolve(url);
-        } catch (error) {
-          reject(error);
-        }
+          resolve({name:file.name || 'file', contentType:file.type || '', size:file.size || 0, path:path || '', url:url || '', uploadedAt:new Date().toISOString()});
+        }catch(error){ reject(error); }
       }
     );
   });
+}
+
+function stripUndefined(value){
+  if (Array.isArray(value)) return value.map(stripUndefined).filter(v => v !== undefined);
+  if (value && typeof value === 'object' && !(value instanceof Date)) {
+    const out = {};
+    Object.entries(value).forEach(([key,val]) => {
+      if (val !== undefined) out[key] = stripUndefined(val);
+    });
+    return out;
+  }
+  return value;
 }
 
 async function uploadDoc(type, buttonEl){
@@ -212,98 +231,88 @@ async function uploadDoc(type, buttonEl){
   if(!storage){ alert('Firebase Storage is not initialized. Check ft-firebase.js.'); return; }
 
   const docItem = buttonEl?.closest('.doc-item');
-  const statusText = (txt)=>{ const pill = docItem?.querySelector('.status-pill'); if(pill) pill.textContent = txt; };
-  const setBusy = (busy, label)=>{ if(buttonEl){ buttonEl.disabled = busy; if(label) buttonEl.textContent = label; } };
-  let files = [];
-  let idFrontMeta = null;
-  let idBackMeta = null;
-
-  if(type === 'id'){
-    const frontInput = $('upload-id-front');
-    const backInput = $('upload-id-back');
-    const front = frontInput?.files?.[0] || null;
-    const back = backInput?.files?.[0] || null;
-    if(!front || !back){ alert('Please choose two separate files: front of ID and back of ID.'); return; }
-    files = [{file:front, side:'front', label:'Front'}, {file:back, side:'back', label:'Back'}];
-  } else if(type === 'portfolio'){
-    const photoInput = $('upload-portfolio-photos');
-    const docInput = $('upload-portfolio-docs');
-    const photoFiles = Array.from(photoInput?.files || []).map(file=>({file, side:'photos', label:'Photo'}));
-    const docFiles = Array.from(docInput?.files || []).map(file=>({file, side:'docs', label:'File'}));
-    files = [...photoFiles, ...docFiles];
-    if(!files.length){ alert('Please choose one or more portfolio photos or files first.'); return; }
-  } else {
-    const input=$(`upload-${type}`);
-    if(!input?.files?.length){ alert('Please choose a file first.'); return; }
-    files = Array.from(input.files).map(file=>({file, side:'', label:cap(type)}));
-  }
+  const statusPill = docItem?.querySelector('.status-pill');
+  const setStatus = txt => { if(statusPill) statusPill.textContent = txt; };
+  const originalText = buttonEl?.textContent || 'Upload';
+  const setButton = (txt, disabled=true) => { if(buttonEl){ buttonEl.textContent = txt; buttonEl.disabled = disabled; } };
+  const beginProgress = () => { docItem?.classList.add('is-uploading'); setUploadProgress(docItem, type, 0, 'Preparing upload…'); };
 
   try{
-    setBusy(true, 'Starting upload…');
-    statusText('Uploading…');
-    const uploaded=[];
+    let payload = {adminStatus:'pending_review', uploadedAt:serverTimestamp()};
+    beginProgress();
+    setStatus('Starting…');
+    setButton('Starting…');
 
-    for(let i=0; i<files.length; i++){
-      const item = files[i];
-      const file = item.file;
-      const sideFolder = item.side ? `/${item.side}` : '';
-      const path=`users/${me.uid}/compliance/${type}${sideFolder}/${Date.now()}-${cleanName(file.name)}`;
-      const r=storageRef(storage,path);
-
-      const url = await uploadFileWithProgress(r, file, (pct)=>{
-        const label = files.length > 1 ? `${item.label} ${i+1}/${files.length}` : item.label;
-        setBusy(true, `${label}: ${pct}%`);
-        statusText(`${pct}% Uploaded`);
+    if(type === 'id'){
+      const front = $('upload-id-front')?.files?.[0];
+      const back = $('upload-id-back')?.files?.[0];
+      if(!front || !back){ alert('Please choose two separate files: front of ID and back of ID.'); resetUploadProgress(docItem,type); setButton(originalText,false); setStatus(docStatus('id')); return; }
+      setStatus('Uploading front…');
+      const frontMeta = await uploadOneFile(`users/${me.uid}/compliance/id/front/${Date.now()}-${cleanName(front.name)}`, front, 'Front of ID', (pct)=>{
+        const overall = Math.round(pct * 0.5);
+        setButton(`Front: ${pct}%`);
+        setUploadProgress(docItem,type,overall,`Front of ID: ${pct}%`);
+        setStatus(`${overall}% Uploaded`);
       });
-
-      const meta={name:file.name,type:file.type,size:file.size,path,url,uploadedAt:new Date().toISOString(), side:item.side || undefined};
-      uploaded.push(meta);
-      if(type === 'id' && item.side === 'front') idFrontMeta = meta;
-      if(type === 'id' && item.side === 'back') idBackMeta = meta;
+      setStatus('Uploading back…');
+      const backMeta = await uploadOneFile(`users/${me.uid}/compliance/id/back/${Date.now()}-${cleanName(back.name)}`, back, 'Back of ID', (pct)=>{
+        const overall = 50 + Math.round(pct * 0.5);
+        setButton(`Back: ${pct}%`);
+        setUploadProgress(docItem,type,overall,`Back of ID: ${pct}%`);
+        setStatus(`${overall}% Uploaded`);
+      });
+      payload = {...payload, front:frontMeta, back:backMeta, files:[frontMeta, backMeta], url:frontMeta.url, path:frontMeta.path};
+    } else if(type === 'portfolio'){
+      const photoFiles = Array.from($('upload-portfolio-photos')?.files || []);
+      const docFiles = Array.from($('upload-portfolio-docs')?.files || []);
+      if(!photoFiles.length && !docFiles.length){ alert('Please choose at least one portfolio photo or document.'); resetUploadProgress(docItem,type); setButton(originalText,false); setStatus(portfolioStatus()); return; }
+      const oldPortfolio = docs().portfolio || {};
+      const photos = Array.isArray(oldPortfolio.photos) ? [...oldPortfolio.photos] : [];
+      const docUploads = Array.isArray(oldPortfolio.docs) ? [...oldPortfolio.docs] : [];
+      const queue = [...photoFiles.map(file=>({file,kind:'photos',label:'Photo'})), ...docFiles.map(file=>({file,kind:'docs',label:'File'}))];
+      for(let i=0;i<queue.length;i++){
+        const item = queue[i];
+        const baseStart = Math.round((i / queue.length) * 100);
+        const baseEnd = Math.round(((i+1) / queue.length) * 100);
+        const meta = await uploadOneFile(`users/${me.uid}/compliance/portfolio/${item.kind}/${Date.now()}-${cleanName(item.file.name)}`, item.file, `${item.label} ${i+1}`, (pct)=>{
+          const overall = Math.round(baseStart + ((baseEnd-baseStart) * pct / 100));
+          setButton(`${item.label} ${i+1}/${queue.length}: ${pct}%`);
+          setUploadProgress(docItem,type,overall,`${item.label} ${i+1} of ${queue.length}: ${pct}%`);
+          setStatus(`${overall}% Uploaded`);
+        });
+        if(item.kind === 'photos') photos.push(meta); else docUploads.push(meta);
+      }
+      payload = {...payload, photos, docs:docUploads, files:[...photos, ...docUploads], url:(photos[0]||docUploads[0]||{}).url || '', path:(photos[0]||docUploads[0]||{}).path || ''};
+    } else {
+      const input = $(`upload-${type}`);
+      const file = input?.files?.[0];
+      if(!file){ alert('Please choose a file first.'); resetUploadProgress(docItem,type); setButton(originalText,false); setStatus(docStatus(type)); return; }
+      const meta = await uploadOneFile(`users/${me.uid}/compliance/${type}/${Date.now()}-${cleanName(file.name)}`, file, type.toUpperCase(), (pct)=>{
+        setButton(`${pct}% uploaded`);
+        setUploadProgress(docItem,type,pct,`${pct}% uploaded`);
+        setStatus(`${pct}% Uploaded`);
+      });
+      payload = {...payload, files:[meta], url:meta.url, path:meta.path};
+      if(type === 'coi') payload.expiration = $('coiExpiration')?.value || '';
     }
 
-    setBusy(true, 'Saving…');
-    statusText('Saving…');
-    const first=uploaded[0]||{};
-    const existingFiles = Array.isArray(docs()[type]?.files) ? docs()[type].files : [];
-    const payload={adminStatus:'pending_review',files:type === 'portfolio' ? [...existingFiles, ...uploaded] : uploaded,url:first.url||'',path:first.path||'',uploadedAt:serverTimestamp()};
-    if(type === 'id'){
-      payload.front = idFrontMeta || null;
-      payload.back = idBackMeta || null;
-    }
-    if(type==='coi') payload.expiration=$('coiExpiration')?.value||'';
-
-    await setDoc(doc(db,'users',me.uid),{ compliance:{ documents:{[type]:payload}, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() },{merge:true});
-
-    userData.compliance = userData.compliance || {};
-    userData.compliance.documents = userData.compliance.documents || {};
-    userData.compliance.documents[type] = payload;
-
-    if(type === 'id'){
-      if($('upload-id-front')) $('upload-id-front').value='';
-      if($('upload-id-back')) $('upload-id-back').value='';
-    } else if(type === 'portfolio') {
-      if($('upload-portfolio-photos')) $('upload-portfolio-photos').value='';
-      if($('upload-portfolio-docs')) $('upload-portfolio-docs').value='';
-    } else if($(`upload-${type}`)) {
-      $(`upload-${type}`).value='';
-    }
-
-    toast(type === 'id' ? 'ID front and back uploaded' : type === 'portfolio' ? 'Portfolio files added' : 'Document uploaded');
-    statusText('Uploaded - Pending Review');
+    setStatus('Saving…');
+    setButton('Saving…');
+    setUploadProgress(docItem,type,100,'Upload complete. Saving to profile…');
+    await setDoc(doc(db,'users',me.uid), stripUndefined({ compliance:{ documents:{[type]:payload}, updatedAt:serverTimestamp() }, updatedAt:serverTimestamp() }), {merge:true});
+    toast(type==='id' ? 'ID front and back uploaded' : 'Upload saved');
     await reloadUser();
     showStep(currentStep);
   }catch(err){
     console.warn('Upload failed:', err);
-    statusText('Upload Failed');
+    setStatus('Upload Failed');
+    setUploadProgress(docItem,type,0,'Upload failed. Please try again.');
     let msg = err?.message || 'Could not upload. Please try again.';
     if(err?.code === 'storage/unauthorized') msg = 'Upload blocked by Firebase Storage rules. Publish the updated storage.rules file in Firebase Storage > Rules.';
-    if(err?.code === 'storage/canceled') msg = 'Upload canceled or timed out. Please try again with a smaller file or stronger connection.';
-    if(err?.code === 'storage/retry-limit-exceeded') msg = 'Upload timed out. Check internet connection and try again.';
+    if(err?.code === 'storage/retry-limit-exceeded' || err?.code === 'storage/canceled') msg = 'Upload timed out. Check your internet connection and try again.';
     alert(msg);
-  } finally {
-    const labels = {id:'Upload ID Front + Back', w9:'Upload W-9', coi:'Upload COI', portfolio:'Add Portfolio Files'};
-    setBusy(false, labels[type] || 'Upload');
+  }finally{
+    setButton(originalText,false);
   }
 }
 async function saveCurrentStep(){ if(steps[currentStep]==='profile') await saveProfile(); if(steps[currentStep]==='agreement') await saveAgreement(); }
@@ -317,7 +326,7 @@ function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if
 function renderJobs(){ const box=$('view-jobs'); box.innerHTML=`<p class="mini-kicker">Jobs</p><h2 class="screen-title">Opportunities & Assignments</h2><div class="grid"><div><h3>Open Jobs</h3><div id="openJobList"></div></div><div><h3>My Jobs</h3><div id="myJobList"></div></div></div>`; $('openJobList').innerHTML=openJobs.length?openJobs.map(jobCard).join(''):'<div class="empty">No open jobs right now.</div>'; $('myJobList').innerHTML=myJobs.length?myJobs.map(jobCard).join(''):'<div class="empty">No accepted jobs yet.</div>'; document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>claimJob(b.dataset.claim,b))); document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>downloadICS(myJobs.find(j=>j.id===b.dataset.ics)))); }
 function jobCard(j){ const dt=j.serviceDate?.toDate?.(); const when=dt?dt.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):(j.date||j.window||''); const mine=(Array.isArray(j.contractorIds)&&j.contractorIds.includes(me?.uid))||j.contractorId===me?.uid; return `<div class="job-card"><strong>${cap(j.serviceType||'Job')}</strong><div class="meta">${j.zip?`<span>📍 ${j.zip}</span>`:''}${when?`<span>🗓️ ${when}</span>`:''}${j.flatRate?`<span>$${Math.round(Number(j.flatRate))}</span>`:''}<span>${cap(j.status||'open')}</span></div>${j.summary?`<p class="hint">${j.summary}</p>`:''}<div class="actions">${!mine?`<button class="btn btn-primary" data-claim="${j.id}">Claim</button>`:`<button class="btn btn-outline" data-ics="${j.id}">Add to Calendar</button>`}<button class="btn btn-soft" type="button" onclick="alert('Messaging coming soon')">Message Admin</button></div></div>`; }
 function renderAvailability(){ $('view-availability').innerHTML=`<p class="mini-kicker">Availability</p><h2 class="screen-title">TFT-only availability</h2><p class="screen-copy">Save the days and windows you want available for scheduling.</p><div class="form-grid"><label class="field full">Available Slots<textarea id="availSlots" placeholder="Example: Tue 8:30, Thu 11:15"></textarea></label><label class="field full">Blocked Days<textarea id="blockedDays" placeholder="Example: unavailable June 14-18"></textarea></label></div><div class="actions"><button class="btn btn-primary" id="saveAvail">Save Availability</button></div>`; $('saveAvail')?.addEventListener('click',async()=>{await setDoc(doc(db,'users',me.uid,'contractorSettings','availability'),{availableSlots:$('availSlots').value.trim(),blockedDays:$('blockedDays').value.trim(),updatedAt:serverTimestamp()},{merge:true});toast('Availability saved');}); }
-function renderDocumentsView(){ $('view-documents').innerHTML=`<p class="mini-kicker">Documents</p><h2 class="screen-title">Compliance File</h2><div class="review-grid"><div class="review-row"><span>ID</span><strong>${docStatus('id')}</strong></div><div class="review-row"><span>W-9</span><strong>${docStatus('w9')}</strong></div><div class="review-row"><span>COI</span><strong>${docStatus('coi')}</strong></div><div class="review-row"><span>Agreement</span><strong>${agreementComplete()?'Signed / Pending Review':'Not Complete'}</strong></div><div class="review-row"><span>Portfolio</span><strong>${portfolioStatus()}</strong></div><div class="review-row"><span>Overall</span><strong>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'not active')}</strong></div></div>`; }
+function renderDocumentsView(){ $('view-documents').innerHTML=`<p class="mini-kicker">Documents</p><h2 class="screen-title">Compliance File</h2><div class="review-grid"><div class="review-row"><span>ID</span><strong>${docStatus('id')}</strong></div><div class="review-row"><span>W-9</span><strong>${docStatus('w9')}</strong></div><div class="review-row"><span>COI</span><strong>${docStatus('coi')}</strong></div><div class="review-row"><span>Agreement</span><strong>${agreementComplete()?'Signed / Pending Review':'Not Complete'}</strong></div><div class="review-row"><span>Overall</span><strong>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'not active')}</strong></div></div>`; }
 function renderResources(){ $('view-resources').innerHTML=`<p class="mini-kicker">Resources</p><h2 class="screen-title">Resources coming soon</h2><p class="screen-copy">This area will hold training, product standards, and job-specific instructions later. Cleaning checklists are intentionally not part of onboarding.</p>`; }
 function startJobListeners(){ unsubs.forEach(u=>{try{u()}catch{}}); unsubs=[]; unsubs.push(onSnapshot(query(collection(db,'jobs'),where('status','==','open')),snap=>{openJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); unsubs.push(onSnapshot(query(collection(db,'jobs'),where('contractorIds','array-contains',me.uid)),snap=>{myJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); }
 async function claimJob(id,b){ if(!isActive(userData)){toast('Account must be active first');return;} b.disabled=true; try{ await runTransaction(db,async tx=>{const ref=doc(db,'jobs',id); const s=await tx.get(ref); if(!s.exists())throw new Error('Job not found'); const j=s.data(); const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:(j.contractorId?[j.contractorId]:[]); if(!ids.includes(me.uid)) ids.push(me.uid); tx.update(ref,{contractorIds:ids,contractorEmails:[...new Set([...(j.contractorEmails||[]),me.email||''])],status:'claimed',workflowStatus:'assigned',claimedAt:serverTimestamp(),updatedAt:serverTimestamp()}); }); toast('Job claimed'); }catch(e){console.warn(e);alert('Could not claim job.');} finally{b.disabled=false;} }
