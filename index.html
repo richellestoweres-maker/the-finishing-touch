@@ -18,7 +18,6 @@
     #book { scroll-margin-top: 80px; }
     .page-home .container{ width:min(1180px,94%); margin-inline:auto; }
 
-    /* Header layout */
     .page-home .header-inner{
       display:flex;
       align-items:center;
@@ -35,11 +34,8 @@
       align-items:center;
     }
 
-    .page-home .main-nav a{
-      white-space:nowrap;
-    }
+    .page-home .main-nav a{ white-space:nowrap; }
 
-    /* Subtle cream button to match brand */
     .btn-cream{
       background:#d2bda9;
       color:#2a2624;
@@ -51,16 +47,8 @@
       display:inline-block;
     }
 
-    /* HERO */
-    .page-home .hero{
-      position:relative;
-      z-index:2;
-    }
-
-    .page-home .hero-media{
-      position:relative;
-    }
-
+    .page-home .hero{ position:relative; z-index:2; }
+    .page-home .hero-media{ position:relative; }
     .page-home .hero-media img{
       width:100%;
       height:100%;
@@ -68,21 +56,18 @@
       object-position:center;
       display:block;
     }
-
     .page-home .hero-scrim{
       position:absolute;
       inset:0;
       background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35));
       pointer-events:none;
     }
-
     .page-home .hero-content{
       position:absolute;
       inset:0;
       display:grid;
       align-content:center;
     }
-
     .page-home .hero-content .script-kicker,
     .page-home .hero-content .hero-title,
     .page-home .hero-content .hero-sub,
@@ -91,18 +76,9 @@
       color:#fff;
       text-shadow:0 2px 10px rgba(0,0,0,.25);
     }
+    .page-home .quote-menu a{ color:#2e2a27; }
 
-    .page-home .quote-menu a{
-      color:#2e2a27;
-    }
-
-    /* Make services its own layer under the hero */
-    .page-home .services{
-      position:relative;
-      z-index:1;
-    }
-
-    /* SERVICES grid centered nicely on desktop */
+    .page-home .services{ position:relative; z-index:1; }
     .page-home .services .cards{
       display:grid;
       grid-template-columns:repeat(2, minmax(0,1fr));
@@ -112,19 +88,12 @@
       width:min(1200px,95%);
       justify-items:center;
     }
-
     @media (min-width: 920px){
-      .page-home .services .cards{
-        grid-template-columns:repeat(3, minmax(0,1fr));
-      }
+      .page-home .services .cards{ grid-template-columns:repeat(3, minmax(0,1fr)); }
     }
-
     @media (min-width: 1100px){
-      .page-home .services .cards{
-        grid-template-columns:repeat(4, 1fr);
-      }
+      .page-home .services .cards{ grid-template-columns:repeat(4, 1fr); }
     }
-
     .page-home .services .card{
       background:#fff;
       border-radius:16px;
@@ -139,30 +108,19 @@
       width:100%;
       height:100%;
     }
-
-    .page-home .service-icon{
-      font-size:28px;
-      color:#2e2a27;
-      opacity:.9;
-    }
-
+    .page-home .service-icon{ font-size:28px; color:#2e2a27; opacity:.9; }
     .page-home .services .card h3{ margin:.25rem 0 .15rem; }
     .page-home .services .card p{ margin:0; opacity:.9; }
 
-    /* ABOUT */
     .page-home .about-grid{
       display:grid;
       grid-template-columns:1fr;
       gap:16px;
       align-items:center;
     }
-
     @media (min-width: 900px){
-      .page-home .about-grid{
-        grid-template-columns:1.1fr .9fr;
-      }
+      .page-home .about-grid{ grid-template-columns:1.1fr .9fr; }
     }
-
     .page-home .about-photo img{
       width:100%;
       height:auto;
@@ -170,24 +128,11 @@
       box-shadow:0 10px 26px rgba(0,0,0,.08);
       display:block;
     }
+    .page-home #reviews .reviews-wrap{ padding:28px 18px; }
+    #ftt-chat-launcher, #ftt-chat{ z-index:9999; }
 
-    /* Reviews spacing */
-    .page-home #reviews .reviews-wrap{
-      padding:28px 18px;
-    }
-
-    /* Chat above media */
-    #ftt-chat-launcher, #ftt-chat{
-      z-index:9999;
-    }
-
-    /* Mobile-only arrows on service cards */
     @media (max-width: 780px){
-      .page-home .service-card-link{
-        position:relative;
-        display:block;
-      }
-
+      .page-home .service-card-link{ position:relative; display:block; }
       .page-home .service-card-link::after{
         content:"›";
         position:absolute;
@@ -202,7 +147,6 @@
     }
   </style>
 
-  <!-- Chat widget base z-index (extra safety) -->
   <style>
     #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
   </style>
@@ -235,7 +179,7 @@
 
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
-        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
+        <a class="btn-cream" href="join-our-team.html">Join Our Team</a>
         <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
       </nav>
     </div>
@@ -350,9 +294,7 @@
         align-items: center;
       }
       @media (max-width: 900px){
-        .social-inner{
-          grid-template-columns: 1fr;
-        }
+        .social-inner{ grid-template-columns: 1fr; }
       }
       .social-text h2{
         font-family:"Playfair Display",serif;
@@ -367,11 +309,7 @@
         color:rgba(0,0,0,.74);
         margin:0;
       }
-      .social-links{
-        display:flex;
-        flex-direction:column;
-        gap:10px;
-      }
+      .social-links{ display:flex; flex-direction:column; gap:10px; }
       .social-links a{
         display:inline-flex;
         align-items:center;
@@ -385,13 +323,8 @@
         box-shadow: var(--shadow, 0 10px 26px rgba(0,0,0,.06));
         color: var(--taupe-900,#2e2a27);
       }
-      .social-links a i{
-        font-size:.95rem;
-      }
-      .social-links a:hover{
-        transform:translateY(-1px);
-        box-shadow:0 12px 30px rgba(0,0,0,.12);
-      }
+      .social-links a i{ font-size:.95rem; }
+      .social-links a:hover{ transform:translateY(-1px); box-shadow:0 12px 30px rgba(0,0,0,.12); }
     </style>
 
     <div class="container social-inner">
@@ -610,9 +543,7 @@
         if (open) input.focus();
       });
 
-      closeBtn.addEventListener("click", ()=>{
-        panel.style.display = "none";
-      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
 
       form.addEventListener("submit",(e)=>{
         e.preventDefault();
@@ -625,14 +556,7 @@
 
       quick.addEventListener("click",(e)=>{
         if (e.target.matches("button[data-q]")){
-          const map = {
-            pricing:"pricing",
-            availability:"availability",
-            services:"services",
-            book:"book",
-            human:"human",
-            help:"recommend"
-          };
+          const map = { pricing:"pricing", availability:"availability", services:"services", book:"book", human:"human", help:"recommend" };
           const intent = map[e.target.getAttribute("data-q")] || "fallback";
           add(e.target.textContent, "me");
           setTimeout(()=> add(answer(intent)), 80);
@@ -694,9 +618,7 @@
         if (!menu.contains(e.target) && e.target !== btn) closeMenu();
       }
 
-      function onKey(e){
-        if (e.key === 'Escape') closeMenu();
-      }
+      function onKey(e){ if (e.key === 'Escape') closeMenu(); }
 
       btn.addEventListener('click', (e)=>{
         e.preventDefault();
@@ -738,46 +660,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
