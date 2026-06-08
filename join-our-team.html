@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Join Our Team – The Finishing Touch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600;700&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/>
+<style>
+:root{
+  --bg:#fbf7f4;--card:#fffdfb;--ink:#2f2926;--muted:#7a6f68;--line:#eadfd8;
+  --blush:#f2d8dc;--blush-strong:#e8b9c2;--soft:#fff1f3;--taupe:#d2bda9;
+  --shadow:0 18px 45px rgba(68,54,45,.10);--shadow-soft:0 10px 28px rgba(68,54,45,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(242,216,220,.75),transparent 34%),radial-gradient(circle at bottom right,rgba(210,189,169,.34),transparent 30%),var(--bg);font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+a{color:inherit}
+.app{width:min(980px,94%);margin:24px auto 70px;display:grid;gap:16px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(255,253,251,.86);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:28px;padding:14px 16px;box-shadow:var(--shadow-soft)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900}.vase-logo{width:34px;height:44px;background:url("logo-vase.png") center/contain no-repeat;display:inline-block}
+.brand-title{font-family:"Playfair Display",serif;font-size:1.2rem;line-height:1}.brand-sub{font-size:.78rem;color:var(--muted);font-weight:800;margin-top:3px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:.75rem 1rem;font-weight:900;text-decoration:none;cursor:pointer;font-family:inherit}
+.btn-solid{background:linear-gradient(135deg,var(--blush-strong),var(--taupe));color:var(--ink);box-shadow:0 10px 22px rgba(232,185,194,.34)}
+.btn-outline{background:#fffdfb;color:var(--ink);border:1.5px solid var(--ink)}
+.btn-soft{background:var(--soft);border:1px solid var(--blush);color:#7d4f59}
+.card{background:rgba(255,253,251,.95);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow-soft);padding:18px}
+.hero{display:grid;gap:10px;text-align:center;padding:26px 18px;background:linear-gradient(135deg,rgba(242,216,220,.95),rgba(255,253,251,.95) 55%,rgba(210,189,169,.42));border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow)}
+.script{font-family:Allura,cursive;font-size:2.2rem;color:#925e69;margin:0}
+h1,h2,h3{font-family:"Playfair Display",serif;margin:.15rem 0;color:var(--ink)}
+p{color:#61554f;font-weight:650;line-height:1.55}
+.muted{color:var(--muted);font-weight:750;font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.choice-card{display:grid;gap:10px;min-height:250px}
+.badge{width:max-content;max-width:100%;border-radius:999px;background:var(--soft);border:1px solid var(--blush);color:#7d4f59;font-size:.78rem;font-weight:900;padding:.28rem .68rem}
+.field{display:grid;gap:6px;font-weight:900;color:var(--ink)}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:16px;background:#fffdfb;color:var(--ink);padding:.78rem .85rem;font-family:inherit;outline:none}
+textarea{min-height:100px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--blush-strong);box-shadow:0 0 0 4px rgba(232,185,194,.18)}
+.hidden{display:none!important}
+.stepper{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap}.dot{height:9px;border-radius:999px;background:#eadfd8;width:38px}.dot.active{background:linear-gradient(135deg,var(--blush-strong),var(--taupe))}
+.actionbar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:14px}
+.checkrow{display:flex;align-items:flex-start;gap:9px;padding:10px;border:1px solid #f1dce1;border-radius:16px;background:#fff7f8;font-weight:800;color:#61554f}
+.checkrow input{width:auto;margin-top:3px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #f1dce1;background:#fff;border-radius:999px;padding:.52rem .75rem;font-weight:900}.pill input{width:auto}
+.progress{height:10px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush-strong),var(--taupe));transition:width .2s ease}
+.section-title{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.question-block{display:grid;gap:12px;margin-top:10px}
+.alert{padding:12px 14px;border-radius:18px;background:#fff7f8;border:1px solid #f1dce1;color:#61554f;font-weight:800}
+@media(max-width:640px){.app{width:min(100% - 18px,980px);margin-top:10px}.hero,.card,.topbar{border-radius:22px}.btn{width:100%}.actionbar{display:grid}.dot{width:28px}}
+</style>
+</head>
+<body>
+  <main class="app">
+    <section class="topbar">
+      <div class="brand"><span class="vase-logo"></span><div><div class="brand-title">The Finishing Touch</div><div class="brand-sub">Join Our Team</div></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn-outline" href="index.html">Home</a>
+        <a class="btn btn-soft" href="login.html">Sign in</a>
+      </div>
+    </section>
+    <section class="hero">
+      <p class="script">Build beautifully with us</p>
+      <h1>Join Our Team</h1>
+      <p>Choose the path that fits how you want to work with The Finishing Touch.</p>
+    </section>
+    <section class="grid">
+      <article class="card choice-card">
+        <span class="badge">Independent Contractor</span>
+        <h2>Become a Contractor</h2>
+        <p>Apply to work independently as a 1099 contractor/subcontractor for cleaning, organizing, interior styling, or holiday decorating opportunities.</p>
+        <p class="muted">Best for individuals or businesses who control their own availability, service area, tools, insurance, and accept work on a per-job or project basis.</p>
+        <a class="btn btn-solid" href="contractor-apply.html">Apply as a Contractor</a>
+      </article>
+      <article class="card choice-card">
+        <span class="badge">Future W2 Team</span>
+        <h2>Join the Employee Waitlist</h2>
+        <p>Interested in future cleaning team employee opportunities with The Finishing Touch?</p>
+        <p class="muted">This waitlist is for future employee roles, assigned shifts, team structure, employee onboarding, and payroll-based work once positions open.</p>
+        <a class="btn btn-outline" href="employee-waitlist.html">Join Employee Waitlist</a>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
