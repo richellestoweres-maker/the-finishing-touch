@@ -1,740 +1,252 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Finishing Touch – Luxury Interior Services</title>
-
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- Site CSS -->
-  <link rel="stylesheet" href="styles.css?v=8" />
-
-  <!-- Page polish -->
-  <style id="home-desktop-fixes">
-    html { scroll-behavior: smooth; }
-    #book { scroll-margin-top: 80px; }
-    .page-home .container{ width:min(1180px,94%); margin-inline:auto; }
-
-    /* Header layout */
-    .page-home .header-inner{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      padding:10px 0;
-    }
-
-    .page-home .main-nav{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-    }
-
-    .page-home .main-nav a{
-      white-space:nowrap;
-    }
-
-    /* Subtle cream button to match brand */
-    .btn-cream{
-      background:#d2bda9;
-      color:#2a2624;
-      border:0;
-      border-radius:999px;
-      padding:.55rem .9rem;
-      font-weight:800;
-      text-decoration:none;
-      display:inline-block;
-    }
-
-    /* HERO */
-    .page-home .hero{
-      position:relative;
-      z-index:2;
-    }
-
-    .page-home .hero-media{
-      position:relative;
-    }
-
-    .page-home .hero-media img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      object-position:center;
-      display:block;
-    }
-
-    .page-home .hero-scrim{
-      position:absolute;
-      inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35));
-      pointer-events:none;
-    }
-
-    .page-home .hero-content{
-      position:absolute;
-      inset:0;
-      display:grid;
-      align-content:center;
-    }
-
-    .page-home .hero-content .script-kicker,
-    .page-home .hero-content .hero-title,
-    .page-home .hero-content .hero-sub,
-    .page-home .hero-content .quote-dropdown{
-      max-width:min(720px, 90%);
-      color:#fff;
-      text-shadow:0 2px 10px rgba(0,0,0,.25);
-    }
-
-    .page-home .quote-menu a{
-      color:#2e2a27;
-    }
-
-    /* Make services its own layer under the hero */
-    .page-home .services{
-      position:relative;
-      z-index:1;
-    }
-
-    /* SERVICES grid centered nicely on desktop */
-    .page-home .services .cards{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:14px;
-      align-items:stretch;
-      margin-inline:auto;
-      width:min(1200px,95%);
-      justify-items:center;
-    }
-
-    @media (min-width: 920px){
-      .page-home .services .cards{
-        grid-template-columns:repeat(3, minmax(0,1fr));
-      }
-    }
-
-    @media (min-width: 1100px){
-      .page-home .services .cards{
-        grid-template-columns:repeat(4, 1fr);
-      }
-    }
-
-    .page-home .services .card{
-      background:#fff;
-      border-radius:16px;
-      padding:18px;
-      text-align:center;
-      box-shadow:0 10px 26px rgba(0,0,0,.08);
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      justify-content:center;
-      align-items:center;
-      width:100%;
-      height:100%;
-    }
-
-    .page-home .service-icon{
-      font-size:28px;
-      color:#2e2a27;
-      opacity:.9;
-    }
-
-    .page-home .services .card h3{ margin:.25rem 0 .15rem; }
-    .page-home .services .card p{ margin:0; opacity:.9; }
-
-    /* ABOUT */
-    .page-home .about-grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:16px;
-      align-items:center;
-    }
-
-    @media (min-width: 900px){
-      .page-home .about-grid{
-        grid-template-columns:1.1fr .9fr;
-      }
-    }
-
-    .page-home .about-photo img{
-      width:100%;
-      height:auto;
-      border-radius:16px;
-      box-shadow:0 10px 26px rgba(0,0,0,.08);
-      display:block;
-    }
-
-    /* Reviews spacing */
-    .page-home #reviews .reviews-wrap{
-      padding:28px 18px;
-    }
-
-    /* Chat above media */
-    #ftt-chat-launcher, #ftt-chat{
-      z-index:9999;
-    }
-
-    /* Mobile-only arrows on service cards */
-    @media (max-width: 780px){
-      .page-home .service-card-link{
-        position:relative;
-        display:block;
-      }
-
-      .page-home .service-card-link::after{
-        content:"›";
-        position:absolute;
-        right:16px;
-        bottom:12px;
-        font-size:24px;
-        line-height:1;
-        color:#524a46;
-        opacity:.55;
-        pointer-events:none;
-      }
-    }
-  </style>
-
-  <!-- Chat widget base z-index (extra safety) -->
-  <style>
-    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Operations Suite – The Finishing Touch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/>
+<style>
+:root{
+  --bg:#f7f1eb;
+  --paper:#fffdf9;
+  --panel:#fbf7f2;
+  --ink:#241f1c;
+  --muted:#746a63;
+  --muted2:#95887f;
+  --line:#e5d9cf;
+  --line2:#d7c5b8;
+  --taupe:#cbb39c;
+  --taupe2:#b99a80;
+  --champagne:#efe4d7;
+  --blush:#ead0d4;
+  --blush-soft:#fbf0f1;
+  --charcoal:#2f2926;
+  --success:#496b52;
+  --warning:#8a620f;
+  --danger:#8a4444;
+  --shadow:0 22px 60px rgba(42,34,28,.10);
+  --shadow-soft:0 12px 30px rgba(42,34,28,.07);
+  --radius-xl:30px;
+  --radius-lg:22px;
+  --radius-md:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    linear-gradient(180deg,rgba(255,253,249,.78),rgba(247,241,235,.96)),
+    radial-gradient(circle at 12% 5%,rgba(234,208,212,.45),transparent 28%),
+    radial-gradient(circle at 92% 90%,rgba(203,179,156,.25),transparent 30%),
+    var(--bg);
+  font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;
+  color:var(--ink);
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.hidden{display:none!important}
+.app-shell{width:min(1240px,96%);margin:20px auto 74px;display:grid;grid-template-columns:286px minmax(0,1fr);gap:18px;align-items:start}
+.app-rail{position:sticky;top:18px;min-height:calc(100vh - 40px);background:rgba(255,253,249,.92);border:1px solid rgba(229,217,207,.95);border-radius:var(--radius-xl);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px;backdrop-filter:blur(18px)}
+.brand{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:8px 6px 17px}
+.brand .logo{width:36px;height:48px;background:url("logo-vase.png") center/contain no-repeat;flex:0 0 auto}
+.brand strong{font-family:"Playfair Display",serif;font-size:1.18rem;line-height:1.08;display:block;letter-spacing:.01em}
+.brand span{display:block;font-size:.78rem;color:var(--muted);font-weight:800;margin-top:2px;letter-spacing:.02em}
+.status-pill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;font-size:.72rem;font-weight:900;border:1px solid var(--line2);background:#fffaf6;color:#6b5140;border-radius:999px;padding:.34rem .72rem;letter-spacing:.02em}
+.status-pill.good{background:#f4fbf4;border-color:#cfe6d0;color:var(--success)}
+.status-pill.warn{background:#fff8e8;border-color:#ead9ad;color:var(--warning)}
+.status-pill.danger{background:#fff1f1;border-color:#ebc6c6;color:var(--danger)}
+.rail-note{color:var(--muted);font-weight:650;line-height:1.55;font-size:.91rem;padding:0 6px}
+.rail-nav{display:grid;gap:7px}
+.navbtn{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:16px;padding:11px 12px;text-align:left;font-weight:850;display:flex;align-items:center;gap:11px;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+.navbtn .ico{width:28px;height:28px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,#fffdf9,#f7f0ea);display:grid;place-items:center;color:#7c695b;font-size:.7rem;font-weight:900;letter-spacing:.04em;box-shadow:0 6px 14px rgba(42,34,28,.06)}
+.navbtn:hover,.navbtn.active{background:linear-gradient(135deg,#fffdf9,#f7eee8);border-color:var(--line2);color:var(--ink);transform:translateY(-1px)}
+.navbtn.active .ico{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+.rail-footer{margin-top:auto;display:grid;gap:9px;border-top:1px solid var(--line);padding-top:14px}
+.main{display:grid;gap:16px;min-width:0}
+.topbar{background:rgba(255,253,249,.9);border:1px solid rgba(229,217,207,.95);border-radius:var(--radius-xl);padding:18px 20px;box-shadow:var(--shadow-soft);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;backdrop-filter:blur(16px)}
+.topbar h1{font-family:"Playfair Display",serif;margin:0;font-size:clamp(1.55rem,2.5vw,2.35rem);letter-spacing:.01em}
+.topbar p{margin:5px 0 0;color:var(--muted);font-weight:650}
+.who{font-size:.84rem;color:var(--muted);font-weight:800;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-card{background:rgba(255,253,249,.96);border:1px solid rgba(229,217,207,.95);border-radius:var(--radius-xl);box-shadow:var(--shadow-soft);padding:22px;overflow:hidden}
+.mini-kicker{font-family:Manrope,system-ui,sans-serif;font-size:.76rem;text-transform:uppercase;letter-spacing:.18em;color:#8b6f5a;margin:0 0 9px;font-weight:900}
+.screen-title{font-family:"Playfair Display",serif;font-size:clamp(1.5rem,3vw,2.25rem);line-height:1.05;margin:0;letter-spacing:.01em}
+.screen-copy{color:#61564f;font-weight:650;line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.tile{border:1px solid var(--line);border-radius:var(--radius-lg);background:linear-gradient(180deg,#fffdf9,#fbf7f2);padding:17px;box-shadow:0 8px 22px rgba(42,34,28,.05);position:relative;overflow:hidden}
+.tile::before{content:"";position:absolute;left:17px;top:0;width:38px;height:3px;background:linear-gradient(90deg,var(--taupe2),var(--champagne));border-radius:999px}
+.tile h3{font-family:"Playfair Display",serif;margin:8px 0 6px;font-size:1.05rem}
+.tile strong{display:block;font-size:1.75rem;line-height:1}
+.tile p{color:var(--muted);font-weight:650;margin:6px 0 0;line-height:1.42}
+.section{display:none}.section.active{display:grid;gap:16px}.stack{display:grid;gap:12px}
+.card{border:1px solid var(--line);border-radius:var(--radius-lg);background:rgba(255,253,249,.98);padding:16px;display:grid;gap:10px;box-shadow:0 8px 22px rgba(42,34,28,.05)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-head h3{font-family:"Playfair Display",serif;margin:0;font-size:1.17rem;letter-spacing:.01em}
+.meta{display:flex;gap:7px;flex-wrap:wrap}
+.meta span{display:inline-flex;border:1px solid var(--line);background:#fffaf6;border-radius:999px;padding:.34rem .62rem;color:#5d514b;font-weight:800;font-size:.82rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:.72rem 1rem;text-decoration:none;border:0;font-weight:900;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--taupe),#decdbd);color:var(--ink);box-shadow:0 10px 22px rgba(185,154,128,.22)}
+.btn-dark{background:var(--charcoal);color:white}.btn-outline{background:#fffdf9;border:1.5px solid var(--charcoal);color:var(--charcoal)}
+.btn-soft{background:#f8f1ec;border:1px solid var(--line2);color:#6f5949}.btn-danger{background:#fff1f1;border:1px solid #ebc6c6;color:var(--danger)}
+.btn:disabled{opacity:.55;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap}.filters{display:flex;gap:8px;flex-wrap:wrap}
+.field{display:grid;gap:7px;font-weight:850;color:var(--ink)}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);background:#fffdf9;border-radius:16px;padding:.8rem .95rem;outline:none;color:var(--ink)}
+.field textarea{min-height:88px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--taupe2);box-shadow:0 0 0 4px rgba(203,179,156,.18)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+.empty{border:1px dashed var(--line2);border-radius:var(--radius-lg);padding:26px;text-align:center;color:var(--muted);font-weight:850;background:rgba(255,253,249,.78)}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.doc-mini{border:1px solid var(--line);background:#fffaf6;border-radius:18px;padding:12px;display:grid;gap:8px}
+.doc-mini strong{font-family:"Playfair Display",serif}.doc-files{display:grid;gap:5px;font-size:.84rem}.doc-files a{color:#6f5949;font-weight:900;word-break:break-all}
+.hint{color:var(--muted);font-weight:700;font-size:.86rem}
+.agreement-scroll{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fffdf9;scrollbar-width:thin;scrollbar-color:#c9b3a2 #fffaf6}
+.agreement-scroll::-webkit-scrollbar{width:10px}.agreement-scroll::-webkit-scrollbar-track{background:#fffaf6}.agreement-scroll::-webkit-scrollbar-thumb{background:#c9b3a2;border-radius:999px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lock-banner{border:1px solid var(--line);border-radius:20px;background:#fffaf6;padding:14px;color:#61554f;font-weight:750;line-height:1.45}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--charcoal);color:#fff;padding:12px 16px;border-radius:999px;box-shadow:0 16px 34px rgba(0,0,0,.24);font-weight:900;z-index:9999;display:none}
+.answer-block{border:1px solid var(--line);border-radius:18px;background:#fffaf6;padding:12px;display:grid;gap:8px}
+.answer-block strong{font-size:.86rem;color:#5d514b}.answer-block p{margin:0;color:#61554f;font-weight:650;line-height:1.5}.score{font-family:"Playfair Display",serif;font-size:2rem;font-weight:700}
+.danger-zone{border-color:#e5beb8;background:#fff7f5}
+.danger-zone .mini-kicker{color:var(--danger)}
+.setting-row{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fffaf6;padding:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.setting-row h3{font-family:"Playfair Display",serif;margin:0 0 5px;font-size:1.17rem}
+.setting-row p{margin:0;color:var(--muted);font-weight:650;line-height:1.5}
+.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,249,.94);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:22px;padding:8px;box-shadow:0 15px 40px rgba(42,34,28,.18);grid-template-columns:repeat(6,1fr);gap:4px}
+.bottom-nav button{border:0;background:transparent;border-radius:14px;padding:8px 4px;color:var(--muted);font-size:.72rem;font-weight:900;display:grid;place-items:center;gap:2px}
+.bottom-nav button.active{background:#f8f1ec;color:var(--ink)}.bico{width:18px;height:2px;border-radius:999px;background:currentColor;display:block;opacity:.7}
+@media(max-width:940px){.app-shell{grid-template-columns:1fr}.app-rail{position:relative;top:auto;min-height:auto}.rail-nav{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}}
+@media(max-width:680px){.app-shell{width:min(100% - 16px,1180px);margin-top:10px}.app-rail{display:none}.bottom-nav{display:grid}.topbar,.app-card{border-radius:22px}.form-grid{grid-template-columns:1fr}.btn{width:100%}.actions{display:grid}.grid{grid-template-columns:1fr}.doc-grid{grid-template-columns:1fr}}
+</style>
 </head>
-<body class="page-home">
+<body>
+<div class="app-shell">
+  <aside class="app-rail">
+    <div class="brand"><span class="logo"></span><div><strong>The Finishing Touch</strong><span>Operations Suite</span><div id="rolePill" class="status-pill">Checking…</div></div></div>
+    <div class="rail-note">A private operations suite for applications, scheduling, compliance, jobs, walkthroughs, quotes, clients, contractors, and future W2 readiness.</div>
+    <nav class="rail-nav" id="railNav">
+      <button class="navbtn active" data-section="home"><span class="ico">01</span>Home</button>
+      <button class="navbtn" data-section="applications"><span class="ico">02</span>Applications</button>
+      <button class="navbtn" data-section="scheduling"><span class="ico">03</span>Scheduling</button>
+      <button class="navbtn" data-section="compliance"><span class="ico">04</span>Compliance</button>
+      <button class="navbtn" data-section="jobs"><span class="ico">05</span>Jobs</button>
+      <button class="navbtn" data-section="people"><span class="ico">06</span>People</button>
+      <button class="navbtn" data-section="quotes"><span class="ico">07</span>Quotes</button>
+      <button class="navbtn" data-section="walkthroughs"><span class="ico">08</span>Walkthroughs</button>
+      <button class="navbtn" data-section="settings"><span class="ico">09</span>Settings</button>
+    </nav>
+    <div class="rail-footer"><button class="btn btn-soft" data-section="settings" type="button">My Settings</button><a class="btn btn-outline" href="index.html">Home Website</a><button id="signOutBtn" class="btn btn-soft">Sign out</button></div>
+  </aside>
+  <main class="main">
+    <section class="topbar"><div><h1 id="pageTitle">Operations Command Center</h1><p id="pageSub">A refined private workspace for The Finishing Touch operations.</p></div><span id="whoami" class="who"></span></section>
+    <section id="gate" class="app-card hidden"><p class="mini-kicker">Private access</p><h2 class="screen-title">Admin sign-in required</h2><p class="screen-copy">Please sign in with an approved admin account.</p><div class="actions"><a class="btn btn-primary" href="login.html?next=admin-dashboard.html">Sign in</a></div></section>
+    <section id="app" class="hidden">
+      <section id="home" class="section active"></section>
+      <section id="applications" class="section"></section>
+      <section id="scheduling" class="section"></section>
+      <section id="compliance" class="section"></section>
+      <section id="jobs" class="section"></section>
+      <section id="people" class="section"></section>
+      <section id="quotes" class="section"></section>
+      <section id="walkthroughs" class="section"></section>
+      <section id="settings" class="section"></section>
+    </section>
+  </main>
+</div>
+<nav class="bottom-nav" id="bottomNav">
+  <button class="active" data-section="home"><span class="bico"></span>Home</button>
+  <button data-section="applications"><span class="bico"></span>Apps</button>
+  <button data-section="scheduling"><span class="bico"></span>Schedule</button>
+  <button data-section="compliance"><span class="bico"></span>Review</button>
+  <button data-section="jobs"><span class="bico"></span>Jobs</button>
+  <button data-section="settings"><span class="bico"></span>Settings</button>
+</nav>
+<div id="toast" class="toast"></div>
+<script type="module">
+import { auth, db } from "./ft-firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import { collection, query, where, orderBy, limit, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+const $=id=>document.getElementById(id); const toastEl=$('toast');
+let me=null, meData={}, users=[], jobs=[], requests=[], quotes=[], walkthroughs=[]; let activeSection='home'; let unsubs=[];
+function showToast(msg){ toastEl.textContent=msg; toastEl.style.display='block'; setTimeout(()=>toastEl.style.display='none',2100); }
+function cap(s){return String(s||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}
+function dateText(v){try{ if(v?.toDate) return v.toDate().toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); if(typeof v==='string'&&v) return new Date(v+'T00:00:00').toLocaleDateString([], {month:'short',day:'numeric'});}catch{} return ''}
+function money(n){ const x=Number(n); return Number.isFinite(x)?`$${Math.round(x)}`:''; }
+function email(u){return u.email||u.clientEmail||u.submittedByEmail||''}
+function safeUrl(url){ return String(url||''); }
+function setTitle(){ const map={
+home:['Operations Command Center','Your daily executive snapshot.'],
+applications:['Applications Review','Review contractor applications before onboarding access is granted.'],
+scheduling:['Scheduling Requests','Review client booking, reschedule, and availability requests.'],
+compliance:['Workforce Compliance','Approve contractor onboarding now and keep W2 readiness available for later.'],
+jobs:['Job Workflow Center','Monitor assignments, status, workflow, and completion.'],
+people:['People Directory','Clients, contractors, employee waitlist, and future W2 records.'],
+quotes:['Quote Queue','Draft, approve, and track client-facing estimates.'],
+walkthroughs:['Walkthrough Review','Contractor-submitted walkthroughs ready for review.'],
+settings:['Admin Settings','Manage your own admin profile, account access, and deletion options.']
+}; $('pageTitle').textContent=map[activeSection]?.[0]||'Operations Suite'; $('pageSub').textContent=map[activeSection]?.[1]||''; }
+function showSection(section){ activeSection=section; document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===section)); document.querySelectorAll('[data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===section)); setTitle(); render(); }
+document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.section)));
+$('signOutBtn').addEventListener('click', async()=>{ await signOut(auth); location.href='index.html'; });
+function clearUnsubs(){ unsubs.forEach(u=>{try{u()}catch{}}); unsubs=[]; }
+function listen(){ clearUnsubs(); unsubs.push(onSnapshot(collection(db,'users'), s=>{users=s.docs.map(d=>({id:d.id,...d.data()})); render();})); unsubs.push(onSnapshot(query(collection(db,'jobs'), orderBy('createdAt','desc'), limit(150)), s=>{jobs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'bookingRequests'), orderBy('createdAt','desc'), limit(100)), s=>{requests=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'quotes'), orderBy('createdAt','desc'), limit(100)), s=>{quotes=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'walkthroughs'), orderBy('createdAt','desc'), limit(100)), s=>{walkthroughs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); }
+onAuthStateChanged(auth, async user=>{ me=user; if(!user){ $('gate').classList.remove('hidden'); $('app').classList.add('hidden'); $('rolePill').textContent='Signed out'; return; } $('whoami').textContent=user.email||user.uid; const snap=await getDoc(doc(db,'users',user.uid)); meData=snap.exists()?snap.data():{}; if(String(meData.role||'').toLowerCase()!=='admin'){ $('gate').classList.remove('hidden'); $('app').classList.add('hidden'); $('rolePill').textContent='Not admin'; return; } $('gate').classList.add('hidden'); $('app').classList.remove('hidden'); $('rolePill').textContent='Admin'; $('rolePill').classList.add('good'); listen(); });
+function workerKind(u){ const v=String(u.workerType||u.classification||u.compliance?.workerType||u.role||u.contractorStatus||u.employeeStatus||'').toLowerCase(); if(v.includes('w2')||v.includes('employee')) return 'employee_w2'; if(v.includes('waitlist')) return 'employee_waitlist'; if(v.includes('team_lead')) return 'team_lead'; if(v.includes('company')) return 'contractor_company'; return 'contractor_1099'; }
+function isWorkforce(u){ const r=String(u.role||'').toLowerCase(); return ['contractor','pending','employee','employee_w2','employee_waitlist','team_lead'].includes(r)||u.contractorStatus||u.employeeStatus||u.compliance; }
+function kindLabel(u){ const k=workerKind(u); const map={contractor_1099:'1099 Contractor',contractor_company:'Contractor Company',team_lead:'Team Lead',employee_w2:'Future W2 Employee',employee_waitlist:'Employee Waitlist'}; return map[k]||cap(k); }
+function applicationList(){ return users.filter(u=>{
+  const st=String(u.applicationStatus||'').toLowerCase();
+  const appType=String(u.application?.type||'').toLowerCase();
+  return appType==='contractor' || ['submitted','needs_review','approved_for_onboarding','rejected'].includes(st);
+}); }
+function kpis(){ const workforce=users.filter(isWorkforce); const contractors=workforce.filter(u=>workerKind(u)!=='employee_w2'&&workerKind(u)!=='employee_waitlist'); const employees=workforce.filter(u=>workerKind(u)==='employee_w2'||workerKind(u)==='employee_waitlist'); const clients=users.filter(u=>String(u.role||'').toLowerCase()==='client'); const apps=applicationList(); return {applications:apps.filter(u=>['submitted','needs_review'].includes(String(u.applicationStatus||'submitted').toLowerCase())).length,newReq:requests.filter(r=>['new','pending','reviewing'].includes(String(r.status||'new'))).length, activeJobs:jobs.filter(j=>!['completed','cancelled','paid'].includes(String(j.status||''))).length, review:workforce.filter(needsReview).length, contractors:contractors.length, employees:employees.length, workforce:workforce.length, clients:clients.length, quotes:quotes.length}; }
+function renderHome(){ const k=kpis(); $('home').innerHTML=`<div class="app-card"><p class="mini-kicker">Today</p><h2 class="screen-title">Operations Command Center</h2><p class="screen-copy">A focused luxury operations view of what needs your attention first.</p><div class="grid" style="margin-top:16px"><div class="tile"><strong>${k.applications}</strong><h3>Applications</h3><p>New contractor applications awaiting review.</p></div><div class="tile"><strong>${k.newReq}</strong><h3>Scheduling Requests</h3><p>New or waiting for review.</p></div><div class="tile"><strong>${k.review}</strong><h3>Compliance Reviews</h3><p>Contractor + future W2 files needing admin action.</p></div><div class="tile"><strong>${k.activeJobs}</strong><h3>Active Jobs</h3><p>Open, claimed, in progress, or submitted.</p></div><div class="tile"><strong>${k.contractors}</strong><h3>Contractors</h3><p>1099 contractors, companies, and team leads.</p></div><div class="tile"><strong>${k.employees}</strong><h3>W2 Readiness</h3><p>Employee waitlist and future payroll onboarding.</p></div></div></div><div class="app-card"><p class="mini-kicker">Priority Queue</p><h2 class="screen-title">Next actions</h2><div class="stack" style="margin-top:12px">${quickAction('Applications Review',`${k.applications} application(s) to review`,'applications')}${quickAction('Scheduling Requests',`${k.newReq} request(s) to review`,'scheduling')}${quickAction('Compliance Review',`${k.review} workforce file(s) need review`,'compliance')}${quickAction('Job Workflow',`${k.activeJobs} job(s) in motion`,'jobs')}${quickAction('Admin Settings','Manage your own profile and account access','settings')}</div></div>`; }
+function quickAction(title,text,section){return `<div class="card"><div class="card-head"><div><h3>${title}</h3><p class="screen-copy" style="margin:4px 0 0">${text}</p></div><button class="btn btn-primary" data-jump="${section}">Open</button></div></div>`}
 
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand">
-        <span class="vase-logo" aria-hidden="true"></span>
-        <span class="brand-name">The Finishing Touch</span>
-      </div>
+function svcLabel(s){ const map={cleaning:'Cleaning',organizing:'Home Organizing',decor:'Interior Decorating / Styling',holiday:'Holiday Decorating'}; return map[String(s||'').toLowerCase()]||cap(s); }
+function screeningFor(u){ return u.application?.aiScreening || u.aiScreening || {}; }
+function appStatusClass(u){ const st=String(u.applicationStatus||'submitted').toLowerCase(); if(st==='approved_for_onboarding') return 'good'; if(st==='rejected') return 'danger'; if(st==='needs_review') return 'warn'; return ''; }
+function portfolioLinks(u){ const files=u.application?.portfolio || []; if(!Array.isArray(files)||!files.length) return '<span class="hint">No portfolio files saved.</span>'; return `<div class="doc-files">${files.map((f,i)=>`<a href="${safeUrl(f.url)}" target="_blank" rel="noopener">${f.name||`Portfolio ${i+1}`}</a>`).join('')}</div>`; }
+function answerSections(u){ const data=u.application?.serviceAnswers || {}; const keys=Object.keys(data); if(!keys.length) return '<div class="empty">No service interview answers saved.</div>'; return keys.map(service=>`<div class="answer-block"><strong>${svcLabel(service)} Interview</strong>${(data[service]||[]).map(item=>`<p><b>${item.question||''}</b><br>${item.answer||'No answer provided.'}</p>`).join('')}</div>`).join(''); }
+function renderApplications(){ const list=applicationList().sort((a,b)=>String(a.applicationStatus||'submitted').localeCompare(String(b.applicationStatus||'submitted'))); $('applications').innerHTML=`<div class="app-card"><p class="mini-kicker">First Review</p><h2 class="screen-title">Applications Review</h2><p class="screen-copy">Review contractor applications, service selections, portfolio uploads, screening score, and interview answers before onboarding access is granted.</p></div><div class="stack">${list.length?list.map(applicationCard).join(''):'<div class="empty">No contractor applications yet.</div>'}</div>`; wireApplications(); }
+function applicationCard(u){ const app=u.application||{}; const s=screeningFor(u); const services=(u.serviceTypes||[]).map(svcLabel); const status=String(u.applicationStatus||'submitted'); return `<div class="card" data-app-user="${u.id}"><div class="card-head"><div><h3>${u.fullName||u.displayName||u.email||'Applicant'}</h3><div class="meta"><span>${u.email||''}</span>${u.phone?`<span>${u.phone}</span>`:''}${u.city||u.zip?`<span>${[u.city,u.zip].filter(Boolean).join(' ')}</span>`:''}<span>${cap(status)}</span>${services.map(x=>`<span>${x}</span>`).join('')}</div></div><span class="status-pill ${appStatusClass(u)}">${cap(status)}</span></div><div class="split"><div class="doc-mini"><strong>Screening</strong><span class="score">${Number.isFinite(Number(s.score))?Number(s.score):'—'}${Number.isFinite(Number(s.score))?'/100':''}</span><p class="screen-copy">${s.recommendation||'No screening recommendation saved yet.'}</p></div><div class="doc-mini"><strong>Requirements</strong><span class="hint">Insurance: ${cap(app.insured||'not answered')}</span><span class="hint">Transportation: ${cap(app.transportation||'not answered')}</span><span class="hint">Background Check: ${cap(app.backgroundOk||'not answered')}</span><span class="hint">Experience: ${app.yearsExperience??'—'} year(s)</span></div></div><div class="split"><div class="doc-mini"><strong>Why TFT</strong><p class="screen-copy">${app.whyTFT||'No answer provided.'}</p></div><div class="doc-mini"><strong>Service Area & Availability</strong><p class="screen-copy">${app.serviceAreas||'No service area provided.'}</p><p class="screen-copy">${app.availability||'No availability provided.'}</p></div></div><div class="doc-grid"><div class="doc-mini"><strong>Strengths</strong>${(s.strengths||[]).length?(s.strengths||[]).map(x=>`<span class="hint">• ${x}</span>`).join(''):'<span class="hint">No strengths generated.</span>'}</div><div class="doc-mini"><strong>Concerns</strong>${(s.concerns||[]).length?(s.concerns||[]).map(x=>`<span class="hint">• ${x}</span>`).join(''):'<span class="hint">No concerns generated.</span>'}</div><div class="doc-mini"><strong>Portfolio</strong>${portfolioLinks(u)}</div></div><details><summary class="btn btn-soft" style="width:max-content">View interview answers</summary><div class="stack" style="margin-top:10px">${answerSections(u)}</div></details><div class="actions"><button class="btn btn-primary" data-app-approve>Approve for Onboarding</button><button class="btn btn-soft" data-app-review>Needs Review</button><button class="btn btn-danger" data-app-reject>Reject</button></div></div>`}
+function wireApplications(){ document.querySelectorAll('[data-app-approve]').forEach(b=>b.addEventListener('click',()=>setApplicationStatus(b.closest('[data-app-user]').dataset.appUser,'approved_for_onboarding'))); document.querySelectorAll('[data-app-review]').forEach(b=>b.addEventListener('click',()=>setApplicationStatus(b.closest('[data-app-user]').dataset.appUser,'needs_review'))); document.querySelectorAll('[data-app-reject]').forEach(b=>b.addEventListener('click',()=>setApplicationStatus(b.closest('[data-app-user]').dataset.appUser,'rejected'))); }
+async function addNotification(uid,title,message,type='application'){ try{ await addDoc(collection(db,'notifications'),{userId:uid,title,message,type,read:false,createdAt:serverTimestamp(),createdBy:me?.email||me?.uid||'admin',actionUrl:type==='application'?'contractor-dashboard.html':''}); }catch(e){ console.warn('Notification not created',e); } }
+async function setApplicationStatus(uid,status){ const patch={applicationStatus:status,applicationReviewedAt:serverTimestamp(),applicationReviewedBy:me.email||me.uid,updatedAt:serverTimestamp()}; if(status==='approved_for_onboarding'){ Object.assign(patch,{role:'contractor',contractorStage:'onboarding',contractorStatus:'pending_documents',portalAccess:'onboarding_only','compliance.status':'pending_documents','compliance.updatedAt':serverTimestamp()}); } if(status==='needs_review'){ Object.assign(patch,{role:'pending',contractorStage:'application_review'}); } if(status==='rejected'){ Object.assign(patch,{role:'pending',contractorStage:'application_rejected',contractorStatus:'rejected'}); } await updateDoc(doc(db,'users',uid),patch); if(status==='approved_for_onboarding') await addNotification(uid,'Approved for onboarding','Your application was approved. Please complete your contractor onboarding packet.','application_approved'); if(status==='needs_review') await addNotification(uid,'Application needs review','Your application is still under review. The Finishing Touch may request more information.','application_review'); if(status==='rejected') await addNotification(uid,'Application update','Thank you for applying. Your application was not selected for onboarding at this time.','application_rejected'); showToast(`Application ${cap(status)}`); }
 
-      <nav class="main-nav">
-        <a href="index.html">Home</a>
-
-        <div class="nav-dropdown">
-          <a href="#services" class="nav-link has-caret">
-            Services <span class="caret">▾</span>
-          </a>
-          <div class="nav-dropdown-menu">
-            <a href="cleaning.html">Cleaning</a>
-            <a href="organizing.html">Home Organizing</a>
-            <a href="stagingandstyling.html">Staging &amp; Styling</a>
-            <a href="holidaydecorating.html">Holiday Decorating</a>
-            <a href="virtualdesign.html">Virtual Interior Design</a>
-          </div>
-        </div>
-
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
-        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-media">
-      <img src="bed-banner.png" alt="Luxury styled bedroom by The Finishing Touch" loading="eager" fetchpriority="high">
-      <div class="hero-scrim"></div>
-    </div>
-
-    <div class="container hero-content">
-      <p class="script-kicker">Luxury Interior Services</p>
-      <h1 class="hero-title">The Finishing Touch</h1>
-      <p class="hero-sub">Curating clean, styled, and peaceful living spaces.</p>
-
-      <div class="quote-dropdown" id="quoteDropdownHero">
-        <button class="btn btn-quote" id="quoteBtnHero" aria-expanded="false" aria-controls="quoteMenuHero">
-          Get Your Quote ▾
-        </button>
-        <div class="quote-menu" id="quoteMenuHero" role="menu" aria-hidden="true">
-          <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
-          <a role="menuitem" href="intake-organizing.html">Organizing</a>
-          <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
-          <a role="menuitem" href="intake-holiday.html">Holiday Decorating</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services -->
-  <section id="services" class="section services">
-    <div class="container cards">
-
-      <a href="cleaning.html" class="service-card-link">
-        <article class="card">
-          <i class="fa-solid fa-broom service-icon" aria-hidden="true"></i>
-          <h3>Cleaning</h3>
-          <p>Meticulous care for a refreshed home</p>
-        </article>
-      </a>
-
-      <a href="stagingandstyling.html" class="service-card-link">
-        <article class="card">
-          <i class="fa-solid fa-couch service-icon" aria-hidden="true"></i>
-          <h3>Staging &amp; Styling</h3>
-          <p>Elevate spaces for living or showings</p>
-        </article>
-      </a>
-
-      <a href="organizing.html" class="service-card-link">
-        <article class="card">
-          <i class="fa-solid fa-border-all service-icon" aria-hidden="true"></i>
-          <h3>Organizing</h3>
-          <p>Declutter and create calm</p>
-        </article>
-      </a>
-
-      <a href="holidaydecorating.html" class="service-card-link">
-        <article class="card">
-          <i class="fa-solid fa-snowman service-icon" aria-hidden="true"></i>
-          <h3>Holiday Decorating</h3>
-          <p>Festive styling for gatherings &amp; celebrations</p>
-        </article>
-      </a>
-
-      <a href="virtualdesign.html" class="service-card-link">
-        <article class="card">
-          <i class="fa-solid fa-house-laptop service-icon" aria-hidden="true"></i>
-          <h3>Virtual Design</h3>
-          <p>Custom plans, moodboards, and sourcing — delivered online</p>
-        </article>
-      </a>
-
-    </div>
-  </section>
-
-  <!-- About teaser -->
-  <section id="about" class="section about">
-    <div class="container about-grid">
-      <div class="about-photo">
-        <img src="fall-candles.jpg" alt="Cozy styled tray with candles and pumpkins" loading="lazy">
-      </div>
-      <div class="about-copy">
-        <h2></h2>
-        <p>
-          The Finishing Touch was created with a simple vision — to help homes and businesses feel as beautiful and functional as they were meant to be. What began as a small, local effort has grown into a trusted team offering residential and commercial cleaning, interior decorating, home staging, and seasonal holiday décor.
-          <br><br>
-          We take pride in our attention to detail and the care we bring into every space, treating each project as if it were our own. Whether you’re looking to refresh your home, prepare a property to sell, or create a welcoming atmosphere for guests or clients, we’re here to elevate your space and give it The Finishing Touch.
-        </p>
-        <a href="about.html" class="btn btn-outline">Learn more about us</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Social proof -->
-  <section id="book" class="social-proof">
-    <style>
-      .social-proof{
-        background: var(--paper, #fbf8f4);
-        padding: 40px 18px 56px;
-      }
-      .social-proof .container{
-        width: min(1180px, 94%);
-        margin-inline: auto;
-      }
-      .social-inner{
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-        gap: 24px;
-        align-items: center;
-      }
-      @media (max-width: 900px){
-        .social-inner{
-          grid-template-columns: 1fr;
-        }
-      }
-      .social-text h2{
-        font-family:"Playfair Display",serif;
-        font-size:1.5rem;
-        margin:0 0 8px;
-        color: var(--taupe-900, #2e2a27);
-      }
-      .social-text p{
-        font-family:"Manrope", system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-        font-size:.96rem;
-        line-height:1.7;
-        color:rgba(0,0,0,.74);
-        margin:0;
-      }
-      .social-links{
-        display:flex;
-        flex-direction:column;
-        gap:10px;
-      }
-      .social-links a{
-        display:inline-flex;
-        align-items:center;
-        gap:8px;
-        text-decoration:none;
-        font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-        font-size:.94rem;
-        padding:9px 12px;
-        border-radius:999px;
-        background:#fff;
-        box-shadow: var(--shadow, 0 10px 26px rgba(0,0,0,.06));
-        color: var(--taupe-900,#2e2a27);
-      }
-      .social-links a i{
-        font-size:.95rem;
-      }
-      .social-links a:hover{
-        transform:translateY(-1px);
-        box-shadow:0 12px 30px rgba(0,0,0,.12);
-      }
-    </style>
-
-    <div class="container social-inner">
-      <div class="social-text">
-        <h2>See our work in real homes</h2>
-        <p>
-          We love sharing before-and-afters, seasonal decorating, and everyday housekeeping on social media.
-          Follow along to see recent projects, cleaning tips, and behind-the-scenes from The Finishing Touch.
-        </p>
-      </div>
-
-      <div class="social-links">
-        <a href="https://www.instagram.com/the_finishing_touch_tx" target="_blank" rel="noopener">
-          <i class="fab fa-instagram" aria-hidden="true"></i>
-          <span>@thefinishingtouch.tx</span>
-        </a>
-        <a href="https://facebook.com/thefinishingtouch.tx" target="_blank" rel="noopener">
-          <i class="fab fa-facebook-f" aria-hidden="true"></i>
-          <span>facebook.com/thefinishingtouch.tx</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
-    </div>
-  </footer>
-
-  <!-- EmailJS (optional) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>/* emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); */</script>
-
-  <!-- Site JS -->
-  <script src="script.js?v=8" defer></script>
-
-  <!-- === AI Concierge Chat (self-contained) === -->
-  <style>
-    #ftt-chat-launcher{
-      position:fixed; right:18px; bottom:18px;
-      width:54px; height:54px; border-radius:999px;
-      display:flex; align-items:center; justify-content:center;
-      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
-      box-shadow:0 10px 28px rgba(0,0,0,.18);
-    }
-    #ftt-chat{
-      position:fixed; right:18px; bottom:84px;
-      width:340px; max-width:calc(100vw - 36px);
-      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
-      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
-      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
-    .ftt-title{ font-weight:800; color:#2e2a27 }
-    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
-    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
-    .ftt-thread{ height:300px; overflow:auto; padding:12px }
-    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
-    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
-    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
-    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
-    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
-    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
-    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
-    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
-    @media (max-width:420px){ .ftt-thread{ height:48vh } }
-  </style>
-
-  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
-
-  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
-    <div class="ftt-chat-header">
-      <div>
-        <div class="ftt-title">The Finishing Touch</div>
-        <div class="ftt-subtitle">AI Concierge • human on request</div>
-      </div>
-      <button class="ftt-close" aria-label="Close chat">×</button>
-    </div>
-
-    <div id="ftt-thread" class="ftt-thread"></div>
-
-    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
-      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
-      <button class="ftt-send" type="submit">Send</button>
-    </form>
-
-    <div class="ftt-quick">
-      <button data-q="pricing">Pricing</button>
-      <button data-q="availability">Availability</button>
-      <button data-q="services">Services</button>
-      <button data-q="book">Book now</button>
-      <button data-q="human">Talk to a person</button>
-      <button data-q="help">Help me choose</button>
-    </div>
-  </div>
-
-  <script>
-    (function(){
-      const CFG = {
-        timezone: "America/Chicago",
-        intakeAnchor: "intake-cleaning.html",
-        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
-        email: "contact.thefinishingtouch.tx@gmail.com",
-        messenger: "https://m.me/thefinishingtouch.tx",
-        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
-      };
-
-      function isWithinBusinessHours(){
-        try{
-          const now = new Date();
-          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
-          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
-          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
-          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
-          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
-          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-          const wd = dayMap[dayShort] ?? now.getDay();
-          const [oH,oM]=CFG.hours.open.split(":").map(Number);
-          const [cH,cM]=CFG.hours.close.split(":").map(Number);
-          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
-          return CFG.hours.days.includes(wd) && after && before;
-        } catch { return false; }
-      }
-
-      const panel   = document.getElementById("ftt-chat");
-      const thread  = document.getElementById("ftt-thread");
-      const form    = document.getElementById("ftt-inputbar");
-      const input   = document.getElementById("ftt-input");
-      const quick   = document.querySelector(".ftt-quick");
-      const closeBtn= document.querySelector(".ftt-close");
-      const launcher= document.getElementById("ftt-chat-launcher");
-
-      function add(html, who="bot"){
-        const b=document.createElement("div");
-        b.className=`ftt-bubble ${who}`;
-        b.innerHTML=html;
-        thread.appendChild(b);
-        thread.scrollTop=thread.scrollHeight;
-      }
-
-      function detectIntent(text){
-        const t=text.toLowerCase();
-        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
-        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
-        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
-        if (/(service|deep|standard|move|organize|staging|decor)/.test(t)) return "services";
-        if (/(book|booking|schedule now)/.test(t)) return "book";
-        if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
-        return "fallback";
-      }
-
-      function answer(intent){
-        const intakeLink = `<a href="${CFG.intakeAnchor}">Start Intake</a>`;
-        const bookLink = `<a href="${CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
-
-        switch(intent){
-          case "pricing":
-            return [
-              "Quick pricing (final depends on size/condition):",
-              "• Initial/Deep: typically $350–$400 for average homes.",
-              "• Standard Maintenance: commonly $275–$300.",
-              "We’ll tailor it after your intake. " + intakeLink + " or " + bookLink + "."
-            ].join("<br>");
-
-          case "availability":
-            return [
-              "We update availability live in Square.",
-              bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."
-            ].join("<br>");
-
-          case "services":
-            return [
-              "We offer luxury cleaning, organizing, and staging/decor.",
-              "• Deep/Initial: top-to-bottom detail.",
-              "• Standard: recurring maintenance (weekly/bi-weekly/monthly).",
-              "• Move-Out/Make-Ready: inside cabinets/fridge/oven by request.",
-              "Want the full checklist? " + intakeLink + " and I’ll tailor it."
-            ].join("<br>");
-
-          case "book":
-            return "Perfect—" + bookLink + " or " + intakeLink + " if you’d like a quick tailored route first.";
-
-          case "human":
-            return isWithinBusinessHours()
-              ? `Absolutely. Tap <a href="${CFG.messenger}" target="_blank" rel="noopener">Message us on Facebook</a> for the fastest response.`
-              : `We’re offline. You can still <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply ASAP.`;
-
-          case "recommend":
-            return [
-              "<strong>Happy to help you choose!</strong>",
-              "<em>Initial:</em> A ≈ up to ~1,200 sq ft · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 · D ≈ 3,000+ / heavy detail.",
-              "<em>Standard:</em> A ≈ up to ~1,200 · B ≈ ~1,200–2,000 · C ≈ ~2,000–3,000 (larger? pick Deep).",
-              `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} first.`
-            ].join("<br>");
-
-          default:
-            return [
-              "I can help with pricing, availability, and services.",
-              "Try “what’s your pricing?” or “do you have Friday slots?”",
-              "Say “human” any time to talk to a person."
-            ].join("<br>");
-        }
-      }
-
-      launcher.addEventListener("click", ()=>{
-        const open = panel.style.display !== "block";
-        panel.style.display = open ? "block" : "none";
-
-        if (open && !thread.dataset.greeted){
-          add("Hi! I’m your AI concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
-          thread.dataset.greeted = "1";
-        }
-
-        if (open) input.focus();
-      });
-
-      closeBtn.addEventListener("click", ()=>{
-        panel.style.display = "none";
-      });
-
-      form.addEventListener("submit",(e)=>{
-        e.preventDefault();
-        const text = input.value.trim();
-        if (!text) return;
-        add(text, "me");
-        input.value = "";
-        setTimeout(()=> add(answer(detectIntent(text))), 120);
-      });
-
-      quick.addEventListener("click",(e)=>{
-        if (e.target.matches("button[data-q]")){
-          const map = {
-            pricing:"pricing",
-            availability:"availability",
-            services:"services",
-            book:"book",
-            human:"human",
-            help:"recommend"
-          };
-          const intent = map[e.target.getAttribute("data-q")] || "fallback";
-          add(e.target.textContent, "me");
-          setTimeout(()=> add(answer(intent)), 80);
-        }
-      });
-    })();
-  </script>
-
-  <!-- Quote dropdown behavior -->
-  <style>
-    .quote-dropdown { position: relative; }
-    .quote-menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      background: #fff;
-      border-radius: 12px;
-      padding: 8px;
-      min-width: 220px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.12);
-      z-index: 1001;
-    }
-    .quote-menu[aria-hidden="false"] { display: block; }
-    .quote-menu[aria-hidden="true"]  { display: none; }
-    .quote-menu a {
-      display: block;
-      padding: 10px 12px;
-      color: #2e2a27;
-      text-decoration: none;
-      border-radius: 10px;
-    }
-    .quote-menu a:hover { background: #f6f3ef; }
-  </style>
-
-  <script>
-    (function(){
-      const btn  = document.getElementById('quoteBtnHero');
-      const menu = document.getElementById('quoteMenuHero');
-      if (!btn || !menu) return;
-
-      btn.setAttribute('aria-expanded', 'false');
-      menu.setAttribute('aria-hidden', 'true');
-
-      function openMenu(){
-        btn.setAttribute('aria-expanded','true');
-        menu.setAttribute('aria-hidden','false');
-        document.addEventListener('click', onDocClick, true);
-        document.addEventListener('keydown', onKey);
-      }
-
-      function closeMenu(){
-        btn.setAttribute('aria-expanded','false');
-        menu.setAttribute('aria-hidden','true');
-        document.removeEventListener('click', onDocClick, true);
-        document.removeEventListener('keydown', onKey);
-      }
-
-      function onDocClick(e){
-        if (!menu.contains(e.target) && e.target !== btn) closeMenu();
-      }
-
-      function onKey(e){
-        if (e.key === 'Escape') closeMenu();
-      }
-
-      btn.addEventListener('click', (e)=>{
-        e.preventDefault();
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        expanded ? closeMenu() : openMenu();
-      });
-    })();
-  </script>
-
-  <!-- Smart auth button -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-
-    const btn = document.querySelector('.btn-auth');
-
-    onAuthStateChanged(auth, (user) => {
-      if (!btn) return;
-
-      if (user) {
-        btn.textContent = 'Sign out';
-        btn.href = '#';
-        btn.onclick = async (e) => {
-          e.preventDefault();
-          await signOut(auth);
-          window.location.reload();
-        };
-      } else {
-        btn.textContent = 'Sign in / Create account';
-        btn.href = 'login.html';
-        btn.onclick = null;
-      }
-    });
-  </script>
-
-  <!-- Base Firebase import -->
-  <script type="module">
-    import { auth } from "./ft-firebase.js";
-  </script>
+function renderScheduling(){ const list=requests.filter(r=>!r.requestKind||r.requestKind==='scheduling_request'||r.source==='client_dashboard'); $('scheduling').innerHTML=`<div class="app-card"><p class="mini-kicker">Scheduling</p><h2 class="screen-title">Client requests</h2><p class="screen-copy">Turn client availability requests into confirmed jobs.</p></div><div class="stack">${list.length?list.map(requestCard).join(''):'<div class="empty">No scheduling requests yet.</div>'}</div>`; wireRequestButtons(); }
+function requestCard(r){return `<div class="card" data-req="${r.id}"><div class="card-head"><div><h3>${cap(r.requestType||'Scheduling Request')}</h3><div class="meta"><span>${cap(r.status||'new')}</span>${r.serviceType?`<span>${cap(r.serviceType)}</span>`:''}${r.preferredDate?`<span>${dateText(r.preferredDate)}</span>`:''}${r.preferredWindow?`<span>${cap(r.preferredWindow)}</span>`:''}</div></div><span class="status-pill">${r.clientName||r.clientEmail||'Client'}</span></div>${r.notes?`<p class="screen-copy">${r.notes}</p>`:''}<div class="actions"><button class="btn btn-soft" data-req-status="reviewing">Reviewing</button><button class="btn btn-outline" data-req-status="contractor_contacted">Contractor Contacted</button><button class="btn btn-outline" data-req-status="options_sent">Options Sent</button><button class="btn btn-primary" data-req-status="confirmed">Confirmed</button><button class="btn btn-danger" data-req-status="declined">Declined</button><button class="btn btn-dark" data-create-job>Create Job</button></div></div>`}
+function wireRequestButtons(){ document.querySelectorAll('[data-req-status]').forEach(b=>b.addEventListener('click',async()=>{const id=b.closest('[data-req]').dataset.req; await updateDoc(doc(db,'bookingRequests',id),{status:b.dataset.reqStatus,updatedAt:serverTimestamp()}); showToast('Request updated');})); document.querySelectorAll('[data-create-job]').forEach(b=>b.addEventListener('click',()=>createJobFromRequest(b.closest('[data-req]').dataset.req))); }
+async function createJobFromRequest(id){ const r=requests.find(x=>x.id===id); if(!r)return; const flat=prompt('Client flat rate / quote amount? Optional.',''); const hours=prompt('Estimated team hours? Optional.',''); const payload={status:'open',workflowStatus:'open',source:'admin_from_scheduling_request',bookingRequestId:id,clientId:r.clientUid||r.clientId||'',clientUid:r.clientUid||r.clientId||'',clientEmail:r.clientEmail||'',serviceType:r.serviceType||'cleaning',summary:r.notes||'',preferredDate:r.preferredDate||'',arrivalWindow:r.preferredWindow||'',flatRate:flat?Number(flat):null,estimatedTeamHours:hours?Number(hours):null,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}; if(r.preferredDate){try{payload.serviceDate=Timestamp.fromDate(new Date(r.preferredDate+'T09:00:00'))}catch{}} await addDoc(collection(db,'jobs'),stripNull(payload)); await updateDoc(doc(db,'bookingRequests',id),{status:'job_created',updatedAt:serverTimestamp()}); showToast('Job created'); }
+function docs(u){return u.compliance?.documents||{}} function agreement(u){return u.compliance?.agreement||{}} function docDone(u,type){const d=docs(u)[type]; return !!(d?.url||d?.front?.url||d?.back?.url||(Array.isArray(d?.files)&&d.files.length));} function adminOk(u,type){const d=type==='agreement'?agreement(u):docs(u)[type]; return ['approved','verified','active'].includes(String(d?.adminStatus||'').toLowerCase())}
+function requiredDocsFor(u){ const k=workerKind(u); if(k==='employee_w2') return ['id','w4','i9','agreement']; return ['id','w9','coi','agreement']; }
+function needsReview(u){return requiredDocsFor(u).some(t=>t==='agreement'?agreement(u)?.signatureName:docDone(u,t))||String(u.contractorStatus||u.employeeStatus||u.onboardingStatus||'').includes('review')}
+function completionPct(u){const required=requiredDocsFor(u); const checks=required.map(t=>t==='agreement'?!!agreement(u)?.signatureName:docDone(u,t)); return Math.round(checks.filter(Boolean).length/checks.length*100)}
+function renderCompliance(){ const list=users.filter(isWorkforce).sort((a,b)=>completionPct(b)-completionPct(a)); $('compliance').innerHTML=`<div class="app-card"><p class="mini-kicker">Review</p><h2 class="screen-title">Workforce compliance</h2><p class="screen-copy">Contractor onboarding is active now. W2/employee readiness stays here for later so you can use it when you are ready.</p><div class="meta" style="margin-top:12px"><span>1099: ID, W-9, COI, Agreement</span><span>W2 later: ID, W-4, I-9, Agreement</span><span>Admin controls activation</span></div></div><div class="stack">${list.length?list.map(complianceCard).join(''):'<div class="empty">No workforce files yet.</div>'}</div>`; wireCompliance(); }
+function docsGridFor(u){return requiredDocsFor(u).map(t=>t==='agreement'?agreementMini(u):docMini(u,t,{id:'Identity',w9:'W-9',coi:'COI',w4:'W-4',i9:'I-9'}[t]||cap(t))).join('')}
+function complianceCard(u){ const isActive=String(u.contractorStatus||u.employeeStatus||u.compliance?.status||'').toLowerCase()==='active'; return `<div class="card" data-user="${u.id}"><div class="card-head"><div><h3>${u.legalName||u.fullName||u.displayName||u.email||'Worker'}</h3><div class="meta"><span>${u.email||''}</span><span>${kindLabel(u)}</span><span>${cap(u.contractorStatus||u.employeeStatus||u.onboardingStatus||u.role||'Needs Review')}</span><span>${completionPct(u)}% submitted</span></div></div><span class="status-pill ${isActive?'good':''}">${cap(u.contractorStatus||u.employeeStatus||u.onboardingStatus||'Needs Review')}</span></div><div class="doc-grid">${docsGridFor(u)}</div><div class="actions"><button class="btn btn-primary" data-mark-active>Mark Active</button><button class="btn btn-soft" data-mark-review>Needs Update</button><button class="btn btn-danger" data-mark-hold>Hold</button><button class="btn btn-outline" data-mark-waitlist>Employee Waitlist</button></div></div>`}
+function fileLinks(fileObj){ if(!fileObj)return ''; let out=[]; if(fileObj.url) out.push(['File',fileObj.url]); if(fileObj.front?.url) out.push(['Front',fileObj.front.url]); if(fileObj.back?.url) out.push(['Back',fileObj.back.url]); if(Array.isArray(fileObj.files)) fileObj.files.forEach((f,i)=>{if(f.url)out.push([f.name||`File ${i+1}`,f.url])}); return out.length?`<div class="doc-files">${out.map(([n,u])=>`<a href="${safeUrl(u)}" target="_blank" rel="noopener">${n}</a>`).join('')}</div>`:'<span class="hint">No file link saved</span>'; }
+function docMini(u,type,label){ const d=docs(u)[type]||{}; return `<div class="doc-mini" data-doc-type="${type}"><div class="card-head"><strong>${label}</strong><span class="status-pill ${adminOk(u,type)?'good':''}">${cap(d.adminStatus|| (docDone(u,type)?'pending_review':'not_uploaded'))}</span></div>${type==='coi'&&d.expiration?`<span class="hint">Expires: ${d.expiration}</span>`:''}${fileLinks(d)}<div class="actions"><button class="btn btn-soft" data-doc-approve="${type}">Approve</button><button class="btn btn-danger" data-doc-reject="${type}">Reject</button></div></div>`}
+function agreementMini(u){ const a=agreement(u)||{}; const initials=a.initials?Object.keys(a.initials).length:0; return `<div class="doc-mini"><div class="card-head"><strong>Agreement</strong><span class="status-pill ${adminOk(u,'agreement')?'good':''}">${cap(a.adminStatus|| (a.signatureName?'pending_review':'not_signed'))}</span></div>${a.signatureName?`<span class="hint">Signed by ${a.signatureName}<br>${a.signedByEmail||''}</span>`:'<span class="hint">Not signed yet</span>'}<span class="hint">Initialed sections: ${initials}</span>${a.acknowledgments?`<div class="agreement-scroll">${Object.entries(a.acknowledgments).map(([k,v])=>`<div>${v?'Yes':'No'} ${cap(k)}</div>`).join('')}</div>`:''}<div class="actions"><button class="btn btn-soft" data-agreement-approve>Approve</button><button class="btn btn-danger" data-agreement-reject>Reject</button></div></div>`}
+function wireCompliance(){ document.querySelectorAll('[data-doc-approve]').forEach(b=>b.addEventListener('click',()=>setDocStatus(b.closest('[data-user]').dataset.user,b.dataset.docApprove,'approved'))); document.querySelectorAll('[data-doc-reject]').forEach(b=>b.addEventListener('click',()=>setDocStatus(b.closest('[data-user]').dataset.user,b.dataset.docReject,'needs_update'))); document.querySelectorAll('[data-agreement-approve]').forEach(b=>b.addEventListener('click',()=>setAgreementStatus(b.closest('[data-user]').dataset.user,'approved'))); document.querySelectorAll('[data-agreement-reject]').forEach(b=>b.addEventListener('click',()=>setAgreementStatus(b.closest('[data-user]').dataset.user,'needs_update'))); document.querySelectorAll('[data-mark-active]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'active'))); document.querySelectorAll('[data-mark-review]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'needs_update'))); document.querySelectorAll('[data-mark-hold]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'hold'))); document.querySelectorAll('[data-mark-waitlist]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'employee_waitlist'))); }
+async function setDocStatus(uid,type,status){ await updateDoc(doc(db,'users',uid),{[`compliance.documents.${type}.adminStatus`]:status,[`compliance.documents.${type}.reviewedAt`]:serverTimestamp(),[`compliance.documents.${type}.reviewedBy`]:me.email||me.uid,'compliance.updatedAt':serverTimestamp(),updatedAt:serverTimestamp()}); showToast(`${cap(type)} ${cap(status)}`); }
+async function setAgreementStatus(uid,status){ await updateDoc(doc(db,'users',uid),{'compliance.agreement.adminStatus':status,'compliance.agreement.reviewedAt':serverTimestamp(),'compliance.agreement.reviewedBy':me.email||me.uid,'compliance.updatedAt':serverTimestamp(),updatedAt:serverTimestamp()}); showToast(`Agreement ${cap(status)}`); }
+async function markContractor(uid,status){ const u=users.find(x=>x.id===uid)||{}; const k=workerKind(u); const patch={onboardingStatus:status==='active'?'active':'review_required','compliance.status':status,updatedAt:serverTimestamp()}; if(k==='employee_w2'||status==='employee_waitlist'){ patch.employeeStatus=status; patch.workerType=status==='employee_waitlist'?'employee_waitlist':'employee_w2'; patch.classification=patch.workerType; if(status==='employee_waitlist') patch.role='employee_waitlist'; } else { patch.contractorStatus=status; patch.workerType=k; patch.classification=k; } if(status==='active'){patch.role=(k==='employee_w2')?'employee':'contractor';patch.activeAt=serverTimestamp();} await updateDoc(doc(db,'users',uid),patch); showToast(`Worker marked ${cap(status)}`); }
+function renderJobs(){ const list=jobs; $('jobs').innerHTML=`<div class="app-card"><p class="mini-kicker">Workflow</p><h2 class="screen-title">Jobs</h2><p class="screen-copy">Track open, claimed, in-progress, submitted, and completed work.</p></div><div class="stack">${list.length?list.map(jobCard).join(''):'<div class="empty">No jobs yet.</div>'}</div>`; wireJobs(); }
+function jobCard(j){return `<div class="card" data-job="${j.id}"><div class="card-head"><div><h3>${cap(j.serviceType||'Job')}</h3><div class="meta"><span>${cap(j.status||'open')}</span>${j.workflowStatus?`<span>${cap(j.workflowStatus)}</span>`:''}${j.serviceDate?`<span>${dateText(j.serviceDate)}</span>`:''}${j.zip?`<span>${j.zip}</span>`:''}${j.flatRate?`<span>${money(j.flatRate)}</span>`:''}</div></div><span class="status-pill">${j.contractorEmails?.length||j.contractorIds?.length||0} assigned</span></div>${j.summary||j.notes?`<p class="screen-copy">${j.summary||j.notes}</p>`:''}<div class="actions"><button class="btn btn-soft" data-job-status="open">Open</button><button class="btn btn-outline" data-job-status="claimed">Claimed</button><button class="btn btn-outline" data-job-status="in_progress">In Progress</button><button class="btn btn-primary" data-job-status="completed">Complete</button></div></div>`}
+function wireJobs(){document.querySelectorAll('[data-job-status]').forEach(b=>b.addEventListener('click',async()=>{const id=b.closest('[data-job]').dataset.job; await updateDoc(doc(db,'jobs',id),{status:b.dataset.jobStatus,workflowStatus:b.dataset.jobStatus,updatedAt:serverTimestamp()}); showToast('Job updated');}))}
+function renderPeople(){ const workforce=users.filter(isWorkforce); const contractors=workforce.filter(u=>workerKind(u)!=='employee_w2'&&workerKind(u)!=='employee_waitlist'); const employees=workforce.filter(u=>workerKind(u)==='employee_w2'||workerKind(u)==='employee_waitlist'); const clients=users.filter(u=>String(u.role||'').toLowerCase()==='client'); $('people').innerHTML=`<div class="app-card"><p class="mini-kicker">People</p><h2 class="screen-title">People Directory</h2><p class="screen-copy">Clients, contractors, and future employee/waitlist records stay separated but visible to admin. Use Archive / Remove Access when someone should no longer use a portal, while keeping backend records for tax, compliance, payments, and job history.</p></div><div class="split"><div class="app-card"><h2 class="screen-title">Contractors</h2><div class="stack" style="margin-top:12px">${contractors.length?contractors.map(personCard).join(''):'<div class="empty">No contractors yet.</div>'}</div></div><div class="app-card"><h2 class="screen-title">W2 / Employee Readiness</h2><div class="stack" style="margin-top:12px">${employees.length?employees.map(personCard).join(''):'<div class="empty">No employee waitlist records yet.</div>'}</div></div></div><div class="app-card"><h2 class="screen-title">Clients</h2><div class="stack" style="margin-top:12px">${clients.length?clients.map(personCard).join(''):'<div class="empty">No clients yet.</div>'}</div></div>`; wirePeople(); }
+function personCard(u){ const archived=String(u.accountStatus||'').toLowerCase()==='archived'||String(u.portalAccess||'').toLowerCase()==='removed'; return `<div class="card" data-person="${u.id}"><div class="card-head"><div><h3>${u.legalName||u.fullName||u.displayName||u.email||'User'}</h3><div class="meta"><span>${u.email||''}</span><span>${kindLabel(u)}</span><span>${cap(u.role||'')}</span>${u.contractorStatus?`<span>${cap(u.contractorStatus)}</span>`:''}${u.employeeStatus?`<span>${cap(u.employeeStatus)}</span>`:''}${u.accountStatus?`<span>${cap(u.accountStatus)}</span>`:''}${u.portalAccess?`<span>Portal: ${cap(u.portalAccess)}</span>`:''}</div></div><span class="status-pill ${archived?'danger':'good'}">${archived?'Access Removed':'Active Record'}</span></div><div class="actions"><button class="btn btn-danger" data-archive-person ${archived?'disabled':''}>Archive / Remove Access</button><button class="btn btn-soft" data-reactivate-person ${archived?'':'disabled'}>Restore Portal Flag</button></div></div>`}
+function wirePeople(){ document.querySelectorAll('[data-archive-person]').forEach(b=>b.addEventListener('click',()=>archivePerson(b.closest('[data-person]').dataset.person))); document.querySelectorAll('[data-reactivate-person]').forEach(b=>b.addEventListener('click',()=>restorePerson(b.closest('[data-person]').dataset.person))); }
+async function archivePerson(uid){ const u=users.find(x=>x.id===uid)||{}; if(!uid||uid===me?.uid){ alert('Use Admin Settings to delete your own admin login.'); return; } const reason=prompt(`Archive and remove portal access for ${u.email||u.fullName||'this profile'}? Backend records will be kept. Reason:`, 'no longer active'); if(reason===null)return; await updateDoc(doc(db,'users',uid),{accountStatus:'archived',portalAccess:'removed',isActive:false,archivedReason:reason||'admin_removed_access',archivedAt:serverTimestamp(),archivedBy:me.email||me.uid,updatedAt:serverTimestamp()}); await addNotification(uid,'Portal access removed','Your portal access has been removed. Business records may be retained by The Finishing Touch.','account_archived'); showToast('Portal access removed'); }
+async function restorePerson(uid){ const reason=prompt('Restore this profile portal flag? This does not recreate a deleted Firebase login if one was deleted.', 'reactivated by admin'); if(reason===null)return; await updateDoc(doc(db,'users',uid),{accountStatus:'active',portalAccess:'allowed',isActive:true,reactivatedReason:reason||'admin_reactivated',reactivatedAt:serverTimestamp(),reactivatedBy:me.email||me.uid,updatedAt:serverTimestamp()}); showToast('Portal flag restored'); }
+function renderQuotes(){ $('quotes').innerHTML=`<div class="app-card"><p class="mini-kicker">Quotes</p><h2 class="screen-title">Quote Queue</h2><p class="screen-copy">Draft, approve, and track client quotes.</p></div><div class="stack">${quotes.length?quotes.map(q=>`<div class="card"><div class="card-head"><h3>${q.clientName||q.clientEmail||'Quote'}</h3><span class="status-pill">${cap(q.status||'draft')}</span></div><div class="meta">${q.serviceType?`<span>${cap(q.serviceType)}</span>`:''}${q.total||q.clientQuote?`<span>${money(q.total||q.clientQuote)}</span>`:''}</div>${q.notes?`<p class="screen-copy">${q.notes}</p>`:''}</div>`).join(''):'<div class="empty">No quotes yet.</div>'}</div>`; }
+function renderWalkthroughs(){ $('walkthroughs').innerHTML=`<div class="app-card"><p class="mini-kicker">Walkthroughs</p><h2 class="screen-title">Walkthrough Review</h2><p class="screen-copy">Contractor-submitted notes, photos, and estimate recommendations.</p></div><div class="stack">${walkthroughs.length?walkthroughs.map(w=>`<div class="card"><div class="card-head"><div><h3>${w.clientName||'Walkthrough'}</h3><div class="meta"><span>${cap(w.status||'pending_review')}</span>${w.serviceType?`<span>${cap(w.serviceType)}</span>`:''}${w.contractorEstimate?`<span>Sub ${money(w.contractorEstimate)}</span>`:''}${w.tftClientQuote?`<span>TFT ${money(w.tftClientQuote)}</span>`:''}</div></div><span class="status-pill">${w.submittedByEmail||''}</span></div>${w.propertyAddress?`<p class="screen-copy">${w.propertyAddress}</p>`:''}${w.notes?`<p class="screen-copy">${w.notes}</p>`:''}<div class="actions"><button class="btn btn-primary" data-walk-quote="${w.id}">Create Quote</button></div></div>`).join(''):'<div class="empty">No walkthroughs yet.</div>'}</div>`; document.querySelectorAll('[data-walk-quote]').forEach(b=>b.addEventListener('click',()=>createQuoteFromWalk(b.dataset.walkQuote))); }
+async function createQuoteFromWalk(id){ const w=walkthroughs.find(x=>x.id===id); if(!w)return; await addDoc(collection(db,'quotes'),{source:'walkthrough',walkthroughId:id,status:'draft',clientName:w.clientName||'',serviceType:w.serviceType||'',contractorEstimate:w.contractorEstimate||null,clientQuote:w.tftClientQuote||null,notes:w.notes||'',createdAt:serverTimestamp(),updatedAt:serverTimestamp()}); await updateDoc(doc(db,'walkthroughs',id),{status:'quote_drafted',updatedAt:serverTimestamp()}); showToast('Quote drafted'); }
+function renderSettings(){ $('settings').innerHTML=`<div class="app-card"><p class="mini-kicker">Admin Profile</p><h2 class="screen-title">Admin Settings</h2><p class="screen-copy">Manage your own admin account access. Use the delete page only for your own login. To remove someone else's access, use People Directory.</p><div class="grid" style="margin-top:16px"><div class="tile"><strong>${me?.email?'Signed in':'—'}</strong><h3>Current Admin</h3><p>${me?.email||me?.uid||'No admin signed in'}</p></div><div class="tile"><strong>${cap(meData?.role||'admin')}</strong><h3>Role</h3><p>Admin access is required for this Operations Suite.</p></div></div></div><div class="app-card danger-zone"><p class="mini-kicker">Danger Zone</p><h2 class="screen-title">Delete My Admin Login</h2><p class="screen-copy">This is for deleting your own signed-in admin login only. You will be asked to type your current password. The backend profile is archived for business records instead of erased.</p><div class="setting-row"><div><h3>Delete my account</h3><p>Use this when you are testing, resetting an account, or intentionally removing your own login access.</p></div><a class="btn btn-danger" href="delete-my-account.html">Delete My Account</a></div></div><div class="app-card"><p class="mini-kicker">Admin Controls</p><h2 class="screen-title">Removing someone else's access</h2><p class="screen-copy">Go to People Directory and choose Archive / Remove Access on a contractor, employee waitlist record, or client. That does not require their password and keeps backend records for taxes, compliance, payments, and job history.</p><div class="actions"><button class="btn btn-primary" data-jump="people">Open People Directory</button><a class="btn btn-outline" href="index.html">Home Website</a></div></div>`; }
+function render(){ if(!$('app')||$('app').classList.contains('hidden'))return; if(activeSection==='home')renderHome(); if(activeSection==='applications')renderApplications(); if(activeSection==='scheduling')renderScheduling(); if(activeSection==='compliance')renderCompliance(); if(activeSection==='jobs')renderJobs(); if(activeSection==='people')renderPeople(); if(activeSection==='quotes')renderQuotes(); if(activeSection==='walkthroughs')renderWalkthroughs(); if(activeSection==='settings')renderSettings(); document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.jump))); }
+function stripNull(obj){return Object.fromEntries(Object.entries(obj).filter(([,v])=>v!==null&&v!==undefined&&v!==''));}
+</script>
 </body>
 </html>
