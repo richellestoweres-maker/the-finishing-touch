@@ -1,134 +1,622 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Employee Waitlist – The Finishing Touch</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600;700&family=Allura&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css"/>
-<style>
-:root{
-  --bg:#fbf7f4;--card:#fffdfb;--ink:#2f2926;--muted:#7a6f68;--line:#eadfd8;
-  --blush:#f2d8dc;--blush-strong:#e8b9c2;--soft:#fff1f3;--taupe:#d2bda9;
-  --shadow:0 18px 45px rgba(68,54,45,.10);--shadow-soft:0 10px 28px rgba(68,54,45,.08);
-}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(242,216,220,.75),transparent 34%),radial-gradient(circle at bottom right,rgba(210,189,169,.34),transparent 30%),var(--bg);font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
-a{color:inherit}
-.app{width:min(980px,94%);margin:24px auto 70px;display:grid;gap:16px}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(255,253,251,.86);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:28px;padding:14px 16px;box-shadow:var(--shadow-soft)}
-.brand{display:flex;align-items:center;gap:10px;font-weight:900}.vase-logo{width:34px;height:44px;background:url("logo-vase.png") center/contain no-repeat;display:inline-block}
-.brand-title{font-family:"Playfair Display",serif;font-size:1.2rem;line-height:1}.brand-sub{font-size:.78rem;color:var(--muted);font-weight:800;margin-top:3px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:.75rem 1rem;font-weight:900;text-decoration:none;cursor:pointer;font-family:inherit}
-.btn-solid{background:linear-gradient(135deg,var(--blush-strong),var(--taupe));color:var(--ink);box-shadow:0 10px 22px rgba(232,185,194,.34)}
-.btn-outline{background:#fffdfb;color:var(--ink);border:1.5px solid var(--ink)}
-.btn-soft{background:var(--soft);border:1px solid var(--blush);color:#7d4f59}
-.card{background:rgba(255,253,251,.95);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow-soft);padding:18px}
-.hero{display:grid;gap:10px;text-align:center;padding:26px 18px;background:linear-gradient(135deg,rgba(242,216,220,.95),rgba(255,253,251,.95) 55%,rgba(210,189,169,.42));border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow)}
-.script{font-family:Allura,cursive;font-size:2.2rem;color:#925e69;margin:0}
-h1,h2,h3{font-family:"Playfair Display",serif;margin:.15rem 0;color:var(--ink)}
-p{color:#61554f;font-weight:650;line-height:1.55}
-.muted{color:var(--muted);font-weight:750;font-size:.92rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
-.choice-card{display:grid;gap:10px;min-height:250px}
-.badge{width:max-content;max-width:100%;border-radius:999px;background:var(--soft);border:1px solid var(--blush);color:#7d4f59;font-size:.78rem;font-weight:900;padding:.28rem .68rem}
-.field{display:grid;gap:6px;font-weight:900;color:var(--ink)}
-input,select,textarea{width:100%;border:1px solid var(--line);border-radius:16px;background:#fffdfb;color:var(--ink);padding:.78rem .85rem;font-family:inherit;outline:none}
-textarea{min-height:100px;resize:vertical}
-input:focus,select:focus,textarea:focus{border-color:var(--blush-strong);box-shadow:0 0 0 4px rgba(232,185,194,.18)}
-.hidden{display:none!important}
-.stepper{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap}.dot{height:9px;border-radius:999px;background:#eadfd8;width:38px}.dot.active{background:linear-gradient(135deg,var(--blush-strong),var(--taupe))}
-.actionbar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:14px}
-.checkrow{display:flex;align-items:flex-start;gap:9px;padding:10px;border:1px solid #f1dce1;border-radius:16px;background:#fff7f8;font-weight:800;color:#61554f}
-.checkrow input{width:auto;margin-top:3px}
-.pills{display:flex;flex-wrap:wrap;gap:8px}.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #f1dce1;background:#fff;border-radius:999px;padding:.52rem .75rem;font-weight:900}.pill input{width:auto}
-.progress{height:10px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush-strong),var(--taupe));transition:width .2s ease}
-.section-title{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
-.question-block{display:grid;gap:12px;margin-top:10px}
-.alert{padding:12px 14px;border-radius:18px;background:#fff7f8;border:1px solid #f1dce1;color:#61554f;font-weight:800}
-@media(max-width:640px){.app{width:min(100% - 18px,980px);margin-top:10px}.hero,.card,.topbar{border-radius:22px}.btn{width:100%}.actionbar{display:grid}.dot{width:28px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Employee Waitlist – The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    html { scroll-behavior:smooth; }
+    body.page-waitlist { background:#fbf8f4; }
+    .page-waitlist .container{ width:min(1180px,94%); margin-inline:auto; }
+
+    .page-waitlist .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:10px 0;
+    }
+
+    .page-waitlist .main-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    .page-waitlist .main-nav a{ white-space:nowrap; }
+
+    .btn-cream{
+      background:#d2bda9;
+      color:#2a2624;
+      border:0;
+      border-radius:999px;
+      padding:.55rem .9rem;
+      font-weight:800;
+      text-decoration:none;
+      display:inline-block;
+    }
+
+    .page-waitlist .waitlist-hero{
+      position:relative;
+      min-height:520px;
+      display:grid;
+      align-items:center;
+      overflow:hidden;
+      background:#2e2a27;
+    }
+
+    .page-waitlist .waitlist-hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:url("cleaningheader.png") center/cover no-repeat;
+      transform:scale(1.02);
+    }
+
+    .page-waitlist .waitlist-hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg,rgba(0,0,0,.60),rgba(0,0,0,.34),rgba(0,0,0,.12)),
+        linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.22));
+    }
+
+    .waitlist-hero-content{
+      position:relative;
+      z-index:2;
+      max-width:720px;
+      color:#fff;
+      padding:72px 0;
+    }
+
+    .script-kicker{
+      font-family:"Allura",cursive;
+      font-size:clamp(2.4rem,5vw,4.4rem);
+      line-height:1;
+      margin:0 0 6px;
+      color:#f7e4e8;
+      text-shadow:0 2px 12px rgba(0,0,0,.24);
+    }
+
+    .waitlist-title{
+      font-family:"Playfair Display",serif;
+      font-size:clamp(2.4rem,6vw,5.2rem);
+      line-height:.95;
+      margin:0 0 18px;
+      letter-spacing:.01em;
+      color:#fff;
+      text-shadow:0 3px 18px rgba(0,0,0,.35);
+    }
+
+    .waitlist-sub{
+      font-family:"Manrope",system-ui,sans-serif;
+      font-size:clamp(1rem,1.6vw,1.18rem);
+      line-height:1.75;
+      max-width:620px;
+      color:rgba(255,255,255,.92);
+      margin:0 0 24px;
+      text-shadow:0 2px 10px rgba(0,0,0,.25);
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .hero-actions .btn{
+      text-decoration:none !important;
+      border-radius:999px;
+      font-weight:800;
+      padding:.78rem 1.15rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .hero-actions .btn-quote{
+      background:linear-gradient(135deg,#d2bda9,#b99d83) !important;
+      color:#fff !important;
+      border:1px solid rgba(255,255,255,.42) !important;
+      box-shadow:0 12px 32px rgba(0,0,0,.22);
+      text-shadow:0 1px 6px rgba(0,0,0,.24);
+    }
+
+    .hero-actions .btn-outline{
+      background:rgba(255,255,255,.12) !important;
+      color:#fff !important;
+      border:1.5px solid rgba(255,255,255,.74) !important;
+      backdrop-filter:blur(8px);
+      text-shadow:0 1px 6px rgba(0,0,0,.24);
+    }
+
+    .hero-actions .btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 34px rgba(0,0,0,.28);
+    }
+
+    .intro-band{
+      background:#fffdfb;
+      border-bottom:1px solid #eadfd8;
+      padding:46px 0 22px;
+    }
+
+    .intro-copy{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,.9fr);
+      gap:34px;
+      align-items:start;
+    }
+
+    .eyebrow{
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:.74rem;
+      font-weight:800;
+      color:#8c6f63;
+      margin:0 0 10px;
+    }
+
+    .section-title{
+      font-family:"Playfair Display",serif;
+      font-size:clamp(1.8rem,3.4vw,3rem);
+      line-height:1.08;
+      margin:0;
+      color:#2e2a27;
+    }
+
+    .section-text{
+      color:rgba(46,42,39,.74);
+      line-height:1.75;
+      font-weight:500;
+      margin:0;
+    }
+
+    .waitlist-section{
+      padding:38px 0 68px;
+      background:#fbf8f4;
+    }
+
+    .waitlist-layout{
+      display:grid;
+      grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);
+      gap:24px;
+      align-items:start;
+    }
+
+    .info-card,
+    .form-card,
+    .thanks-card{
+      background:#fff;
+      border:1px solid #eadfd8;
+      border-radius:16px;
+      box-shadow:0 10px 26px rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+
+    .info-image{
+      min-height:240px;
+      background:url("cleaningheader.png") center/cover no-repeat;
+      position:relative;
+    }
+
+    .info-image::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.24));
+    }
+
+    .info-body,
+    .form-body,
+    .thanks-card{
+      padding:24px;
+    }
+
+    .info-body h2,
+    .form-body h2,
+    .thanks-card h2{
+      font-family:"Playfair Display",serif;
+      color:#2e2a27;
+      font-size:1.8rem;
+      margin:0 0 10px;
+      line-height:1.1;
+    }
+
+    .info-body p,
+    .form-body p,
+    .thanks-card p{
+      margin:0 0 14px;
+      color:rgba(46,42,39,.74);
+      line-height:1.7;
+      font-weight:500;
+    }
+
+    .detail-list{
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .detail-item{
+      border-top:1px solid #eadfd8;
+      padding-top:12px;
+      color:rgba(46,42,39,.70);
+      font-weight:600;
+      line-height:1.55;
+    }
+
+    .detail-item strong{
+      color:#2e2a27;
+      font-family:"Playfair Display",serif;
+      font-size:1.05rem;
+      display:block;
+      margin-bottom:3px;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .field{
+      display:grid;
+      gap:7px;
+      font-weight:800;
+      color:#2e2a27;
+      font-size:.94rem;
+    }
+
+    .field.full{
+      grid-column:1/-1;
+    }
+
+    input,select,textarea{
+      width:100%;
+      border:1px solid #e3d9ce;
+      border-radius:12px;
+      background:#fffdfb;
+      color:#2e2a27;
+      padding:.82rem .9rem;
+      font-family:inherit;
+      outline:none;
+      font-size:.96rem;
+    }
+
+    textarea{
+      min-height:118px;
+      resize:vertical;
+      line-height:1.55;
+    }
+
+    input:focus,select:focus,textarea:focus{
+      border-color:#d2bda9;
+      box-shadow:0 0 0 4px rgba(210,189,169,.18);
+    }
+
+    .checkrow{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      margin-top:14px;
+      padding:13px 14px;
+      border:1px solid #eadfd8;
+      border-radius:14px;
+      background:#fffdfb;
+      color:rgba(46,42,39,.72);
+      font-weight:600;
+      line-height:1.55;
+    }
+
+    .checkrow input{
+      width:auto;
+      margin-top:4px;
+      flex:0 0 auto;
+    }
+
+    .actionbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .muted{
+      color:rgba(46,42,39,.62);
+      font-weight:650;
+      font-size:.94rem;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-decoration:none;
+      border-radius:999px;
+      font-weight:800;
+      border:0;
+      cursor:pointer;
+      font-family:inherit;
+      padding:.74rem 1.05rem;
+    }
+
+    .btn-solid{
+      background:#d2bda9;
+      color:#2a2624;
+      box-shadow:0 10px 22px rgba(0,0,0,.08);
+    }
+
+    .btn-outline{
+      background:#fffdfb;
+      color:#2e2a27;
+      border:1.5px solid #2e2a27;
+    }
+
+    .btn-soft{
+      background:#fbf8f4;
+      color:#2e2a27;
+      border:1px solid #eadfd8;
+    }
+
+    .hidden{ display:none !important; }
+
+    .site-footer{ margin-top:0; }
+
+    @media (max-width:900px){
+      .intro-copy,
+      .waitlist-layout{
+        grid-template-columns:1fr;
+      }
+      .page-waitlist .waitlist-hero{
+        min-height:500px;
+      }
+    }
+
+    @media (max-width:640px){
+      .waitlist-hero-content{ padding:58px 0; }
+      .hero-actions{ display:grid; }
+      .hero-actions .btn,
+      .actionbar .btn,
+      .thanks-card .btn{
+        width:100%;
+        text-align:center;
+        justify-content:center;
+      }
+      .form-grid{ grid-template-columns:1fr; }
+      .form-body,
+      .info-body,
+      .thanks-card{ padding:20px; }
+      .info-image{ min-height:190px; }
+    }
+  </style>
 </head>
-<body>
-<main class="app">
-  <section class="topbar">
-    <div class="brand"><span class="vase-logo"></span><div><div class="brand-title">The Finishing Touch</div><div class="brand-sub">Employee Waitlist</div></div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <a class="btn btn-outline" href="join-our-team.html">Back</a>
-      <a class="btn btn-soft" href="index.html">Home</a>
+
+<body class="page-waitlist">
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+
+        <div class="nav-dropdown">
+          <a href="index.html#services" class="nav-link has-caret">
+            Services <span class="caret">▾</span>
+          </a>
+          <div class="nav-dropdown-menu">
+            <a href="cleaning.html">Cleaning</a>
+            <a href="organizing.html">Home Organizing</a>
+            <a href="stagingandstyling.html">Staging &amp; Styling</a>
+            <a href="holidaydecorating.html">Holiday Decorating</a>
+            <a href="virtualdesign.html">Virtual Interior Design</a>
+          </div>
+        </div>
+
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="join-our-team.html">Join Our Team</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="waitlist-hero">
+    <div class="container">
+      <div class="waitlist-hero-content">
+        <p class="script-kicker">Future cleaning team</p>
+        <h1 class="waitlist-title">Employee Waitlist</h1>
+        <p class="waitlist-sub">Employee positions are not currently open, but you can join the waitlist for future cleaning team opportunities as The Finishing Touch grows.</p>
+        <div class="hero-actions">
+          <a class="btn btn-quote" href="#waitlist-form">Join the Waitlist</a>
+          <a class="btn btn-outline" href="join-our-team.html">View All Opportunities</a>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="hero">
-    <p class="script">Future cleaning team</p>
-    <h1>Join the Employee Waitlist</h1>
-    <p>Employee positions are not open yet, but you can join the waitlist for future cleaning team opportunities.</p>
+  <section class="intro-band">
+    <div class="container intro-copy">
+      <div>
+        <p class="eyebrow">Future W2 team opportunities</p>
+        <h2 class="section-title">A polished path for future in-house cleaning team growth.</h2>
+      </div>
+      <p class="section-text">This waitlist is for future employee roles, assigned shifts, employee onboarding, and payroll-based work once positions become available. Joining the list does not guarantee employment, but it allows us to contact you first when we begin hiring.</p>
+    </div>
   </section>
 
-  <form id="waitlistForm" class="card">
-    <div class="grid">
-      <label class="field">Full Name <input name="fullName" required></label>
-      <label class="field">Email <input name="email" type="email" required></label>
-      <label class="field">Phone <input name="phone" required></label>
-      <label class="field">City / ZIP <input name="area" required></label>
-      <label class="field">Cleaning experience
-        <select name="experience" required>
-          <option value="">Select</option>
-          <option>No professional experience yet</option>
-          <option>Less than 1 year</option>
-          <option>1–2 years</option>
-          <option>3+ years</option>
-        </select>
-      </label>
-      <label class="field">Preferred schedule
-        <select name="schedule" required>
-          <option value="">Select</option>
-          <option>Weekday mornings</option>
-          <option>Weekday afternoons</option>
-          <option>Full-time if available</option>
-          <option>Part-time only</option>
-          <option>Flexible</option>
-        </select>
-      </label>
-    </div>
-    <label class="field" style="margin-top:12px">Why are you interested in future employee roles with The Finishing Touch?
-      <textarea name="why" required></textarea>
-    </label>
-    <label class="checkrow" style="margin-top:12px">
-      <input type="checkbox" name="understand" required>
-      <span>I understand this is a waitlist only and does not guarantee employment.</span>
-    </label>
-    <div class="actionbar">
-      <span class="muted" id="msg"></span>
-      <button class="btn btn-solid" type="submit">Join Waitlist</button>
-    </div>
-  </form>
+  <section id="waitlist-form" class="waitlist-section">
+    <div class="container waitlist-layout">
+      <aside class="info-card">
+        <div class="info-image" aria-hidden="true"></div>
+        <div class="info-body">
+          <h2>What this list is for</h2>
+          <p>The employee waitlist is separate from independent contractor applications. This is for future in-house cleaning team roles under The Finishing Touch.</p>
 
-  <section id="thanks" class="card hidden">
-    <h2>You’re on the waitlist</h2>
-    <p>Thank you — we’ll keep your information on file and reach out when employee opportunities become available.</p>
-    <a class="btn btn-outline" href="index.html">Return Home</a>
+          <div class="detail-list">
+            <div class="detail-item">
+              <strong>Employee path</strong>
+              Future assigned shifts, team expectations, and payroll-based work.
+            </div>
+            <div class="detail-item">
+              <strong>Cleaning team focus</strong>
+              Residential and commercial cleaning support as positions become available.
+            </div>
+            <div class="detail-item">
+              <strong>Future onboarding</strong>
+              W2 paperwork, training, and employee requirements will be handled later if invited forward.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="form-card">
+        <form id="waitlistForm" class="form-body">
+          <h2>Join the Employee Waitlist</h2>
+          <p>Tell us a little about yourself so we can keep your information on file for future openings.</p>
+
+          <div class="form-grid">
+            <label class="field">Full Name
+              <input name="fullName" autocomplete="name" required>
+            </label>
+
+            <label class="field">Email
+              <input name="email" type="email" autocomplete="email" required>
+            </label>
+
+            <label class="field">Phone
+              <input name="phone" autocomplete="tel" required>
+            </label>
+
+            <label class="field">City / ZIP
+              <input name="area" autocomplete="postal-code" required>
+            </label>
+
+            <label class="field">Cleaning experience
+              <select name="experience" required>
+                <option value="">Select</option>
+                <option>No professional experience yet</option>
+                <option>Less than 1 year</option>
+                <option>1–2 years</option>
+                <option>3+ years</option>
+              </select>
+            </label>
+
+            <label class="field">Preferred schedule
+              <select name="schedule" required>
+                <option value="">Select</option>
+                <option>Weekday mornings</option>
+                <option>Weekday afternoons</option>
+                <option>Full-time if available</option>
+                <option>Part-time only</option>
+                <option>Flexible</option>
+              </select>
+            </label>
+
+            <label class="field full">Why are you interested in future employee roles with The Finishing Touch?
+              <textarea name="why" required></textarea>
+            </label>
+          </div>
+
+          <label class="checkrow">
+            <input type="checkbox" name="understand" required>
+            <span>I understand this is a waitlist only and does not guarantee employment.</span>
+          </label>
+
+          <div class="actionbar">
+            <span class="muted" id="msg"></span>
+            <button class="btn btn-solid" type="submit">Join Waitlist</button>
+          </div>
+        </form>
+
+        <section id="thanks" class="thanks-card hidden">
+          <h2>You’re on the waitlist</h2>
+          <p>Thank you — we’ll keep your information on file and reach out when employee opportunities become available.</p>
+          <a class="btn btn-outline" href="index.html">Return Home</a>
+        </section>
+      </div>
+    </div>
   </section>
-</main>
 
-<script>
-document.getElementById("waitlistForm").addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  const form = e.currentTarget;
-  const msg = document.getElementById("msg");
-  msg.textContent = "Submitting…";
-  try {
-    const fs = new FormData(form);
-    fs.append("_subject", "Employee Waitlist — The Finishing Touch");
-    fs.append("type", "employee_waitlist");
-    fs.append("_page", location.href);
-    await fetch("https://formspree.io/f/mzzaogbv", { method:"POST", body:fs, headers:{Accept:"application/json"} });
-    form.classList.add("hidden");
-    document.getElementById("thanks").classList.remove("hidden");
-  } catch(err) {
-    console.warn(err);
-    msg.textContent = "Could not submit right now. Please try again.";
-  }
-});
-</script>
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
+  </footer>
+
+  <script src="script.js?v=8" defer></script>
+
+  <script>
+    document.getElementById("waitlistForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const form = e.currentTarget;
+      const msg = document.getElementById("msg");
+      msg.textContent = "Submitting…";
+
+      try {
+        const fs = new FormData(form);
+        fs.append("_subject", "Employee Waitlist — The Finishing Touch");
+        fs.append("type", "employee_waitlist");
+        fs.append("_page", location.href);
+
+        await fetch("https://formspree.io/f/mzzaogbv", {
+          method:"POST",
+          body:fs,
+          headers:{Accept:"application/json"}
+        });
+
+        form.classList.add("hidden");
+        document.getElementById("thanks").classList.remove("hidden");
+      } catch(err) {
+        console.warn(err);
+        msg.textContent = "Could not submit right now. Please try again.";
+      }
+    });
+  </script>
+
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
 </body>
 </html>
