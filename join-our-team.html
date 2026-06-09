@@ -108,7 +108,32 @@
     }
 
     .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .hero-actions .btn{ text-decoration:none; }
+    .hero-actions .btn{
+      text-decoration:none !important;
+      color:#fff !important;
+      border-radius:999px;
+      font-weight:800;
+      padding:.72rem 1.05rem;
+      min-width:160px;
+      text-align:center;
+      justify-content:center;
+      box-shadow:0 14px 30px rgba(0,0,0,.18);
+      backdrop-filter:blur(10px);
+    }
+    .hero-actions .btn-quote{
+      background:rgba(210,189,169,.92) !important;
+      border:1px solid rgba(255,255,255,.38) !important;
+      color:#fff !important;
+    }
+    .hero-actions .btn-outline{
+      background:rgba(255,253,251,.14) !important;
+      border:1.5px solid rgba(255,255,255,.72) !important;
+      color:#fff !important;
+    }
+    .hero-actions .btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 16px 34px rgba(0,0,0,.24);
+    }
 
     .intro-band{
       background:#fffdfb;
@@ -228,6 +253,28 @@
     }
 
     .path-card .btn-row{ margin-top:auto; padding-top:8px; }
+
+    .path-card .btn{
+      text-decoration:none !important;
+      border-radius:999px;
+      font-weight:800;
+      padding:.76rem 1rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+    .path-card .btn-quote{
+      background:#d2bda9 !important;
+      color:#2a2624 !important;
+      border:1px solid #d2bda9 !important;
+      box-shadow:0 10px 24px rgba(210,189,169,.28);
+    }
+    .path-card .btn-outline{
+      background:#fffdfb !important;
+      color:#2e2a27 !important;
+      border:1.5px solid #2e2a27 !important;
+    }
 
     .note-panel{
       margin-top:24px;
