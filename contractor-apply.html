@@ -560,6 +560,16 @@
       margin-top:0;
     }
 
+
+    /* Contractor-facing privacy: admin scoring is never displayed to applicants */
+    #aiPreview,
+    #scorePreview,
+    #screeningPreview,
+    .ai-box,
+    .score{
+      display:none !important;
+    }
+
     .site-footer{ margin-top:0; }
 
     @media (max-width:980px){
@@ -821,10 +831,8 @@
           <section class="step" data-step="5">
             <h2>Review + Submit</h2>
 
-            <div id="aiPreview" class="ai-box">
-              <span class="badge">Screening preview</span>
-              <div class="score" id="scorePreview">--</div>
-              <div id="screeningPreview">Complete the application to generate a screening summary.</div>
+            <div class="alert">
+              Your application will be reviewed privately by The Finishing Touch. Screening notes, admin scores, and review recommendations are only visible to admin.
             </div>
 
             <label class="checkrow">
@@ -970,7 +978,7 @@
       document.getElementById("nextBtn").classList.toggle("hidden", step === totalSteps-1);
       document.getElementById("submitBtn").classList.toggle("hidden", step !== totalSteps-1);
       refreshServiceSections();
-      if(step === totalSteps-1) renderScreening();
+      // Screening is generated on submit for admin only. It is not shown to the contractor.
     }
 
     function collectAnswers(){
@@ -1025,13 +1033,9 @@
     }
 
     function renderScreening(){
-      const s = generateScreening();
-      document.getElementById("scorePreview").textContent = `${s.score} / 100`;
-      document.getElementById("screeningPreview").innerHTML = `
-        <strong>Recommendation:</strong> ${s.recommendation}<br><br>
-        <strong>Strengths:</strong><br>${s.strengths.length ? s.strengths.map(x=>"• "+x).join("<br>") : "None yet."}<br><br>
-        <strong>Potential concerns:</strong><br>${s.concerns.length ? s.concerns.map(x=>"• "+x).join("<br>") : "None flagged."}
-      `;
+      // Intentionally hidden from contractors.
+      // The screening score is generated only when the application is submitted and saved for admin review.
+      return;
     }
 
     function validateCurrentStep(){
