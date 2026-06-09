@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Delete My Account – The Finishing Touch</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=8"/>
+
+  <style>
+    html{scroll-behavior:smooth}
+    body.page-delete{margin:0;background:#fbf8f4;color:#2e2a27;font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .page-delete .container{width:min(1180px,94%);margin-inline:auto}
+
+    .page-delete .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:10px 0;
+    }
+
+    .page-delete .main-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    .page-delete .main-nav a{white-space:nowrap}
+
+    .btn-cream{
+      background:#d2bda9;
+      color:#2a2624;
+      border:0;
+      border-radius:999px;
+      padding:.55rem .9rem;
+      font-weight:800;
+      text-decoration:none;
+      display:inline-block;
+    }
+
+    .delete-hero{
+      position:relative;
+      min-height:420px;
+      display:grid;
+      align-items:center;
+      overflow:hidden;
+      background:#2e2a27;
+    }
+
+    .delete-hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:url("bed-banner.png") center/cover no-repeat;
+      transform:scale(1.02);
+    }
+
+    .delete-hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.36),rgba(0,0,0,.12)),
+        linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.24));
+    }
+
+    .delete-hero-content{
+      position:relative;
+      z-index:2;
+      max-width:720px;
+      color:#fff;
+      padding:68px 0;
+    }
+
+    .script-kicker{
+      font-family:Allura,cursive;
+      font-size:clamp(2.3rem,5vw,4.2rem);
+      line-height:1;
+      margin:0 0 6px;
+      color:#f7e4e8;
+      text-shadow:0 2px 12px rgba(0,0,0,.24);
+    }
+
+    .delete-title{
+      font-family:"Playfair Display",serif;
+      font-size:clamp(2.35rem,5.6vw,4.75rem);
+      line-height:.98;
+      margin:0 0 18px;
+      color:#fff;
+      text-shadow:0 3px 18px rgba(0,0,0,.35);
+    }
+
+    .delete-sub{
+      font-size:clamp(1rem,1.6vw,1.15rem);
+      line-height:1.75;
+      max-width:620px;
+      color:rgba(255,255,255,.92);
+      margin:0;
+      text-shadow:0 2px 10px rgba(0,0,0,.25);
+    }
+
+    .delete-section{
+      padding:42px 0 72px;
+    }
+
+    .delete-layout{
+      display:grid;
+      grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);
+      gap:24px;
+      align-items:start;
+    }
+
+    .info-card,
+    .form-card,
+    .success-card{
+      background:#fff;
+      border:1px solid #eadfd8;
+      border-radius:16px;
+      box-shadow:0 10px 26px rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+
+    .info-image{
+      min-height:230px;
+      background:url("logo-vase.png") center/140px auto no-repeat,#fffdfb;
+      border-bottom:1px solid #eadfd8;
+    }
+
+    .info-body,
+    .form-body,
+    .success-card{
+      padding:24px;
+    }
+
+    h2{
+      font-family:"Playfair Display",serif;
+      color:#2e2a27;
+      font-size:1.8rem;
+      line-height:1.1;
+      margin:0 0 10px;
+    }
+
+    p{
+      margin:0 0 14px;
+      color:rgba(46,42,39,.74);
+      line-height:1.7;
+      font-weight:500;
+    }
+
+    .detail-list{
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .detail-item{
+      border-top:1px solid #eadfd8;
+      padding-top:12px;
+      color:rgba(46,42,39,.70);
+      font-weight:600;
+      line-height:1.55;
+    }
+
+    .detail-item strong{
+      color:#2e2a27;
+      font-family:"Playfair Display",serif;
+      font-size:1.05rem;
+      display:block;
+      margin-bottom:3px;
+    }
+
+    .field{
+      display:grid;
+      gap:7px;
+      font-weight:800;
+      color:#2e2a27;
+      font-size:.94rem;
+      margin-top:14px;
+    }
+
+    input,textarea{
+      width:100%;
+      border:1px solid #e3d9ce;
+      border-radius:12px;
+      background:#fffdfb;
+      color:#2e2a27;
+      padding:.82rem .9rem;
+      font-family:inherit;
+      outline:none;
+      font-size:.96rem;
+    }
+
+    textarea{
+      min-height:100px;
+      resize:vertical;
+      line-height:1.55;
+    }
+
+    input:focus,textarea:focus{
+      border-color:#d2bda9;
+      box-shadow:0 0 0 4px rgba(210,189,169,.18);
+    }
+
+    .checkrow{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      margin-top:14px;
+      padding:13px 14px;
+      border:1px solid #eadfd8;
+      border-radius:14px;
+      background:#fffdfb;
+      color:rgba(46,42,39,.72);
+      font-weight:600;
+      line-height:1.55;
+    }
+
+    .checkrow input{
+      width:auto;
+      margin-top:4px;
+      flex:0 0 auto;
+    }
+
+    .alert{
+      margin-top:14px;
+      padding:13px 14px;
+      border-radius:14px;
+      border:1px solid #eadfd8;
+      background:#fffdfb;
+      color:rgba(46,42,39,.72);
+      font-weight:650;
+      line-height:1.6;
+    }
+
+    .alert.danger{
+      background:#fff5f3;
+      border-color:#e9c3bb;
+      color:#7d3c32;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-decoration:none;
+      border-radius:999px;
+      font-weight:800;
+      border:0;
+      cursor:pointer;
+      font-family:inherit;
+      padding:.74rem 1.05rem;
+    }
+
+    .btn-solid{
+      background:#d2bda9;
+      color:#2a2624;
+      box-shadow:0 10px 22px rgba(0,0,0,.08);
+    }
+
+    .btn-danger{
+      background:#7d3c32;
+      color:#fff;
+      box-shadow:0 10px 22px rgba(125,60,50,.18);
+    }
+
+    .btn-outline{
+      background:#fffdfb;
+      color:#2e2a27;
+      border:1.5px solid #2e2a27;
+    }
+
+    .btn-soft{
+      background:#fbf8f4;
+      color:#2e2a27;
+      border:1px solid #eadfd8;
+    }
+
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .muted{
+      color:rgba(46,42,39,.62);
+      font-weight:650;
+      font-size:.94rem;
+    }
+
+    .hidden{display:none!important}
+
+    .site-footer{margin-top:0}
+
+    @media(max-width:900px){
+      .delete-layout{grid-template-columns:1fr}
+      .delete-hero{min-height:390px}
+    }
+
+    @media(max-width:640px){
+      .delete-hero-content{padding:58px 0}
+      .info-body,.form-body,.success-card{padding:20px}
+      .actions{display:grid}
+      .actions .btn,.form-card .btn,.success-card .btn{width:100%}
+    }
+  </style>
+</head>
+
+<body class="page-delete">
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+
+        <div class="nav-dropdown">
+          <a href="index.html#services" class="nav-link has-caret">
+            Services <span class="caret">▾</span>
+          </a>
+          <div class="nav-dropdown-menu">
+            <a href="cleaning.html">Cleaning</a>
+            <a href="organizing.html">Home Organizing</a>
+            <a href="stagingandstyling.html">Staging &amp; Styling</a>
+            <a href="holidaydecorating.html">Holiday Decorating</a>
+            <a href="virtualdesign.html">Virtual Interior Design</a>
+          </div>
+        </div>
+
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="join-our-team.html">Join Our Team</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="delete-hero">
+    <div class="container">
+      <div class="delete-hero-content">
+        <p class="script-kicker">Account settings</p>
+        <h1 class="delete-title">Delete My Account</h1>
+        <p class="delete-sub">This removes your sign-in access while The Finishing Touch keeps required business records, job history, compliance records, and tax-related data in the backend.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="delete-section">
+    <div class="container delete-layout">
+      <aside class="info-card">
+        <div class="info-image" aria-hidden="true"></div>
+        <div class="info-body">
+          <h2>What happens next</h2>
+          <p>This page is for the person who is currently signed in and wants to remove their own account access.</p>
+
+          <div class="detail-list">
+            <div class="detail-item">
+              <strong>Your login is deleted</strong>
+              You will no longer be able to sign into the portal with this account.
+            </div>
+            <div class="detail-item">
+              <strong>Business records are retained</strong>
+              Backend records are archived for job history, tax, compliance, payment, and legal recordkeeping.
+            </div>
+            <div class="detail-item">
+              <strong>Password required</strong>
+              For security, you must type your current password before the account can be deleted.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="form-card">
+        <section id="signedOutCard" class="form-body hidden">
+          <h2>Sign in required</h2>
+          <p>You need to sign in before deleting your account.</p>
+          <a class="btn btn-solid" href="login.html?next=delete-my-account.html">Sign in</a>
+        </section>
+
+        <form id="deleteForm" class="form-body hidden">
+          <h2>Confirm account deletion</h2>
+          <p id="signedInAs" class="muted"></p>
+
+          <div class="alert">
+            This does <strong>not</strong> erase The Finishing Touch business records. It removes your portal login and marks the profile as archived in the backend.
+          </div>
+
+          <label class="field">Current Password
+            <input id="password" type="password" autocomplete="current-password" required>
+          </label>
+
+          <label class="field">Reason, optional
+            <textarea id="reason" placeholder="Example: testing reset, no longer working with TFT, duplicate account, etc."></textarea>
+          </label>
+
+          <label class="checkrow">
+            <input id="confirmKeepRecords" type="checkbox" required>
+            <span>I understand my portal login will be removed, but The Finishing Touch may retain business records for tax, compliance, job history, and legal purposes.</span>
+          </label>
+
+          <label class="checkrow">
+            <input id="confirmDelete" type="checkbox" required>
+            <span>I understand this action deletes my sign-in account and I may need to create a new account if I apply again later.</span>
+          </label>
+
+          <div id="msg" class="alert danger hidden"></div>
+
+          <div class="actions">
+            <a class="btn btn-outline" href="index.html">Cancel</a>
+            <button id="deleteBtn" class="btn btn-danger" type="submit">Delete My Login Access</button>
+          </div>
+        </form>
+
+        <section id="successCard" class="success-card hidden">
+          <h2>Account access removed</h2>
+          <p>Your login has been deleted and the backend profile has been archived for business records.</p>
+          <a class="btn btn-outline" href="index.html">Return Home</a>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+    </div>
+  </footer>
+
+  <script src="script.js?v=8" defer></script>
+
+  <script type="module">
+    import { auth, db } from "./ft-firebase.js";
+    import {
+      onAuthStateChanged,
+      EmailAuthProvider,
+      reauthenticateWithCredential,
+      deleteUser,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    import {
+      doc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const signedOutCard = document.getElementById("signedOutCard");
+    const deleteForm = document.getElementById("deleteForm");
+    const successCard = document.getElementById("successCard");
+    const signedInAs = document.getElementById("signedInAs");
+    const msg = document.getElementById("msg");
+    const deleteBtn = document.getElementById("deleteBtn");
+    const authBtn = document.querySelector(".btn-auth");
+
+    let currentUser = null;
+
+    function showMsg(text){
+      msg.textContent = text;
+      msg.classList.remove("hidden");
+    }
+
+    function clearMsg(){
+      msg.textContent = "";
+      msg.classList.add("hidden");
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+
+      if (authBtn) {
+        if (user) {
+          authBtn.textContent = "Sign out";
+          authBtn.href = "#";
+          authBtn.onclick = async (e) => {
+            e.preventDefault();
+            await signOut(auth);
+            window.location.href = "index.html";
+          };
+        } else {
+          authBtn.textContent = "Sign in / Create account";
+          authBtn.href = "login.html";
+          authBtn.onclick = null;
+        }
+      }
+
+      if (!user) {
+        signedOutCard.classList.remove("hidden");
+        deleteForm.classList.add("hidden");
+        successCard.classList.add("hidden");
+        return;
+      }
+
+      signedOutCard.classList.add("hidden");
+      deleteForm.classList.remove("hidden");
+      successCard.classList.add("hidden");
+      signedInAs.textContent = `Signed in as ${user.email || user.uid}`;
+    });
+
+    deleteForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearMsg();
+
+      if (!currentUser) {
+        showMsg("Please sign in first.");
+        return;
+      }
+
+      const email = currentUser.email || "";
+      const password = document.getElementById("password").value;
+      const reason = document.getElementById("reason").value.trim();
+
+      if (!email) {
+        showMsg("This account does not have an email/password login. Please contact The Finishing Touch to remove access.");
+        return;
+      }
+
+      deleteBtn.disabled = true;
+      deleteBtn.textContent = "Removing access…";
+
+      try {
+        const credential = EmailAuthProvider.credential(email, password);
+        await reauthenticateWithCredential(currentUser, credential);
+
+        await setDoc(doc(db, "users", currentUser.uid), {
+          accountStatus: "archived",
+          portalAccess: "removed",
+          isActive: false,
+          authStatus: "self_deleted",
+          archivedReason: reason || "self_deleted_account",
+          archivedAt: serverTimestamp(),
+          archivedBy: email,
+          deletedLoginAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+
+        await deleteUser(currentUser);
+
+        deleteForm.classList.add("hidden");
+        successCard.classList.remove("hidden");
+      } catch (err) {
+        console.warn(err);
+
+        if (err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+          showMsg("That password does not match this account. Please try again.");
+        } else if (err.code === "auth/requires-recent-login") {
+          showMsg("For security, please sign out, sign back in, and try again.");
+        } else if (err.code === "permission-denied") {
+          showMsg("Your account could not archive the backend profile before deletion. Please contact admin or update Firestore rules.");
+        } else {
+          showMsg("Could not delete the login right now. Please try again or contact admin.");
+        }
+      } finally {
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = "Delete My Login Access";
+      }
+    });
+  </script>
+</body>
+</html>
