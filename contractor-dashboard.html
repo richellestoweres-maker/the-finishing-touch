@@ -346,7 +346,7 @@ a{color:inherit}
 .meta span{display:inline-flex;border:1px solid var(--line);background:#fffaf6;border-radius:999px;padding:.32rem .62rem;color:#61554f;font-weight:800;font-size:.86rem}
 .empty{border:1px dashed var(--line2);border-radius:24px;padding:26px;text-align:center;color:var(--muted);font-weight:900;background:rgba(255,253,249,.78)}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--charcoal);color:#fff;padding:12px 16px;border-radius:999px;box-shadow:0 16px 34px rgba(0,0,0,.24);font-weight:900;z-index:9999;display:none}
-.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,249,.94);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:22px;padding:8px;box-shadow:0 15px 40px rgba(42,34,28,.18);grid-template-columns:repeat(6,1fr);gap:4px}
+.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,249,.94);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:22px;padding:8px;box-shadow:0 15px 40px rgba(42,34,28,.18);grid-template-columns:repeat(7,1fr);gap:4px}
 .bottom-nav button{border:0;background:transparent;border-radius:14px;padding:8px 4px;color:var(--muted);font-size:.7rem;font-weight:900;display:grid;place-items:center;gap:2px}
 .bottom-nav button.active{background:#f8f1ec;color:var(--ink)}
 .bottom-nav .bico{width:18px;height:2px;border-radius:999px;background:currentColor;display:block;opacity:.7;font-size:0}
@@ -400,10 +400,11 @@ a{color:inherit}
     <nav class="rail-nav" aria-label="Contractor app navigation">
       <button class="navbtn active" data-view="home"><span class="ico">01</span>Home</button>
       <button class="navbtn" data-view="jobs"><span class="ico">02</span>Jobs</button>
-      <button class="navbtn" data-view="availability"><span class="ico">03</span>Availability</button>
-      <button class="navbtn" data-view="documents"><span class="ico">04</span>Documents</button>
-      <button class="navbtn" data-view="resources"><span class="ico">05</span>Resources</button>
-      <button class="navbtn" data-view="settings"><span class="ico">06</span>Settings</button>
+      <button class="navbtn" data-view="walkthrough"><span class="ico">03</span>Walkthrough</button>
+      <button class="navbtn" data-view="availability"><span class="ico">04</span>Availability</button>
+      <button class="navbtn" data-view="documents"><span class="ico">05</span>Documents</button>
+      <button class="navbtn" data-view="resources"><span class="ico">06</span>Resources</button>
+      <button class="navbtn" data-view="settings"><span class="ico">07</span>Settings</button>
     </nav>
     <div class="rail-footer"><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button><a class="btn btn-outline" href="index.html">Home Website</a><a class="btn btn-soft" id="signOutBtn" href="#">Sign out</a></div>
   </aside>
@@ -430,6 +431,7 @@ a{color:inherit}
     <section id="appScreen" class="screen">
       <div id="view-home" class="app-card appview active"></div>
       <div id="view-jobs" class="app-card appview"></div>
+      <div id="view-walkthrough" class="app-card appview"></div>
       <div id="view-availability" class="app-card appview"></div>
       <div id="view-documents" class="app-card appview"></div>
       <div id="view-resources" class="app-card appview"></div>
@@ -438,7 +440,7 @@ a{color:inherit}
   </main>
 </div>
 <nav class="bottom-nav" aria-label="Mobile contractor navigation">
-  <button class="active" data-view="home"><span class="bico"></span>Home</button><button data-view="jobs"><span class="bico"></span>Jobs</button><button data-view="availability"><span class="bico"></span>Avail.</button><button data-view="documents"><span class="bico"></span>Docs</button><button data-view="resources"><span class="bico"></span>Help</button><button data-view="settings"><span class="bico"></span>Settings</button>
+  <button class="active" data-view="home"><span class="bico"></span>Home</button><button data-view="jobs"><span class="bico"></span>Jobs</button><button data-view="walkthrough"><span class="bico"></span>Walk</button><button data-view="availability"><span class="bico"></span>Avail.</button><button data-view="documents"><span class="bico"></span>Docs</button><button data-view="resources"><span class="bico"></span>Help</button><button data-view="settings"><span class="bico"></span>Settings</button>
 </nav>
 <div id="toast" class="toast"></div>
 <script type="module">
@@ -695,10 +697,129 @@ $('nextStep').addEventListener('click', next); $('backStep').addEventListener('c
 
 function setView(v){ activeView=v; document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v)); document.querySelectorAll('.appview').forEach(x=>x.classList.remove('active')); $(`view-${v}`).classList.add('active'); $('topTitle').textContent=cap(v); }
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{ if(!isActive(userData) && !['documents','home','settings'].includes(b.dataset.view)){toast('Complete onboarding first');return;} setView(b.dataset.view);}));
-function renderActiveApp(){ $('railNote').textContent='Your contractor suite is active. Manage jobs, availability, documents, resources, and profile settings here.'; document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('locked')); $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Quick actions and status for your work with The Finishing Touch.</p><div class="grid"><div class="tile"><h3>Open Jobs</h3><p>${openJobs.length} available opportunities.</p></div><div class="tile"><h3>My Jobs</h3><p>${myJobs.length} accepted or assigned jobs.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div><div class="actions"><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderJobs(); renderAvailability(); renderDocumentsView(); renderResources(); renderSettings(); }
+function renderActiveApp(){ $('railNote').textContent='Your contractor suite is active. Manage jobs, availability, documents, resources, and profile settings here.'; document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('locked')); $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Quick actions and status for your work with The Finishing Touch.</p><div class="grid"><div class="tile"><h3>Open Jobs</h3><p>${openJobs.length} available opportunities.</p></div><div class="tile"><h3>My Jobs</h3><p>${myJobs.length} accepted or assigned jobs.</p></div><div class="tile"><h3>Walkthroughs</h3><p>Submit notes, photos, and flat-rate recommendations for admin review.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div><div class="actions"><button class="btn btn-primary" data-view="walkthrough" type="button">Submit Walkthrough</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderJobs(); renderWalkthrough(); renderAvailability(); renderDocumentsView(); renderResources(); renderSettings(); }
 function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if(!['home','documents','settings'].includes(b.dataset.view)) b.classList.add('locked'); }); $('view-home').innerHTML=`<p class="mini-kicker">Onboarding</p><h2 class="screen-title">Finish onboarding first</h2><p class="screen-copy">Jobs, availability, territory, and workflow unlock after The Finishing Touch reviews your documents and marks your contractor profile active.</p><div class="actions"><button class="btn btn-primary" type="button" onclick="document.getElementById('onboardingScreen').classList.add('active');document.getElementById('appScreen').classList.remove('active')">Go to Onboarding</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderDocumentsView(); renderSettings(); }
 function renderJobs(){ const box=$('view-jobs'); box.innerHTML=`<p class="mini-kicker">Jobs</p><h2 class="screen-title">Opportunities & Assignments</h2><div class="grid"><div><h3>Open Jobs</h3><div id="openJobList"></div></div><div><h3>My Jobs</h3><div id="myJobList"></div></div></div>`; $('openJobList').innerHTML=openJobs.length?openJobs.map(jobCard).join(''):'<div class="empty">No open jobs right now.</div>'; $('myJobList').innerHTML=myJobs.length?myJobs.map(jobCard).join(''):'<div class="empty">No accepted jobs yet.</div>'; document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>claimJob(b.dataset.claim,b))); document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>downloadICS(myJobs.find(j=>j.id===b.dataset.ics)))); }
 function jobCard(j){ const dt=j.serviceDate?.toDate?.(); const when=dt?dt.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):(j.date||j.window||''); const mine=(Array.isArray(j.contractorIds)&&j.contractorIds.includes(me?.uid))||j.contractorId===me?.uid; return `<div class="job-card"><strong>${cap(j.serviceType||'Job')}</strong><div class="meta">${j.zip?`<span>📍 ${j.zip}</span>`:''}${when?`<span>🗓️ ${when}</span>`:''}${j.flatRate?`<span>$${Math.round(Number(j.flatRate))}</span>`:''}<span>${cap(j.status||'open')}</span></div>${j.summary?`<p class="hint">${j.summary}</p>`:''}<div class="actions">${!mine?`<button class="btn btn-primary" data-claim="${j.id}">Claim</button>`:`<button class="btn btn-outline" data-ics="${j.id}">Add to Calendar</button>`}<button class="btn btn-soft" type="button" onclick="alert('Messaging coming soon')">Message Admin</button></div></div>`; }
+function renderWalkthrough(){
+  const jobOptions = myJobs.length
+    ? myJobs.map(j=>`<option value="${j.id}">${cap(j.serviceType||'Job')} ${j.serviceDate?.toDate ? '— '+j.serviceDate.toDate().toLocaleDateString([], {month:'short',day:'numeric'}) : ''}</option>`).join('')
+    : '<option value="">No accepted job linked</option>';
+
+  $('view-walkthrough').innerHTML=`<p class="mini-kicker">Walkthrough</p><h2 class="screen-title">Submit Walkthrough</h2><p class="screen-copy">Use this after a walkthrough or estimate visit to send admin your notes, photos, condition concerns, estimated time, and recommended flat-rate pay.</p>
+  <div class="form-grid" style="margin-top:14px">
+    <label class="field">Related Job, optional
+      <select id="walkJobId">
+        <option value="">No related job / new estimate</option>
+        ${jobOptions}
+      </select>
+    </label>
+    <label class="field">Service Type
+      <select id="walkServiceType">
+        <option value="cleaning">Cleaning</option>
+        <option value="move_in_out">Move-In / Move-Out</option>
+        <option value="organizing">Organizing</option>
+        <option value="decor">Decor / Styling</option>
+        <option value="holiday">Holiday Decorating</option>
+        <option value="commercial">Commercial</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
+    <label class="field full">Client Name / Property Label
+      <input id="walkClientName" placeholder="Example: Brandi O. / Baycliff move-out">
+    </label>
+    <label class="field full">Property Address
+      <input id="walkAddress" placeholder="Street, city, ZIP if available">
+    </label>
+    <label class="field">Home Size / Rooms
+      <input id="walkSize" placeholder="Example: 1,800 sq ft, 3 bed / 2 bath">
+    </label>
+    <label class="field">Condition
+      <select id="walkCondition">
+        <option value="clean">Clean / light</option>
+        <option value="moderate">Moderate</option>
+        <option value="very_dirty">Very dirty / heavy buildup</option>
+        <option value="construction">Construction / renovation dust</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </label>
+    <label class="field">Estimated Team Hours
+      <input id="walkHours" type="number" min="0" step=".25" placeholder="Example: 5">
+    </label>
+    <label class="field">Recommended Contractor Pay
+      <input id="walkContractorEstimate" type="number" min="0" step="1" placeholder="Example: 270">
+    </label>
+    <label class="field">Suggested TFT Client Quote
+      <input id="walkClientQuote" type="number" min="0" step="1" placeholder="Example: 355">
+    </label>
+    <label class="field">Arrival / Scheduling Notes
+      <input id="walkSchedulingNotes" placeholder="Example: vacant after Sunday, needs early next week">
+    </label>
+    <label class="field full">Walkthrough Notes
+      <textarea id="walkNotes" placeholder="Condition, priorities, concerns, exclusions, add-ons, repairs noticed, pet hair, soap scum, oven/fridge/cabinets, etc."></textarea>
+    </label>
+    <label class="field full">Photos / Videos
+      <input id="walkFiles" type="file" accept="image/*,video/*,.pdf" multiple>
+      <span class="hint">Optional. Add walkthrough photos, videos, or PDFs for admin review.</span>
+    </label>
+  </div>
+  <div class="actions"><button class="btn btn-primary" id="submitWalkthrough" type="button">Submit Walkthrough</button></div>`;
+  $('submitWalkthrough')?.addEventListener('click', submitWalkthrough);
+}
+
+async function submitWalkthrough(){
+  if(!me){ alert('Please sign in first.'); return; }
+  const btn=$('submitWalkthrough');
+  btn.disabled=true;
+  btn.textContent='Submitting…';
+  try{
+    const files = Array.from($('walkFiles')?.files || []);
+    const uploaded = [];
+    for(let i=0;i<files.length;i++){
+      const file = files[i];
+      btn.textContent=`Uploading ${i+1}/${files.length}…`;
+      const meta = await uploadOneFile(`users/${me.uid}/walkthroughs/${Date.now()}-${i}-${cleanName(file.name)}`, file, `Walkthrough file ${i+1}`);
+      uploaded.push(meta);
+    }
+
+    const jobId=$('walkJobId')?.value||'';
+    const linkedJob = jobId ? myJobs.find(j=>j.id===jobId) : null;
+
+    await addDoc(collection(db,'walkthroughs'),{
+      status:'pending_review',
+      source:'contractor_dashboard',
+      submittedByUid:me.uid,
+      submittedByEmail:me.email||'',
+      submittedByName:userData.legalName||userData.fullName||userData.displayName||'',
+      relatedJobId:jobId,
+      clientName:$('walkClientName')?.value.trim() || linkedJob?.clientName || '',
+      clientId:linkedJob?.clientId || linkedJob?.clientUid || '',
+      clientEmail:linkedJob?.clientEmail || '',
+      propertyAddress:$('walkAddress')?.value.trim() || linkedJob?.propertyAddress || linkedJob?.address || '',
+      serviceType:$('walkServiceType')?.value || linkedJob?.serviceType || '',
+      homeSize:$('walkSize')?.value.trim() || '',
+      condition:$('walkCondition')?.value || '',
+      estimatedTeamHours:$('walkHours')?.value ? Number($('walkHours').value) : null,
+      contractorEstimate:$('walkContractorEstimate')?.value ? Number($('walkContractorEstimate').value) : null,
+      tftClientQuote:$('walkClientQuote')?.value ? Number($('walkClientQuote').value) : null,
+      schedulingNotes:$('walkSchedulingNotes')?.value.trim() || '',
+      notes:$('walkNotes')?.value.trim() || '',
+      files:uploaded,
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    });
+
+    toast('Walkthrough submitted for admin review');
+    renderWalkthrough();
+  }catch(err){
+    console.warn(err);
+    alert(err?.message || 'Could not submit walkthrough. Please try again.');
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Submit Walkthrough';
+  }
+}
+
 function renderAvailability(){ $('view-availability').innerHTML=`<p class="mini-kicker">Availability</p><h2 class="screen-title">TFT-only availability</h2><p class="screen-copy">Save the days and windows you want available for scheduling.</p><div class="form-grid"><label class="field full">Available Slots<textarea id="availSlots" placeholder="Example: Tue 8:30, Thu 11:15"></textarea></label><label class="field full">Blocked Days<textarea id="blockedDays" placeholder="Example: unavailable June 14-18"></textarea></label></div><div class="actions"><button class="btn btn-primary" id="saveAvail">Save Availability</button></div>`; $('saveAvail')?.addEventListener('click',async()=>{await setDoc(doc(db,'users',me.uid,'contractorSettings','availability'),{availableSlots:$('availSlots').value.trim(),blockedDays:$('blockedDays').value.trim(),updatedAt:serverTimestamp()},{merge:true});toast('Availability saved');}); }
 function renderDocumentsView(){ $('view-documents').innerHTML=`<p class="mini-kicker">Documents</p><h2 class="screen-title">Compliance File</h2><div class="review-grid"><div class="review-row"><span>ID</span><strong>${docStatus('id')}</strong></div><div class="review-row"><span>W-9</span><strong>${docStatus('w9')}</strong></div><div class="review-row"><span>COI</span><strong>${docStatus('coi')}</strong></div><div class="review-row"><span>Agreement</span><strong>${agreementComplete()?'Signed / Pending Review':'Not Complete'}</strong></div><div class="review-row"><span>Overall</span><strong>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'not active')}</strong></div></div>`; }
 function renderResources(){ $('view-resources').innerHTML=`<p class="mini-kicker">Resources</p><h2 class="screen-title">Resources coming soon</h2><p class="screen-copy">This area will hold training, product standards, and job-specific instructions later. Cleaning checklists are intentionally not part of onboarding.</p>`; }
