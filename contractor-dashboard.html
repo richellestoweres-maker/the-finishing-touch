@@ -3,43 +3,416 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Contractor App – The Finishing Touch</title>
+<title>Contractor Suite – The Finishing Touch</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Allura&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css"/>
 <style>
 :root{
-  --bg:#fbf7f4; --card:#fffdfb; --ink:#2f2926; --muted:#786f69; --line:#eadfd8;
-  --blush:#f2d8dc; --blush2:#e8b9c2; --soft:#fff1f3; --taupe:#d2bda9;
-  --good:#466b4f; --warn:#8a5b00; --danger:#8a4444; --shadow:0 20px 55px rgba(68,54,45,.12);
+  --bg:#f7f1eb;
+  --paper:#fffdf9;
+  --panel:#fbf7f2;
+  --ink:#241f1c;
+  --muted:#746a63;
+  --muted2:#95887f;
+  --line:#e5d9cf;
+  --line2:#d7c5b8;
+  --taupe:#cbb39c;
+  --taupe2:#b99a80;
+  --champagne:#efe4d7;
+  --blush:#ead0d4;
+  --blush-soft:#fbf0f1;
+  --charcoal:#2f2926;
+  --good:#496b52;
+  --warn:#8a620f;
+  --danger:#8a4444;
+  --shadow:0 22px 60px rgba(42,34,28,.10);
+  --shadow-soft:0 12px 30px rgba(42,34,28,.07);
+  --radius-xl:30px;
+  --radius-lg:22px;
+  --radius-md:16px;
 }
-*{box-sizing:border-box} html{scroll-behavior:smooth}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 0%,rgba(242,216,220,.75),transparent 32%),radial-gradient(circle at 92% 90%,rgba(210,189,169,.38),transparent 34%),var(--bg);font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
-button,input,textarea,select{font:inherit} button{cursor:pointer}.hidden{display:none!important}
-.app-shell{width:min(1120px,96%);margin:22px auto 72px;display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start}
-.app-rail{position:sticky;top:18px;background:rgba(255,253,251,.86);border:1px solid var(--line);border-radius:32px;padding:18px;box-shadow:var(--shadow);min-height:calc(100vh - 44px);display:flex;flex-direction:column;gap:16px}.brand{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:8px 6px 16px}.brand .logo{width:38px;height:48px;background:url("logo-vase.png") center/contain no-repeat;flex:0 0 auto}.brand strong{font-family:Playfair Display,serif;font-size:1.15rem;display:block}.brand span{font-size:.82rem;color:var(--muted);font-weight:800}.status-pill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;font-size:.76rem;font-weight:900;border:1px solid #f0d5da;background:var(--soft);color:#7d4f59;border-radius:999px;padding:.32rem .7rem}.rail-note{color:var(--muted);font-weight:700;line-height:1.45;font-size:.92rem}.rail-nav{display:grid;gap:8px}.navbtn{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:18px;padding:12px;text-align:left;font-weight:900;display:flex;align-items:center;gap:10px}.navbtn .ico{width:30px;height:30px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:0 7px 18px rgba(68,54,45,.08)}.navbtn.active,.navbtn:hover{background:linear-gradient(135deg,var(--soft),#fff);border-color:var(--blush);color:var(--ink)}.navbtn.locked{opacity:.48}.rail-footer{margin-top:auto;display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}.main{display:grid;gap:16px;min-width:0}.topbar{background:rgba(255,253,251,.86);border:1px solid var(--line);border-radius:30px;padding:18px 20px;box-shadow:0 12px 34px rgba(68,54,45,.08);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.topbar h1{font-family:Playfair Display,serif;margin:0;font-size:clamp(1.55rem,2.4vw,2.25rem)}.topbar p{margin:5px 0 0;color:var(--muted);font-weight:700}.who{font-size:.86rem;color:var(--muted);font-weight:800;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.app-card{background:rgba(255,253,251,.94);border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);padding:22px;overflow:hidden}.phone-flow{width:min(100%,680px);margin:0 auto}.mini-kicker{font-family:Allura,cursive;font-size:2rem;color:#925e69;margin:0}.screen-title{font-family:Playfair Display,serif;font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.05;margin:0}.screen-copy{color:#61554f;font-weight:700;line-height:1.5}.progress-wrap{display:grid;gap:9px;margin:18px 0}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-weight:900;font-size:.84rem}.progress{height:12px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush2),var(--taupe));transition:width .2s ease}.step-list{display:grid;gap:9px;margin-top:12px}.step-row{border:1px solid #f1dce1;background:#fff7f8;border-radius:18px;padding:12px;display:flex;gap:10px;align-items:flex-start}.step-dot{width:28px;height:28px;border-radius:999px;background:#fff;border:1px solid #f1dce1;display:grid;place-items:center;font-weight:900;color:#7d4f59;flex:0 0 auto}.step-row.done .step-dot{background:#f4fbf4;border-color:#cfe6d0;color:var(--good)}.step-row strong{display:block}.step-row span{display:block;color:var(--muted);font-size:.86rem;font-weight:700;margin-top:2px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px;font-weight:900;color:var(--ink)}.field.full{grid-column:1/-1}.field input,.field textarea,.field select{width:100%;border:1px solid #decfc6;background:#fffdfb;border-radius:18px;padding:.86rem 1rem;outline:none;color:var(--ink)}.field textarea{min-height:92px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blush2);box-shadow:0 0 0 4px rgba(232,185,194,.18)}.hint{color:var(--muted);font-weight:700;font-size:.84rem;line-height:1.4}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:.78rem 1.05rem;text-decoration:none;border:0;font-weight:900}.btn-primary{background:linear-gradient(135deg,var(--blush2),var(--taupe));color:#2f2926;box-shadow:0 12px 26px rgba(232,185,194,.34)}.btn-dark{background:#2f2926;color:white}.btn-outline{background:#fffdfb;border:1.5px solid #2f2926;color:#2f2926}.btn-soft{background:var(--soft);border:1px solid var(--blush);color:#7d4f59}.btn:disabled{opacity:.55;cursor:not-allowed}.doc-stack{display:grid;gap:12px}.doc-item{border:1px solid #f1dce1;border-radius:22px;background:#fffdfb;padding:14px;display:grid;gap:10px}.doc-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.doc-head h3{font-family:Playfair Display,serif;margin:0;font-size:1.15rem}.doc-actions{display:grid;gap:8px}.doc-upload-progress{height:12px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden;display:none}.doc-upload-progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--blush2),var(--taupe));transition:width .18s ease}.doc-upload-caption{display:none;color:var(--muted);font-weight:900;font-size:.84rem}.doc-item.is-uploading .doc-upload-progress,.doc-item.is-uploading .doc-upload-caption{display:block}.agreement-shell{border:1px solid var(--line);border-radius:24px;background:#fffdfb;overflow:hidden}.agreement-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,var(--soft),#fff)}.agreement-toolbar strong{font-family:Playfair Display,serif}.agreement-scroll{max-height:430px;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:#d7b8be #fff7f8}.agreement-scroll::-webkit-scrollbar{width:10px}.agreement-scroll::-webkit-scrollbar-track{background:#fff7f8;border-radius:999px}.agreement-scroll::-webkit-scrollbar-thumb{background:#d7b8be;border-radius:999px;border:2px solid #fff7f8}.clause-card{border:1px solid #f1dce1;border-radius:20px;background:#fff;padding:14px;margin-bottom:12px}.clause-card h4{margin:0 0 8px;font-family:Playfair Display,serif}.clause-card p,.clause-card li{color:#5f554f;font-weight:650;line-height:1.48}.clause-card ul{padding-left:20px}.initial-line{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:end;border-top:1px dashed #eadfd8;padding-top:11px;margin-top:10px}.consent-box{border:1px solid #ead1d6;border-radius:22px;padding:14px;background:#fffaf9;display:grid;gap:10px}.checkrow{display:flex;gap:10px;align-items:flex-start;color:#3d3531;font-weight:750;line-height:1.4}.checkrow input{margin-top:4px;transform:scale(1.1)}.review-grid{display:grid;gap:10px}.review-row{display:flex;justify-content:space-between;gap:12px;border:1px solid #f1dce1;background:#fffdfb;border-radius:18px;padding:12px}.review-row span{color:var(--muted);font-weight:800}.review-row strong{text-align:right}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.tile{border:1px solid var(--line);border-radius:24px;background:#fffdfb;padding:16px;box-shadow:0 9px 24px rgba(68,54,45,.06)}.tile h3{font-family:Playfair Display,serif;margin:0 0 6px}.tile p{color:var(--muted);font-weight:700;margin:0;line-height:1.42}.job-card{border:1px solid var(--line);border-radius:24px;background:#fffdfb;padding:16px;display:grid;gap:10px}.meta{display:flex;gap:7px;flex-wrap:wrap}.meta span{display:inline-flex;border:1px solid #f1dce1;background:#fff7f8;border-radius:999px;padding:.32rem .62rem;color:#61554f;font-weight:800;font-size:.86rem}.empty{border:1px dashed #e3cfd4;border-radius:24px;padding:26px;text-align:center;color:var(--muted);font-weight:900;background:rgba(255,253,251,.76)}.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#2f2926;color:#fff;padding:12px 16px;border-radius:999px;box-shadow:0 16px 34px rgba(0,0,0,.24);font-weight:900;z-index:9999;display:none}.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,251,.92);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:24px;padding:8px;box-shadow:0 15px 40px rgba(68,54,45,.18);grid-template-columns:repeat(5,1fr);gap:4px}.bottom-nav button{border:0;background:transparent;border-radius:16px;padding:8px 4px;color:var(--muted);font-size:.72rem;font-weight:900;display:grid;place-items:center;gap:2px}.bottom-nav button.active{background:var(--soft);color:#7d4f59}.bottom-nav .bico{font-size:1.05rem}.screen{display:none}.screen.active{display:block}.auth-box{width:min(100%,520px);margin:0 auto;text-align:center}.auth-box h2{font-family:Playfair Display,serif;font-size:2rem;margin:0 0 8px}.auth-box p{color:var(--muted);font-weight:700;line-height:1.5}.lock-banner{border:1px solid #ead1d6;background:#fff7f8;border-radius:24px;padding:14px;color:#61554f;font-weight:800;line-height:1.45;margin-bottom:14px}@media(max-width:900px){.app-shell{grid-template-columns:1fr;width:min(100% - 16px,760px);margin-top:10px}.app-rail{position:relative;min-height:auto}.rail-nav{grid-template-columns:repeat(2,1fr)}.topbar,.app-card,.app-rail{border-radius:24px}}@media(max-width:640px){body{padding-bottom:86px}.app-shell{width:min(100% - 14px,760px);gap:10px}.app-rail{display:none}.topbar{display:none}.app-card{padding:17px;border-radius:26px}.phone-flow{width:100%}.form-grid{grid-template-columns:1fr}.actions .btn{width:100%}.bottom-nav{display:grid}.agreement-scroll{max-height:58vh}.initial-line{grid-template-columns:1fr}.review-row{display:grid}.review-row strong{text-align:left}.screen-title{font-size:1.7rem}.mini-kicker{font-size:1.75rem}}
-.upload-summary{margin-top:10px;padding:10px 12px;border-radius:16px;background:#fff7f8;border:1px solid #f1dce1;color:#61554f;font-weight:800;font-size:.9rem}.upload-summary.warn{color:#8a5b00;background:#fff9ed;border-color:#ead9ad}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    linear-gradient(180deg,rgba(255,253,249,.78),rgba(247,241,235,.96)),
+    radial-gradient(circle at 12% 5%,rgba(234,208,212,.36),transparent 28%),
+    radial-gradient(circle at 92% 90%,rgba(203,179,156,.24),transparent 30%),
+    var(--bg);
+  font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;
+  color:var(--ink);
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.hidden{display:none!important}
+
+.app-shell{
+  width:min(1240px,96%);
+  margin:20px auto 74px;
+  display:grid;
+  grid-template-columns:286px minmax(0,1fr);
+  gap:18px;
+  align-items:start;
+}
+.app-rail{
+  position:sticky;
+  top:18px;
+  min-height:calc(100vh - 40px);
+  background:rgba(255,253,249,.92);
+  border:1px solid rgba(229,217,207,.95);
+  border-radius:var(--radius-xl);
+  padding:18px;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  backdrop-filter:blur(18px);
+}
+.brand{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  border-bottom:1px solid var(--line);
+  padding:8px 6px 17px;
+}
+.brand .logo{
+  width:36px;
+  height:48px;
+  background:url("logo-vase.png") center/contain no-repeat;
+  flex:0 0 auto;
+}
+.brand strong{
+  font-family:"Playfair Display",serif;
+  font-size:1.18rem;
+  line-height:1.08;
+  display:block;
+  letter-spacing:.01em;
+}
+.brand span{
+  display:block;
+  font-size:.78rem;
+  color:var(--muted);
+  font-weight:800;
+  margin-top:2px;
+  letter-spacing:.02em;
+}
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  width:max-content;
+  max-width:100%;
+  font-size:.72rem;
+  font-weight:900;
+  border:1px solid var(--line2);
+  background:#fffaf6;
+  color:#6b5140;
+  border-radius:999px;
+  padding:.34rem .72rem;
+  letter-spacing:.02em;
+}
+.status-pill.good{background:#f4fbf4;border-color:#cfe6d0;color:var(--good)}
+.status-pill.warn{background:#fff8e8;border-color:#ead9ad;color:var(--warn)}
+.status-pill.danger{background:#fff1f1;border-color:#ebc6c6;color:var(--danger)}
+.rail-note{
+  color:var(--muted);
+  font-weight:650;
+  line-height:1.55;
+  font-size:.91rem;
+  padding:0 6px;
+}
+.rail-nav{display:grid;gap:7px}
+.navbtn{
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--muted);
+  border-radius:16px;
+  padding:11px 12px;
+  text-align:left;
+  font-weight:850;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease;
+}
+.navbtn .ico{
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#fffdf9,#f7f0ea);
+  display:grid;
+  place-items:center;
+  color:#7c695b;
+  font-size:.68rem;
+  font-weight:900;
+  letter-spacing:.04em;
+  box-shadow:0 6px 14px rgba(42,34,28,.06);
+}
+.navbtn:hover,.navbtn.active{
+  background:linear-gradient(135deg,#fffdf9,#f7eee8);
+  border-color:var(--line2);
+  color:var(--ink);
+  transform:translateY(-1px);
+}
+.navbtn.active .ico{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+.navbtn.locked{opacity:.48}
+.rail-footer{
+  margin-top:auto;
+  display:grid;
+  gap:9px;
+  border-top:1px solid var(--line);
+  padding-top:14px;
+}
+.main{display:grid;gap:16px;min-width:0}
+.topbar{
+  background:rgba(255,253,249,.9);
+  border:1px solid rgba(229,217,207,.95);
+  border-radius:var(--radius-xl);
+  padding:18px 20px;
+  box-shadow:var(--shadow-soft);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  backdrop-filter:blur(16px);
+}
+.topbar h1{
+  font-family:"Playfair Display",serif;
+  margin:0;
+  font-size:clamp(1.55rem,2.5vw,2.35rem);
+  letter-spacing:.01em;
+}
+.topbar p{margin:5px 0 0;color:var(--muted);font-weight:650}
+.who{font-size:.84rem;color:var(--muted);font-weight:800;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-card{
+  background:rgba(255,253,249,.96);
+  border:1px solid rgba(229,217,207,.95);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-soft);
+  padding:22px;
+  overflow:hidden;
+}
+.phone-flow{width:min(100%,720px);margin:0 auto}
+.mini-kicker{
+  font-family:Manrope,system-ui,sans-serif;
+  font-size:.76rem;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  color:#8b6f5a;
+  margin:0 0 9px;
+  font-weight:900;
+}
+.screen-title{
+  font-family:"Playfair Display",serif;
+  font-size:clamp(1.5rem,3vw,2.25rem);
+  line-height:1.05;
+  margin:0;
+  letter-spacing:.01em;
+}
+.screen-copy{color:#61564f;font-weight:650;line-height:1.55}
+.progress-wrap{display:grid;gap:9px;margin:18px 0}
+.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-weight:900;font-size:.84rem}
+.progress{height:12px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--taupe2),var(--champagne));transition:width .2s ease}
+
+.step-list{display:grid;gap:9px;margin-top:12px}
+.step-row{
+  border:1px solid var(--line);
+  background:#fffaf6;
+  border-radius:18px;
+  padding:12px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.step-dot{
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  background:#fffdf9;
+  border:1px solid var(--line2);
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  color:#6f5949;
+  flex:0 0 auto;
+}
+.step-row.done .step-dot{background:#f4fbf4;border-color:#cfe6d0;color:var(--good)}
+.step-row strong{display:block}
+.step-row span{display:block;color:var(--muted);font-size:.86rem;font-weight:650;margin-top:2px}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:grid;gap:7px;font-weight:850;color:var(--ink)}
+.field.full{grid-column:1/-1}
+.field input,.field textarea,.field select{
+  width:100%;
+  border:1px solid var(--line2);
+  background:#fffdf9;
+  border-radius:16px;
+  padding:.86rem 1rem;
+  outline:none;
+  color:var(--ink);
+}
+.field textarea{min-height:92px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--taupe2);box-shadow:0 0 0 4px rgba(203,179,156,.18)}
+.hint{color:var(--muted);font-weight:700;font-size:.84rem;line-height:1.4}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-radius:999px;
+  padding:.78rem 1.05rem;
+  text-decoration:none;
+  border:0;
+  font-weight:900;
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--taupe),#decdbd);color:var(--ink);box-shadow:0 10px 22px rgba(185,154,128,.22)}
+.btn-dark{background:var(--charcoal);color:white}
+.btn-outline{background:#fffdf9;border:1.5px solid var(--charcoal);color:var(--charcoal)}
+.btn-soft{background:#f8f1ec;border:1px solid var(--line2);color:#6f5949}
+.btn-danger{background:#fff1f1;border:1px solid #ebc6c6;color:var(--danger)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+.doc-stack{display:grid;gap:12px}
+.doc-item{
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  background:#fffdf9;
+  padding:14px;
+  display:grid;
+  gap:10px;
+  box-shadow:0 8px 22px rgba(42,34,28,.04);
+}
+.doc-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.doc-head h3{font-family:"Playfair Display",serif;margin:0;font-size:1.15rem}
+.doc-actions{display:grid;gap:8px}
+.doc-upload-progress{height:12px;background:#f3e8e4;border:1px solid var(--line);border-radius:999px;overflow:hidden;display:none}
+.doc-upload-progress span{display:block;height:100%;width:0%;background:linear-gradient(135deg,var(--taupe2),var(--champagne));transition:width .18s ease}
+.doc-upload-caption{display:none;color:var(--muted);font-weight:900;font-size:.84rem}
+.doc-item.is-uploading .doc-upload-progress,.doc-item.is-uploading .doc-upload-caption{display:block}
+
+.agreement-shell{border:1px solid var(--line);border-radius:24px;background:#fffdf9;overflow:hidden}
+.agreement-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#fffaf6,#fffdf9)}
+.agreement-toolbar strong{font-family:"Playfair Display",serif}
+.agreement-scroll{max-height:430px;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:#c9b3a2 #fffaf6}
+.agreement-scroll::-webkit-scrollbar{width:10px}
+.agreement-scroll::-webkit-scrollbar-track{background:#fffaf6;border-radius:999px}
+.agreement-scroll::-webkit-scrollbar-thumb{background:#c9b3a2;border-radius:999px;border:2px solid #fffaf6}
+.clause-card{border:1px solid var(--line);border-radius:20px;background:#fff;padding:14px;margin-bottom:12px}
+.clause-card h4{margin:0 0 8px;font-family:"Playfair Display",serif}
+.clause-card p,.clause-card li{color:#5f554f;font-weight:650;line-height:1.48}
+.clause-card ul{padding-left:20px}
+.initial-line{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:end;border-top:1px dashed var(--line);padding-top:11px;margin-top:10px}
+.consent-box{border:1px solid var(--line);border-radius:22px;padding:14px;background:#fffaf6;display:grid;gap:10px}
+.checkrow{display:flex;gap:10px;align-items:flex-start;color:#3d3531;font-weight:750;line-height:1.4}
+.checkrow input{margin-top:4px;transform:scale(1.1)}
+
+.review-grid{display:grid;gap:10px}
+.review-row{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);background:#fffdf9;border-radius:18px;padding:12px}
+.review-row span{color:var(--muted);font-weight:800}
+.review-row strong{text-align:right}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.tile{
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  background:linear-gradient(180deg,#fffdf9,#fbf7f2);
+  padding:16px;
+  box-shadow:0 8px 22px rgba(42,34,28,.05);
+  position:relative;
+  overflow:hidden;
+}
+.tile::before{content:"";position:absolute;left:16px;top:0;width:38px;height:3px;background:linear-gradient(90deg,var(--taupe2),var(--champagne));border-radius:999px}
+.tile h3{font-family:"Playfair Display",serif;margin:8px 0 6px}
+.tile p{color:var(--muted);font-weight:650;margin:0;line-height:1.42}
+.job-card{
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  background:#fffdf9;
+  padding:16px;
+  display:grid;
+  gap:10px;
+  box-shadow:0 8px 22px rgba(42,34,28,.04);
+}
+.meta{display:flex;gap:7px;flex-wrap:wrap}
+.meta span{display:inline-flex;border:1px solid var(--line);background:#fffaf6;border-radius:999px;padding:.32rem .62rem;color:#61554f;font-weight:800;font-size:.86rem}
+.empty{border:1px dashed var(--line2);border-radius:24px;padding:26px;text-align:center;color:var(--muted);font-weight:900;background:rgba(255,253,249,.78)}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--charcoal);color:#fff;padding:12px 16px;border-radius:999px;box-shadow:0 16px 34px rgba(0,0,0,.24);font-weight:900;z-index:9999;display:none}
+.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,249,.94);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:22px;padding:8px;box-shadow:0 15px 40px rgba(42,34,28,.18);grid-template-columns:repeat(6,1fr);gap:4px}
+.bottom-nav button{border:0;background:transparent;border-radius:14px;padding:8px 4px;color:var(--muted);font-size:.7rem;font-weight:900;display:grid;place-items:center;gap:2px}
+.bottom-nav button.active{background:#f8f1ec;color:var(--ink)}
+.bottom-nav .bico{width:18px;height:2px;border-radius:999px;background:currentColor;display:block;opacity:.7;font-size:0}
+
+.screen{display:none}
+.screen.active{display:block}
+.appview{display:none}
+.appview.active{display:block}
+.auth-box{width:min(100%,520px);margin:0 auto;text-align:center}
+.auth-box h2{font-family:"Playfair Display",serif;font-size:2rem;margin:0 0 8px}
+.auth-box p{color:var(--muted);font-weight:650;line-height:1.55}
+.lock-banner{border:1px solid var(--line);background:#fffaf6;border-radius:24px;padding:14px;color:#61554f;font-weight:750;line-height:1.45;margin-bottom:14px}
+.upload-summary{margin-top:10px;padding:10px 12px;border-radius:16px;background:#fffaf6;border:1px solid var(--line);color:#61554f;font-weight:800;font-size:.9rem}
+.upload-summary.warn{color:var(--warn);background:#fff9ed;border-color:#ead9ad}
+.danger-zone{border-color:#ebc6c6;background:#fff7f6}
+.danger-zone .mini-kicker{color:var(--danger)}
+.setting-row{border:1px solid var(--line);background:#fffdf9;border-radius:var(--radius-lg);padding:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.setting-row h3{font-family:"Playfair Display",serif;margin:0 0 5px}
+.setting-row p{margin:0;color:var(--muted);font-weight:650;line-height:1.5}
+
+@media(max-width:900px){
+  .app-shell{grid-template-columns:1fr;width:min(100% - 16px,760px);margin-top:10px}
+  .app-rail{position:relative;min-height:auto}
+  .rail-nav{grid-template-columns:repeat(2,1fr)}
+  .topbar,.app-card,.app-rail{border-radius:24px}
+}
+@media(max-width:640px){
+  body{padding-bottom:86px}
+  .app-shell{width:min(100% - 14px,760px);gap:10px}
+  .app-rail{display:none}
+  .topbar{display:none}
+  .app-card{padding:17px;border-radius:26px}
+  .phone-flow{width:100%}
+  .form-grid{grid-template-columns:1fr}
+  .actions .btn{width:100%}
+  .bottom-nav{display:grid}
+  .agreement-scroll{max-height:58vh}
+  .initial-line{grid-template-columns:1fr}
+  .review-row{display:grid}
+  .review-row strong{text-align:left}
+  .screen-title{font-size:1.7rem}
+  .mini-kicker{font-size:.72rem}
+}
 </style>
 </head>
 <body>
 <div class="app-shell">
   <aside class="app-rail">
-    <div class="brand"><span class="logo" aria-hidden="true"></span><div><strong>The Finishing Touch</strong><span>Contractor App</span><div id="rolePill" class="status-pill">Checking…</div></div></div>
+    <div class="brand"><span class="logo" aria-hidden="true"></span><div><strong>The Finishing Touch</strong><span>Contractor Suite</span><div id="rolePill" class="status-pill">Checking…</div></div></div>
     <div class="rail-note" id="railNote">Complete onboarding before jobs, availability, and workflow unlock.</div>
     <nav class="rail-nav" aria-label="Contractor app navigation">
-      <button class="navbtn active" data-view="home"><span class="ico">⌂</span>Home</button>
-      <button class="navbtn" data-view="jobs"><span class="ico">✦</span>Jobs</button>
-      <button class="navbtn" data-view="availability"><span class="ico">📅</span>Availability</button>
-      <button class="navbtn" data-view="documents"><span class="ico">☑</span>Documents</button>
-      <button class="navbtn" data-view="resources"><span class="ico">♡</span>Resources</button>
+      <button class="navbtn active" data-view="home"><span class="ico">01</span>Home</button>
+      <button class="navbtn" data-view="jobs"><span class="ico">02</span>Jobs</button>
+      <button class="navbtn" data-view="availability"><span class="ico">03</span>Availability</button>
+      <button class="navbtn" data-view="documents"><span class="ico">04</span>Documents</button>
+      <button class="navbtn" data-view="resources"><span class="ico">05</span>Resources</button>
+      <button class="navbtn" data-view="settings"><span class="ico">06</span>Settings</button>
     </nav>
-    <div class="rail-footer"><a class="btn btn-outline" href="index.html">Home Website</a><a class="btn btn-soft" id="signOutBtn" href="#">Sign out</a></div>
+    <div class="rail-footer"><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button><a class="btn btn-outline" href="index.html">Home Website</a><a class="btn btn-soft" id="signOutBtn" href="#">Sign out</a></div>
   </aside>
   <main class="main">
-    <section class="topbar"><div><h1 id="topTitle">Contractor App</h1><p id="topSub">A guided onboarding and job workflow experience.</p></div><span id="whoami" class="who"></span></section>
+    <section class="topbar"><div><h1 id="topTitle">Contractor Suite</h1><p id="topSub">A refined private workspace for onboarding, jobs, documents, and account settings.</p></div><span id="whoami" class="who"></span></section>
 
-    <section id="signedOutScreen" class="app-card screen active"><div class="auth-box"><p class="mini-kicker">Private Portal</p><h2>Sign in to continue</h2><p>This contractor app is private. Approved contractors and subcontractors can complete onboarding here before work is assigned.</p><div class="actions" style="justify-content:center"><a class="btn btn-primary" href="login.html?next=contractor-dashboard.html">Sign in</a><a class="btn btn-outline" href="index.html">Return Home</a></div></div></section>
+    <section id="signedOutScreen" class="app-card screen active"><div class="auth-box"><p class="mini-kicker">Private Portal</p><h2>Sign in to continue</h2><p>This contractor suite is private. Approved contractors and subcontractors can complete onboarding here before work is assigned.</p><div class="actions" style="justify-content:center"><a class="btn btn-primary" href="login.html?next=contractor-dashboard.html">Sign in</a><a class="btn btn-outline" href="index.html">Return Home</a></div></div></section>
 
-    <section id="pendingScreen" class="app-card screen"><div class="auth-box"><p class="mini-kicker">Application Review</p><h2>Access pending</h2><p>Your account is not active for contractor onboarding yet. The Finishing Touch will review your application and notify you if access is approved.</p><div class="actions" style="justify-content:center"><a class="btn btn-outline" href="index.html">Return Home</a></div></div></section>
+    <section id="pendingScreen" class="app-card screen"><div class="auth-box"><p class="mini-kicker">Application Review</p><h2>Access pending</h2><p>Your account is not active for contractor onboarding yet. The Finishing Touch will review your application and notify you if access is approved.</p><div class="actions" style="justify-content:center"><a class="btn btn-outline" href="index.html">Return Home</a><a class="btn btn-soft" href="delete-my-account.html">Delete My Account</a></div></div></section>
 
     <section id="onboardingScreen" class="app-card screen">
       <div class="phone-flow">
@@ -60,11 +433,12 @@ button,input,textarea,select{font:inherit} button{cursor:pointer}.hidden{display
       <div id="view-availability" class="app-card appview"></div>
       <div id="view-documents" class="app-card appview"></div>
       <div id="view-resources" class="app-card appview"></div>
+      <div id="view-settings" class="app-card appview"></div>
     </section>
   </main>
 </div>
 <nav class="bottom-nav" aria-label="Mobile contractor navigation">
-  <button class="active" data-view="home"><span class="bico">⌂</span>Home</button><button data-view="jobs"><span class="bico">✦</span>Jobs</button><button data-view="availability"><span class="bico">📅</span>Avail.</button><button data-view="documents"><span class="bico">☑</span>Docs</button><button data-view="resources"><span class="bico">♡</span>Help</button>
+  <button class="active" data-view="home"><span class="bico"></span>Home</button><button data-view="jobs"><span class="bico"></span>Jobs</button><button data-view="availability"><span class="bico"></span>Avail.</button><button data-view="documents"><span class="bico"></span>Docs</button><button data-view="resources"><span class="bico"></span>Help</button><button data-view="settings"><span class="bico"></span>Settings</button>
 </nav>
 <div id="toast" class="toast"></div>
 <script type="module">
@@ -320,19 +694,20 @@ async function next(){ try{ await saveCurrentStep(); if(currentStep<steps.length
 $('nextStep').addEventListener('click', next); $('backStep').addEventListener('click',()=>showStep(currentStep-1)); $('signOutBtn').addEventListener('click',async e=>{e.preventDefault(); await signOut(auth); location.href='index.html';});
 
 function setView(v){ activeView=v; document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v)); document.querySelectorAll('.appview').forEach(x=>x.classList.remove('active')); $(`view-${v}`).classList.add('active'); $('topTitle').textContent=cap(v); }
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{ if(!isActive(userData) && b.dataset.view!=='documents' && b.dataset.view!=='home'){toast('Complete onboarding first');return;} setView(b.dataset.view);}));
-function renderActiveApp(){ $('railNote').textContent='Your contractor app is active. Manage jobs, availability, documents, and resources here.'; document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('locked')); $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Quick actions and status for your work with The Finishing Touch.</p><div class="grid"><div class="tile"><h3>Open Jobs</h3><p>${openJobs.length} available opportunities.</p></div><div class="tile"><h3>My Jobs</h3><p>${myJobs.length} accepted or assigned jobs.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div>`; renderJobs(); renderAvailability(); renderDocumentsView(); renderResources(); }
-function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if(!['home','documents'].includes(b.dataset.view)) b.classList.add('locked'); }); $('view-home').innerHTML=`<p class="mini-kicker">Onboarding</p><h2 class="screen-title">Finish onboarding first</h2><p class="screen-copy">Jobs, availability, territory, and workflow unlock after The Finishing Touch reviews your documents and marks your contractor profile active.</p><div class="actions"><button class="btn btn-primary" type="button" onclick="document.getElementById('onboardingScreen').classList.add('active');document.getElementById('appScreen').classList.remove('active')">Go to Onboarding</button></div>`; renderDocumentsView(); }
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{ if(!isActive(userData) && !['documents','home','settings'].includes(b.dataset.view)){toast('Complete onboarding first');return;} setView(b.dataset.view);}));
+function renderActiveApp(){ $('railNote').textContent='Your contractor suite is active. Manage jobs, availability, documents, resources, and profile settings here.'; document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('locked')); $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Quick actions and status for your work with The Finishing Touch.</p><div class="grid"><div class="tile"><h3>Open Jobs</h3><p>${openJobs.length} available opportunities.</p></div><div class="tile"><h3>My Jobs</h3><p>${myJobs.length} accepted or assigned jobs.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div><div class="actions"><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderJobs(); renderAvailability(); renderDocumentsView(); renderResources(); renderSettings(); }
+function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if(!['home','documents','settings'].includes(b.dataset.view)) b.classList.add('locked'); }); $('view-home').innerHTML=`<p class="mini-kicker">Onboarding</p><h2 class="screen-title">Finish onboarding first</h2><p class="screen-copy">Jobs, availability, territory, and workflow unlock after The Finishing Touch reviews your documents and marks your contractor profile active.</p><div class="actions"><button class="btn btn-primary" type="button" onclick="document.getElementById('onboardingScreen').classList.add('active');document.getElementById('appScreen').classList.remove('active')">Go to Onboarding</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderDocumentsView(); renderSettings(); }
 function renderJobs(){ const box=$('view-jobs'); box.innerHTML=`<p class="mini-kicker">Jobs</p><h2 class="screen-title">Opportunities & Assignments</h2><div class="grid"><div><h3>Open Jobs</h3><div id="openJobList"></div></div><div><h3>My Jobs</h3><div id="myJobList"></div></div></div>`; $('openJobList').innerHTML=openJobs.length?openJobs.map(jobCard).join(''):'<div class="empty">No open jobs right now.</div>'; $('myJobList').innerHTML=myJobs.length?myJobs.map(jobCard).join(''):'<div class="empty">No accepted jobs yet.</div>'; document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>claimJob(b.dataset.claim,b))); document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>downloadICS(myJobs.find(j=>j.id===b.dataset.ics)))); }
 function jobCard(j){ const dt=j.serviceDate?.toDate?.(); const when=dt?dt.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):(j.date||j.window||''); const mine=(Array.isArray(j.contractorIds)&&j.contractorIds.includes(me?.uid))||j.contractorId===me?.uid; return `<div class="job-card"><strong>${cap(j.serviceType||'Job')}</strong><div class="meta">${j.zip?`<span>📍 ${j.zip}</span>`:''}${when?`<span>🗓️ ${when}</span>`:''}${j.flatRate?`<span>$${Math.round(Number(j.flatRate))}</span>`:''}<span>${cap(j.status||'open')}</span></div>${j.summary?`<p class="hint">${j.summary}</p>`:''}<div class="actions">${!mine?`<button class="btn btn-primary" data-claim="${j.id}">Claim</button>`:`<button class="btn btn-outline" data-ics="${j.id}">Add to Calendar</button>`}<button class="btn btn-soft" type="button" onclick="alert('Messaging coming soon')">Message Admin</button></div></div>`; }
 function renderAvailability(){ $('view-availability').innerHTML=`<p class="mini-kicker">Availability</p><h2 class="screen-title">TFT-only availability</h2><p class="screen-copy">Save the days and windows you want available for scheduling.</p><div class="form-grid"><label class="field full">Available Slots<textarea id="availSlots" placeholder="Example: Tue 8:30, Thu 11:15"></textarea></label><label class="field full">Blocked Days<textarea id="blockedDays" placeholder="Example: unavailable June 14-18"></textarea></label></div><div class="actions"><button class="btn btn-primary" id="saveAvail">Save Availability</button></div>`; $('saveAvail')?.addEventListener('click',async()=>{await setDoc(doc(db,'users',me.uid,'contractorSettings','availability'),{availableSlots:$('availSlots').value.trim(),blockedDays:$('blockedDays').value.trim(),updatedAt:serverTimestamp()},{merge:true});toast('Availability saved');}); }
 function renderDocumentsView(){ $('view-documents').innerHTML=`<p class="mini-kicker">Documents</p><h2 class="screen-title">Compliance File</h2><div class="review-grid"><div class="review-row"><span>ID</span><strong>${docStatus('id')}</strong></div><div class="review-row"><span>W-9</span><strong>${docStatus('w9')}</strong></div><div class="review-row"><span>COI</span><strong>${docStatus('coi')}</strong></div><div class="review-row"><span>Agreement</span><strong>${agreementComplete()?'Signed / Pending Review':'Not Complete'}</strong></div><div class="review-row"><span>Overall</span><strong>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'not active')}</strong></div></div>`; }
 function renderResources(){ $('view-resources').innerHTML=`<p class="mini-kicker">Resources</p><h2 class="screen-title">Resources coming soon</h2><p class="screen-copy">This area will hold training, product standards, and job-specific instructions later. Cleaning checklists are intentionally not part of onboarding.</p>`; }
+function renderSettings(){ $('view-settings').innerHTML=`<p class="mini-kicker">Profile</p><h2 class="screen-title">Profile / Settings</h2><p class="screen-copy">Manage your contractor profile and account access.</p><div class="grid" style="margin-top:14px"><div class="tile"><h3>Signed In</h3><p>${me?.email||me?.uid||'Not available'}</p></div><div class="tile"><h3>Account Status</h3><p>${cap(userData.accountStatus||userData.contractorStatus||userData.role||'pending')}</p></div><div class="tile"><h3>Portal Access</h3><p>${cap(userData.portalAccess||'standard')}</p></div></div><div class="app-card danger-zone" style="box-shadow:none;margin-top:14px"><p class="mini-kicker">Danger Zone</p><h2 class="screen-title">Delete My Account</h2><p class="screen-copy">Use this only if you want to remove your own contractor login access. You will be asked to type your current password. The Finishing Touch may keep backend business records for tax, compliance, job history, payments, and legal recordkeeping.</p><div class="setting-row"><div><h3>Remove my login access</h3><p>This archives the backend profile and deletes your Firebase sign-in login. You may need to create a new account if you apply again later.</p></div><a class="btn btn-danger" href="delete-my-account.html">Delete My Account</a></div></div>`; }
 function startJobListeners(){ unsubs.forEach(u=>{try{u()}catch{}}); unsubs=[]; unsubs.push(onSnapshot(query(collection(db,'jobs'),where('status','==','open')),snap=>{openJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); unsubs.push(onSnapshot(query(collection(db,'jobs'),where('contractorIds','array-contains',me.uid)),snap=>{myJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); }
 async function claimJob(id,b){ if(!isActive(userData)){toast('Account must be active first');return;} b.disabled=true; try{ await runTransaction(db,async tx=>{const ref=doc(db,'jobs',id); const s=await tx.get(ref); if(!s.exists())throw new Error('Job not found'); const j=s.data(); const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:(j.contractorId?[j.contractorId]:[]); if(!ids.includes(me.uid)) ids.push(me.uid); tx.update(ref,{contractorIds:ids,contractorEmails:[...new Set([...(j.contractorEmails||[]),me.email||''])],status:'claimed',workflowStatus:'assigned',claimedAt:serverTimestamp(),updatedAt:serverTimestamp()}); }); toast('Job claimed'); }catch(e){console.warn(e);alert('Could not claim job.');} finally{b.disabled=false;} }
-function downloadICS(j){ if(!j?.serviceDate?.toDate){alert('No service date found yet.');return;} const dt=j.serviceDate.toDate(); const end=new Date(dt.getTime()+2*60*60*1000); const fmt=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z'; const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//The Finishing Touch//Contractor App//EN\nBEGIN:VEVENT\nUID:${j.id}@thefinishingtouch\nDTSTAMP:${fmt(new Date())}\nDTSTART:${fmt(dt)}\nDTEND:${fmt(end)}\nSUMMARY:The Finishing Touch - ${cap(j.serviceType||'Job')}\nDESCRIPTION:Open the contractor app for job details, arrival instructions, photos, and workflow requirements.\nEND:VEVENT\nEND:VCALENDAR`; const blob=new Blob([ics],{type:'text/calendar'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tft-job-${j.id}.ics`; a.click(); URL.revokeObjectURL(a.href); }
+function downloadICS(j){ if(!j?.serviceDate?.toDate){alert('No service date found yet.');return;} const dt=j.serviceDate.toDate(); const end=new Date(dt.getTime()+2*60*60*1000); const fmt=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z'; const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//The Finishing Touch//Contractor App//EN\nBEGIN:VEVENT\nUID:${j.id}@thefinishingtouch\nDTSTAMP:${fmt(new Date())}\nDTSTART:${fmt(dt)}\nDTEND:${fmt(end)}\nSUMMARY:The Finishing Touch - ${cap(j.serviceType||'Job')}\nDESCRIPTION:Open the contractor suite for job details, arrival instructions, photos, and workflow requirements.\nEND:VEVENT\nEND:VCALENDAR`; const blob=new Blob([ics],{type:'text/calendar'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tft-job-${j.id}.ics`; a.click(); URL.revokeObjectURL(a.href); }
 
-onAuthStateChanged(auth, async user=>{ if(!user){ me=null; $('rolePill').textContent='Signed out'; $('whoami').textContent=''; showScreen('signedOut'); return;} me=user; $('whoami').textContent=user.email||user.uid; const snap=await getDoc(doc(db,'users',user.uid)); userData=snap.exists()?snap.data():{}; const role=String(userData.role||'').toLowerCase(); $('rolePill').textContent=role?cap(role):'No role yet'; if(!(role==='contractor'||role==='admin')){ showScreen('pending'); return;} renderAllSteps(); if(isActive(userData)){ showScreen('app'); startJobListeners(); renderActiveApp(); setView('home'); } else { showScreen('onboarding'); showStep(0); if(submitted(userData)) toast('Onboarding pending admin review'); }});
+onAuthStateChanged(auth, async user=>{ if(!user){ me=null; $('rolePill').textContent='Signed out'; $('whoami').textContent=''; showScreen('signedOut'); return;} me=user; $('whoami').textContent=user.email||user.uid; const snap=await getDoc(doc(db,'users',user.uid)); userData=snap.exists()?snap.data():{}; const role=String(userData.role||'').toLowerCase(); const archived=String(userData.accountStatus||'').toLowerCase()==='archived'||String(userData.portalAccess||'').toLowerCase()==='removed'; $('rolePill').textContent=archived?'Access removed':(role?cap(role):'No role yet'); if(archived){ showScreen('pending'); return; } if(!(role==='contractor'||role==='admin')){ showScreen('pending'); return;} renderAllSteps(); if(isActive(userData)){ showScreen('app'); startJobListeners(); renderActiveApp(); setView('home'); } else { renderLockedApp(); showScreen('onboarding'); showStep(0); if(submitted(userData)) toast('Onboarding pending admin review'); }});
 </script>
 </body>
 </html>
