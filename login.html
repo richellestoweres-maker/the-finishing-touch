@@ -65,15 +65,31 @@
     const signupLink = document.getElementById("signupLink");
     const resetLink = document.getElementById("resetLink");
 
+    const ALLOWED_NEXT = new Set([
+      "admin-dashboard.html",
+      "contractor-dashboard.html",
+      "client-dashboard.html",
+      "delete-my-account.html",
+      "contractor-apply.html",
+      "employee-waitlist.html"
+    ]);
+
+    function cleanNextPath(next){
+      let value = String(next || "").trim();
+
+      if (!value) return "";
+      if (/^https?:\/\//i.test(value)) return "";
+      if (/^\/\//.test(value)) return "";
+
+      value = value.replace(/^\.?\//, "");
+      value = value.split("#")[0].split("?")[0];
+
+      return ALLOWED_NEXT.has(value) ? value : "";
+    }
+
     function safeNextFromQuery(){
       const params = new URLSearchParams(location.search);
-      const next = (params.get("next") || "").trim();
-
-      if (!next) return "";
-      if (/^https?:\/\//i.test(next)) return "";
-      if (/^\/\//.test(next)) return "";
-
-      return next;
+      return cleanNextPath(params.get("next") || "");
     }
 
     function preserveNextOnLinks(){
@@ -94,8 +110,12 @@
           displayName: user.displayName || user.email || user.uid,
           email: user.email || "",
           role: "client",
+          accountStatus: "active",
+          portalAccess: "allowed",
+          isActive: true,
           serviceTypes: [],
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
         });
 
         const freshSnap = await getDoc(ref);
@@ -103,6 +123,67 @@
       }
 
       return snap.data() || {};
+    }
+
+    function roleHome(role, profile){
+      const normalizedRole = String(role || "").toLowerCase();
+      const contractorStage = String(profile.contractorStage || "").toLowerCase();
+      const contractorStatus = String(profile.contractorStatus || "").toLowerCase();
+      const portalAccess = String(profile.portalAccess || "").toLowerCase();
+      const accountStatus = String(profile.accountStatus || "").toLowerCase();
+
+      if (accountStatus === "archived" || portalAccess === "removed") {
+        return "delete-my-account.html";
+      }
+
+      if (normalizedRole === "admin") return "admin-dashboard.html";
+      if (normalizedRole === "client") return "client-dashboard.html";
+
+      if (
+        normalizedRole === "contractor" ||
+        contractorStage === "onboarding" ||
+        contractorStatus === "pending_documents" ||
+        contractorStatus === "pending_admin_review" ||
+        portalAccess === "onboarding_only"
+      ) {
+        return "contractor-dashboard.html";
+      }
+
+      if (normalizedRole === "pending") return "contractor-apply.html";
+      if (normalizedRole === "employee_waitlist") return "employee-waitlist.html";
+
+      return "client-dashboard.html";
+    }
+
+    function nextAllowedForRole(next, role, profile){
+      if (!next) return "";
+
+      const normalizedRole = String(role || "").toLowerCase();
+
+      // Let any signed-in user reach the self-delete page.
+      if (next === "delete-my-account.html") return next;
+
+      // Admin can return to the admin dashboard.
+      if (next === "admin-dashboard.html" && normalizedRole === "admin") return next;
+
+      // Contractors and approved onboarding users can return to contractor dashboard.
+      const isContractorLike =
+        normalizedRole === "contractor" ||
+        String(profile.contractorStage || "").toLowerCase() === "onboarding" ||
+        String(profile.contractorStatus || "").toLowerCase() === "pending_documents" ||
+        String(profile.contractorStatus || "").toLowerCase() === "pending_admin_review" ||
+        String(profile.portalAccess || "").toLowerCase() === "onboarding_only";
+
+      if (next === "contractor-dashboard.html" && (isContractorLike || normalizedRole === "admin")) return next;
+
+      // Clients can return to the client dashboard.
+      if (next === "client-dashboard.html" && (normalizedRole === "client" || normalizedRole === "admin")) return next;
+
+      // Pending applicants can go back to application pages.
+      if (next === "contractor-apply.html" && (normalizedRole === "pending" || normalizedRole === "client" || !normalizedRole)) return next;
+      if (next === "employee-waitlist.html") return next;
+
+      return "";
     }
 
     async function routeByRole(user){
@@ -114,28 +195,9 @@
       const profile = await ensureUserDoc(user);
       const role = String(profile.role || "").toLowerCase();
       const next = safeNextFromQuery();
+      const allowedNext = nextAllowedForRole(next, role, profile);
 
-      if (role === "admin") {
-        window.location.href = "admin-dashboard.html";
-        return;
-      }
-
-      if (role === "contractor") {
-        window.location.href = "contractor-dashboard.html";
-        return;
-      }
-
-      if (role === "pending") {
-        window.location.href = "contractor-apply.html";
-        return;
-      }
-
-      if (role === "client") {
-        window.location.href = next || "client-dashboard.html";
-        return;
-      }
-
-      window.location.href = next || "client-dashboard.html";
+      window.location.href = allowedNext || roleHome(role, profile);
     }
 
     preserveNextOnLinks();
