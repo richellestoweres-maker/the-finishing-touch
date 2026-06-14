@@ -400,7 +400,7 @@ a{color:inherit}
     <nav class="rail-nav" aria-label="Contractor app navigation">
       <button class="navbtn active" data-view="home"><span class="ico">01</span>Home</button>
       <button class="navbtn" data-view="jobs"><span class="ico">02</span>Jobs</button>
-      <button class="navbtn" data-view="walkthrough"><span class="ico">03</span>Walkthrough</button>
+      <button class="navbtn" data-view="walkthrough" id="projectNavBtn"><span class="ico">03</span>Project Notes</button>
       <button class="navbtn" data-view="availability"><span class="ico">04</span>Availability</button>
       <button class="navbtn" data-view="documents"><span class="ico">05</span>Documents</button>
       <button class="navbtn" data-view="resources"><span class="ico">06</span>Resources</button>
@@ -440,7 +440,7 @@ a{color:inherit}
   </main>
 </div>
 <nav class="bottom-nav" aria-label="Mobile contractor navigation">
-  <button class="active" data-view="home"><span class="bico"></span>Home</button><button data-view="jobs"><span class="bico"></span>Jobs</button><button data-view="walkthrough"><span class="bico"></span>Walk</button><button data-view="availability"><span class="bico"></span>Avail.</button><button data-view="documents"><span class="bico"></span>Docs</button><button data-view="resources"><span class="bico"></span>Help</button><button data-view="settings"><span class="bico"></span>Settings</button>
+  <button class="active" data-view="home"><span class="bico"></span>Home</button><button data-view="jobs"><span class="bico"></span>Jobs</button><button data-view="walkthrough"><span class="bico"></span>Notes</button><button data-view="availability"><span class="bico"></span>Avail.</button><button data-view="documents"><span class="bico"></span>Docs</button><button data-view="resources"><span class="bico"></span>Help</button><button data-view="settings"><span class="bico"></span>Settings</button>
 </nav>
 <div id="toast" class="toast"></div>
 <script type="module">
@@ -478,6 +478,16 @@ function showScreen(key){ Object.values(screens).forEach(s=>s.classList.remove('
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2200); }
 function cap(s){return String(s||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());}
 function cleanName(n){return String(n||'file').replace(/[^a-zA-Z0-9._-]/g,'_');}
+const SERVICE_LABELS={cleaning:'Cleaning',move_in_out:'Move-In / Move-Out',airbnb:'Airbnb Turnover',commercial:'Commercial Cleaning',organizing:'Home Organizing',decor:'Interior Decorating / Styling',holiday:'Holiday Decorating'};
+function normalizeService(s){const v=String(s||'').toLowerCase().trim(); if(['clean','cleaning','deep_clean','standard_clean'].includes(v))return'cleaning'; if(['moveout','move_out','move-in-out','move in out','move_in','move_in_out'].includes(v))return'move_in_out'; if(['airbnb','turnover','short_term_rental'].includes(v))return'airbnb'; if(['commercial','office'].includes(v))return'commercial'; if(['organize','organizing','organization','home_organizing'].includes(v))return'organizing'; if(['decor','decorating','styling','staging','interior','interior_decorating','design'].includes(v))return'decor'; if(['holiday','holiday_decor','christmas','event','events'].includes(v))return'holiday'; return v||'cleaning';}
+function contractorServices(){const raw=userData.approvedServiceTypes||userData.approvedServices||userData.serviceTypes||userData.application?.serviceTypes||[]; const list=Array.isArray(raw)?raw:String(raw||'').split(','); const normalized=[...new Set(list.map(normalizeService).filter(Boolean))]; return normalized.length?normalized:['cleaning'];}
+function serviceLabel(s){return SERVICE_LABELS[normalizeService(s)]||cap(s)}
+function hasService(s){return contractorServices().includes(normalizeService(s))}
+function serviceOptionsHTML(){return contractorServices().map(s=>`<option value="${s}">${serviceLabel(s)}</option>`).join('')}
+function serviceMatchesJob(job){const allowed=contractorServices(); const service=normalizeService(job.serviceType||job.service||job.category||''); if(allowed.includes(service))return true; if(['move_in_out','airbnb','commercial'].includes(service)&&allowed.includes('cleaning'))return true; return false;}
+function visibleOpenJobs(){return openJobs.filter(serviceMatchesJob)}
+function visibleMyJobs(){return myJobs.filter(serviceMatchesJob)}
+function projectModuleLabel(){const s=contractorServices(); if(s.length===1&&['cleaning','move_in_out','airbnb','commercial'].includes(s[0]))return'Walkthrough'; if(s.length===1&&s[0]==='organizing')return'Organizing Notes'; if(s.length===1&&s[0]==='decor')return'Styling Notes'; if(s.length===1&&s[0]==='holiday')return'Holiday Notes'; return'Project Notes';}
 function isActive(data){ const c=data.compliance||{}; return data.contractorStatus==='active' || data.status==='active' || c.overallStatus==='active' || data.active===true || (data.role==='admin'); }
 function submitted(data){ return !!(data.compliance?.onboarding?.submittedAt || data.compliance?.agreement?.signedAt || data.contractorStatus==='pending_admin_review'); }
 function docs(){ return userData.compliance?.documents || {}; }
@@ -697,136 +707,55 @@ $('nextStep').addEventListener('click', next); $('backStep').addEventListener('c
 
 function setView(v){ activeView=v; document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v)); document.querySelectorAll('.appview').forEach(x=>x.classList.remove('active')); $(`view-${v}`).classList.add('active'); $('topTitle').textContent=cap(v); }
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{ if(!isActive(userData) && !['documents','home','settings'].includes(b.dataset.view)){toast('Complete onboarding first');return;} setView(b.dataset.view);}));
-function renderActiveApp(){ $('railNote').textContent='Your contractor suite is active. Manage jobs, availability, documents, resources, and profile settings here.'; document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('locked')); $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Quick actions and status for your work with The Finishing Touch.</p><div class="grid"><div class="tile"><h3>Open Jobs</h3><p>${openJobs.length} available opportunities.</p></div><div class="tile"><h3>My Jobs</h3><p>${myJobs.length} accepted or assigned jobs.</p></div><div class="tile"><h3>Walkthroughs</h3><p>Submit notes, photos, and flat-rate recommendations for admin review.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div><div class="actions"><button class="btn btn-primary" data-view="walkthrough" type="button">Submit Walkthrough</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderJobs(); renderWalkthrough(); renderAvailability(); renderDocumentsView(); renderResources(); renderSettings(); }
+function renderActiveApp(){
+ const openCount=visibleOpenJobs().length, mineCount=visibleMyJobs().length, label=projectModuleLabel();
+ const services=contractorServices().map(serviceLabel).join(', ');
+ $('railNote').textContent=`Approved services: ${services}. Your suite only shows work that matches your approved service categories.`;
+ const pbtn=$('projectNavBtn'); if(pbtn) pbtn.lastChild.textContent=label;
+ document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('locked'));
+ $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Your private workspace is filtered to your approved service type(s): <strong>${services}</strong>.</p><div class="grid"><div class="tile"><h3>Open Work</h3><p>${openCount} available opportunities matched to your approved services.</p></div><div class="tile"><h3>My Work</h3><p>${mineCount} accepted or assigned project(s).</p></div><div class="tile"><h3>${label}</h3><p>Submit notes, photos, estimate details, or project-specific updates for admin review.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div><div class="actions"><button class="btn btn-primary" data-view="walkthrough" type="button">${label}</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`;
+ renderJobs(); renderWalkthrough(); renderAvailability(); renderDocumentsView(); renderResources(); renderSettings();
+}
 function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if(!['home','documents','settings'].includes(b.dataset.view)) b.classList.add('locked'); }); $('view-home').innerHTML=`<p class="mini-kicker">Onboarding</p><h2 class="screen-title">Finish onboarding first</h2><p class="screen-copy">Jobs, availability, territory, and workflow unlock after The Finishing Touch reviews your documents and marks your contractor profile active.</p><div class="actions"><button class="btn btn-primary" type="button" onclick="document.getElementById('onboardingScreen').classList.add('active');document.getElementById('appScreen').classList.remove('active')">Go to Onboarding</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderDocumentsView(); renderSettings(); }
-function renderJobs(){ const box=$('view-jobs'); box.innerHTML=`<p class="mini-kicker">Jobs</p><h2 class="screen-title">Opportunities & Assignments</h2><div class="grid"><div><h3>Open Jobs</h3><div id="openJobList"></div></div><div><h3>My Jobs</h3><div id="myJobList"></div></div></div>`; $('openJobList').innerHTML=openJobs.length?openJobs.map(jobCard).join(''):'<div class="empty">No open jobs right now.</div>'; $('myJobList').innerHTML=myJobs.length?myJobs.map(jobCard).join(''):'<div class="empty">No accepted jobs yet.</div>'; document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>claimJob(b.dataset.claim,b))); document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>downloadICS(myJobs.find(j=>j.id===b.dataset.ics)))); }
-function jobCard(j){ const dt=j.serviceDate?.toDate?.(); const when=dt?dt.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):(j.date||j.window||''); const mine=(Array.isArray(j.contractorIds)&&j.contractorIds.includes(me?.uid))||j.contractorId===me?.uid; return `<div class="job-card"><strong>${cap(j.serviceType||'Job')}</strong><div class="meta">${j.zip?`<span>📍 ${j.zip}</span>`:''}${when?`<span>🗓️ ${when}</span>`:''}${j.flatRate?`<span>$${Math.round(Number(j.flatRate))}</span>`:''}<span>${cap(j.status||'open')}</span></div>${j.summary?`<p class="hint">${j.summary}</p>`:''}<div class="actions">${!mine?`<button class="btn btn-primary" data-claim="${j.id}">Claim</button>`:`<button class="btn btn-outline" data-ics="${j.id}">Add to Calendar</button>`}<button class="btn btn-soft" type="button" onclick="alert('Messaging coming soon')">Message Admin</button></div></div>`; }
+function renderJobs(){
+ const box=$('view-jobs'), open=visibleOpenJobs(), mine=visibleMyJobs(), services=contractorServices().map(serviceLabel).join(', ');
+ box.innerHTML=`<p class="mini-kicker">Work</p><h2 class="screen-title">Opportunities & Assignments</h2><p class="screen-copy">Only opportunities matching your approved services are shown here: <strong>${services}</strong>.</p><div class="grid"><div><h3>Open Work</h3><div id="openJobList"></div></div><div><h3>My Work</h3><div id="myJobList"></div></div></div>`;
+ $('openJobList').innerHTML=open.length?open.map(jobCard).join(''):'<div class="empty">No open work matching your approved services right now.</div>';
+ $('myJobList').innerHTML=mine.length?mine.map(jobCard).join(''):'<div class="empty">No accepted work yet.</div>';
+ document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>claimJob(b.dataset.claim,b)));
+ document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>downloadICS(mine.find(j=>j.id===b.dataset.ics))));
+}
+function jobCard(j){ const dt=j.serviceDate?.toDate?.(); const when=dt?dt.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):(j.date||j.window||''); const mine=(Array.isArray(j.contractorIds)&&j.contractorIds.includes(me?.uid))||j.contractorId===me?.uid; return `<div class="job-card"><strong>${cap(j.serviceType||'Job')}</strong><div class="meta">${j.zip?`<span>Area: ${j.zip}</span>`:''}${when?`<span>Date: ${when}</span>`:''}${j.flatRate?`<span>$${Math.round(Number(j.flatRate))}</span>`:''}<span>${cap(j.status||'open')}</span></div>${j.summary?`<p class="hint">${j.summary}</p>`:''}<div class="actions">${!mine?`<button class="btn btn-primary" data-claim="${j.id}">Claim</button>`:`<button class="btn btn-outline" data-ics="${j.id}">Add to Calendar</button>`}<button class="btn btn-soft" type="button" onclick="alert('Messaging coming soon')">Message Admin</button></div></div>`; }
+function projectGuidance(service){
+ const s=normalizeService(service);
+ if(['cleaning','move_in_out','airbnb','commercial'].includes(s))return{title:'Cleaning Walkthrough Details',help:'Use this for cleaning, make-ready, turnover, commercial, or move-in/move-out walkthrough notes.',size:'Example: 1,800 sq ft, 3 bed / 2 bath',notes:'Describe buildup, pet hair, soap scum, oven/fridge/cabinet needs, floors, windows, and any exclusions.',pay:'Recommended contractor pay',quote:'Suggested TFT client quote'};
+ if(s==='organizing')return{title:'Organizing Project Details',help:'Use this for pantry, closet, garage, playroom, laundry, paper systems, unpacking, or home reset projects.',size:'Example: pantry + laundry room, 2 closets, garage wall',notes:'Describe clutter level, categories, product needs, labels, donation/trash estimate, and client priorities.',pay:'Recommended project pay',quote:'Suggested TFT client quote'};
+ if(s==='decor')return{title:'Styling / Decorating Project Details',help:'Use this for room styling, staging, shelf styling, sourcing, room refreshes, and design consult notes.',size:'Example: living room shelves, entry table, primary bedroom',notes:'Describe room, style direction, client preferences, colors, measurements, product/source notes, install needs, and budget boundaries.',pay:'Recommended styling/project pay',quote:'Suggested TFT client quote'};
+ if(s==='holiday')return{title:'Holiday Decorating Project Details',help:'Use this for holiday installs, takedowns, indoor/outdoor spaces, tree styling, garland, wreaths, and event setup notes.',size:'Example: 9 ft tree, staircase garland, front porch, mantel',notes:'Describe indoor/outdoor areas, ladder access, outlets, surfaces, client decor inventory, supplies needed, install/takedown notes, and safety concerns.',pay:'Recommended install/takedown pay',quote:'Suggested TFT client quote'};
+ return{title:'Project Details',help:'Use this for project notes, photos, pricing recommendations, and admin review.',size:'Project size / spaces',notes:'Project notes',pay:'Recommended contractor pay',quote:'Suggested TFT client quote'};
+}
 function renderWalkthrough(){
-  const jobOptions = myJobs.length
-    ? myJobs.map(j=>`<option value="${j.id}">${cap(j.serviceType||'Job')} ${j.serviceDate?.toDate ? '— '+j.serviceDate.toDate().toLocaleDateString([], {month:'short',day:'numeric'}) : ''}</option>`).join('')
-    : '<option value="">No accepted job linked</option>';
-
-  $('view-walkthrough').innerHTML=`<p class="mini-kicker">Walkthrough</p><h2 class="screen-title">Submit Walkthrough</h2><p class="screen-copy">Use this after a walkthrough or estimate visit to send admin your notes, photos, condition concerns, estimated time, and recommended flat-rate pay.</p>
-  <div class="form-grid" style="margin-top:14px">
-    <label class="field">Related Job, optional
-      <select id="walkJobId">
-        <option value="">No related job / new estimate</option>
-        ${jobOptions}
-      </select>
-    </label>
-    <label class="field">Service Type
-      <select id="walkServiceType">
-        <option value="cleaning">Cleaning</option>
-        <option value="move_in_out">Move-In / Move-Out</option>
-        <option value="organizing">Organizing</option>
-        <option value="decor">Decor / Styling</option>
-        <option value="holiday">Holiday Decorating</option>
-        <option value="commercial">Commercial</option>
-        <option value="other">Other</option>
-      </select>
-    </label>
-    <label class="field full">Client Name / Property Label
-      <input id="walkClientName" placeholder="Example: Brandi O. / Baycliff move-out">
-    </label>
-    <label class="field full">Property Address
-      <input id="walkAddress" placeholder="Street, city, ZIP if available">
-    </label>
-    <label class="field">Home Size / Rooms
-      <input id="walkSize" placeholder="Example: 1,800 sq ft, 3 bed / 2 bath">
-    </label>
-    <label class="field">Condition
-      <select id="walkCondition">
-        <option value="clean">Clean / light</option>
-        <option value="moderate">Moderate</option>
-        <option value="very_dirty">Very dirty / heavy buildup</option>
-        <option value="construction">Construction / renovation dust</option>
-        <option value="unknown">Unknown</option>
-      </select>
-    </label>
-    <label class="field">Estimated Team Hours
-      <input id="walkHours" type="number" min="0" step=".25" placeholder="Example: 5">
-    </label>
-    <label class="field">Recommended Contractor Pay
-      <input id="walkContractorEstimate" type="number" min="0" step="1" placeholder="Example: 270">
-    </label>
-    <label class="field">Suggested TFT Client Quote
-      <input id="walkClientQuote" type="number" min="0" step="1" placeholder="Example: 355">
-    </label>
-    <label class="field">Arrival / Scheduling Notes
-      <input id="walkSchedulingNotes" placeholder="Example: vacant after Sunday, needs early next week">
-    </label>
-    <label class="field full">Walkthrough Notes
-      <textarea id="walkNotes" placeholder="Condition, priorities, concerns, exclusions, add-ons, repairs noticed, pet hair, soap scum, oven/fridge/cabinets, etc."></textarea>
-    </label>
-    <label class="field full">Photos / Videos
-      <input id="walkFiles" type="file" accept="image/*,video/*,.pdf" multiple>
-      <span class="hint">Optional. Add walkthrough photos, videos, or PDFs for admin review.</span>
-    </label>
-  </div>
-  <div class="actions"><button class="btn btn-primary" id="submitWalkthrough" type="button">Submit Walkthrough</button></div>`;
-  $('submitWalkthrough')?.addEventListener('click', submitWalkthrough);
+ const label=projectModuleLabel(), defaultService=contractorServices()[0]||'cleaning', g=projectGuidance(defaultService);
+ $('view-walkthrough').innerHTML=`<p class="mini-kicker">${label}</p><h2 class="screen-title">${label}</h2><p class="screen-copy">This form changes based on your approved service type. Cleaning contractors see cleaning walkthrough language. Organizers, stylists, and holiday decorators see project-specific notes instead.</p><div id="projectHelp" class="lock-banner" style="margin-top:14px"><strong>${g.title}</strong><br>${g.help}</div><div class="form-grid" style="margin-top:14px"><label class="field">Service Type<select id="projectServiceType">${serviceOptionsHTML()}</select></label><label class="field">Related Job, optional<select id="projectJobId"><option value="">No related job / new estimate</option>${visibleMyJobs().map(j=>`<option value="${j.id}">${cap(j.serviceType||'Job')} ${j.serviceDate?.toDate ? '— '+j.serviceDate.toDate().toLocaleDateString([], {month:'short',day:'numeric'}) : ''}</option>`).join('')}</select></label><label class="field full">Client Name / Property Label<input id="projectClientName" placeholder="Example: Antonella C. / Holiday mantel install"></label><label class="field full">Property Address<input id="projectAddress" placeholder="Street, city, ZIP if available"></label><label class="field full">Project Size / Spaces<input id="projectSize" placeholder="${g.size}"></label><label class="field">Estimated Team Hours<input id="projectHours" type="number" min="0" step=".25" placeholder="Example: 5"></label><label class="field">Recommended Pay<input id="projectContractorEstimate" type="number" min="0" step="1" placeholder="${g.pay}"></label><label class="field">Suggested Client Quote<input id="projectClientQuote" type="number" min="0" step="1" placeholder="${g.quote}"></label><label class="field">Scheduling / Access Notes<input id="projectSchedulingNotes" placeholder="Example: earliest morning preferred, gate code, parking, install timing, takedown timing"></label><label class="field full">Notes<textarea id="projectNotes" placeholder="${g.notes}"></textarea></label><label class="field full">Photos / Videos / PDFs<input id="projectFiles" type="file" accept="image/*,video/*,.pdf" multiple><span class="hint">Optional. Add photos, videos, PDFs, measurements, inspiration, room photos, or walkthrough documentation.</span></label></div><div class="actions"><button class="btn btn-primary" id="submitProjectNotes" type="button">Submit for Admin Review</button></div>`;
+ $('projectServiceType')?.addEventListener('change',updateProjectHelp); $('submitProjectNotes')?.addEventListener('click',submitProjectNotes);
 }
-
-async function submitWalkthrough(){
-  if(!me){ alert('Please sign in first.'); return; }
-  const btn=$('submitWalkthrough');
-  btn.disabled=true;
-  btn.textContent='Submitting…';
-  try{
-    const files = Array.from($('walkFiles')?.files || []);
-    const uploaded = [];
-    for(let i=0;i<files.length;i++){
-      const file = files[i];
-      btn.textContent=`Uploading ${i+1}/${files.length}…`;
-      const meta = await uploadOneFile(`users/${me.uid}/walkthroughs/${Date.now()}-${i}-${cleanName(file.name)}`, file, `Walkthrough file ${i+1}`);
-      uploaded.push(meta);
-    }
-
-    const jobId=$('walkJobId')?.value||'';
-    const linkedJob = jobId ? myJobs.find(j=>j.id===jobId) : null;
-
-    await addDoc(collection(db,'walkthroughs'),{
-      status:'pending_review',
-      source:'contractor_dashboard',
-      submittedByUid:me.uid,
-      submittedByEmail:me.email||'',
-      submittedByName:userData.legalName||userData.fullName||userData.displayName||'',
-      relatedJobId:jobId,
-      clientName:$('walkClientName')?.value.trim() || linkedJob?.clientName || '',
-      clientId:linkedJob?.clientId || linkedJob?.clientUid || '',
-      clientEmail:linkedJob?.clientEmail || '',
-      propertyAddress:$('walkAddress')?.value.trim() || linkedJob?.propertyAddress || linkedJob?.address || '',
-      serviceType:$('walkServiceType')?.value || linkedJob?.serviceType || '',
-      homeSize:$('walkSize')?.value.trim() || '',
-      condition:$('walkCondition')?.value || '',
-      estimatedTeamHours:$('walkHours')?.value ? Number($('walkHours').value) : null,
-      contractorEstimate:$('walkContractorEstimate')?.value ? Number($('walkContractorEstimate').value) : null,
-      tftClientQuote:$('walkClientQuote')?.value ? Number($('walkClientQuote').value) : null,
-      schedulingNotes:$('walkSchedulingNotes')?.value.trim() || '',
-      notes:$('walkNotes')?.value.trim() || '',
-      files:uploaded,
-      createdAt:serverTimestamp(),
-      updatedAt:serverTimestamp()
-    });
-
-    toast('Walkthrough submitted for admin review');
-    renderWalkthrough();
-  }catch(err){
-    console.warn(err);
-    alert(err?.message || 'Could not submit walkthrough. Please try again.');
-  }finally{
-    btn.disabled=false;
-    btn.textContent='Submit Walkthrough';
-  }
+function updateProjectHelp(){const service=$('projectServiceType')?.value||contractorServices()[0]||'cleaning', g=projectGuidance(service); if($('projectHelp'))$('projectHelp').innerHTML=`<strong>${g.title}</strong><br>${g.help}`; if($('projectSize'))$('projectSize').placeholder=g.size; if($('projectNotes'))$('projectNotes').placeholder=g.notes; if($('projectContractorEstimate'))$('projectContractorEstimate').placeholder=g.pay; if($('projectClientQuote'))$('projectClientQuote').placeholder=g.quote;}
+async function submitProjectNotes(){
+ if(!me){alert('Please sign in first.');return;}
+ const service=normalizeService($('projectServiceType')?.value||contractorServices()[0]||'cleaning'); if(!hasService(service)){alert('This service is not approved on your contractor profile.');return;}
+ const btn=$('submitProjectNotes'); btn.disabled=true; btn.textContent='Submitting…';
+ try{const files=Array.from($('projectFiles')?.files||[]), uploaded=[]; for(let i=0;i<files.length;i++){const file=files[i]; btn.textContent=`Uploading ${i+1}/${files.length}…`; uploaded.push(await uploadOneFile(`users/${me.uid}/project-notes/${service}/${Date.now()}-${i}-${cleanName(file.name)}`,file,`Project file ${i+1}`));}
+ const jobId=$('projectJobId')?.value||'', linkedJob=jobId?visibleMyJobs().find(j=>j.id===jobId):null, cleanType=['cleaning','move_in_out','airbnb','commercial'].includes(service);
+ await addDoc(collection(db,'walkthroughs'),{status:'pending_review',source:'contractor_dashboard',projectCategory:cleanType?'cleaning_walkthrough':'service_project_notes',serviceType:service,serviceLabel:serviceLabel(service),submittedByUid:me.uid,submittedByEmail:me.email||'',submittedByName:userData.legalName||userData.fullName||userData.displayName||'',approvedServiceTypes:contractorServices(),relatedJobId:jobId,clientName:$('projectClientName')?.value.trim()||linkedJob?.clientName||'',clientId:linkedJob?.clientId||linkedJob?.clientUid||'',clientEmail:linkedJob?.clientEmail||'',propertyAddress:$('projectAddress')?.value.trim()||linkedJob?.propertyAddress||linkedJob?.address||'',homeSize:$('projectSize')?.value.trim()||'',estimatedTeamHours:$('projectHours')?.value?Number($('projectHours').value):null,contractorEstimate:$('projectContractorEstimate')?.value?Number($('projectContractorEstimate').value):null,tftClientQuote:$('projectClientQuote')?.value?Number($('projectClientQuote').value):null,schedulingNotes:$('projectSchedulingNotes')?.value.trim()||'',notes:$('projectNotes')?.value.trim()||'',files:uploaded,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+ toast(`${serviceLabel(service)} notes submitted`); renderWalkthrough();}catch(err){console.warn(err); alert(err?.message||'Could not submit notes. Please try again.');} finally{btn.disabled=false; btn.textContent='Submit for Admin Review';}
 }
-
 function renderAvailability(){ $('view-availability').innerHTML=`<p class="mini-kicker">Availability</p><h2 class="screen-title">TFT-only availability</h2><p class="screen-copy">Save the days and windows you want available for scheduling.</p><div class="form-grid"><label class="field full">Available Slots<textarea id="availSlots" placeholder="Example: Tue 8:30, Thu 11:15"></textarea></label><label class="field full">Blocked Days<textarea id="blockedDays" placeholder="Example: unavailable June 14-18"></textarea></label></div><div class="actions"><button class="btn btn-primary" id="saveAvail">Save Availability</button></div>`; $('saveAvail')?.addEventListener('click',async()=>{await setDoc(doc(db,'users',me.uid,'contractorSettings','availability'),{availableSlots:$('availSlots').value.trim(),blockedDays:$('blockedDays').value.trim(),updatedAt:serverTimestamp()},{merge:true});toast('Availability saved');}); }
 function renderDocumentsView(){ $('view-documents').innerHTML=`<p class="mini-kicker">Documents</p><h2 class="screen-title">Compliance File</h2><div class="review-grid"><div class="review-row"><span>ID</span><strong>${docStatus('id')}</strong></div><div class="review-row"><span>W-9</span><strong>${docStatus('w9')}</strong></div><div class="review-row"><span>COI</span><strong>${docStatus('coi')}</strong></div><div class="review-row"><span>Agreement</span><strong>${agreementComplete()?'Signed / Pending Review':'Not Complete'}</strong></div><div class="review-row"><span>Overall</span><strong>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'not active')}</strong></div></div>`; }
-function renderResources(){ $('view-resources').innerHTML=`<p class="mini-kicker">Resources</p><h2 class="screen-title">Resources coming soon</h2><p class="screen-copy">This area will hold training, product standards, and job-specific instructions later. Cleaning checklists are intentionally not part of onboarding.</p>`; }
-function renderSettings(){ $('view-settings').innerHTML=`<p class="mini-kicker">Profile</p><h2 class="screen-title">Profile / Settings</h2><p class="screen-copy">Manage your contractor profile and account access.</p><div class="grid" style="margin-top:14px"><div class="tile"><h3>Signed In</h3><p>${me?.email||me?.uid||'Not available'}</p></div><div class="tile"><h3>Account Status</h3><p>${cap(userData.accountStatus||userData.contractorStatus||userData.role||'pending')}</p></div><div class="tile"><h3>Portal Access</h3><p>${cap(userData.portalAccess||'standard')}</p></div></div><div class="app-card danger-zone" style="box-shadow:none;margin-top:14px"><p class="mini-kicker">Danger Zone</p><h2 class="screen-title">Delete My Account</h2><p class="screen-copy">Use this only if you want to remove your own contractor login access. You will be asked to type your current password. The Finishing Touch may keep backend business records for tax, compliance, job history, payments, and legal recordkeeping.</p><div class="setting-row"><div><h3>Remove my login access</h3><p>This archives the backend profile and deletes your Firebase sign-in login. You may need to create a new account if you apply again later.</p></div><a class="btn btn-danger" href="delete-my-account.html">Delete My Account</a></div></div>`; }
+function renderResources(){ const services=contractorServices(); const lines=services.map(s=>{ if(['cleaning','move_in_out','airbnb','commercial'].includes(s)) return '<div class="tile"><h3>Cleaning Standards</h3><p>Cleaning checklists, products, walkthrough expectations, and make-ready standards will live here.</p></div>'; if(s==='organizing') return '<div class="tile"><h3>Organizing Standards</h3><p>Project flow, labels, product sourcing, donation/trash handling, and before/after documentation will live here.</p></div>'; if(s==='decor') return '<div class="tile"><h3>Styling Standards</h3><p>Client preferences, room styling notes, sourcing standards, measurements, and photo documentation will live here.</p></div>'; if(s==='holiday') return '<div class="tile"><h3>Holiday Standards</h3><p>Install/takedown flow, ladder safety, inventory notes, electrical/access notes, and seasonal documentation will live here.</p></div>'; return ''; }).join(''); $('view-resources').innerHTML=`<p class="mini-kicker">Resources</p><h2 class="screen-title">Resources</h2><p class="screen-copy">This area is filtered to your approved services: <strong>${services.map(serviceLabel).join(', ')}</strong>.</p><div class="grid" style="margin-top:14px">${lines||'<div class="empty">Resources coming soon.</div>'}</div>`; }
+function renderSettings(){ $('view-settings').innerHTML=`<p class="mini-kicker">Profile</p><h2 class="screen-title">Profile / Settings</h2><p class="screen-copy">Manage your contractor profile and account access.</p><div class="grid" style="margin-top:14px"><div class="tile"><h3>Signed In</h3><p>${me?.email||me?.uid||'Not available'}</p></div><div class="tile"><h3>Approved Services</h3><p>${contractorServices().map(serviceLabel).join(', ')}</p></div><div class="tile"><h3>Account Status</h3><p>${cap(userData.accountStatus||userData.contractorStatus||userData.role||'pending')}</p></div><div class="tile"><h3>Portal Access</h3><p>${cap(userData.portalAccess||'standard')}</p></div></div><div class="app-card danger-zone" style="box-shadow:none;margin-top:14px"><p class="mini-kicker">Danger Zone</p><h2 class="screen-title">Delete My Account</h2><p class="screen-copy">Use this only if you want to remove your own contractor login access. You will be asked to type your current password. The Finishing Touch may keep backend business records for tax, compliance, job history, payments, and legal recordkeeping.</p><div class="setting-row"><div><h3>Remove my login access</h3><p>This archives the backend profile and deletes your Firebase sign-in login. You may need to create a new account if you apply again later.</p></div><a class="btn btn-danger" href="delete-my-account.html">Delete My Account</a></div></div>`; }
 function startJobListeners(){ unsubs.forEach(u=>{try{u()}catch{}}); unsubs=[]; unsubs.push(onSnapshot(query(collection(db,'jobs'),where('status','==','open')),snap=>{openJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); unsubs.push(onSnapshot(query(collection(db,'jobs'),where('contractorIds','array-contains',me.uid)),snap=>{myJobs=snap.docs.map(d=>({id:d.id,...d.data()})); if(screens.app.classList.contains('active')) renderActiveApp();},err=>console.warn(err))); }
-async function claimJob(id,b){ if(!isActive(userData)){toast('Account must be active first');return;} b.disabled=true; try{ await runTransaction(db,async tx=>{const ref=doc(db,'jobs',id); const s=await tx.get(ref); if(!s.exists())throw new Error('Job not found'); const j=s.data(); const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:(j.contractorId?[j.contractorId]:[]); if(!ids.includes(me.uid)) ids.push(me.uid); tx.update(ref,{contractorIds:ids,contractorEmails:[...new Set([...(j.contractorEmails||[]),me.email||''])],status:'claimed',workflowStatus:'assigned',claimedAt:serverTimestamp(),updatedAt:serverTimestamp()}); }); toast('Job claimed'); }catch(e){console.warn(e);alert('Could not claim job.');} finally{b.disabled=false;} }
-function downloadICS(j){ if(!j?.serviceDate?.toDate){alert('No service date found yet.');return;} const dt=j.serviceDate.toDate(); const end=new Date(dt.getTime()+2*60*60*1000); const fmt=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z'; const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//The Finishing Touch//Contractor App//EN\nBEGIN:VEVENT\nUID:${j.id}@thefinishingtouch\nDTSTAMP:${fmt(new Date())}\nDTSTART:${fmt(dt)}\nDTEND:${fmt(end)}\nSUMMARY:The Finishing Touch - ${cap(j.serviceType||'Job')}\nDESCRIPTION:Open the contractor suite for job details, arrival instructions, photos, and workflow requirements.\nEND:VEVENT\nEND:VCALENDAR`; const blob=new Blob([ics],{type:'text/calendar'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tft-job-${j.id}.ics`; a.click(); URL.revokeObjectURL(a.href); }
+async function claimJob(id,b){ if(!isActive(userData)){toast('Account must be active first');return;} b.disabled=true; try{ await runTransaction(db,async tx=>{const ref=doc(db,'jobs',id); const s=await tx.get(ref); if(!s.exists())throw new Error('Job not found'); const j=s.data(); if(!serviceMatchesJob(j)) throw new Error('This job does not match your approved service type.'); const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:(j.contractorId?[j.contractorId]:[]); if(!ids.includes(me.uid)) ids.push(me.uid); tx.update(ref,{contractorIds:ids,contractorEmails:[...new Set([...(j.contractorEmails||[]),me.email||''])],status:'claimed',workflowStatus:'assigned',claimedAt:serverTimestamp(),updatedAt:serverTimestamp()}); }); toast('Job claimed'); }catch(e){console.warn(e);alert(e.message || 'Could not claim job.');} finally{b.disabled=false;} }
+function downloadICS(j){ if(!j?.serviceDate?.toDate){alert('No service date found yet.');return;} const dt=j.serviceDate.toDate(); const end=new Date(dt.getTime()+2*60*60*1000); const fmt=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z'; const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//The Finishing Touch//Contractor Suite//EN\nBEGIN:VEVENT\nUID:${j.id}@thefinishingtouch\nDTSTAMP:${fmt(new Date())}\nDTSTART:${fmt(dt)}\nDTEND:${fmt(end)}\nSUMMARY:The Finishing Touch - ${cap(j.serviceType||'Job')}\nDESCRIPTION:Open the contractor suite for job details, arrival instructions, photos, and workflow requirements.\nEND:VEVENT\nEND:VCALENDAR`; const blob=new Blob([ics],{type:'text/calendar'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`tft-job-${j.id}.ics`; a.click(); URL.revokeObjectURL(a.href); }
 
 onAuthStateChanged(auth, async user=>{ if(!user){ me=null; $('rolePill').textContent='Signed out'; $('whoami').textContent=''; showScreen('signedOut'); return;} me=user; $('whoami').textContent=user.email||user.uid; const snap=await getDoc(doc(db,'users',user.uid)); userData=snap.exists()?snap.data():{}; const role=String(userData.role||'').toLowerCase(); const archived=String(userData.accountStatus||'').toLowerCase()==='archived'||String(userData.portalAccess||'').toLowerCase()==='removed'; $('rolePill').textContent=archived?'Access removed':(role?cap(role):'No role yet'); if(archived){ showScreen('pending'); return; } if(!(role==='contractor'||role==='admin')){ showScreen('pending'); return;} renderAllSteps(); if(isActive(userData)){ showScreen('app'); startJobListeners(); renderActiveApp(); setView('home'); } else { renderLockedApp(); showScreen('onboarding'); showStep(0); if(submitted(userData)) toast('Onboarding pending admin review'); }});
 </script>
