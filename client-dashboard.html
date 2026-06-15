@@ -444,6 +444,66 @@ a{color:inherit}
   flex-wrap:wrap;
 }
 
+
+/* === TFT client dashboard field clipping fix === */
+.portal-shell{
+  grid-template-columns:310px minmax(0,1fr);
+}
+
+.side-link{
+  min-height:52px;
+  line-height:1.25;
+  padding-top:12px;
+  padding-bottom:12px;
+  font-size:.95rem;
+}
+
+.side-link .icon{
+  flex:0 0 28px;
+}
+
+.portal-form input,
+.portal-form select,
+.portal-form textarea,
+.card select{
+  min-height:54px;
+  line-height:1.35;
+  padding-top:14px;
+  padding-bottom:14px;
+  overflow:visible;
+}
+
+.portal-form select,
+.card select{
+  appearance:auto;
+  -webkit-appearance:menulist;
+  display:block;
+  white-space:normal;
+  text-overflow:clip;
+}
+
+.portal-form textarea{
+  min-height:116px;
+  line-height:1.45;
+}
+
+.btn{
+  min-height:48px;
+  line-height:1.25;
+  white-space:normal;
+  text-align:center;
+}
+
+.panel-shell{
+  overflow:visible;
+}
+
+@media(max-width:920px){
+  .portal-shell{
+    grid-template-columns:1fr;
+  }
+}
+
 @media(max-width:920px){
   .portal-shell{grid-template-columns:1fr;width:min(100% - 16px,760px);margin-top:10px}
   .sidebar{position:relative;min-height:auto}
