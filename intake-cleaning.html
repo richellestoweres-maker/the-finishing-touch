@@ -75,6 +75,30 @@
       font-size:.95rem;
       opacity:.9;
     }
+    .check-grid{
+      grid-column:1/-1;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+    .check-card{
+      display:flex;
+      align-items:flex-start;
+      gap:.65rem;
+      padding:12px 14px;
+      border:1px solid #e8ddd1;
+      border-radius:12px;
+      background:#fcfaf7;
+      font-weight:600;
+      line-height:1.35;
+    }
+    .check-card input{
+      margin-top:3px;
+      flex:0 0 auto;
+    }
+    @media(max-width:720px){
+      .check-grid{grid-template-columns:1fr}
+    }
     @media(max-width:720px){
       .grid-2{grid-template-columns:1fr}
     }
@@ -192,9 +216,9 @@
 
         <label>Stories
           <select name="stories">
-            <option>1</option>
-            <option>2</option>
-            <option>3+</option>
+            <option value="1 Story">1 Story</option>
+            <option value="2 Stories">2 Stories</option>
+            <option value="3+ Stories">3+ Stories</option>
           </select>
         </label>
 
@@ -529,9 +553,13 @@
         </label>
       </div>
 
-      <!-- Add-ons + Pay -->
+      <!-- Add-ons + Specialty Requests -->
       <div class="fieldset grid-2">
-        <label>Add-ons
+        <p class="section-intro">
+          Optional add-ons help us understand what you may want included. Specialty services may require a separate quote, separate appointment, or specialty team availability.
+        </p>
+
+        <label>Cleaning Add-ons
           <input name="addons" placeholder="oven, fridge, inside windows, baseboards, laundry, cabinets">
         </label>
 
@@ -543,6 +571,47 @@
             <option>Cash App</option>
             <option>Square Invoice</option>
           </select>
+        </label>
+
+        <div class="check-grid">
+          <label class="check-card">
+            <input type="checkbox" name="specialty_addons" value="Carpet cleaning">
+            <span>Carpet cleaning</span>
+          </label>
+
+          <label class="check-card">
+            <input type="checkbox" name="specialty_addons" value="Upholstery / couch cleaning">
+            <span>Upholstery / couch cleaning</span>
+          </label>
+
+          <label class="check-card">
+            <input type="checkbox" name="specialty_addons" value="Grout cleaning">
+            <span>Grout cleaning</span>
+          </label>
+
+          <label class="check-card">
+            <input type="checkbox" name="specialty_addons" value="Urine stain treatment">
+            <span>Urine stain treatment</span>
+          </label>
+
+          <label class="check-card">
+            <input type="checkbox" name="specialty_addons" value="Odor treatment">
+            <span>Odor treatment</span>
+          </label>
+
+          <label class="check-card">
+            <input type="checkbox" name="specialty_addons" value="Spot treatment">
+            <span>Spot treatment</span>
+          </label>
+
+          <label class="check-card">
+            <input type="checkbox" name="specialty_addons" value="Not sure / please advise">
+            <span>Not sure / please advise</span>
+          </label>
+        </div>
+
+        <label style="grid-column:1/-1;">Specialty Add-On Notes
+          <textarea name="specialty_addon_notes" rows="3" placeholder="Tell us what areas/items need specialty cleaning, approximate room count, stains, pet urine/odor concerns, or grout areas."></textarea>
         </label>
       </div>
 
@@ -960,10 +1029,40 @@
           const data = {};
           fd.forEach((v, k) => {
             if (k === "media_photos" || k === "media_video") return;
-            data[k] = v;
+
+            if (data[k] != null){
+              if (Array.isArray(data[k])) data[k].push(v);
+              else data[k] = [data[k], v];
+            } else {
+              data[k] = v;
+            }
           });
 
           data.sqft = (data.sqft || '').toString().trim();
+
+          const specialtyAddOns = Array.isArray(data.specialty_addons)
+            ? data.specialty_addons
+            : (data.specialty_addons ? [data.specialty_addons] : []);
+
+          const homeLayoutSummary = [
+            data.stories || "Stories not provided",
+            `${data.beds || 0} bed`,
+            `${data.baths || 0} bath`,
+            data.other_rooms ? `${data.other_rooms} other room(s)` : null
+          ].filter(Boolean).join(" | ");
+
+          const propertyDetailsSummary = [
+            `Property: ${data.property_type || "Not provided"}`,
+            `Service: ${data.service || "Not provided"}`,
+            `Layout: ${homeLayoutSummary}`,
+            data.sqft ? `Sq Ft: ${data.sqft}` : null,
+            data.general_area ? `Area: ${data.general_area}` : null,
+            data.pets ? `Pets: ${data.pets}` : null
+          ].filter(Boolean).join(" | ");
+
+          const specialtySummary = specialtyAddOns.length
+            ? specialtyAddOns.join(", ")
+            : "None selected";
 
           let price = null;
           try{
@@ -989,6 +1088,11 @@
           const ownerWageSuggested_ifIndividuals = remainingAfterSub * OWNER_WAGE_SHARE_IF_INDIVIDUALS;
           const contractorsPoolSuggested_ifIndividuals = Math.max(0, remainingAfterSub - (remainingAfterSub * (TAX_PCT_OF_REMAINDER + PROFIT_PCT_OF_REMAINDER)) - ownerWageSuggested_ifIndividuals);
           const contractorPayEachSuggested_ifIndividuals = cleanerCount ? (contractorsPoolSuggested_ifIndividuals / cleanerCount) : 0;
+
+          fd.append("HOME_LAYOUT_CLEAR", homeLayoutSummary);
+          fd.append("PROPERTY_DETAILS_CLEAR", propertyDetailsSummary);
+          fd.append("SPECIALTY_ADDONS_CLEAR", specialtySummary);
+          fd.append("SPECIALTY_ADDON_NOTES_CLEAR", data.specialty_addon_notes || "");
 
           fd.append("INTERNAL_estimate_method", estimateMethod);
           fd.append("INTERNAL_property_type", data.property_type || "");
@@ -1024,7 +1128,7 @@
 
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
-              const summary = `${data.property_type || "Cleaning"} — ${data.service || "Cleaning"} — ${data.sqft || "No sqft"} sq ft`;
+              const summary = `${data.property_type || "Cleaning"} — ${data.service || "Cleaning"} — ${homeLayoutSummary} — ${data.sqft || "No sqft"} sq ft${specialtyAddOns.length ? " — Specialty: " + specialtySummary : ""}`;
 
               await FTAuto.createJobFromIntake({
                 type: "cleaning",
