@@ -722,12 +722,93 @@
           const data = {};
           fd.forEach((v, k) => {
             if (k === "media_photos" || k === "media_video") return;
-            data[k] = v;
+
+            if (data[k] != null){
+              if (Array.isArray(data[k])) data[k].push(v);
+              else data[k] = [data[k], v];
+            } else {
+              data[k] = v;
+            }
           });
+
+          const clientContactClear = [
+            data.name ? `Name: ${data.name}` : null,
+            data.email ? `Email: ${data.email}` : null,
+            data.phone ? `Phone: ${data.phone}` : null,
+            data.address ? `Address: ${data.address}` : null
+          ].filter(Boolean).join(" | ");
+
+          const propertyDetailsClear = [
+            data.property_type ? `Property Type: ${data.property_type}` : null,
+            data.property_status ? `Status: ${data.property_status}` : null,
+            data.sqft ? `Sq Ft: ${data.sqft}` : null,
+            data.beds ? `Beds: ${data.beds}` : null,
+            data.baths ? `Baths: ${data.baths}` : null,
+            data.listed_status ? `Listed: ${data.listed_status}` : null
+          ].filter(Boolean).join(" | ");
+
+          const stagingScopeClear = [
+            data.client_type ? `Client Type: ${data.client_type}` : null,
+            data.project_type ? `Project Type: ${data.project_type}` : null,
+            data.service_format ? `Format: ${data.service_format}` : null,
+            data.scope_preference ? `Scope: ${data.scope_preference}` : null,
+            data.focus_areas ? `Focus Areas: ${data.focus_areas}` : null,
+            data.sourcing_needed ? `Sourcing: ${data.sourcing_needed}` : null,
+            data.install_needed ? `Install Needed: ${data.install_needed}` : null
+          ].filter(Boolean).join(" | ");
+
+          const listingTimelineClear = [
+            data.timeline ? `Timeline: ${data.timeline}` : null,
+            data.availability ? `Preferred Days/Times: ${data.availability}` : null,
+            data.investment_level ? `Investment Comfort: ${data.investment_level}` : null,
+            data.project_link ? `Project Link: ${data.project_link}` : null,
+            data.walkthrough_notes ? `Walkthrough Availability: ${data.walkthrough_notes}` : null
+          ].filter(Boolean).join(" | ");
+
+          const styleGoalsClear = [
+            data.goal ? `Goal: ${data.goal}` : null,
+            data.space_feel ? `Feel: ${data.space_feel}` : null,
+            data.style_direction ? `Style Direction: ${data.style_direction}` : null,
+            data.virtual_deliverables ? `Virtual Deliverables: ${data.virtual_deliverables}` : null
+          ].filter(Boolean).join(" | ");
+
+          const clientSegmentClear = [
+            data.realtor_target_price ? `Target Listing Price: ${data.realtor_target_price}` : null,
+            data.realtor_photo_date_status ? `Photo Date Scheduled: ${data.realtor_photo_date_status}` : null,
+            data.realtor_goal ? `Realtor Goal: ${data.realtor_goal}` : null,
+            data.realtor_priority_spaces ? `Priority Spaces: ${data.realtor_priority_spaces}` : null,
+            data.airbnb_status ? `Airbnb Status: ${data.airbnb_status}` : null,
+            data.airbnb_scope ? `Airbnb Scope: ${data.airbnb_scope}` : null,
+            data.airbnb_vibe ? `Airbnb Vibe: ${data.airbnb_vibe}` : null,
+            data.homeowner_intent ? `Homeowner Intent: ${data.homeowner_intent}` : null,
+            data.homeowner_help_type ? `Homeowner Help: ${data.homeowner_help_type}` : null,
+            data.investor_exit_strategy ? `Investor Strategy: ${data.investor_exit_strategy}` : null,
+            data.investor_finish_level ? `Investor Finish: ${data.investor_finish_level}` : null
+          ].filter(Boolean).join(" | ");
+
+          const requestSummaryClear = [
+            "Staging & Styling",
+            stagingScopeClear,
+            propertyDetailsClear,
+            styleGoalsClear,
+            listingTimelineClear,
+            clientSegmentClear,
+            data.notes ? `Notes: ${data.notes}` : null
+          ].filter(Boolean).join(" | ");
+
+          fd.append("SERVICE_CATEGORY_CLEAR", "Staging & Styling");
+          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
+          fd.append("STAGING_SCOPE_CLEAR", stagingScopeClear);
+          fd.append("PROPERTY_DETAILS_CLEAR", propertyDetailsClear);
+          fd.append("STYLE_GOALS_CLEAR", styleGoalsClear);
+          fd.append("LISTING_TIMELINE_CLEAR", listingTimelineClear);
+          fd.append("CLIENT_SEGMENT_DETAILS_CLEAR", clientSegmentClear);
+          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          fd.append("INTERNAL_app_intake_type", "staging");
 
           fd.append("INTERNAL_estimate_method", estimateMethod);
           fd.append("INTERNAL_client_segment", data.client_type || "");
-          fd.append("INTERNAL_project_summary", [data.project_type || '', data.client_type || '', data.property_status || '', data.goal || ''].filter(Boolean).join(' | '));
+          fd.append("INTERNAL_project_summary", requestSummaryClear);
 
           if (estimateMethod === "walkthrough"){
             fd.append("INTERNAL_walkthrough_requested", "Yes");
@@ -735,11 +816,11 @@
 
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
-              const summary = `${data.project_type || 'Staging & Styling'} — ${data.client_type || ''}`.trim();
               await FTAuto.createJobFromIntake({
                 type: "staging",
+                serviceType: "staging",
                 intakeData: data,
-                summary
+                summary: requestSummaryClear
               });
             }
           } catch(err){
