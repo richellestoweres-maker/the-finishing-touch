@@ -203,10 +203,6 @@
         <label style="grid-column:1/-1">Notes / Special Requests
           <input name="notes" placeholder="colors, themes, fragile items, access notes">
         </label>
-
-        <label>Payment Preference
-          <select name="pay" required><option>Zelle</option><option>Venmo</option><option>Cash App</option><option>Cash</option></select>
-        </label>
       </div>
 
       <!-- Media Uploads (match cleaning/organizing) -->
@@ -544,7 +540,6 @@
             data.storage ? `Storage Access: ${data.storage}` : null,
             data.shopping_trips ? `Shopping Trips: ${data.shopping_trips}` : null,
             data.teardown ? `Teardown: ${data.teardown}` : null,
-            data.pay ? `Payment: ${data.pay}` : null
           ].filter(Boolean).join(" | ");
 
           const requestSummaryClear = [
