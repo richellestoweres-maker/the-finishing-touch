@@ -133,13 +133,14 @@ a{color:inherit}
     <nav class="rail-nav" id="railNav">
       <button class="navbtn active" data-section="home"><span class="ico">01</span>Home</button>
       <button class="navbtn" data-section="applications"><span class="ico">02</span>Applications</button>
-      <button class="navbtn" data-section="scheduling"><span class="ico">03</span>Scheduling</button>
-      <button class="navbtn" data-section="compliance"><span class="ico">04</span>Compliance</button>
-      <button class="navbtn" data-section="jobs"><span class="ico">05</span>Jobs</button>
-      <button class="navbtn" data-section="people"><span class="ico">06</span>People</button>
-      <button class="navbtn" data-section="quotes"><span class="ico">07</span>Quotes</button>
-      <button class="navbtn" data-section="walkthroughs"><span class="ico">08</span>Walkthroughs</button>
-      <button class="navbtn" data-section="settings"><span class="ico">09</span>Settings</button>
+      <button class="navbtn" data-section="intakes"><span class="ico">03</span>Intake Inbox</button>
+      <button class="navbtn" data-section="scheduling"><span class="ico">04</span>Scheduling</button>
+      <button class="navbtn" data-section="compliance"><span class="ico">05</span>Compliance</button>
+      <button class="navbtn" data-section="jobs"><span class="ico">06</span>Jobs</button>
+      <button class="navbtn" data-section="people"><span class="ico">07</span>People</button>
+      <button class="navbtn" data-section="quotes"><span class="ico">08</span>Quotes</button>
+      <button class="navbtn" data-section="walkthroughs"><span class="ico">09</span>Walkthroughs</button>
+      <button class="navbtn" data-section="settings"><span class="ico">10</span>Settings</button>
     </nav>
     <div class="rail-footer"><button class="btn btn-soft" data-section="settings" type="button">My Settings</button><a class="btn btn-outline" href="index.html">Home Website</a><button id="signOutBtn" class="btn btn-soft">Sign out</button></div>
   </aside>
@@ -149,6 +150,7 @@ a{color:inherit}
     <section id="app" class="hidden">
       <section id="home" class="section active"></section>
       <section id="applications" class="section"></section>
+      <section id="intakes" class="section"></section>
       <section id="scheduling" class="section"></section>
       <section id="compliance" class="section"></section>
       <section id="jobs" class="section"></section>
@@ -162,8 +164,8 @@ a{color:inherit}
 <nav class="bottom-nav" id="bottomNav">
   <button class="active" data-section="home"><span class="bico"></span>Home</button>
   <button data-section="applications"><span class="bico"></span>Apps</button>
+  <button data-section="intakes"><span class="bico"></span>Intakes</button>
   <button data-section="scheduling"><span class="bico"></span>Schedule</button>
-  <button data-section="compliance"><span class="bico"></span>Review</button>
   <button data-section="jobs"><span class="bico"></span>Jobs</button>
   <button data-section="settings"><span class="bico"></span>Settings</button>
 </nav>
@@ -173,7 +175,7 @@ import { auth, db } from "./ft-firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 import { collection, query, where, orderBy, limit, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 const $=id=>document.getElementById(id); const toastEl=$('toast');
-let me=null, meData={}, users=[], jobs=[], requests=[], quotes=[], walkthroughs=[]; let activeSection='home'; let unsubs=[];
+let me=null, meData={}, users=[], jobs=[], requests=[], intakes=[], quotes=[], walkthroughs=[]; let activeSection='home'; let unsubs=[];
 function showToast(msg){ toastEl.textContent=msg; toastEl.style.display='block'; setTimeout(()=>toastEl.style.display='none',2100); }
 function cap(s){return String(s||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}
 function dateText(v){try{ if(v?.toDate) return v.toDate().toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); if(typeof v==='string'&&v) return new Date(v+'T00:00:00').toLocaleDateString([], {month:'short',day:'numeric'});}catch{} return ''}
@@ -183,6 +185,7 @@ function safeUrl(url){ return String(url||''); }
 function setTitle(){ const map={
 home:['Operations Command Center','Your daily executive snapshot.'],
 applications:['Applications Review','Review contractor applications before onboarding access is granted.'],
+intakes:['Intake Inbox','Review Formspree-backed website intakes and convert them into quotes or jobs.'],
 scheduling:['Scheduling Requests','Review client booking, reschedule, and availability requests.'],
 compliance:['Workforce Compliance','Approve contractor onboarding now and keep W2 readiness available for later.'],
 jobs:['Job Workflow Center','Monitor assignments, status, workflow, and completion.'],
@@ -195,18 +198,82 @@ function showSection(section){ activeSection=section; document.querySelectorAll(
 document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.section)));
 $('signOutBtn').addEventListener('click', async()=>{ await signOut(auth); location.href='index.html'; });
 function clearUnsubs(){ unsubs.forEach(u=>{try{u()}catch{}}); unsubs=[]; }
-function listen(){ clearUnsubs(); unsubs.push(onSnapshot(collection(db,'users'), s=>{users=s.docs.map(d=>({id:d.id,...d.data()})); render();})); unsubs.push(onSnapshot(query(collection(db,'jobs'), orderBy('createdAt','desc'), limit(150)), s=>{jobs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'bookingRequests'), orderBy('createdAt','desc'), limit(100)), s=>{requests=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'quotes'), orderBy('createdAt','desc'), limit(100)), s=>{quotes=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'walkthroughs'), orderBy('createdAt','desc'), limit(100)), s=>{walkthroughs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); }
+function listen(){ clearUnsubs(); unsubs.push(onSnapshot(collection(db,'users'), s=>{users=s.docs.map(d=>({id:d.id,...d.data()})); render();})); unsubs.push(onSnapshot(query(collection(db,'jobs'), orderBy('createdAt','desc'), limit(150)), s=>{jobs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'bookingRequests'), orderBy('createdAt','desc'), limit(100)), s=>{requests=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'intakeRequests'), orderBy('createdAt','desc'), limit(150)), s=>{intakes=s.docs.map(d=>({id:d.id,_sourceCollection:'intakeRequests',...d.data()})); render();}, e=>console.warn('intakeRequests unavailable or not allowed yet',e))); unsubs.push(onSnapshot(query(collection(db,'quotes'), orderBy('createdAt','desc'), limit(100)), s=>{quotes=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'walkthroughs'), orderBy('createdAt','desc'), limit(100)), s=>{walkthroughs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); }
 onAuthStateChanged(auth, async user=>{ me=user; if(!user){ $('gate').classList.remove('hidden'); $('app').classList.add('hidden'); $('rolePill').textContent='Signed out'; return; } $('whoami').textContent=user.email||user.uid; const snap=await getDoc(doc(db,'users',user.uid)); meData=snap.exists()?snap.data():{}; if(String(meData.role||'').toLowerCase()!=='admin'){ $('gate').classList.remove('hidden'); $('app').classList.add('hidden'); $('rolePill').textContent='Not admin'; return; } $('gate').classList.add('hidden'); $('app').classList.remove('hidden'); $('rolePill').textContent='Admin'; $('rolePill').classList.add('good'); listen(); });
 function workerKind(u){ const v=String(u.workerType||u.classification||u.compliance?.workerType||u.role||u.contractorStatus||u.employeeStatus||'').toLowerCase(); if(v.includes('w2')||v.includes('employee')) return 'employee_w2'; if(v.includes('waitlist')) return 'employee_waitlist'; if(v.includes('team_lead')) return 'team_lead'; if(v.includes('company')) return 'contractor_company'; return 'contractor_1099'; }
 function isWorkforce(u){ const r=String(u.role||'').toLowerCase(); return ['contractor','pending','employee','employee_w2','employee_waitlist','team_lead'].includes(r)||u.contractorStatus||u.employeeStatus||u.compliance; }
 function kindLabel(u){ const k=workerKind(u); const map={contractor_1099:'1099 Contractor',contractor_company:'Contractor Company',team_lead:'Team Lead',employee_w2:'Future W2 Employee',employee_waitlist:'Employee Waitlist'}; return map[k]||cap(k); }
+
+function serviceFromIntake(x){
+  const d=x.intakeData||x.intake||x.data||x;
+  const raw=x.serviceType||x.type||x.serviceCategory||d.serviceType||d.service||d.INTERNAL_app_intake_type||d.page||'';
+  const page=String(d.page||x.page||'').toLowerCase();
+  if(page.includes('organizing')) return 'organizing';
+  if(page.includes('decor')) return 'decor';
+  if(page.includes('holiday')) return 'holiday';
+  if(page.includes('staging')) return 'staging';
+  return normalizeService(raw);
+}
+function intakeList(){
+  const fromIntakes=(intakes||[]).map(x=>({...x,_sourceCollection:x._sourceCollection||'intakeRequests'}));
+  const fromRequests=(requests||[]).filter(r=>{
+    const rk=String(r.requestKind||'').toLowerCase();
+    const src=String(r.source||'').toLowerCase();
+    return rk.includes('intake') || src.includes('intake') || r.intakeData || r.intake || r.INTERNAL_app_intake_type;
+  }).map(x=>({...x,_sourceCollection:'bookingRequests'}));
+  const fromJobs=(jobs||[]).filter(j=>{
+    const src=String(j.source||'').toLowerCase();
+    return j.intakeData || j.intake || src.includes('intake') || src.includes('formspree');
+  }).map(x=>({...x,_sourceCollection:'jobs'}));
+  const seen=new Set();
+  return [...fromIntakes,...fromRequests,...fromJobs].filter(x=>{
+    const key=(x._sourceCollection||'')+':'+x.id;
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).sort((a,b)=>{
+    const da=a.createdAt?.toDate?a.createdAt.toDate().getTime():0;
+    const db=b.createdAt?.toDate?b.createdAt.toDate().getTime():0;
+    return db-da;
+  });
+}
+function intakeData(x){ return x.intakeData||x.intake||x.data||x; }
+function intakeClientName(x){ const d=intakeData(x); return x.clientName||x.name||d.name||x.clientEmail||d.email||'Website Client'; }
+function intakeClientEmail(x){ const d=intakeData(x); return x.clientEmail||x.email||d.email||''; }
+function intakeSummary(x){
+  const d=intakeData(x);
+  return x.summary || x.REQUEST_SUMMARY_CLEAR || d.REQUEST_SUMMARY_CLEAR || d.requestSummaryClear || d.notes || x.notes || '';
+}
+function intakeClearDetails(x){
+  const d=intakeData(x);
+  return [
+    d.CLIENT_CONTACT_CLEAR||x.CLIENT_CONTACT_CLEAR,
+    d.PROPERTY_DETAILS_CLEAR||x.PROPERTY_DETAILS_CLEAR,
+    d.HOME_LAYOUT_CLEAR||x.HOME_LAYOUT_CLEAR,
+    d.ORGANIZING_AREAS_CLEAR||x.ORGANIZING_AREAS_CLEAR,
+    d.ORGANIZING_GOALS_CLEAR||x.ORGANIZING_GOALS_CLEAR,
+    d.DECOR_SCOPE_CLEAR||x.DECOR_SCOPE_CLEAR,
+    d.STYLE_GOALS_CLEAR||x.STYLE_GOALS_CLEAR,
+    d.HOLIDAY_SCOPE_CLEAR||x.HOLIDAY_SCOPE_CLEAR,
+    d.INSTALL_TIMELINE_CLEAR||x.INSTALL_TIMELINE_CLEAR,
+    d.STAGING_SCOPE_CLEAR||x.STAGING_SCOPE_CLEAR,
+    d.LISTING_TIMELINE_CLEAR||x.LISTING_TIMELINE_CLEAR,
+    d.SPECIALTY_ADDONS_CLEAR||x.SPECIALTY_ADDONS_CLEAR,
+    d.SCHEDULING_PREFERENCES_CLEAR||x.SCHEDULING_PREFERENCES_CLEAR
+  ].filter(Boolean);
+}
+async function updateSourceDoc(item, patch){
+  const col=item._sourceCollection||'intakeRequests';
+  await updateDoc(doc(db,col,item.id),{...patch,updatedAt:serverTimestamp()});
+}
+
 function applicationList(){ return users.filter(u=>{
   const st=String(u.applicationStatus||'').toLowerCase();
   const appType=String(u.application?.type||'').toLowerCase();
   return appType==='contractor' || ['submitted','needs_review','approved_for_onboarding','rejected'].includes(st);
 }); }
-function kpis(){ const workforce=users.filter(isWorkforce); const contractors=workforce.filter(u=>workerKind(u)!=='employee_w2'&&workerKind(u)!=='employee_waitlist'); const employees=workforce.filter(u=>workerKind(u)==='employee_w2'||workerKind(u)==='employee_waitlist'); const clients=users.filter(u=>String(u.role||'').toLowerCase()==='client'); const apps=applicationList(); return {applications:apps.filter(u=>['submitted','needs_review'].includes(String(u.applicationStatus||'submitted').toLowerCase())).length,newReq:requests.filter(r=>['new','pending','reviewing'].includes(String(r.status||'new'))).length, activeJobs:jobs.filter(j=>!['completed','cancelled','paid'].includes(String(j.status||''))).length, review:workforce.filter(needsReview).length, contractors:contractors.length, employees:employees.length, workforce:workforce.length, clients:clients.length, quotes:quotes.length}; }
-function renderHome(){ const k=kpis(); $('home').innerHTML=`<div class="app-card"><p class="mini-kicker">Today</p><h2 class="screen-title">Operations Command Center</h2><p class="screen-copy">A focused luxury operations view of what needs your attention first.</p><div class="grid" style="margin-top:16px"><div class="tile"><strong>${k.applications}</strong><h3>Applications</h3><p>New contractor applications awaiting review.</p></div><div class="tile"><strong>${k.newReq}</strong><h3>Scheduling Requests</h3><p>New or waiting for review.</p></div><div class="tile"><strong>${k.review}</strong><h3>Compliance Reviews</h3><p>Contractor + future W2 files needing admin action.</p></div><div class="tile"><strong>${k.activeJobs}</strong><h3>Active Jobs</h3><p>Open, claimed, in progress, or submitted.</p></div><div class="tile"><strong>${k.contractors}</strong><h3>Contractors</h3><p>1099 contractors, companies, and team leads.</p></div><div class="tile"><strong>${k.employees}</strong><h3>W2 Readiness</h3><p>Employee waitlist and future payroll onboarding.</p></div></div></div><div class="app-card"><p class="mini-kicker">Priority Queue</p><h2 class="screen-title">Next actions</h2><div class="stack" style="margin-top:12px">${quickAction('Applications Review',`${k.applications} application(s) to review`,'applications')}${quickAction('Scheduling Requests',`${k.newReq} request(s) to review`,'scheduling')}${quickAction('Compliance Review',`${k.review} workforce file(s) need review`,'compliance')}${quickAction('Job Workflow',`${k.activeJobs} job(s) in motion`,'jobs')}${quickAction('Admin Settings','Manage your own profile and account access','settings')}</div></div>`; }
+function kpis(){ const workforce=users.filter(isWorkforce); const contractors=workforce.filter(u=>workerKind(u)!=='employee_w2'&&workerKind(u)!=='employee_waitlist'); const employees=workforce.filter(u=>workerKind(u)==='employee_w2'||workerKind(u)==='employee_waitlist'); const clients=users.filter(u=>String(u.role||'').toLowerCase()==='client'); const apps=applicationList(); return {applications:apps.filter(u=>['submitted','needs_review'].includes(String(u.applicationStatus||'submitted').toLowerCase())).length,intakes:intakeList().filter(i=>['new','pending','submitted','reviewing',''].includes(String(i.status||'new').toLowerCase())).length,newReq:requests.filter(r=>['new','pending','reviewing'].includes(String(r.status||'new'))&&!String(r.requestKind||'').toLowerCase().includes('intake')).length, activeJobs:jobs.filter(j=>!['completed','cancelled','paid'].includes(String(j.status||''))).length, review:workforce.filter(needsReview).length, contractors:contractors.length, employees:employees.length, workforce:workforce.length, clients:clients.length, quotes:quotes.length}; }
+function renderHome(){ const k=kpis(); $('home').innerHTML=`<div class="app-card"><p class="mini-kicker">Today</p><h2 class="screen-title">Operations Command Center</h2><p class="screen-copy">A focused luxury operations view of what needs your attention first.</p><div class="grid" style="margin-top:16px"><div class="tile"><strong>${k.applications}</strong><h3>Applications</h3><p>New contractor applications awaiting review.</p></div><div class="tile"><strong>${k.intakes}</strong><h3>Website Intakes</h3><p>Cleaning, organizing, decor, holiday, and staging requests from the website.</p></div><div class="tile"><strong>${k.newReq}</strong><h3>Scheduling Requests</h3><p>New or waiting for review.</p></div><div class="tile"><strong>${k.review}</strong><h3>Compliance Reviews</h3><p>Contractor + future W2 files needing admin action.</p></div><div class="tile"><strong>${k.activeJobs}</strong><h3>Active Jobs</h3><p>Open, claimed, in progress, or submitted.</p></div><div class="tile"><strong>${k.contractors}</strong><h3>Contractors</h3><p>1099 contractors, companies, and team leads.</p></div><div class="tile"><strong>${k.employees}</strong><h3>W2 Readiness</h3><p>Employee waitlist and future payroll onboarding.</p></div></div></div><div class="app-card"><p class="mini-kicker">Priority Queue</p><h2 class="screen-title">Next actions</h2><div class="stack" style="margin-top:12px">${quickAction('Applications Review',`${k.applications} application(s) to review`,'applications')}${quickAction('Intake Inbox',`${k.intakes} website intake(s) to review`,'intakes')}${quickAction('Scheduling Requests',`${k.newReq} request(s) to review`,'scheduling')}${quickAction('Compliance Review',`${k.review} workforce file(s) need review`,'compliance')}${quickAction('Job Workflow',`${k.activeJobs} job(s) in motion`,'jobs')}${quickAction('Admin Settings','Manage your own profile and account access','settings')}</div></div>`; }
 function quickAction(title,text,section){return `<div class="card"><div class="card-head"><div><h3>${title}</h3><p class="screen-copy" style="margin:4px 0 0">${text}</p></div><button class="btn btn-primary" data-jump="${section}">Open</button></div></div>`}
 
 const SERVICE_LABELS={
@@ -216,7 +283,9 @@ const SERVICE_LABELS={
   commercial:'Commercial Cleaning',
   organizing:'Home Organizing',
   decor:'Interior Decorating / Styling',
-  holiday:'Holiday Decorating'
+  holiday:'Holiday Decorating',
+  staging:'Staging & Styling',
+  carpet_upholstery_grout:'Carpet, Upholstery & Grout Request'
 };
 function normalizeService(s){
   const v=String(s||'').toLowerCase().trim();
@@ -225,7 +294,9 @@ function normalizeService(s){
   if(['airbnb','turnover','short_term_rental'].includes(v)) return 'airbnb';
   if(['commercial','office'].includes(v)) return 'commercial';
   if(['organize','organizing','organization','home_organizing'].includes(v)) return 'organizing';
-  if(['decor','decorating','styling','staging','interior','interior_decorating','design'].includes(v)) return 'decor';
+  if(['staging','home_staging','stage','staging_styling'].includes(v)) return 'staging';
+  if(['carpet_upholstery_grout','carpet','upholstery','grout','specialty_cleaning'].includes(v)) return 'carpet_upholstery_grout';
+  if(['decor','decorating','styling','interior','interior_decorating','design'].includes(v)) return 'decor';
   if(['holiday','holiday_decor','christmas','event','events'].includes(v)) return 'holiday';
   return v || 'cleaning';
 }
@@ -339,6 +410,106 @@ async function setApplicationStatus(uid,status,approved=[]){
   showToast(status==='approved_for_onboarding'?`Approved for ${selected.map(svcLabel).join(', ')}`:`Application ${cap(status)}`);
 }
 
+
+function renderIntakes(){
+  const list=intakeList();
+  $('intakes').innerHTML=`<div class="app-card"><p class="mini-kicker">Website Requests</p><h2 class="screen-title">Intake Inbox</h2><p class="screen-copy">These are website intake submissions that still go through Formspree/Zapier as your backup, while also saving structured data for the app. Review, draft a quote, or convert to a job when ready.</p><div class="meta" style="margin-top:12px"><span>Cleaning</span><span>Organizing</span><span>Decor</span><span>Holiday</span><span>Staging</span></div></div><div class="stack">${list.length?list.map(intakeCard).join(''):'<div class="empty">No website intakes found yet. Once forms are submitted through the updated pages, they will appear here if Firestore save is allowed.</div>'}</div>`;
+  wireIntakes();
+}
+function intakeCard(x){
+  const d=intakeData(x);
+  const details=intakeClearDetails(x);
+  const summary=intakeSummary(x);
+  const st=String(x.intakeStatus||x.status||'new');
+  return `<div class="card" data-intake="${x.id}" data-intake-col="${x._sourceCollection||'intakeRequests'}">
+    <div class="card-head">
+      <div>
+        <h3>${intakeClientName(x)}</h3>
+        <div class="meta"><span>${svcLabel(serviceFromIntake(x))}</span><span>${cap(st)}</span>${intakeClientEmail(x)?`<span>${intakeClientEmail(x)}</span>`:''}${d.phone?`<span>${d.phone}</span>`:''}${x._sourceCollection?`<span>${cap(x._sourceCollection)}</span>`:''}</div>
+      </div>
+      <span class="status-pill ${['reviewing','quote_drafted','converted_to_job','job_created'].includes(st)?'good':''}">${dateText(x.createdAt)||'New'}</span>
+    </div>
+    ${summary?`<p class="screen-copy">${summary}</p>`:''}
+    ${details.length?`<div class="doc-grid">${details.map((line,i)=>`<div class="doc-mini"><strong>Detail ${i+1}</strong><span class="hint">${line}</span></div>`).join('')}</div>`:''}
+    <div class="actions">
+      <button class="btn btn-soft" data-intake-status="reviewing">Reviewing</button>
+      <button class="btn btn-outline" data-intake-quote>Draft Quote</button>
+      <button class="btn btn-primary" data-intake-job>Create Job</button>
+      <button class="btn btn-danger" data-intake-status="archived">Archive</button>
+    </div>
+  </div>`;
+}
+function getIntakeItemFromCard(card){
+  const col=card.dataset.intakeCol;
+  const id=card.dataset.intake;
+  return intakeList().find(x=>x.id===id && (x._sourceCollection||'intakeRequests')===col);
+}
+function wireIntakes(){
+  document.querySelectorAll('[data-intake-status]').forEach(b=>b.addEventListener('click',async()=>{
+    const item=getIntakeItemFromCard(b.closest('[data-intake]'));
+    if(!item)return;
+    await updateSourceDoc(item,{status:b.dataset.intakeStatus,intakeStatus:b.dataset.intakeStatus});
+    showToast('Intake updated');
+  }));
+  document.querySelectorAll('[data-intake-quote]').forEach(b=>b.addEventListener('click',()=>createQuoteFromIntakeCard(b.closest('[data-intake]'))));
+  document.querySelectorAll('[data-intake-job]').forEach(b=>b.addEventListener('click',()=>createJobFromIntakeCard(b.closest('[data-intake]'))));
+}
+async function createQuoteFromIntakeCard(card){
+  const item=getIntakeItemFromCard(card);
+  if(!item)return;
+  const d=intakeData(item);
+  const amount=prompt('Client-facing quote amount? Optional.','');
+  await addDoc(collection(db,'quotes'),{
+    source:'website_intake',
+    intakeSourceCollection:item._sourceCollection||'intakeRequests',
+    intakeId:item.id,
+    status:'draft',
+    clientName:intakeClientName(item),
+    clientEmail:intakeClientEmail(item),
+    serviceType:serviceFromIntake(item),
+    serviceLabel:svcLabel(serviceFromIntake(item)),
+    clientQuote:amount?Number(amount):null,
+    notes:intakeSummary(item)||d.notes||'',
+    intakeData:d,
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
+  });
+  await updateSourceDoc(item,{status:'quote_drafted',intakeStatus:'quote_drafted'});
+  showToast('Quote drafted from intake');
+}
+async function createJobFromIntakeCard(card){
+  const item=getIntakeItemFromCard(card);
+  if(!item)return;
+  const d=intakeData(item);
+  if((item._sourceCollection||'')==='jobs'){
+    await updateSourceDoc(item,{status:'open',workflowStatus:'open',intakeStatus:'converted_to_job'});
+    showToast('Intake job opened');
+    return;
+  }
+  const flat=prompt('Client flat rate / quote amount? Optional.','');
+  const hours=prompt('Estimated team hours? Optional.','');
+  const payload={
+    status:'open',
+    workflowStatus:'open',
+    source:'admin_from_website_intake',
+    intakeSourceCollection:item._sourceCollection||'intakeRequests',
+    intakeId:item.id,
+    clientName:intakeClientName(item),
+    clientEmail:intakeClientEmail(item),
+    clientUid:item.clientUid||item.userId||'',
+    serviceType:serviceFromIntake(item),
+    summary:intakeSummary(item)||d.notes||'',
+    flatRate:flat?Number(flat):null,
+    estimatedTeamHours:hours?Number(hours):null,
+    intakeData:d,
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
+  };
+  await addDoc(collection(db,'jobs'),stripNull(payload));
+  await updateSourceDoc(item,{status:'converted_to_job',intakeStatus:'converted_to_job'});
+  showToast('Job created from intake');
+}
+
 function renderScheduling(){ const list=requests.filter(r=>!r.requestKind||r.requestKind==='scheduling_request'||r.source==='client_dashboard'); $('scheduling').innerHTML=`<div class="app-card"><p class="mini-kicker">Scheduling</p><h2 class="screen-title">Client requests</h2><p class="screen-copy">Turn client availability requests into confirmed jobs.</p></div><div class="stack">${list.length?list.map(requestCard).join(''):'<div class="empty">No scheduling requests yet.</div>'}</div>`; wireRequestButtons(); }
 function requestCard(r){return `<div class="card" data-req="${r.id}"><div class="card-head"><div><h3>${cap(r.requestType||'Scheduling Request')}</h3><div class="meta"><span>${cap(r.status||'new')}</span>${r.serviceType?`<span>${cap(r.serviceType)}</span>`:''}${r.preferredDate?`<span>${dateText(r.preferredDate)}</span>`:''}${r.preferredWindow?`<span>${cap(r.preferredWindow)}</span>`:''}</div></div><span class="status-pill">${r.clientName||r.clientEmail||'Client'}</span></div>${r.notes?`<p class="screen-copy">${r.notes}</p>`:''}<div class="actions"><button class="btn btn-soft" data-req-status="reviewing">Reviewing</button><button class="btn btn-outline" data-req-status="contractor_contacted">Contractor Contacted</button><button class="btn btn-outline" data-req-status="options_sent">Options Sent</button><button class="btn btn-primary" data-req-status="confirmed">Confirmed</button><button class="btn btn-danger" data-req-status="declined">Declined</button><button class="btn btn-dark" data-create-job>Create Job</button></div></div>`}
 function wireRequestButtons(){ document.querySelectorAll('[data-req-status]').forEach(b=>b.addEventListener('click',async()=>{const id=b.closest('[data-req]').dataset.req; await updateDoc(doc(db,'bookingRequests',id),{status:b.dataset.reqStatus,updatedAt:serverTimestamp()}); showToast('Request updated');})); document.querySelectorAll('[data-create-job]').forEach(b=>b.addEventListener('click',()=>createJobFromRequest(b.closest('[data-req]').dataset.req))); }
@@ -392,7 +563,7 @@ function renderWalkthroughs(){
 }
 async function createQuoteFromWalk(id){ const w=walkthroughs.find(x=>x.id===id); if(!w)return; await addDoc(collection(db,'quotes'),{source:'walkthrough',walkthroughId:id,status:'draft',clientName:w.clientName||'',serviceType:w.serviceType||'',serviceLabel:svcLabel(w.serviceType||''),projectCategory:w.projectCategory||'',contractorEstimate:w.contractorEstimate||null,clientQuote:w.tftClientQuote||null,notes:w.notes||'',createdAt:serverTimestamp(),updatedAt:serverTimestamp()}); await updateDoc(doc(db,'walkthroughs',id),{status:'quote_drafted',updatedAt:serverTimestamp()}); showToast('Quote drafted'); }
 function renderSettings(){ $('settings').innerHTML=`<div class="app-card"><p class="mini-kicker">Admin Profile</p><h2 class="screen-title">Admin Settings</h2><p class="screen-copy">Manage your own admin account access. Use the delete page only for your own login. To remove someone else's access, use People Directory.</p><div class="grid" style="margin-top:16px"><div class="tile"><strong>${me?.email?'Signed in':'—'}</strong><h3>Current Admin</h3><p>${me?.email||me?.uid||'No admin signed in'}</p></div><div class="tile"><strong>${cap(meData?.role||'admin')}</strong><h3>Role</h3><p>Admin access is required for this Operations Suite.</p></div></div></div><div class="app-card danger-zone"><p class="mini-kicker">Danger Zone</p><h2 class="screen-title">Delete My Admin Login</h2><p class="screen-copy">This is for deleting your own signed-in admin login only. You will be asked to type your current password. The backend profile is archived for business records instead of erased.</p><div class="setting-row"><div><h3>Delete my account</h3><p>Use this when you are testing, resetting an account, or intentionally removing your own login access.</p></div><a class="btn btn-danger" href="delete-my-account.html">Delete My Account</a></div></div><div class="app-card"><p class="mini-kicker">Admin Controls</p><h2 class="screen-title">Removing someone else's access</h2><p class="screen-copy">Go to People Directory and choose Archive / Remove Access on a contractor, employee waitlist record, or client. That does not require their password and keeps backend records for taxes, compliance, payments, and job history.</p><div class="actions"><button class="btn btn-primary" data-jump="people">Open People Directory</button><a class="btn btn-outline" href="index.html">Home Website</a></div></div>`; }
-function render(){ if(!$('app')||$('app').classList.contains('hidden'))return; if(activeSection==='home')renderHome(); if(activeSection==='applications')renderApplications(); if(activeSection==='scheduling')renderScheduling(); if(activeSection==='compliance')renderCompliance(); if(activeSection==='jobs')renderJobs(); if(activeSection==='people')renderPeople(); if(activeSection==='quotes')renderQuotes(); if(activeSection==='walkthroughs')renderWalkthroughs(); if(activeSection==='settings')renderSettings(); document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.jump))); }
+function render(){ if(!$('app')||$('app').classList.contains('hidden'))return; if(activeSection==='home')renderHome(); if(activeSection==='applications')renderApplications(); if(activeSection==='intakes')renderIntakes(); if(activeSection==='scheduling')renderScheduling(); if(activeSection==='compliance')renderCompliance(); if(activeSection==='jobs')renderJobs(); if(activeSection==='people')renderPeople(); if(activeSection==='quotes')renderQuotes(); if(activeSection==='walkthroughs')renderWalkthroughs(); if(activeSection==='settings')renderSettings(); document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.jump))); }
 function stripNull(obj){return Object.fromEntries(Object.entries(obj).filter(([,v])=>v!==null&&v!==undefined&&v!==''));}
 </script>
 </body>
