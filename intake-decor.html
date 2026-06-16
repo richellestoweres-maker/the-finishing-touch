@@ -36,6 +36,7 @@
     .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
     .quote-menu a:hover{background:#f3ece6}
     .quote-dropdown.open .quote-menu{display:block}
+    .success-card{margin-top:14px;background:#fbf5ee;border:1px solid #ecdccc;border-radius:14px;padding:14px 16px;font-size:.98rem;display:none;text-align:center}
   </style>
 </head>
 <body>
@@ -75,9 +76,17 @@
   <main class="intake-wrap">
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Interior Decorating Intake</div>
-    <p class="intake-note">Complete this brief form for an instant ballpark estimate. When ready, click <strong>Book Now</strong> to open our calendar in a new tab.</p>
+    <p class="intake-note">
+      Complete this brief intake so we can review your decorating project and follow up with a tailored ballpark estimate, recommended approach, and next steps.
+    </p>
 
-    <form id="intakeFormDecor" class="grid-1" novalidate>
+    <form id="intakeFormDecor" class="grid-1"
+          method="POST"
+          action="https://formspree.io/f/mzzaogbv"
+          enctype="multipart/form-data"
+          novalidate>
+      <input type="hidden" name="_subject" value="New Decorating Intake · The Finishing Touch" />
+      <input type="hidden" name="page" value="intake-decor.html" />
       <!-- 1) Contact -->
       <div class="grid-2">
         <label>Full Name<input name="name" autocomplete="name" required></label>
@@ -210,10 +219,10 @@
 
       <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit">Get Decorating Estimate</button>
+        <button class="btn btn-solid" type="submit" id="decorSubmitBtn">Submit Decorating Intake</button>
         <p id="estimateDecor" class="hero-sub" style="color:#524a46;margin-top:10px;"></p>
-        <!-- Book button gets injected here after estimate -->
         <p id="emailStatusDecor" style="opacity:.9"></p>
+        <div id="successCardDecor" class="success-card" aria-live="polite"></div>
       </div>
     </form>
   </main>
@@ -238,13 +247,11 @@
   <!-- Optional helper exposing FTAuto.createJobFromIntake(...) -->
   <script src="ft-auto.js" defer></script>
 
-  <!-- OVERRIDE: Estimate + Book button + Firestore job (if available) + Formspree -->
+  <!-- OVERRIDE: Estimate + Firestore app intake backup + Formspree/Zapier backup -->
   <script>
     (function(){
-      const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
       function roundHalf(n){ return Math.round(n*2)/2; }
 
-      // Fallback estimator
       function estimateHoursDecorLocal(data){
         try { if (typeof estimateHoursDecor === 'function') return estimateHoursDecor(data); } catch(_){}
         const room = data.decor_room || "Living Room";
@@ -253,10 +260,8 @@
         const furniture = data.decor_furniture || "No";
         const install = data.decor_install || "Light (art, textiles)";
         const access = data.decor_access || "Easy";
-
         const basePerRoom = {"Living Room":3,"Bedroom":2.5,"Dining Room":2.5,"Home Office":2.5,"Kitchen / Nook":2.5,"Entryway":1.5,"Multiple Rooms":3,"Whole Home":4,"Outdoor Space":2};
-        let solo = (basePerRoom[room] ?? 2.5) * count;
-
+        let solo = (basePerRoom[room] || 2.5) * count;
         if (scope === "Refresh + small sourcing") solo *= 1.3;
         if (scope === "Full room redesign") solo *= 1.8;
         if (furniture === "Yes — a few pieces") solo += 1.0;
@@ -265,110 +270,132 @@
         if (install === "Heavy (multiple furniture + window treatments)") solo += 2.0;
         if (access === "Stairs / elevator") solo += 0.5;
         if (access === "HOA / tight timing") solo += 0.75;
-
         solo = roundHalf(solo);
-        const teamHours = roundHalf(solo/2);
-        return { soloHours: solo, teamHours };
+        return { soloHours: solo, teamHours: roundHalf(solo/2) };
       }
 
       function decorHintLocal(data, teamHours){
         const room = data.decor_room || "Room";
         const scope = data.decor_scope || "Refresh";
-        if (teamHours <= 2.5) return `${room} — ${scope} (Small, ≈2–2.5 hr)`;
-        if (teamHours <= 4)   return `${room} — ${scope} (Medium, ≈3–4 hr)`;
-        if (teamHours <= 6)   return `${room} — ${scope} (Large, ≈5–6 hr)`;
-        return `${room} — ${scope} (XL, 6.5+ hr)`;
+        if (teamHours <= 2.5) return `${room} — ${scope} (Small, approx. 2–2.5 team hours)`;
+        if (teamHours <= 4) return `${room} — ${scope} (Medium, approx. 3–4 team hours)`;
+        if (teamHours <= 6) return `${room} — ${scope} (Large, approx. 5–6 team hours)`;
+        return `${room} — ${scope} (XL, 6.5+ team hours)`;
       }
 
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('intakeFormDecor');
         if (!form) return;
+        const estEl = document.getElementById('estimateDecor');
+        const statusEl = document.getElementById('emailStatusDecor');
+        const successCard = document.getElementById('successCardDecor');
+        const submitBtn = document.getElementById('decorSubmitBtn');
 
         form.addEventListener('submit', async (e)=>{
           e.preventDefault();
           e.stopImmediatePropagation();
 
-          const data = Object.fromEntries(new FormData(form).entries());
-          const estEl = document.getElementById('estimateDecor');
+          if (statusEl) statusEl.textContent = "";
+          if (successCard){ successCard.style.display = "none"; successCard.textContent = ""; }
+          if (submitBtn){ submitBtn.disabled = true; submitBtn.textContent = "Submitting…"; }
 
-          // 1) Instant estimate via your calcDecor (if present)
+          const fd = new FormData(form);
+          const data = {};
+          fd.forEach((v,k)=>{ data[k] = data[k] ? [].concat(data[k], v) : v; });
+
           let price = null;
-          try {
-            if (typeof calcDecor === 'function') {
+          try{
+            if (typeof calcDecor === 'function'){
               price = calcDecor(data);
               if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-            } else {
-              if (estEl) estEl.textContent = "Ballpark estimate ready.";
+            } else if (estEl) {
+              estEl.textContent = "Thanks — your decorating intake is ready to submit.";
             }
-          } catch(err){ console.warn("Decor estimate error:", err); }
-
-          // 2) Recommend a time block
-          const { teamHours, soloHours } = estimateHoursDecorLocal(data);
-          const hint = decorHintLocal(data, teamHours);
-
-          // 3) Inject/refresh Book button
-          let btn = document.getElementById('scheduleOnSquareDecor');
-          if (!btn){
-            btn = document.createElement('a');
-            btn.id = 'scheduleOnSquareDecor';
-            btn.className = 'btn btn-solid';
-            btn.style.marginTop = '10px';
-            btn.textContent = 'Book Now';
-            estEl.parentNode.insertBefore(btn, estEl.nextSibling);
+          } catch(err){
+            console.warn("Decor estimate error:", err);
+            if (estEl) estEl.textContent = "Thanks — your decorating intake is ready to submit.";
           }
-          btn.href = SQUARE_BOOKING_BASE;
-          btn.target = '_blank';
-          btn.rel = 'noopener';
 
-          let hintEl = document.getElementById('decorHint');
-          if (!hintEl){
-            hintEl = document.createElement('p');
-            hintEl.id = 'decorHint';
-            hintEl.className = 'hint';
-            btn.parentNode.insertBefore(hintEl, btn.nextSibling);
-          }
-          hintEl.textContent = `Recommended: ${hint}. Square opens in a new tab—choose the closest matching time block.`;
+          const hours = estimateHoursDecorLocal(data);
+          const hint = decorHintLocal(data, hours.teamHours);
 
-          // 4) Try to create a Firestore job via helper (non-blocking)
-          try {
+          const clientContactClear = [
+            data.name ? `Name: ${data.name}` : null,
+            data.email ? `Email: ${data.email}` : null,
+            data.phone ? `Phone: ${data.phone}` : null,
+            data.address ? `Address: ${data.address}` : null
+          ].filter(Boolean).join(" | ");
+
+          const decorScopeClear = [
+            data.goal ? `Goal: ${data.goal}` : null,
+            data.decor_room ? `Space: ${data.decor_room}` : null,
+            data.count ? `Rooms Count: ${data.count}` : null,
+            data.decor_scope ? `Service Level: ${data.decor_scope}` : null,
+            data.decor_furniture ? `Furniture Sourcing: ${data.decor_furniture}` : null,
+            data.decor_install ? `Install Level: ${data.decor_install}` : null
+          ].filter(Boolean).join(" | ");
+
+          const styleGoalsClear = [
+            data.style ? `Style: ${data.style}` : null,
+            data.inspo ? `Inspiration: ${data.inspo}` : null,
+            data.must_keep ? `Must Keep: ${data.must_keep}` : null,
+            data.budget ? `Budget: ${data.budget}` : null,
+            data.timeline ? `Timeline: ${data.timeline}` : null
+          ].filter(Boolean).join(" | ");
+
+          const requestSummaryClear = [
+            "Interior Decorating / Styling",
+            decorScopeClear,
+            styleGoalsClear,
+            data.addons ? `Add-ons: ${data.addons}` : null,
+            data.notes ? `Notes: ${data.notes}` : null
+          ].filter(Boolean).join(" | ");
+
+          fd.append("SERVICE_CATEGORY_CLEAR", "Interior Decorating / Styling");
+          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
+          fd.append("DECOR_SCOPE_CLEAR", decorScopeClear);
+          fd.append("STYLE_GOALS_CLEAR", styleGoalsClear);
+          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          fd.append("RECOMMENDED_TIME_BLOCK_CLEAR", hint);
+          fd.append("INTERNAL_app_intake_type", "decor");
+          fd.append("INTERNAL_team_hours", String(hours.teamHours));
+          fd.append("INTERNAL_solo_hours", String(hours.soloHours));
+          if (price != null) fd.append("INTERNAL_price_estimate", `$${Math.round(Number(price))}`);
+
+          try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === 'function'){
-              const summary = `${data.decor_room || 'Room'} — ${data.decor_scope || 'Decor'}`.trim();
               await FTAuto.createJobFromIntake({
-                serviceType: 'decor',
-                summary,
-                estTeamHours: teamHours,
-                flatRate: (price!=null? Number(price) : null),
-                intake: data
+                type:'decor',
+                serviceType:'decor',
+                intakeData:data,
+                estimate:{ price: price != null ? Number(price) : null, teamHours:hours.teamHours, soloHours:hours.soloHours, recommendedTimeBlock:hint },
+                summary:requestSummaryClear
               });
             }
-          } catch (err) {
-            console.warn('Could not create job from intake (ok to ignore):', err);
+          } catch(err){
+            console.warn("Could not create app intake from decor form (Formspree backup will still send):", err);
           }
 
-          // 5) Send to Formspree (FYI trail)
-          const statusEl = document.getElementById('emailStatusDecor');
-          try {
-            const fsData = new FormData(form);
-            const estText = estEl?.textContent?.trim() || '';
-            fsData.append('_subject','Decor Intake');
-            fsData.append('form_name','Decor Intake');
-            fsData.append('page', location.href);
-            if (estText) fsData.append('estimate', estText);
-            fsData.append('team_hours', String(teamHours));
-            fsData.append('solo_hours', String(soloHours));
-            if (price!=null) fsData.append('price', `$${Math.round(Number(price))}`);
-
-            const resp = await fetch('https://formspree.io/f/mzzaogbv', {
-              method: 'POST',
-              body: fsData,
-              headers: { 'Accept': 'application/json' }
+          try{
+            const resp = await fetch(form.action || 'https://formspree.io/f/mzzaogbv', {
+              method:'POST',
+              body:fd,
+              headers:{ 'Accept':'application/json' }
             });
-
-            if (resp.ok) statusEl.textContent = 'Thanks! Your intake was sent.';
-            else statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
-          } catch (err){
-            statusEl.textContent = 'Estimate shown above. We couldn’t send the form right now.';
+            if (resp.ok){
+              if (successCard){
+                successCard.textContent = "Thanks! We’ve received your decorating intake. We’ll review your details and follow up with a tailored ballpark estimate and next steps.";
+                successCard.style.display = "block";
+              }
+              form.reset();
+            } else if (statusEl){
+              statusEl.textContent = "We received your intake in the app, but couldn’t send the email backup right now.";
+            }
+          } catch(err){
             console.warn(err);
+            if (statusEl) statusEl.textContent = "We received your intake in the app, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+          } finally {
+            if (submitBtn){ submitBtn.disabled = false; submitBtn.textContent = "Submit Decorating Intake"; }
           }
         }, true);
       });
