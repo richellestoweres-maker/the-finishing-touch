@@ -87,8 +87,8 @@
     <div class="intake-script">Holiday Decorating (Indoor) Intake</div>
 
     <p class="intake-note">
-      Tell us your holiday vibe! We’ll show an instant ballpark <strong>install</strong> estimate below
-      (optional teardown after the season). Uploading photos/video (optional) helps us quote accurately.
+      Tell us your holiday vibe so we can review your indoor decorating request, provide a tailored ballpark install estimate, and recommend next steps.
+      Optional teardown after the season can also be requested. Uploading photos/video helps us quote accurately.
     </p>
 
     <!-- Formspree (uploads enabled) -->
@@ -254,7 +254,7 @@
 
       <!-- Submit -->
       <div class="submit-row">
-        <button class="btn btn-solid" type="submit" id="holidaySubmitBtn">Get Holiday Estimate</button>
+        <button class="btn btn-solid" type="submit" id="holidaySubmitBtn">Submit Holiday Intake</button>
 
         <p id="holidayStatus" class="hint" style="margin-top:10px;"></p>
 
@@ -278,6 +278,8 @@
     })();
   </script>
 
+  <script src="ft-auto.js" defer></script>
+
   <!-- Holiday page logic: visibility + uploads validation + instant estimate + Formspree submit -->
   <script>
     (function(){
@@ -286,8 +288,6 @@
       const PHOTO_MAX = 10;
       const MAX_PHOTO_MB_EACH = 12;
       const MAX_VIDEO_MB = 60;
-
-      const SQUARE_BOOKING_BASE = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
 
       function bytesToMB(b){ return b/(1024*1024); }
       function roundTo(n, step){ return Math.round(n/step)*step; }
@@ -505,13 +505,54 @@
           fd.set("occasion", occ);
           fd.set("occasion_custom", (occCustom?.value || "").trim());
 
-          // Build plain data object for math (ignore files)
+          // Build plain data object for math and app intake backup (ignore files)
           const data = {};
           fd.forEach((v,k)=>{
             if (k === "media_photos" || k === "media_video") return;
-            data[k] = v;
+
+            if (data[k] != null){
+              if (Array.isArray(data[k])) data[k].push(v);
+              else data[k] = [data[k], v];
+            } else {
+              data[k] = v;
+            }
           });
           data.occasion = occ;
+
+          const clientContactClear = [
+            data.name ? `Name: ${data.name}` : null,
+            data.email ? `Email: ${data.email}` : null,
+            data.phone ? `Phone: ${data.phone}` : null,
+            data.address ? `Address: ${data.address}` : null
+          ].filter(Boolean).join(" | ");
+
+          const holidayScopeClear = [
+            data.occasion ? `Holiday: ${data.occasion}` : null,
+            data.vibe ? `Vibe: ${data.vibe}` : null,
+            data.trees ? `Trees: ${data.trees}` : null,
+            data.tallest ? `Tallest Tree: ${data.tallest}` : null,
+            data.tree_style ? `Tree Style: ${data.tree_style}` : null,
+            data.tree_ribbon ? `Tree Ribbon: ${data.tree_ribbon}` : null,
+            data.wreaths ? `Wreaths: ${data.wreaths}` : null,
+            data.garland_sections ? `Garland Sections: ${data.garland_sections}` : null,
+            data.stair_sections ? `Stair/Railing Sections: ${data.stair_sections}` : null,
+            data.mantle ? `Mantle: ${data.mantle}` : null,
+            data.tablescapes ? `Tablescapes/Vignettes: ${data.tablescapes}` : null
+          ].filter(Boolean).join(" | ");
+
+          const installTimelineClear = [
+            data.storage ? `Storage Access: ${data.storage}` : null,
+            data.shopping_trips ? `Shopping Trips: ${data.shopping_trips}` : null,
+            data.teardown ? `Teardown: ${data.teardown}` : null,
+            data.pay ? `Payment: ${data.pay}` : null
+          ].filter(Boolean).join(" | ");
+
+          const requestSummaryClear = [
+            "Holiday Decorating",
+            holidayScopeClear,
+            installTimelineClear,
+            data.notes ? `Notes: ${data.notes}` : null
+          ].filter(Boolean).join(" | ");
 
           // Render estimate (client sees it + you get internal fields)
           const { est, html } = renderEstimate(data);
@@ -525,6 +566,13 @@
           // Add internal-only fields to the Formspree email
           const intakeId = `holiday_${Date.now()}_${Math.random().toString(16).slice(2)}`;
           fd.append("intake_id", intakeId);
+          fd.append("SERVICE_CATEGORY_CLEAR", "Holiday Decorating");
+          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
+          fd.append("HOLIDAY_SCOPE_CLEAR", holidayScopeClear);
+          fd.append("INSTALL_TIMELINE_CLEAR", installTimelineClear);
+          fd.append("TAKEDOWN_NEEDED_CLEAR", data.teardown || "No");
+          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          fd.append("INTERNAL_app_intake_type", "holiday");
 
           fd.append("INTERNAL_install_ballpark", `$${est.price}`);
           fd.append("INTERNAL_team_hours_est", String(est.teamHours));
@@ -537,6 +585,28 @@
           fd.append("INTERNAL_rate_note", `Holiday estimator base: $${est.baseRateTeamHr}/team-hr • min $325 • rounded to $25`);
 
           try{
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
+              await FTAuto.createJobFromIntake({
+                type: "holiday",
+                serviceType: "holiday",
+                intakeData: data,
+                estimate: {
+                  installBallpark: est.price,
+                  teamHours: est.teamHours,
+                  soloHours: est.soloHours,
+                  teardownSelected: data.teardown || "No",
+                  teardownHours: est.teardownHours,
+                  teardownBallpark: est.teardownPrice,
+                  recommendedTimeBlock: labelFromTeamHours(est.teamHours, data.occasion || "")
+                },
+                summary: requestSummaryClear
+              });
+            }
+          } catch(err){
+            console.warn("Could not create app intake from holiday form (Formspree backup will still send):", err);
+          }
+
+          try{
             const resp = await fetch(form.action, {
               method: "POST",
               headers: { "Accept": "application/json" },
@@ -545,10 +615,8 @@
 
             if (resp.ok){
               if (successCard){
-                // Create a Book Now button right in the success card
-                successCard.innerHTML =
-                  `Thanks! We’ve received your intake. We’ll follow up to confirm details and finalize your estimate.<br><br>
-                   <a class="btn btn-solid" href="${SQUARE_BOOKING_BASE}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;">Book Now</a>`;
+                successCard.textContent =
+                  "Thanks! We’ve received your holiday decorating intake. We’ll review your details and follow up with a tailored ballpark estimate and next steps.";
                 successCard.style.display = "block";
               }
               form.reset();
@@ -565,7 +633,7 @@
           } finally {
             if (submitBtn){
               submitBtn.disabled = false;
-              submitBtn.textContent = "Get Holiday Estimate";
+              submitBtn.textContent = "Submit Holiday Intake";
             }
           }
         }, true);
