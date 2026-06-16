@@ -314,6 +314,7 @@
   </script>
 
   <script src="script.js?v=7" defer></script>
+  <script src="ft-auto.js" defer></script>
 
   <!-- Internal recommendation engine (emails to YOU only; never shown to client) -->
   <script>
@@ -535,16 +536,66 @@
 
           const fd = new FormData(form);
 
-          // Build data object (non-file fields) for internal ops rec
+          // Build data object (non-file fields) for internal ops rec and app intake backup
           const data = {};
           fd.forEach((v, k) => {
             // keep files in FormData for Formspree upload; but ignore them for math
             if (k === "media_photos" || k === "media_video") return;
-            data[k] = v;
+
+            if (data[k] != null){
+              if (Array.isArray(data[k])) data[k].push(v);
+              else data[k] = [data[k], v];
+            } else {
+              data[k] = v;
+            }
           });
+
+          const organizingAreasClear = [
+            data.org_area ? `Primary Area: ${data.org_area}` : null,
+            data.spaces ? `Spaces: ${data.spaces}` : null,
+            data.home_sqft ? `Home Size: ${data.home_sqft}` : null,
+            data.org_size ? `Area Size: ${data.org_size}` : null
+          ].filter(Boolean).join(" | ");
+
+          const organizingGoalsClear = [
+            data.org_service_type ? `Service Type: ${data.org_service_type}` : null,
+            data.org_goal ? `Goal: ${data.org_goal}` : null,
+            data.org_clutter ? `Clutter: ${data.org_clutter}` : null,
+            data.org_volume ? `Volume: ${data.org_volume}` : null,
+            data.org_decision_speed ? `Decision Speed: ${data.org_decision_speed}` : null,
+            data.org_containers ? `Containers: ${data.org_containers}` : null
+          ].filter(Boolean).join(" | ");
+
+          const schedulingClear = [
+            data.org_cadence ? `Cadence: ${data.org_cadence}` : null,
+            data.availability ? `Preferred Days/Times: ${data.availability}` : null,
+            data.org_style ? `Decision Preference: ${data.org_style}` : null
+          ].filter(Boolean).join(" | ");
+
+          const clientContactClear = [
+            data.name ? `Name: ${data.name}` : null,
+            data.email ? `Email: ${data.email}` : null,
+            data.phone ? `Phone: ${data.phone}` : null,
+            data.address ? `Address: ${data.address}` : null
+          ].filter(Boolean).join(" | ");
+
+          const requestSummaryClear = [
+            "Organizing",
+            organizingAreasClear,
+            organizingGoalsClear,
+            data.notes ? `Notes: ${data.notes}` : null,
+            data.addons ? `Add-ons: ${data.addons}` : null
+          ].filter(Boolean).join(" | ");
 
           const intakeId = `org_${Date.now()}_${Math.random().toString(16).slice(2)}`;
           fd.append("intake_id", intakeId);
+          fd.append("SERVICE_CATEGORY_CLEAR", "Home Organizing");
+          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
+          fd.append("ORGANIZING_AREAS_CLEAR", organizingAreasClear);
+          fd.append("ORGANIZING_GOALS_CLEAR", organizingGoalsClear);
+          fd.append("SCHEDULING_PREFERENCES_CLEAR", schedulingClear);
+          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          fd.append("INTERNAL_app_intake_type", "organizing");
 
           const rec = window.__FTT_ORG_REC__?.computeRecommendation
             ? window.__FTT_ORG_REC__.computeRecommendation(data)
@@ -566,6 +617,32 @@
 
             fd.append("INTERNAL_complexity_score", String(rec.points));
             fd.append("INTERNAL_notes", (rec.internalNotes || []).join(" | "));
+          }
+
+          try{
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
+              await FTAuto.createJobFromIntake({
+                type: "organizing",
+                intakeData: data,
+                estimate: rec ? {
+                  tier: rec.tier,
+                  sessions: rec.sessions,
+                  sessionHours: rec.sessionHours,
+                  organizers: rec.organizers,
+                  scheduleSuggestion: rec.scheduleSuggestion,
+                  clientBallparkLow: rec.clientBallparkLow,
+                  clientBallparkHigh: rec.clientBallparkHigh,
+                  clientPerSessionStarting: rec.clientPerSessionStarting,
+                  subHourlyMid: rec.subHourlyMid,
+                  subFlatPerOrganizer: rec.subFlatPerOrganizer,
+                  subFlatTeamPerSession: rec.subFlatTeamPerSession,
+                  complexityScore: rec.points
+                } : null,
+                summary: requestSummaryClear
+              });
+            }
+          } catch(err){
+            console.warn("Could not create app intake from organizing form (Formspree backup will still send):", err);
           }
 
           // Send to Formspree (AJAX). Do NOT set Content-Type manually.
