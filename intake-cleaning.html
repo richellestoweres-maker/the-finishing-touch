@@ -125,6 +125,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+            <a role="menuitem" href="intake-staging.html">Staging & Styling</a>
             <a role="menuitem" href="intake-holiday.html">Holiday & Event (Indoor)</a>
           </div>
         </div>
@@ -675,12 +676,12 @@
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_terms" value="Yes" required>
-          <span>I agree to the service terms including scheduling, access, cancellation, safety, and ballpark/final pricing policies. <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+          <span>I agree to the service terms including scheduling, access, cancellation, safety, and scope adjustments if needed. <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
         </label>
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_updates" value="Yes">
-          <span>Okay to contact me by email/SMS with scheduling, invoices, updates, and offers.</span>
+          <span>Okay to contact me by email/SMS with scheduling, service updates, and offers.</span>
         </label>
       </fieldset>
 
@@ -712,7 +713,7 @@
   </script>
 
   <script src="script.js?v=11" defer></script>
-  <script src="ft-auto.js" defer></script>
+  <script type="module" src="ft-auto.js"></script>
 
   <!-- Cleaning conditional logic + internal pricing + payout engine + Formspree upload submission -->
   <script>
@@ -1079,10 +1080,51 @@
           const contractorsPoolSuggested_ifIndividuals = Math.max(0, remainingAfterSub - (remainingAfterSub * (TAX_PCT_OF_REMAINDER + PROFIT_PCT_OF_REMAINDER)) - ownerWageSuggested_ifIndividuals);
           const contractorPayEachSuggested_ifIndividuals = cleanerCount ? (contractorsPoolSuggested_ifIndividuals / cleanerCount) : 0;
 
-          fd.append("HOME_LAYOUT_CLEAR", homeLayoutSummary);
-          fd.append("PROPERTY_DETAILS_CLEAR", propertyDetailsSummary);
-          fd.append("SPECIALTY_ADDONS_CLEAR", specialtySummary);
-          fd.append("SPECIALTY_ADDON_NOTES_CLEAR", data.specialty_addon_notes || "");
+          const clientContactClear = [
+            data.name ? `Name: ${data.name}` : null,
+            data.email ? `Email: ${data.email}` : null,
+            data.phone ? `Phone: ${data.phone}` : null,
+            data.address ? `Address: ${data.address}` : null
+          ].filter(Boolean).join(" | ");
+
+          const schedulingPreferencesClear = [
+            data.frequency ? `Frequency: ${data.frequency}` : null,
+            data.availability ? `Preferred Days/Times: ${data.availability}` : null,
+            estimateMethod === "walkthrough" ? "Walkthrough requested" : "Photo/video review requested",
+            data.walkthrough_notes ? `Walkthrough Availability: ${data.walkthrough_notes}` : null
+          ].filter(Boolean).join(" | ");
+
+          const requestSummaryClear = [
+            "Cleaning",
+            propertyDetailsSummary,
+            schedulingPreferencesClear,
+            specialtySummary && specialtySummary !== "None selected" ? `Specialty Add-Ons: ${specialtySummary}` : null,
+            data.specialty_addon_notes ? `Specialty Notes: ${data.specialty_addon_notes}` : null,
+            data.notes ? `Focus Areas: ${data.notes}` : null,
+            data.airbnb_notes ? `Airbnb Notes: ${data.airbnb_notes}` : null,
+            data.commercial_notes ? `Commercial Notes: ${data.commercial_notes}` : null,
+            data.construction_notes ? `Construction Notes: ${data.construction_notes}` : null
+          ].filter(Boolean).join(" | ");
+
+          data.SERVICE_CATEGORY_CLEAR = "Cleaning";
+          data.CLIENT_CONTACT_CLEAR = clientContactClear;
+          data.HOME_LAYOUT_CLEAR = homeLayoutSummary;
+          data.PROPERTY_DETAILS_CLEAR = propertyDetailsSummary;
+          data.SPECIALTY_ADDONS_CLEAR = specialtySummary;
+          data.SPECIALTY_ADDON_NOTES_CLEAR = data.specialty_addon_notes || "";
+          data.SCHEDULING_PREFERENCES_CLEAR = schedulingPreferencesClear;
+          data.REQUEST_SUMMARY_CLEAR = requestSummaryClear;
+          data.INTERNAL_app_intake_type = "cleaning";
+
+          fd.append("SERVICE_CATEGORY_CLEAR", data.SERVICE_CATEGORY_CLEAR);
+          fd.append("CLIENT_CONTACT_CLEAR", data.CLIENT_CONTACT_CLEAR);
+          fd.append("HOME_LAYOUT_CLEAR", data.HOME_LAYOUT_CLEAR);
+          fd.append("PROPERTY_DETAILS_CLEAR", data.PROPERTY_DETAILS_CLEAR);
+          fd.append("SPECIALTY_ADDONS_CLEAR", data.SPECIALTY_ADDONS_CLEAR);
+          fd.append("SPECIALTY_ADDON_NOTES_CLEAR", data.SPECIALTY_ADDON_NOTES_CLEAR);
+          fd.append("SCHEDULING_PREFERENCES_CLEAR", data.SCHEDULING_PREFERENCES_CLEAR);
+          fd.append("REQUEST_SUMMARY_CLEAR", data.REQUEST_SUMMARY_CLEAR);
+          fd.append("INTERNAL_app_intake_type", data.INTERNAL_app_intake_type);
 
           fd.append("INTERNAL_estimate_method", estimateMethod);
           fd.append("INTERNAL_property_type", data.property_type || "");
@@ -1118,10 +1160,9 @@
 
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
-              const summary = `${data.property_type || "Cleaning"} — ${data.service || "Cleaning"} — ${homeLayoutSummary} — ${data.sqft || "No sqft"} sq ft${specialtyAddOns.length ? " — Specialty: " + specialtySummary : ""}`;
-
               await FTAuto.createJobFromIntake({
                 type: "cleaning",
+                serviceType: "cleaning",
                 intakeData: data,
                 estimate: {
                   price: totalPrice,
@@ -1138,11 +1179,11 @@
                   contractorsPoolSuggested_ifIndividuals,
                   contractorPayEachSuggested_ifIndividuals
                 },
-                summary
+                summary: requestSummaryClear
               });
             }
           } catch(err){
-            console.warn("Could not create job from intake (ok to ignore):", err);
+            console.warn("Could not save intake to app Intake Inbox. Formspree/Zapier backup should still send:", err);
           }
 
           try{
