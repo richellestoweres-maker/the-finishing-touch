@@ -71,6 +71,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+            <a role="menuitem" href="intake-staging.html">Staging & Styling</a>
             <a role="menuitem" href="intake-holiday.html">Holiday Decorating (Indoor)</a>
           </div>
         </div>
@@ -87,8 +88,8 @@
     <div class="intake-script">Holiday Decorating (Indoor) Intake</div>
 
     <p class="intake-note">
-      Tell us your holiday vibe so we can review your indoor decorating request, provide a tailored ballpark install estimate, and recommend next steps.
-      Optional teardown after the season can also be requested. Uploading photos/video helps us quote accurately.
+      Tell us your holiday vibe so we can review your indoor decorating request and recommend next steps.
+      Optional teardown after the season can also be requested. Uploading photos/video helps us review the scope more accurately.
     </p>
 
     <!-- Formspree (uploads enabled) -->
@@ -208,7 +209,7 @@
       <!-- Media Uploads (match cleaning/organizing) -->
       <div class="fieldset grid-1">
         <p class="hint" style="margin:0 0 8px;">
-          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us quote accurately.
+          <strong>Photos/Video (optional):</strong> Upload <strong>3–10 photos</strong> and/or <strong>1 short video</strong> to help us review the scope accurately.
           Best shots: living room, tree area, mantle, stairs/railings, entryway, and your main decor zones/storage access.
         </p>
 
@@ -244,7 +245,7 @@
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_updates" value="Yes">
-          <span>Okay to contact me by email/SMS with scheduling, invoices, updates, and offers.</span>
+          <span>Okay to contact me by email/SMS with scheduling and project updates.</span>
         </label>
       </fieldset>
 
@@ -274,9 +275,9 @@
     })();
   </script>
 
-  <script src="ft-auto.js" defer></script>
+  <script type="module" src="ft-auto.js"></script>
 
-  <!-- Holiday page logic: visibility + uploads validation + instant estimate + Formspree submit -->
+  <!-- Holiday page logic: visibility + uploads validation + internal estimate + Formspree/app intake submit -->
   <script>
     (function(){
       // Upload constraints (same pattern as cleaning)
@@ -462,16 +463,7 @@
         function renderEstimate(data){
           const est = calcHolidayLocal(data);
           const label = labelFromTeamHours(est.teamHours, data.occasion || "");
-          const parts = [
-            `<strong>Install (ballpark): $${est.price}</strong>`,
-            `Estimated time: ${est.soloHours} solo hrs (~${est.teamHours} hrs with 2 stylists)`,
-          ];
-          if (est.teardownHours){
-            parts.push(`Teardown (optional): ~${est.teardownHours} hrs • approx <strong>$${est.teardownPrice}</strong>`);
-          }
-          parts.push(`<span class="hint">Materials (ribbon/ornaments/garland/props) are separate and billed to your budget.</span>`);
-          parts.push(`<span class="hint">Recommended: ${label}. Square opens in a new tab—choose the closest matching time block.</span>`);
-          return { est, html: parts.join("<br>") };
+          return { est, label };
         }
 
         form.addEventListener("submit", async (e) => {
@@ -549,35 +541,35 @@
             data.notes ? `Notes: ${data.notes}` : null
           ].filter(Boolean).join(" | ");
 
-          // Render estimate (client sees it + you get internal fields)
-          const { est, html } = renderEstimate(data);
+          // Internal estimate only for admin review/Zapier fields
+          const { est, label: recommendedTimeBlock } = renderEstimate(data);
 
-          // On-page estimate card
-          if (estimateCard){
-            estimateCard.innerHTML = html;
-            estimateCard.style.display = "block";
-          }
-
-          // Add internal-only fields to the Formspree email
+          // Add internal-only fields to the Formspree email and app intake
           const intakeId = `holiday_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-          fd.append("intake_id", intakeId);
-          fd.append("SERVICE_CATEGORY_CLEAR", "Holiday Decorating");
-          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
-          fd.append("HOLIDAY_SCOPE_CLEAR", holidayScopeClear);
-          fd.append("INSTALL_TIMELINE_CLEAR", installTimelineClear);
-          fd.append("TAKEDOWN_NEEDED_CLEAR", data.teardown || "No");
-          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
-          fd.append("INTERNAL_app_intake_type", "holiday");
-
-          fd.append("INTERNAL_install_ballpark", `$${est.price}`);
-          fd.append("INTERNAL_team_hours_est", String(est.teamHours));
-          fd.append("INTERNAL_solo_hours_est", String(est.soloHours));
-          fd.append("INTERNAL_teardown_selected", (data.teardown || "No"));
-          if (est.teardownHours){
-            fd.append("INTERNAL_teardown_hours_est", String(est.teardownHours));
-            fd.append("INTERNAL_teardown_ballpark", `$${est.teardownPrice}`);
+          function setClearField(key, value){
+            const cleanValue = value == null ? "" : String(value);
+            data[key] = cleanValue;
+            fd.append(key, cleanValue);
           }
-          fd.append("INTERNAL_rate_note", `Holiday estimator base: $${est.baseRateTeamHr}/team-hr • min $325 • rounded to $25`);
+
+          setClearField("intake_id", intakeId);
+          setClearField("SERVICE_CATEGORY_CLEAR", "Holiday Decorating");
+          setClearField("CLIENT_CONTACT_CLEAR", clientContactClear);
+          setClearField("HOLIDAY_SCOPE_CLEAR", holidayScopeClear);
+          setClearField("INSTALL_TIMELINE_CLEAR", installTimelineClear);
+          setClearField("TAKEDOWN_NEEDED_CLEAR", data.teardown || "No");
+          setClearField("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          setClearField("INTERNAL_app_intake_type", "holiday");
+
+          setClearField("INTERNAL_install_ballpark", `$${est.price}`);
+          setClearField("INTERNAL_team_hours_est", String(est.teamHours));
+          setClearField("INTERNAL_solo_hours_est", String(est.soloHours));
+          setClearField("INTERNAL_teardown_selected", (data.teardown || "No"));
+          if (est.teardownHours){
+            setClearField("INTERNAL_teardown_hours_est", String(est.teardownHours));
+            setClearField("INTERNAL_teardown_ballpark", `$${est.teardownPrice}`);
+          }
+          setClearField("INTERNAL_rate_note", `Holiday estimator base: $${est.baseRateTeamHr}/team-hr • min $325 • rounded to $25`);
 
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
@@ -592,13 +584,13 @@
                   teardownSelected: data.teardown || "No",
                   teardownHours: est.teardownHours,
                   teardownBallpark: est.teardownPrice,
-                  recommendedTimeBlock: labelFromTeamHours(est.teamHours, data.occasion || "")
+                  recommendedTimeBlock
                 },
                 summary: requestSummaryClear
               });
             }
           } catch(err){
-            console.warn("Could not create app intake from holiday form (Formspree backup will still send):", err);
+            console.warn("Could not save holiday intake to app Intake Inbox (Formspree backup will still send):", err);
           }
 
           try{
@@ -611,7 +603,7 @@
             if (resp.ok){
               if (successCard){
                 successCard.textContent =
-                  "Thanks! We’ve received your holiday decorating intake. We’ll review your details and follow up with a tailored ballpark estimate and next steps.";
+                  "Thanks! We’ve received your holiday decorating intake. We’ll review your details and follow up with next steps.";
                 successCard.style.display = "block";
               }
               form.reset();
