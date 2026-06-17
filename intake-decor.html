@@ -61,6 +61,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+            <a role="menuitem" href="intake-staging.html">Staging & Styling</a>
             <a role="menuitem" href="intake-holiday.html">Holiday & Event (Indoor)</a>
           </div>
         </div>
@@ -77,7 +78,7 @@
     <h1 class="intake-title">The Finishing Touch</h1>
     <div class="intake-script">Interior Decorating Intake</div>
     <p class="intake-note">
-      Complete this brief intake so we can review your decorating project and follow up with a tailored ballpark estimate, recommended approach, and next steps.
+      Complete this brief intake so we can review your decorating project and follow up with a recommended approach and next steps.
     </p>
 
     <form id="intakeFormDecor" class="grid-1"
@@ -240,8 +241,8 @@
 
   <!-- Your site JS (pricing etc.) -->
   <script src="script.js?v=8" defer></script>
-  <!-- Optional helper exposing FTAuto.createJobFromIntake(...) -->
-  <script src="ft-auto.js" defer></script>
+  <!-- App intake helper: saves to Admin Dashboard Intake Inbox -->
+  <script type="module" src="ft-auto.js"></script>
 
   <!-- OVERRIDE: Estimate + Firestore app intake backup + Formspree/Zapier backup -->
   <script>
@@ -297,19 +298,24 @@
 
           const fd = new FormData(form);
           const data = {};
-          fd.forEach((v,k)=>{ data[k] = data[k] ? [].concat(data[k], v) : v; });
+          fd.forEach((v,k)=>{
+            if (data[k] != null){
+              if (Array.isArray(data[k])) data[k].push(v);
+              else data[k] = [data[k], v];
+            } else {
+              data[k] = v;
+            }
+          });
 
           let price = null;
           try{
             if (typeof calcDecor === 'function'){
               price = calcDecor(data);
-              if (estEl) estEl.innerHTML = `Ballpark Estimate: <strong>$${price}</strong>`;
-            } else if (estEl) {
-              estEl.textContent = "Thanks — your decorating intake is ready to submit.";
             }
+            if (estEl) estEl.textContent = "";
           } catch(err){
-            console.warn("Decor estimate error:", err);
-            if (estEl) estEl.textContent = "Thanks — your decorating intake is ready to submit.";
+            console.warn("Decor internal estimate error:", err);
+            if (estEl) estEl.textContent = "";
           }
 
           const hours = estimateHoursDecorLocal(data);
@@ -347,16 +353,22 @@
             data.notes ? `Notes: ${data.notes}` : null
           ].filter(Boolean).join(" | ");
 
-          fd.append("SERVICE_CATEGORY_CLEAR", "Interior Decorating / Styling");
-          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
-          fd.append("DECOR_SCOPE_CLEAR", decorScopeClear);
-          fd.append("STYLE_GOALS_CLEAR", styleGoalsClear);
-          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
-          fd.append("RECOMMENDED_TIME_BLOCK_CLEAR", hint);
-          fd.append("INTERNAL_app_intake_type", "decor");
-          fd.append("INTERNAL_team_hours", String(hours.teamHours));
-          fd.append("INTERNAL_solo_hours", String(hours.soloHours));
-          if (price != null) fd.append("INTERNAL_price_estimate", `$${Math.round(Number(price))}`);
+          function setClearField(key, value){
+            const cleanValue = value == null ? "" : String(value);
+            data[key] = cleanValue;
+            fd.append(key, cleanValue);
+          }
+
+          setClearField("SERVICE_CATEGORY_CLEAR", "Interior Decorating / Styling");
+          setClearField("CLIENT_CONTACT_CLEAR", clientContactClear);
+          setClearField("DECOR_SCOPE_CLEAR", decorScopeClear);
+          setClearField("STYLE_GOALS_CLEAR", styleGoalsClear);
+          setClearField("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          setClearField("RECOMMENDED_TIME_BLOCK_CLEAR", hint);
+          setClearField("INTERNAL_app_intake_type", "decor");
+          setClearField("INTERNAL_team_hours", String(hours.teamHours));
+          setClearField("INTERNAL_solo_hours", String(hours.soloHours));
+          if (price != null) setClearField("INTERNAL_price_estimate", `$${Math.round(Number(price))}`);
 
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === 'function'){
@@ -369,7 +381,7 @@
               });
             }
           } catch(err){
-            console.warn("Could not create app intake from decor form (Formspree backup will still send):", err);
+            console.warn("Could not save decor intake to app Intake Inbox (Formspree backup will still send):", err);
           }
 
           try{
@@ -380,7 +392,7 @@
             });
             if (resp.ok){
               if (successCard){
-                successCard.textContent = "Thanks! We’ve received your decorating intake. We’ll review your details and follow up with a tailored ballpark estimate and next steps.";
+                successCard.textContent = "Thanks! We’ve received your decorating intake. We’ll review your details and follow up with next steps.";
                 successCard.style.display = "block";
               }
               form.reset();
@@ -421,7 +433,7 @@
       <button data-q="pricing">Pricing</button>
       <button data-q="availability">Availability</button>
       <button data-q="services">Services</button>
-      <button data-q="book">Book now</button>
+      <button data-q="intake">Start intake</button>
       <button data-q="human">Talk to a person</button>
       <button data-q="help">Help me choose</button>
     </div>
@@ -433,7 +445,6 @@
       const FTT_CFG = {
         timezone: "America/Chicago",
         intakeAnchor: "intake-decor.html",
-        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
         email: "contact.thefinishingtouch.tx@gmail.com",
         messengerDeepLink: "https://m.me/thefinishingtouch.tx",
         hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" },
@@ -460,22 +471,21 @@
       }
       function answer(intent){
         const intakeLink = `<a href="${FTT_CFG.intakeAnchor}">Start Intake</a>`;
-        const bookLink = `<a href="${FTT_CFG.bookUrl}" target="_blank" rel="noopener">Book now</a>`;
         switch(intent){
           case "pricing":
             return [
               "Decor refreshes typically start near $450–$500 per room and scale with scope/sourcing.",
-              "You’ll see a tailored ballpark after this intake. " + intakeLink + " or " + bookLink + "."
+              "You’ll see a tailored ballpark after this intake. " + intakeLink + " or submit this intake."
             ].join("<br>");
           case "availability":
-            return ["Availability is live in Square.", bookLink + " to see current openings, or " + intakeLink + " and I’ll route you."].join("<br>");
+            return ["Please submit this intake with your preferred timeline, and we’ll follow up with next steps."].join("<br>");
           case "services":
             return [
               "Interior decorating & light staging, including sourcing, styling, and install.",
               "Options range from styling-only to full-room redesign.",
-              "Start here: " + intakeLink + " • Or jump to " + bookLink + "."
+              "Start here: " + intakeLink + "."
             ].join("<br>");
-          case "book": return "Perfect—" + bookLink + " (Square opens in a new tab), or " + intakeLink + " first for a tailored estimate.";
+          case "book": return "Perfect — please complete this intake and we’ll review your project details.";
           case "human":
             return `You can <a href="${FTT_CFG.messengerDeepLink}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${FTT_CFG.email}">${FTT_CFG.email}</a> and we’ll reply ASAP.`;
           case "recommend":
@@ -484,7 +494,7 @@
               "<em>Styling only:</em> shorter visits focused on textiles/art.",
               "<em>Refresh + small sourcing:</em> styling plus a few new pieces.",
               "<em>Full room redesign:</em> sourcing + install for a full transformation.",
-              `Ready to book? ${bookLink} (opens in a new tab). Or ${intakeLink} for a tailored estimate first.`
+              `Ready to begin? ${intakeLink} and we’ll review your project details.`
             ].join("<br>");
           default:
             return ["I can help with pricing, availability, and services.", "Try “what’s your pricing?” or “do you have Friday slots?”", "Say “human” any time to talk to a person."].join("<br>");
@@ -502,7 +512,7 @@
         launcher.addEventListener("click", ()=>{ panel.hidden=false; if (!thread.dataset.greeted){ add("Hi! I’m your AI concierge. Ask me about pricing, availability, or services. Say “human” anytime.","bot"); thread.dataset.greeted="1"; } input.focus(); });
         closeBtn.addEventListener("click", ()=>{ panel.hidden=true; });
         form.addEventListener("submit",(e)=>{ e.preventDefault(); const text=input.value.trim(); if(!text) return; add(text,"me"); input.value=""; setTimeout(()=> add(answer(detectIntent(text))),200); });
-        quick.addEventListener("click",(e)=>{ if(e.target.matches("button[data-q]")){ const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; add(e.target.textContent,"me"); setTimeout(()=> add(answer(intent)),200); } });
+        quick.addEventListener("click",(e)=>{ if(e.target.matches("button[data-q]")){ const map={pricing:"pricing",availability:"availability",services:"services",book:"book",intake:"book",human:"human",help:"recommend"}; const intent=map[e.target.getAttribute("data-q")]||"fallback"; add(e.target.textContent,"me"); setTimeout(()=> add(answer(intent)),200); } });
       }
       document.addEventListener("DOMContentLoaded", init);
     })();
