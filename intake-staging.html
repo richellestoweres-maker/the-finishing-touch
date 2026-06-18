@@ -38,13 +38,13 @@
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <a href="https://www.thefinishingtouch-tx.com/index.html" class="brand-link">
+        <a href="client-dashboard.html" class="brand-link">
           <span class="vase-logo" aria-hidden="true"></span>
           <span class="brand-name">The Finishing Touch</span>
         </a>
       </div>
       <nav class="main-nav">
-        <a href="https://www.thefinishingtouch-tx.com/index.html">Home</a>
+        <a href="client-dashboard.html">Client Portal</a>
 
         <div class="quote-dropdown" id="quoteDropdown">
           <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu" type="button">
@@ -63,7 +63,7 @@
   </header>
 
   <div class="mini-bar">
-    <a class="btn btn-outline" href="https://www.thefinishingtouch-tx.com/index.html">← Back to Home</a>
+    <a class="btn btn-outline" href="client-dashboard.html">← Back to Client Portal</a>
   </div>
 
   <main class="intake-wrap">
@@ -517,7 +517,7 @@
 
         <label style="display:flex;gap:.6rem;align-items:flex-start;">
           <input type="checkbox" name="consent_updates" value="Yes">
-          <span>Okay to contact me by email/SMS with scheduling, proposals, updates, and offers.</span>
+          <span>Okay to contact me by email/SMS with scheduling, proposals, and project updates.</span>
         </label>
       </fieldset>
 
@@ -549,7 +549,7 @@
   </script>
 
   <script src="script.js?v=9" defer></script>
-  <script src="ft-auto.js" defer></script>
+  <script type="module" src="ft-auto.js"></script>
 
   <script>
     (function(){
@@ -796,22 +796,28 @@
             data.notes ? `Notes: ${data.notes}` : null
           ].filter(Boolean).join(" | ");
 
-          fd.append("SERVICE_CATEGORY_CLEAR", "Staging & Styling");
-          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
-          fd.append("STAGING_SCOPE_CLEAR", stagingScopeClear);
-          fd.append("PROPERTY_DETAILS_CLEAR", propertyDetailsClear);
-          fd.append("STYLE_GOALS_CLEAR", styleGoalsClear);
-          fd.append("LISTING_TIMELINE_CLEAR", listingTimelineClear);
-          fd.append("CLIENT_SEGMENT_DETAILS_CLEAR", clientSegmentClear);
-          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
-          fd.append("INTERNAL_app_intake_type", "staging");
+          function setClearField(key, value){
+            const cleanValue = value == null ? "" : String(value);
+            data[key] = cleanValue;
+            fd.append(key, cleanValue);
+          }
 
-          fd.append("INTERNAL_estimate_method", estimateMethod);
-          fd.append("INTERNAL_client_segment", data.client_type || "");
-          fd.append("INTERNAL_project_summary", requestSummaryClear);
+          setClearField("SERVICE_CATEGORY_CLEAR", "Staging & Styling");
+          setClearField("CLIENT_CONTACT_CLEAR", clientContactClear);
+          setClearField("STAGING_SCOPE_CLEAR", stagingScopeClear);
+          setClearField("PROPERTY_DETAILS_CLEAR", propertyDetailsClear);
+          setClearField("STYLE_GOALS_CLEAR", styleGoalsClear);
+          setClearField("LISTING_TIMELINE_CLEAR", listingTimelineClear);
+          setClearField("CLIENT_SEGMENT_DETAILS_CLEAR", clientSegmentClear);
+          setClearField("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          setClearField("INTERNAL_app_intake_type", "staging");
+
+          setClearField("INTERNAL_estimate_method", estimateMethod);
+          setClearField("INTERNAL_client_segment", data.client_type || "");
+          setClearField("INTERNAL_project_summary", requestSummaryClear);
 
           if (estimateMethod === "walkthrough"){
-            fd.append("INTERNAL_walkthrough_requested", "Yes");
+            setClearField("INTERNAL_walkthrough_requested", "Yes");
           }
 
           try{
@@ -824,7 +830,7 @@
               });
             }
           } catch(err){
-            console.warn("Could not create job from intake (ok to ignore):", err);
+            console.warn("Could not save staging intake to app Intake Inbox (Formspree backup will still send):", err);
           }
 
           try{
