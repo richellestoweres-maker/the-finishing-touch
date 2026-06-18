@@ -69,6 +69,7 @@
             <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
             <a role="menuitem" href="intake-organizing.html">Organizing</a>
             <a role="menuitem" href="intake-decor.html">Interior Decorating</a>
+            <a role="menuitem" href="intake-staging.html">Staging & Styling</a>
             <a role="menuitem" href="intake-holiday.html">Holiday Decorating (Indoor)</a>
           </div>
         </div>
@@ -85,8 +86,8 @@
     <div class="intake-script">Organizing Intake Form</div>
 
     <p class="intake-note">
-      Complete this brief intake so we can review your project and follow up with a ballpark range and recommended approach.
-      Uploading photos/video (optional) helps us quote accurately.
+      Complete this brief intake so we can review your organizing project and follow up with a recommended approach and next steps.
+      Uploading photos/video (optional) helps us review the scope more accurately.
     </p>
 
     <!-- Formspree (paid uploads enabled) -->
@@ -217,7 +218,7 @@
       <!-- Media Uploads (Formspree handles uploads) -->
       <div class="fieldset grid-1">
         <p class="hint" style="margin:0 0 8px;">
-          <strong>Photos/Video (optional):</strong> Upload 3–10 photos (and an optional short video) to help us quote accurately.
+          <strong>Photos/Video (optional):</strong> Upload 3–10 photos (and an optional short video) to help us review the scope accurately.
           Best shots: wide view of the space, inside cabinets/closet, and the main problem zones.
         </p>
 
@@ -308,9 +309,9 @@
   </script>
 
   <script src="script.js?v=7" defer></script>
-  <script src="ft-auto.js" defer></script>
+  <script type="module" src="ft-auto.js"></script>
 
-  <!-- Internal recommendation engine (emails to YOU only; never shown to client) -->
+  <!-- Internal recommendation engine (for admin/Zapier fields only; never shown to client) -->
   <script>
     (function(){
       // === 4-hour session model ===
@@ -496,7 +497,7 @@
     })();
   </script>
 
-  <!-- Submit: Formspree upload + email ops details to YOU (client sees only success message) -->
+  <!-- Submit: Formspree/Zapier backup + app Intake Inbox save -->
   <script>
     (function(){
       document.addEventListener('DOMContentLoaded', () => {
@@ -582,14 +583,21 @@
           ].filter(Boolean).join(" | ");
 
           const intakeId = `org_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-          fd.append("intake_id", intakeId);
-          fd.append("SERVICE_CATEGORY_CLEAR", "Home Organizing");
-          fd.append("CLIENT_CONTACT_CLEAR", clientContactClear);
-          fd.append("ORGANIZING_AREAS_CLEAR", organizingAreasClear);
-          fd.append("ORGANIZING_GOALS_CLEAR", organizingGoalsClear);
-          fd.append("SCHEDULING_PREFERENCES_CLEAR", schedulingClear);
-          fd.append("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
-          fd.append("INTERNAL_app_intake_type", "organizing");
+
+          function setClearField(key, value){
+            const cleanValue = value == null ? "" : String(value);
+            data[key] = cleanValue;
+            fd.append(key, cleanValue);
+          }
+
+          setClearField("intake_id", intakeId);
+          setClearField("SERVICE_CATEGORY_CLEAR", "Home Organizing");
+          setClearField("CLIENT_CONTACT_CLEAR", clientContactClear);
+          setClearField("ORGANIZING_AREAS_CLEAR", organizingAreasClear);
+          setClearField("ORGANIZING_GOALS_CLEAR", organizingGoalsClear);
+          setClearField("SCHEDULING_PREFERENCES_CLEAR", schedulingClear);
+          setClearField("REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+          setClearField("INTERNAL_app_intake_type", "organizing");
 
           const rec = window.__FTT_ORG_REC__?.computeRecommendation
             ? window.__FTT_ORG_REC__.computeRecommendation(data)
@@ -597,26 +605,27 @@
 
           // Internal-only fields (to your email)
           if (rec){
-            fd.append("INTERNAL_recommended_tier", rec.tier === "Light" ? "Light Organizing (4-hour sessions)" : "Whole-Home Organizing (4-hour sessions)");
-            fd.append("INTERNAL_sessions", `${rec.sessions} session(s) × ${rec.sessionHours} hours`);
-            fd.append("INTERNAL_staffing", `${rec.organizers} organizer(s)`);
-            fd.append("INTERNAL_schedule_suggestion", rec.scheduleSuggestion);
+            setClearField("INTERNAL_recommended_tier", rec.tier === "Light" ? "Light Organizing (4-hour sessions)" : "Whole-Home Organizing (4-hour sessions)");
+            setClearField("INTERNAL_sessions", `${rec.sessions} session(s) × ${rec.sessionHours} hours`);
+            setClearField("INTERNAL_staffing", `${rec.organizers} organizer(s)`);
+            setClearField("INTERNAL_schedule_suggestion", rec.scheduleSuggestion);
 
-            fd.append("INTERNAL_client_ballpark_range", `$${rec.clientBallparkLow} – $${rec.clientBallparkHigh}`);
-            fd.append("INTERNAL_per_session_starting", `$${rec.clientPerSessionStarting} per 4-hour session`);
+            setClearField("INTERNAL_client_ballpark_range", `$${rec.clientBallparkLow} – $${rec.clientBallparkHigh}`);
+            setClearField("INTERNAL_per_session_starting", `$${rec.clientPerSessionStarting} per 4-hour session`);
 
-            fd.append("INTERNAL_sub_pay_mid_hourly", `$${rec.subHourlyMid}/hr (midpoint)`);
-            fd.append("INTERNAL_sub_flat_per_organizer_per_session", `$${rec.subFlatPerOrganizer} (4 hours)`);
-            fd.append("INTERNAL_sub_flat_team_per_session", `$${rec.subFlatTeamPerSession} total team flat`);
+            setClearField("INTERNAL_sub_pay_mid_hourly", `$${rec.subHourlyMid}/hr (midpoint)`);
+            setClearField("INTERNAL_sub_flat_per_organizer_per_session", `$${rec.subFlatPerOrganizer} (4 hours)`);
+            setClearField("INTERNAL_sub_flat_team_per_session", `$${rec.subFlatTeamPerSession} total team flat`);
 
-            fd.append("INTERNAL_complexity_score", String(rec.points));
-            fd.append("INTERNAL_notes", (rec.internalNotes || []).join(" | "));
+            setClearField("INTERNAL_complexity_score", String(rec.points));
+            setClearField("INTERNAL_notes", (rec.internalNotes || []).join(" | "));
           }
 
           try{
             if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
               await FTAuto.createJobFromIntake({
                 type: "organizing",
+                serviceType: "organizing",
                 intakeData: data,
                 estimate: rec ? {
                   tier: rec.tier,
@@ -636,7 +645,7 @@
               });
             }
           } catch(err){
-            console.warn("Could not create app intake from organizing form (Formspree backup will still send):", err);
+            console.warn("Could not save organizing intake to app Intake Inbox (Formspree backup will still send):", err);
           }
 
           // Send to Formspree (AJAX). Do NOT set Content-Type manually.
@@ -651,7 +660,7 @@
               if (statusEl) statusEl.textContent = "";
               if (successCard){
                 successCard.textContent =
-                  "Thanks! We’ve received your intake. We’ll review your details and follow up with a ballpark range and recommended approach.";
+                  "Thanks! We’ve received your organizing intake. We’ll review your details and follow up with next steps.";
                 successCard.style.display = "block";
               }
               form.reset();
