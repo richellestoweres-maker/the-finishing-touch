@@ -320,6 +320,7 @@
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
         <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+        <a class="btn btn-outline" href="client-dashboard.html">Client Portal</a>
       </nav>
     </div>
   </header>
@@ -333,13 +334,19 @@
     <h1 class="intake-title">Virtual Design Intake</h1>
     <p class="intake-script">Thoughtfully Curated, Designed Online</p>
     <p class="microcopy">
-      Tell us about your space, your style, and what you’re hoping to create. Once we review your submission, we’ll follow up with a tailored ballpark estimate and recommended next steps. This form is the first step toward a space that feels elevated, cohesive, and beautifully finished.
+      Tell us about your space, your style, and what you’re hoping to create. Once we review your submission, we’ll follow up with a recommended approach and next steps. This form is the first step toward a space that feels elevated, cohesive, and beautifully finished.
     </p>
   </div>
 
   <main class="intake-wrap">
     <div class="intake-panel">
-      <form id="intakeFormVirtualDesign" class="grid-1" enctype="multipart/form-data" novalidate>
+      <form id="intakeFormVirtualDesign" class="grid-1"
+            method="POST"
+            action="https://formspree.io/f/mzzaogbv"
+            enctype="multipart/form-data"
+            novalidate>
+        <input type="hidden" name="_subject" value="New Virtual Design Intake · The Finishing Touch" />
+        <input type="hidden" name="page" value="intake-virtual-design.html" />
 
         <h2 class="field-heading">Contact Information</h2>
         <p class="section-note">Start with the essentials so we know how to best reach you.</p>
@@ -530,7 +537,7 @@
           <label class="check-row" for="agree_acknowledgement">
             <input id="agree_acknowledgement" type="checkbox" name="agree_acknowledgement" required>
             <span>
-              I have reviewed the <a href="virtualdesign-terms.html">Virtual Design Terms</a> and understand that this is a virtual service, that all pricing shared before review is a ballpark estimate, and that final recommendations are based on the photos, videos, measurements, and project details I provide.
+              I have reviewed the <a href="virtualdesign-terms.html">Virtual Design Terms</a> and understand that this is a virtual service and that recommendations are based on the photos, videos, measurements, and project details I provide.
             </span>
           </label>
 
@@ -569,6 +576,183 @@
   </footer>
 
   <script src="script.js?v=8" defer></script>
+
+
+  <script type="module" src="ft-auto.js"></script>
+
+  <script>
+    (function(){
+      const MAX_PHOTO_MB_EACH = 12;
+      const MAX_VIDEO_MB_EACH = 80;
+
+      function bytesToMB(bytes){
+        return bytes / (1024 * 1024);
+      }
+
+      function filesTooLarge(files, maxMb){
+        return Array.from(files || []).find(file => bytesToMB(file.size) > maxMb);
+      }
+
+      function collectFormData(form){
+        const fd = new FormData(form);
+        const data = {};
+
+        fd.forEach((value, key) => {
+          if (key === "vd_photos" || key === "vd_videos") return;
+
+          if (data[key] != null){
+            if (Array.isArray(data[key])) data[key].push(value);
+            else data[key] = [data[key], value];
+          } else {
+            data[key] = value;
+          }
+        });
+
+        return { fd, data };
+      }
+
+      function setClearField(fd, data, key, value){
+        const cleanValue = value == null ? "" : String(value);
+        data[key] = cleanValue;
+        fd.append(key, cleanValue);
+      }
+
+      function buildClearFields(fd, data){
+        const clientContactClear = [
+          data.name ? `Name: ${data.name}` : null,
+          data.email ? `Email: ${data.email}` : null,
+          data.phone ? `Phone: ${data.phone}` : null,
+          data.location ? `Location: ${data.location}` : null
+        ].filter(Boolean).join(" | ");
+
+        const virtualScopeClear = [
+          data.vd_package ? `Service Type: ${data.vd_package}` : null,
+          data.vd_rooms ? `Rooms/Areas: ${data.vd_rooms}` : null,
+          data.vd_room_types ? `Spaces Included: ${data.vd_room_types}` : null,
+          data.vd_timeline ? `Timeline: ${data.vd_timeline}` : null,
+          data.vd_budget ? `Furnishings/Decor Budget: ${data.vd_budget}` : null
+        ].filter(Boolean).join(" | ");
+
+        const styleGoalsClear = [
+          data.vd_style ? `Design Style: ${data.vd_style}` : null,
+          data.vd_goal ? `Main Goal: ${data.vd_goal}` : null,
+          data.vd_inspo_links ? `Inspiration Links: ${data.vd_inspo_links}` : null,
+          data.vd_painpoints ? `Pain Points: ${data.vd_painpoints}` : null
+        ].filter(Boolean).join(" | ");
+
+        const designDetailsClear = [
+          data.vd_measurements ? `Measurements: ${data.vd_measurements}` : null,
+          data.vd_existing ? `Existing Pieces: ${data.vd_existing}` : null,
+          data.vd_consultation ? `Consultation: ${data.vd_consultation}` : null,
+          data.vd_purchase_option ? `Purchase Option: ${data.vd_purchase_option}` : null,
+          data.vd_sourcing ? `Sourcing: ${data.vd_sourcing}` : null,
+          data.vd_shipping_notes ? `Shipping/Purchase Notes: ${data.vd_shipping_notes}` : null
+        ].filter(Boolean).join(" | ");
+
+        const requestSummaryClear = [
+          "Virtual Design",
+          virtualScopeClear,
+          styleGoalsClear,
+          designDetailsClear,
+          data.notes ? `Notes: ${data.notes}` : null
+        ].filter(Boolean).join(" | ");
+
+        const intakeId = `virtual_design_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
+        setClearField(fd, data, "intake_id", intakeId);
+        setClearField(fd, data, "SERVICE_CATEGORY_CLEAR", "Virtual Design");
+        setClearField(fd, data, "CLIENT_CONTACT_CLEAR", clientContactClear);
+        setClearField(fd, data, "VIRTUAL_DESIGN_SCOPE_CLEAR", virtualScopeClear);
+        setClearField(fd, data, "STYLE_GOALS_CLEAR", styleGoalsClear);
+        setClearField(fd, data, "DESIGN_DETAILS_CLEAR", designDetailsClear);
+        setClearField(fd, data, "REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+        setClearField(fd, data, "INTERNAL_app_intake_type", "virtual_design");
+        setClearField(fd, data, "INTERNAL_service_format", "virtual");
+
+        return { requestSummaryClear };
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("intakeFormVirtualDesign");
+        if (!form) return;
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const statusEl = document.getElementById("emailStatusVirtualDesign");
+        const estimateEl = document.getElementById("estimateVirtualDesign");
+        const photoInput = document.getElementById("vd_photos");
+        const videoInput = document.getElementById("vd_videos");
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+
+          if (statusEl) statusEl.textContent = "";
+          if (estimateEl) estimateEl.textContent = "";
+
+          if (!form.checkValidity()){
+            form.reportValidity();
+            return;
+          }
+
+          const oversizedPhoto = filesTooLarge(photoInput?.files, MAX_PHOTO_MB_EACH);
+          if (oversizedPhoto){
+            if (statusEl) statusEl.textContent = `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
+            return;
+          }
+
+          const oversizedVideo = filesTooLarge(videoInput?.files, MAX_VIDEO_MB_EACH);
+          if (oversizedVideo){
+            if (statusEl) statusEl.textContent = `One of your videos is too large. Please keep each video under ${MAX_VIDEO_MB_EACH}MB.`;
+            return;
+          }
+
+          if (submitBtn){
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting…";
+          }
+
+          const { fd, data } = collectFormData(form);
+          const { requestSummaryClear } = buildClearFields(fd, data);
+
+          try{
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
+              await FTAuto.createJobFromIntake({
+                type: "virtual_design",
+                serviceType: "virtual_design",
+                intakeData: data,
+                summary: requestSummaryClear
+              });
+            }
+          } catch(err){
+            console.warn("Could not save virtual design intake to app Intake Inbox (Formspree backup will still send):", err);
+          }
+
+          try{
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: { "Accept": "application/json" },
+              body: fd
+            });
+
+            if (response.ok){
+              if (statusEl) statusEl.textContent = "Thanks! We’ve received your virtual design intake. We’ll review your details and follow up with next steps.";
+              form.reset();
+            } else {
+              if (statusEl) statusEl.textContent = "We received your intake in the app, but couldn’t send the email backup right now. If needed, please email us directly.";
+            }
+          } catch(err){
+            console.warn(err);
+            if (statusEl) statusEl.textContent = "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+          } finally {
+            if (submitBtn){
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit Virtual Design Intake";
+            }
+          }
+        }, true);
+      });
+    })();
+  </script>
 
   <script type="module">
     import { auth } from "./ft-firebase.js";
