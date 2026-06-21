@@ -1,577 +1,3021 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Operations Suite – The Finishing Touch</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Allura&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css"/>
-<style>
-:root{
-  --bg:#f7f1eb;
-  --paper:#fffdf9;
-  --panel:#fbf7f2;
-  --ink:#241f1c;
-  --muted:#746a63;
-  --muted2:#95887f;
-  --line:#e5d9cf;
-  --line2:#d7c5b8;
-  --taupe:#cbb39c;
-  --taupe2:#b99a80;
-  --champagne:#efe4d7;
-  --blush:#ead0d4;
-  --blush-soft:#fbf0f1;
-  --charcoal:#2f2926;
-  --success:#496b52;
-  --warning:#8a620f;
-  --danger:#8a4444;
-  --shadow:0 22px 60px rgba(42,34,28,.10);
-  --shadow-soft:0 12px 30px rgba(42,34,28,.07);
-  --radius-xl:30px;
-  --radius-lg:22px;
-  --radius-md:16px;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  min-height:100vh;
-  background:
-    linear-gradient(180deg,rgba(255,253,249,.78),rgba(247,241,235,.96)),
-    radial-gradient(circle at 12% 5%,rgba(234,208,212,.45),transparent 28%),
-    radial-gradient(circle at 92% 90%,rgba(203,179,156,.25),transparent 30%),
-    var(--bg);
-  font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;
-  color:var(--ink);
-}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-a{color:inherit}
-.hidden{display:none!important}
-.app-shell{width:min(1240px,96%);margin:20px auto 74px;display:grid;grid-template-columns:286px minmax(0,1fr);gap:18px;align-items:start}
-.app-rail{position:sticky;top:18px;min-height:calc(100vh - 40px);background:rgba(255,253,249,.92);border:1px solid rgba(229,217,207,.95);border-radius:var(--radius-xl);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px;backdrop-filter:blur(18px)}
-.brand{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:8px 6px 17px}
-.brand .logo{width:36px;height:48px;background:url("logo-vase.png") center/contain no-repeat;flex:0 0 auto}
-.brand strong{font-family:"Playfair Display",serif;font-size:1.18rem;line-height:1.08;display:block;letter-spacing:.01em}
-.brand span{display:block;font-size:.78rem;color:var(--muted);font-weight:800;margin-top:2px;letter-spacing:.02em}
-.status-pill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;font-size:.72rem;font-weight:900;border:1px solid var(--line2);background:#fffaf6;color:#6b5140;border-radius:999px;padding:.34rem .72rem;letter-spacing:.02em}
-.status-pill.good{background:#f4fbf4;border-color:#cfe6d0;color:var(--success)}
-.status-pill.warn{background:#fff8e8;border-color:#ead9ad;color:var(--warning)}
-.status-pill.danger{background:#fff1f1;border-color:#ebc6c6;color:var(--danger)}
-.rail-note{color:var(--muted);font-weight:650;line-height:1.55;font-size:.91rem;padding:0 6px}
-.rail-nav{display:grid;gap:7px}
-.navbtn{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:16px;padding:11px 12px;text-align:left;font-weight:850;display:flex;align-items:center;gap:11px;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
-.navbtn .ico{width:28px;height:28px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,#fffdf9,#f7f0ea);display:grid;place-items:center;color:#7c695b;font-size:.7rem;font-weight:900;letter-spacing:.04em;box-shadow:0 6px 14px rgba(42,34,28,.06)}
-.navbtn:hover,.navbtn.active{background:linear-gradient(135deg,#fffdf9,#f7eee8);border-color:var(--line2);color:var(--ink);transform:translateY(-1px)}
-.navbtn.active .ico{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
-.rail-footer{margin-top:auto;display:grid;gap:9px;border-top:1px solid var(--line);padding-top:14px}
-.main{display:grid;gap:16px;min-width:0}
-.topbar{background:rgba(255,253,249,.9);border:1px solid rgba(229,217,207,.95);border-radius:var(--radius-xl);padding:18px 20px;box-shadow:var(--shadow-soft);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;backdrop-filter:blur(16px)}
-.topbar h1{font-family:"Playfair Display",serif;margin:0;font-size:clamp(1.55rem,2.5vw,2.35rem);letter-spacing:.01em}
-.topbar p{margin:5px 0 0;color:var(--muted);font-weight:650}
-.who{font-size:.84rem;color:var(--muted);font-weight:800;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.app-card{background:rgba(255,253,249,.96);border:1px solid rgba(229,217,207,.95);border-radius:var(--radius-xl);box-shadow:var(--shadow-soft);padding:22px;overflow:hidden}
-.mini-kicker{font-family:Manrope,system-ui,sans-serif;font-size:.76rem;text-transform:uppercase;letter-spacing:.18em;color:#8b6f5a;margin:0 0 9px;font-weight:900}
-.screen-title{font-family:"Playfair Display",serif;font-size:clamp(1.5rem,3vw,2.25rem);line-height:1.05;margin:0;letter-spacing:.01em}
-.screen-copy{color:#61564f;font-weight:650;line-height:1.55}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
-.tile{border:1px solid var(--line);border-radius:var(--radius-lg);background:linear-gradient(180deg,#fffdf9,#fbf7f2);padding:17px;box-shadow:0 8px 22px rgba(42,34,28,.05);position:relative;overflow:hidden}
-.tile::before{content:"";position:absolute;left:17px;top:0;width:38px;height:3px;background:linear-gradient(90deg,var(--taupe2),var(--champagne));border-radius:999px}
-.tile h3{font-family:"Playfair Display",serif;margin:8px 0 6px;font-size:1.05rem}
-.tile strong{display:block;font-size:1.75rem;line-height:1}
-.tile p{color:var(--muted);font-weight:650;margin:6px 0 0;line-height:1.42}
-.section{display:none}.section.active{display:grid;gap:16px}.stack{display:grid;gap:12px}
-.card{border:1px solid var(--line);border-radius:var(--radius-lg);background:rgba(255,253,249,.98);padding:16px;display:grid;gap:10px;box-shadow:0 8px 22px rgba(42,34,28,.05)}
-.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.card-head h3{font-family:"Playfair Display",serif;margin:0;font-size:1.17rem;letter-spacing:.01em}
-.meta{display:flex;gap:7px;flex-wrap:wrap}
-.meta span{display:inline-flex;border:1px solid var(--line);background:#fffaf6;border-radius:999px;padding:.34rem .62rem;color:#5d514b;font-weight:800;font-size:.82rem}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:.72rem 1rem;text-decoration:none;border:0;font-weight:900;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
-.btn:hover{transform:translateY(-1px)}
-.btn-primary{background:linear-gradient(135deg,var(--taupe),#decdbd);color:var(--ink);box-shadow:0 10px 22px rgba(185,154,128,.22)}
-.btn-dark{background:var(--charcoal);color:white}.btn-outline{background:#fffdf9;border:1.5px solid var(--charcoal);color:var(--charcoal)}
-.btn-soft{background:#f8f1ec;border:1px solid var(--line2);color:#6f5949}.btn-danger{background:#fff1f1;border:1px solid #ebc6c6;color:var(--danger)}
-.btn:disabled{opacity:.55;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap}.filters{display:flex;gap:8px;flex-wrap:wrap}
-.field{display:grid;gap:7px;font-weight:850;color:var(--ink)}
-.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);background:#fffdf9;border-radius:16px;padding:.8rem .95rem;outline:none;color:var(--ink)}
-.field textarea{min-height:88px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--taupe2);box-shadow:0 0 0 4px rgba(203,179,156,.18)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
-.empty{border:1px dashed var(--line2);border-radius:var(--radius-lg);padding:26px;text-align:center;color:var(--muted);font-weight:850;background:rgba(255,253,249,.78)}
-.doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;min-width:0}
-.doc-mini{border:1px solid var(--line);background:#fffaf6;border-radius:18px;padding:12px;display:grid;gap:8px}
-.doc-mini strong{font-family:"Playfair Display",serif}.doc-files{display:grid;gap:5px;font-size:.84rem}.doc-files a{color:#6f5949;font-weight:900;word-break:break-all}
-.hint{color:var(--muted);font-weight:700;font-size:.86rem}
-.agreement-scroll{max-height:220px;max-width:100%;overflow:auto;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fffdf9;scrollbar-width:thin;scrollbar-color:#c9b3a2 #fffaf6;white-space:normal}
-.agreement-scroll div{overflow-wrap:anywhere;word-break:break-word;line-height:1.55}
-.agreement-scroll::-webkit-scrollbar{width:10px}.agreement-scroll::-webkit-scrollbar-track{background:#fffaf6}.agreement-scroll::-webkit-scrollbar-thumb{background:#c9b3a2;border-radius:999px}
-.card,.doc-mini,.tile{min-width:0}
-.doc-mini{overflow:hidden}
-.doc-mini .actions{align-items:center}
-.doc-mini .btn{max-width:100%;white-space:normal;text-align:center}
-.doc-files a{overflow-wrap:anywhere;word-break:break-word}
-.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
-.lock-banner{border:1px solid var(--line);border-radius:20px;background:#fffaf6;padding:14px;color:#61554f;font-weight:750;line-height:1.45}
-.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--charcoal);color:#fff;padding:12px 16px;border-radius:999px;box-shadow:0 16px 34px rgba(0,0,0,.24);font-weight:900;z-index:9999;display:none}
-.answer-block{border:1px solid var(--line);border-radius:18px;background:#fffaf6;padding:12px;display:grid;gap:8px}
-.answer-block strong{font-size:.86rem;color:#5d514b}.answer-block p{margin:0;color:#61554f;font-weight:650;line-height:1.5}.score{font-family:"Playfair Display",serif;font-size:2rem;font-weight:700}
-.service-approval{border:1px solid var(--line);border-radius:20px;background:#fffaf6;padding:14px;display:grid;gap:10px}
-.service-checks{display:flex;gap:8px;flex-wrap:wrap}
-.service-check{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:#fffdf9;border-radius:999px;padding:.55rem .78rem;font-weight:900;color:#5d514b}
-.service-check input{accent-color:#8b6f5a}
-.service-note{margin:0;color:var(--muted);font-weight:700;line-height:1.45;font-size:.9rem}
-.danger-zone{border-color:#e5beb8;background:#fff7f5}
-.danger-zone .mini-kicker{color:var(--danger)}
-.setting-row{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fffaf6;padding:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
-.setting-row h3{font-family:"Playfair Display",serif;margin:0 0 5px;font-size:1.17rem}
-.setting-row p{margin:0;color:var(--muted);font-weight:650;line-height:1.5}
-.bottom-nav{display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:900;background:rgba(255,253,249,.94);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:22px;padding:8px;box-shadow:0 15px 40px rgba(42,34,28,.18);grid-template-columns:repeat(6,1fr);gap:4px}
-.bottom-nav button{border:0;background:transparent;border-radius:14px;padding:8px 4px;color:var(--muted);font-size:.72rem;font-weight:900;display:grid;place-items:center;gap:2px}
-.bottom-nav button.active{background:#f8f1ec;color:var(--ink)}.bico{width:18px;height:2px;border-radius:999px;background:currentColor;display:block;opacity:.7}
-@media(max-width:1180px){.doc-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}}
-@media(max-width:940px){.app-shell{grid-template-columns:1fr}.app-rail{position:relative;top:auto;min-height:auto}.rail-nav{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}}
-@media(max-width:680px){.app-shell{width:min(100% - 16px,1180px);margin-top:10px}.app-rail{display:none}.bottom-nav{display:grid}.topbar,.app-card{border-radius:22px}.form-grid{grid-template-columns:1fr}.btn{width:100%}.actions{display:grid}.grid{grid-template-columns:1fr}.doc-grid{grid-template-columns:1fr}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard – The Finishing Touch</title>
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  
+  <style>
+    :root{
+      --portal-bg:#fbf7f4;
+      --portal-card:#fffdfb;
+      --portal-ink:#2f2926;
+      --portal-muted:#7a6f68;
+      --portal-line:#eadfd8;
+      --portal-blush:#f2d8dc;
+      --portal-blush-strong:#e8b9c2;
+      --portal-blush-soft:#fff1f3;
+      --portal-taupe:#d2bda9;
+      --portal-shadow:0 18px 45px rgba(68,54,45,.10);
+      --portal-shadow-soft:0 10px 28px rgba(68,54,45,.08);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(242,216,220,.72), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(210,189,169,.34), transparent 30%),
+        var(--portal-bg);
+      font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--portal-ink);
+    }
+
+    .portal{
+      width:min(1280px,96%);
+      margin:22px auto 60px;
+      display:grid;
+      gap:16px;
+    }
+
+    .topbar{
+      background:rgba(255,253,251,.86);
+      backdrop-filter:blur(18px);
+      border:1px solid rgba(234,223,216,.95);
+      border-radius:30px;
+      padding:18px 20px;
+      box-shadow:var(--portal-shadow);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .brand-mini{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .brand-mini .vase-logo{
+      width:36px;
+      height:48px;
+      background:url("logo-vase.png") center/contain no-repeat;
+      display:inline-block;
+      flex:0 0 auto;
+    }
+
+    .brand-mini > div > div:first-child{
+      font-family:"Playfair Display",serif !important;
+      font-size:1.24rem;
+      color:var(--portal-ink) !important;
+    }
+
+    .rolepill{
+      width:max-content;
+      font-size:.76rem;
+      padding:.28rem .72rem;
+      border-radius:999px;
+      background:var(--portal-blush-soft);
+      border:1px solid var(--portal-blush);
+      color:#7d4f59;
+      font-weight:900;
+      margin-top:5px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .small{
+      font-size:.9rem;
+      color:var(--portal-muted);
+      font-weight:700;
+    }
+
+    .tabs{
+      background:rgba(255,253,251,.78);
+      border:1px solid var(--portal-line);
+      border-radius:26px;
+      padding:12px;
+      box-shadow:var(--portal-shadow-soft);
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:0;
+    }
+
+    .tabbtn{
+      border:1px solid var(--portal-line);
+      background:#fff;
+      color:var(--portal-muted);
+      border-radius:999px;
+      padding:.62rem .92rem;
+      font-weight:900;
+      cursor:pointer;
+      white-space:nowrap;
+      font-family:inherit;
+      transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
+    }
+
+    .tabbtn:hover{
+      transform:translateY(-1px);
+      background:var(--portal-blush-soft);
+      border-color:var(--portal-blush);
+      color:#7d4f59;
+    }
+
+    .tabbtn.active{
+      background:#2f2926;
+      color:#fff;
+      border-color:#2f2926;
+      box-shadow:0 10px 22px rgba(47,41,38,.18);
+    }
+
+    .bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      background:rgba(255,253,251,.78);
+      border:1px solid var(--portal-line);
+      border-radius:26px;
+      padding:12px;
+      box-shadow:var(--portal-shadow-soft);
+      margin-top:0;
+    }
+
+    .filters{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      border:1px solid var(--portal-line);
+      background:#fffdfb;
+      color:var(--portal-muted);
+      border-radius:999px;
+      padding:.45rem .78rem;
+      cursor:pointer;
+      font-weight:900;
+      font-size:.86rem;
+      white-space:nowrap;
+      font-family:inherit;
+    }
+
+    .chip.active{
+      background:var(--portal-blush-soft);
+      border-color:var(--portal-blush-strong);
+      color:#7d4f59;
+    }
+
+    .search{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .search input{
+      border:1px solid var(--portal-line);
+      border-radius:999px;
+      padding:.7rem .95rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      min-width:min(280px,70vw);
+      outline:none;
+      font-family:inherit;
+    }
+
+    .search input:focus{
+      border-color:var(--portal-blush-strong);
+      box-shadow:0 0 0 4px rgba(232,185,194,.18);
+    }
+
+    .panels{
+      margin-top:0;
+    }
+
+    .panel{
+      display:none;
+    }
+
+    .panel.active{
+      display:block;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:14px;
+    }
+
+    .card{
+      background:rgba(255,253,251,.95);
+      border:1px solid var(--portal-line);
+      border-radius:26px;
+      box-shadow:var(--portal-shadow-soft);
+      padding:17px;
+      display:flex;
+      flex-direction:column;
+      gap:11px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0 auto 0 0;
+      width:6px;
+      background:linear-gradient(180deg,var(--portal-blush-strong),var(--portal-taupe));
+      border-radius:999px;
+      opacity:.82;
+    }
+
+    .toprow{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+      padding-left:4px;
+    }
+
+    .toprow strong{
+      font-family:"Playfair Display",serif;
+      font-size:1.16rem;
+      color:var(--portal-ink);
+    }
+
+    .meta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      font-size:.9rem;
+      color:#61554f;
+      font-weight:700;
+      opacity:1;
+    }
+
+    .meta span{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#fff7f8;
+      border:1px solid #f1dce1;
+      border-radius:999px;
+      padding:.32rem .6rem;
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:2px;
+      padding-left:4px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      padding:.62rem .9rem;
+      border-radius:999px;
+      font-weight:900;
+      text-decoration:none;
+      cursor:pointer;
+      font-family:inherit;
+      border:0;
+      transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .btn-outline{
+      border:1.5px solid #2f2926;
+      background:#fffdfb;
+      color:#2f2926;
+    }
+
+    .btn-solid{
+      background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));
+      color:#2f2926;
+      box-shadow:0 10px 22px rgba(232,185,194,.34);
+    }
+
+    .btn-danger{
+      background:#7f1d1d;
+      color:#fff;
+    }
+
+    .empty{
+      text-align:center;
+      padding:28px;
+      background:rgba(255,253,251,.9);
+      border-radius:26px;
+      border:1px dashed #e3cfd4;
+      color:var(--portal-muted);
+      font-weight:800;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      background:rgba(255,253,251,.92);
+      border:1px solid var(--portal-line);
+      border-radius:28px;
+      padding:18px;
+      box-shadow:var(--portal-shadow-soft);
+    }
+
+    .form-grid label{
+      display:grid;
+      gap:6px;
+      font-weight:900;
+      color:var(--portal-ink);
+    }
+
+    .form-grid input,
+    .form-grid select,
+    .form-grid textarea{
+      border:1px solid var(--portal-line);
+      border-radius:16px;
+      padding:.72rem .8rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      outline:none;
+      font-family:inherit;
+    }
+
+    .form-grid input:focus,
+    .form-grid select:focus,
+    .form-grid textarea:focus{
+      border-color:var(--portal-blush-strong);
+      box-shadow:0 0 0 4px rgba(232,185,194,.18);
+    }
+
+    .hint{
+      font-size:.92rem;
+      color:var(--portal-muted);
+      font-weight:700;
+    }
+
+    code{
+      background:var(--portal-blush-soft);
+      border:1px solid var(--portal-blush);
+      color:#7d4f59;
+      border-radius:8px;
+      padding:2px 5px;
+    }
+
+    #panel-estimate .card{
+      border-radius:28px;
+    }
+
+    #estResult{
+      background:#fffdfb !important;
+      border:1px solid var(--portal-line) !important;
+    }
+
+    #admin-help-launcher{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      width:54px;
+      height:54px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));
+      color:#2f2926;
+      font-size:22px;
+      box-shadow:0 14px 30px rgba(68,54,45,.22);
+      cursor:pointer;
+      z-index:9999;
+      font-weight:900;
+    }
+
+    #admin-help{
+      position:fixed;
+      right:20px;
+      bottom:86px;
+      width:360px;
+      max-width:90vw;
+      background:#fffdfb;
+      border:1px solid var(--portal-line);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 20px 50px rgba(68,54,45,.24);
+      z-index:9999;
+      font-family:Manrope,system-ui,sans-serif;
+      display:none;
+    }
+
+    .ah-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      background:#2f2926;
+      color:#fff;
+    }
+
+    .ah-title{font-weight:900}
+    .ah-sub{font-size:12px;opacity:.82}
+    .ah-close{background:transparent;border:none;color:#fff;font-size:24px;cursor:pointer}
+    .ah-thread{max-height:50vh;overflow:auto;padding:12px;background:#fbf7f4;display:flex;flex-direction:column;gap:10px}
+    .ah-bubble{max-width:85%;padding:10px 12px;border-radius:14px;line-height:1.35;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .ah-bubble.bot{background:#fffdfb;border:1px solid var(--portal-line);align-self:flex-start}
+    .ah-bubble.me{background:var(--portal-blush-soft);border:1px solid var(--portal-blush);color:#7d4f59;align-self:flex-end}
+    .ah-input{display:flex;gap:8px;padding:10px;border-top:1px solid var(--portal-line);background:#fff}
+    .ah-input input{flex:1;border:1px solid var(--portal-line);border-radius:999px;padding:10px;font-size:14px}
+    .ah-send{background:#2f2926;color:#fff;border:none;border-radius:999px;padding:0 14px;cursor:pointer;font-weight:900}
+    .ah-quick{display:flex;gap:6px;padding:8px 10px;flex-wrap:wrap;background:#fff;border-top:1px solid var(--portal-line)}
+    .ah-quick button{font-size:12px;border:1px solid var(--portal-line);background:#fffdfb;border-radius:999px;padding:6px 10px;cursor:pointer;font-weight:800}
+
+    @media (max-width:760px){
+      .form-grid{
+        grid-template-columns:1fr;
+      }
+
+      .topbar,
+      .tabs,
+      .bar,
+      .card,
+      .form-grid{
+        border-radius:22px;
+      }
+
+      .search input{
+        min-width:100%;
+      }
+
+      .btn{
+        width:100%;
+      }
+    }
+
+    @media (max-width:640px){
+      #admin-help{right:0;left:0;bottom:0;width:100vw;height:70vh;border-radius:16px 16px 0 0}
+      #admin-help-launcher{right:12px;bottom:12px}
+    }
+  
+    /* === Admin Command Center 2.0 layout upgrade === */
+    .portal{
+      grid-template-columns:270px minmax(0,1fr);
+      align-items:start;
+    }
+    .topbar,.bar,.panels{grid-column:2}
+    .tabs{
+      grid-column:1;
+      grid-row:1 / span 4;
+      position:sticky;
+      top:18px;
+      min-height:calc(100vh - 44px);
+      align-content:start;
+      display:grid;
+      gap:8px;
+      border-radius:30px;
+      padding:18px;
+      background:rgba(255,253,251,.86);
+      backdrop-filter:blur(18px);
+      box-shadow:var(--portal-shadow);
+    }
+    .tabs::before{
+      content:"The Finishing Touch\\A Admin Command Center";
+      white-space:pre-line;
+      font-family:"Playfair Display",serif;
+      font-size:1.1rem;
+      line-height:1.15;
+      color:var(--portal-ink);
+      padding:8px 8px 14px;
+      border-bottom:1px solid var(--portal-line);
+      margin-bottom:8px;
+    }
+    .tabbtn{
+      width:100%;
+      text-align:left;
+      justify-content:flex-start;
+      display:flex;
+      align-items:center;
+      border-radius:18px;
+      border-color:transparent;
+      background:transparent;
+    }
+    .tabbtn::before{
+      width:30px;
+      height:30px;
+      border-radius:12px;
+      background:#fff;
+      display:inline-grid;
+      place-items:center;
+      margin-right:8px;
+      box-shadow:0 6px 18px rgba(68,54,45,.08);
+      content:"✦";
+      flex:0 0 auto;
+    }
+    .tabbtn[data-tab="open"]::before{content:"⌂"}
+    .tabbtn[data-tab="all"]::before{content:"☷"}
+    .tabbtn[data-tab="workflow"]::before{content:"✓"}
+    .tabbtn[data-tab="create"]::before{content:"+"}
+    .tabbtn[data-tab="walkthroughs"]::before{content:"◷"}
+    .tabbtn[data-tab="quotes"]::before{content:"$"}
+    .tabbtn[data-tab="estimate"]::before{content:"♢"}
+    .tabbtn[data-tab="contractors"]::before{content:"👥"}
+    .tabbtn[data-tab="apps"]::before{content:"☑"}
+    .tabbtn[data-tab="compliance"]::before{content:"🛡"}
+    .tabbtn[data-tab="clients"]::before{content:"🏡"}
+    .tabbtn[data-tab="scheduling"]::before{content:"🤖"}
+    .tabbtn[data-tab="calendar"]::before{content:"📅"}
+    .tabbtn[data-tab="payments"]::before{content:"$"}
+    .tabbtn[data-tab="settings"]::before{content:"⚙"}
+
+    .admin-hero{
+      grid-column:2;
+      border-radius:32px;
+      padding:22px;
+      background:linear-gradient(135deg,rgba(242,216,220,.95),rgba(255,253,251,.95) 55%,rgba(210,189,169,.42));
+      border:1px solid var(--portal-line);
+      box-shadow:var(--portal-shadow-soft);
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:16px;
+      align-items:center;
+    }
+    .admin-hero .script{
+      font-family:"Allura",cursive;
+      color:#925e69;
+      font-size:2rem;
+      margin:0 0 4px;
+    }
+    .admin-hero h1{
+      margin:0;
+      font-family:"Playfair Display",serif;
+      font-size:clamp(1.5rem,2.5vw,2.2rem);
+    }
+    .admin-hero p{
+      color:#61554f;
+      font-weight:700;
+    }
+    .admin-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    .admin-stat{
+      background:rgba(255,253,251,.76);
+      border:1px solid var(--portal-line);
+      border-radius:22px;
+      padding:14px;
+    }
+    .admin-stat strong{
+      display:block;
+      font-size:1.35rem;
+    }
+    .admin-stat span{
+      display:block;
+      margin-top:5px;
+      color:var(--portal-muted);
+      font-weight:900;
+      font-size:.78rem;
+    }
+    .placeholder-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+    .placeholder-list li{background:#fff7f8;border:1px solid #f1dce1;border-radius:16px;padding:10px 12px;font-weight:800;color:#61554f}
+    @media(max-width:980px){
+      .portal{grid-template-columns:1fr}
+      .topbar,.bar,.panels,.admin-hero,.tabs{grid-column:1}
+      .tabs{position:relative;top:auto;min-height:auto;grid-row:auto}
+      .admin-hero{grid-template-columns:1fr}
+    }
+    @media(max-width:720px){
+      .admin-stats{grid-template-columns:1fr}
+    }
+
+  
+    .profile-box{margin-top:10px;padding:12px;border:1px solid #f1dce1;border-radius:18px;background:#fff7f8;color:#61554f;font-weight:700;line-height:1.45}
+    .profile-box strong{color:#2f2926}
+    .profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+    .profile-mini{border:1px solid #f1dce1;background:#fffdfb;border-radius:16px;padding:10px}
+    .profile-mini h4{margin:0 0 6px;font-family:"Playfair Display",serif;color:#2f2926;font-size:1rem}
+    .profile-mini p{margin:0;white-space:pre-wrap;word-break:break-word}
+    
+  
+    .walk-media-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+      gap:8px;
+      margin-top:8px;
+    }
+    .walk-media-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      border-radius:14px;
+      border:1px solid #f1dce1;
+      background:#fff7f8;
+      color:#7d4f59;
+      font-weight:900;
+      text-decoration:none;
+      padding:8px 10px;
+      text-align:center;
+      word-break:break-word;
+    }
+    .quote-box{
+      margin-top:8px;
+      padding:12px;
+      border:1px solid #f1dce1;
+      border-radius:18px;
+      background:#fff7f8;
+      color:#61554f;
+      font-weight:800;
+      line-height:1.5;
+    }
+    .quote-box strong{color:#2f2926}
+    .review-note{
+      width:100%;
+      border:1px solid var(--portal-line);
+      border-radius:16px;
+      padding:.72rem .8rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      outline:none;
+      font-family:inherit;
+      min-height:72px;
+      resize:vertical;
+    }
+
+  
+    .compliance-summary{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .compliance-kpi{
+      background:rgba(255,253,251,.95);
+      border:1px solid var(--portal-line);
+      border-radius:24px;
+      box-shadow:var(--portal-shadow-soft);
+      padding:15px;
+    }
+
+    .compliance-kpi strong{
+      display:block;
+      font-size:1.55rem;
+      color:var(--portal-ink);
+    }
+
+    .compliance-kpi span{
+      display:block;
+      color:var(--portal-muted);
+      font-weight:900;
+      font-size:.8rem;
+      margin-top:5px;
+    }
+
+    .doc-review-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .doc-review-card{
+      border:1px solid #f1dce1;
+      background:#fffdfb;
+      border-radius:18px;
+      padding:11px;
+      display:grid;
+      gap:8px;
+    }
+
+    .doc-review-card strong{
+      font-family:"Playfair Display",serif;
+      color:var(--portal-ink);
+    }
+
+    .doc-link{
+      color:#7d4f59;
+      font-weight:900;
+      text-decoration:none;
+      word-break:break-word;
+    }
+
+    .admin-select,
+    .admin-input{
+      border:1px solid var(--portal-line);
+      border-radius:16px;
+      padding:.64rem .75rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      outline:none;
+      font-family:inherit;
+      width:100%;
+      font-weight:800;
+    }
+
+    .admin-select:focus,
+    .admin-input:focus{
+      border-color:var(--portal-blush-strong);
+      box-shadow:0 0 0 4px rgba(232,185,194,.18);
+    }
+
+    .compliance-controls{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .status-pill{
+      width:max-content;
+      max-width:100%;
+      font-size:.76rem;
+      padding:.28rem .7rem;
+      border-radius:999px;
+      background:#fff7f8;
+      border:1px solid #f1dce1;
+      color:#7d4f59;
+      font-weight:900;
+    }
+
+    .status-good{color:#466b4f;background:#f4fbf4;border-color:#cfe6d0}
+    .status-warn{color:#8a5b00;background:#fff8e8;border-color:#f1d99c}
+    .status-bad{color:#7f1d1d;background:#fff1f1;border-color:#f1c5c5}
+
+
+    /* === Job Workflow Center === */
+    .workflow-hero{
+      margin-bottom:14px;
+      border-radius:30px;
+      padding:18px;
+      background:linear-gradient(135deg,rgba(255,241,243,.95),rgba(255,253,251,.96));
+      border:1px solid var(--portal-line);
+      box-shadow:var(--portal-shadow-soft);
+    }
+    .workflow-hero h2{
+      margin:0;
+      font-family:"Playfair Display",serif;
+      font-size:clamp(1.35rem,2.2vw,2rem);
+      color:var(--portal-ink);
+    }
+    .workflow-hero p{margin:6px 0 0;color:#61554f;font-weight:700;line-height:1.45}
+    .workflow-kpis{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:10px;
+      margin-top:14px;
+    }
+    .workflow-kpi{
+      background:rgba(255,253,251,.86);
+      border:1px solid #f1dce1;
+      border-radius:20px;
+      padding:12px;
+    }
+    .workflow-kpi strong{display:block;font-size:1.35rem;color:var(--portal-ink)}
+    .workflow-kpi span{display:block;margin-top:4px;color:var(--portal-muted);font-weight:900;font-size:.78rem}
+    .workflow-controls{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .workflow-progress{
+      height:11px;
+      background:#f3e8e4;
+      border:1px solid #eadfd8;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:6px;
+    }
+    .workflow-progress span{
+      display:block;
+      height:100%;
+      width:0%;
+      background:linear-gradient(135deg,var(--portal-blush-strong),var(--portal-taupe));
+      border-radius:999px;
+    }
+    .workflow-detail{
+      margin-top:8px;
+      padding:12px;
+      border-radius:18px;
+      background:#fffdfb;
+      border:1px solid #f1dce1;
+      color:#61554f;
+      font-weight:800;
+      line-height:1.45;
+    }
+    .workflow-select{
+      border:1px solid var(--portal-line);
+      border-radius:999px;
+      padding:.62rem .82rem;
+      background:#fffdfb;
+      color:var(--portal-ink);
+      font-family:inherit;
+      font-weight:900;
+      max-width:100%;
+    }
+
+
+  </style>
+
 </head>
 <body>
-<div class="app-shell">
-  <aside class="app-rail">
-    <div class="brand"><span class="logo"></span><div><strong>The Finishing Touch</strong><span>Operations Suite</span><div id="rolePill" class="status-pill">Checking…</div></div></div>
-    <div class="rail-note">A private operations suite for applications, scheduling, compliance, jobs, walkthroughs, quotes, clients, contractors, and future W2 readiness.</div>
-    <nav class="rail-nav" id="railNav">
-      <button class="navbtn active" data-section="home"><span class="ico">01</span>Home</button>
-      <button class="navbtn" data-section="applications"><span class="ico">02</span>Applications</button>
-      <button class="navbtn" data-section="intakes"><span class="ico">03</span>Intake Inbox</button>
-      <button class="navbtn" data-section="scheduling"><span class="ico">04</span>Scheduling</button>
-      <button class="navbtn" data-section="compliance"><span class="ico">05</span>Compliance</button>
-      <button class="navbtn" data-section="jobs"><span class="ico">06</span>Jobs</button>
-      <button class="navbtn" data-section="people"><span class="ico">07</span>People</button>
-      <button class="navbtn" data-section="quotes"><span class="ico">08</span>Quotes</button>
-      <button class="navbtn" data-section="walkthroughs"><span class="ico">09</span>Walkthroughs</button>
-      <button class="navbtn" data-section="settings"><span class="ico">10</span>Settings</button>
-    </nav>
-    <div class="rail-footer"><button class="btn btn-soft" data-section="settings" type="button">My Settings</button><a class="btn btn-outline" href="index.html">Home Website</a><button id="signOutBtn" class="btn btn-soft">Sign out</button></div>
-  </aside>
-  <main class="main">
-    <section class="topbar"><div><h1 id="pageTitle">Operations Command Center</h1><p id="pageSub">A refined private workspace for The Finishing Touch operations.</p></div><span id="whoami" class="who"></span></section>
-    <section id="gate" class="app-card hidden"><p class="mini-kicker">Private access</p><h2 class="screen-title">Admin sign-in required</h2><p class="screen-copy">Please sign in with an approved admin account.</p><div class="actions"><a class="btn btn-primary" href="login.html?next=admin-dashboard.html">Sign in</a></div></section>
-    <section id="app" class="hidden">
-      <section id="home" class="section active"></section>
-      <section id="applications" class="section"></section>
-      <section id="intakes" class="section"></section>
-      <section id="scheduling" class="section"></section>
-      <section id="compliance" class="section"></section>
-      <section id="jobs" class="section"></section>
-      <section id="people" class="section"></section>
-      <section id="quotes" class="section"></section>
-      <section id="walkthroughs" class="section"></section>
-      <section id="settings" class="section"></section>
+  <div class="portal">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand-mini">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <div>
+          <div style="font-family:'Playfair Display',serif;line-height:1;color:#2e2a27">The Finishing Touch</div>
+          <div class="rolepill">Admin</div>
+        </div>
+      </div>
+      <div class="row">
+        <span id="whoami" class="small"></span>
+        <a class="btn btn-outline" href="index.html">Home</a>
+        <a class="btn btn-outline" href="contractor-dashboard.html">Contractor view</a>
+        <a id="signOutBtn" class="btn btn-outline" href="#">Sign out</a>
+      </div>
+    </div>
+
+
+    <section class="admin-hero">
+      <div>
+        <p class="script">Operations, polished</p>
+        <h1>TFT Command Center</h1>
+        <p>Review jobs, approve quotes, vet applicants, manage contractor categories, and build toward a more automated company.</p>
+      </div>
+      <div class="admin-stats">
+        <div class="admin-stat"><strong>AI</strong><span>Screening + Scheduling</span></div>
+        <div class="admin-stat"><strong>+30%</strong><span>TFT Markup Logic</span></div>
+        <div class="admin-stat"><strong>W2</strong><span>Shift Mode Hidden</span></div>
+      </div>
     </section>
-  </main>
-</div>
-<nav class="bottom-nav" id="bottomNav">
-  <button class="active" data-section="home"><span class="bico"></span>Home</button>
-  <button data-section="applications"><span class="bico"></span>Apps</button>
-  <button data-section="intakes"><span class="bico"></span>Intakes</button>
-  <button data-section="scheduling"><span class="bico"></span>Schedule</button>
-  <button data-section="jobs"><span class="bico"></span>Jobs</button>
-  <button data-section="settings"><span class="bico"></span>Settings</button>
-</nav>
-<div id="toast" class="toast"></div>
-<script type="module">
-import { auth, db } from "./ft-firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-import { collection, query, where, orderBy, limit, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-const $=id=>document.getElementById(id); const toastEl=$('toast');
-let me=null, meData={}, users=[], jobs=[], requests=[], intakes=[], quotes=[], walkthroughs=[]; let activeSection='home'; let unsubs=[];
-function showToast(msg){ toastEl.textContent=msg; toastEl.style.display='block'; setTimeout(()=>toastEl.style.display='none',2100); }
-function cap(s){return String(s||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase())}
-function dateText(v){try{ if(v?.toDate) return v.toDate().toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); if(typeof v==='string'&&v) return new Date(v+'T00:00:00').toLocaleDateString([], {month:'short',day:'numeric'});}catch{} return ''}
-function money(n){ const x=Number(n); return Number.isFinite(x)?`$${Math.round(x)}`:''; }
-function email(u){return u.email||u.clientEmail||u.submittedByEmail||''}
-function safeUrl(url){ return String(url||''); }
-function setTitle(){ const map={
-home:['Operations Command Center','Your daily executive snapshot.'],
-applications:['Applications Review','Review contractor applications before onboarding access is granted.'],
-intakes:['Intake Inbox','Review Formspree-backed website intakes and convert them into quotes or jobs.'],
-scheduling:['Scheduling Requests','Review client booking, reschedule, and availability requests.'],
-compliance:['Workforce Compliance','Approve contractor onboarding now and keep W2 readiness available for later.'],
-jobs:['Job Workflow Center','Monitor assignments, status, workflow, and completion.'],
-people:['People Directory','Clients, contractors, employee waitlist, and future W2 records.'],
-quotes:['Quote Queue','Draft, approve, and track client-facing estimates.'],
-walkthroughs:['Walkthrough Review','Contractor-submitted walkthroughs ready for review.'],
-settings:['Admin Settings','Manage your own admin profile, account access, and deletion options.']
-}; $('pageTitle').textContent=map[activeSection]?.[0]||'Operations Suite'; $('pageSub').textContent=map[activeSection]?.[1]||''; }
-function showSection(section){ activeSection=section; document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===section)); document.querySelectorAll('[data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===section)); setTitle(); render(); }
-document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.section)));
-$('signOutBtn').addEventListener('click', async()=>{ await signOut(auth); location.href='index.html'; });
-function clearUnsubs(){ unsubs.forEach(u=>{try{u()}catch{}}); unsubs=[]; }
-function listen(){ clearUnsubs(); unsubs.push(onSnapshot(collection(db,'users'), s=>{users=s.docs.map(d=>({id:d.id,...d.data()})); render();})); unsubs.push(onSnapshot(query(collection(db,'jobs'), orderBy('createdAt','desc'), limit(150)), s=>{jobs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'bookingRequests'), orderBy('createdAt','desc'), limit(100)), s=>{requests=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'intakeRequests'), orderBy('createdAt','desc'), limit(150)), s=>{intakes=s.docs.map(d=>({id:d.id,_sourceCollection:'intakeRequests',...d.data()})); render();}, e=>console.warn('intakeRequests unavailable or not allowed yet',e))); unsubs.push(onSnapshot(query(collection(db,'quotes'), orderBy('createdAt','desc'), limit(100)), s=>{quotes=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); unsubs.push(onSnapshot(query(collection(db,'walkthroughs'), orderBy('createdAt','desc'), limit(100)), s=>{walkthroughs=s.docs.map(d=>({id:d.id,...d.data()})); render();}, e=>console.warn(e))); }
-onAuthStateChanged(auth, async user=>{ me=user; if(!user){ $('gate').classList.remove('hidden'); $('app').classList.add('hidden'); $('rolePill').textContent='Signed out'; return; } $('whoami').textContent=user.email||user.uid; const snap=await getDoc(doc(db,'users',user.uid)); meData=snap.exists()?snap.data():{}; if(String(meData.role||'').toLowerCase()!=='admin'){ $('gate').classList.remove('hidden'); $('app').classList.add('hidden'); $('rolePill').textContent='Not admin'; return; } $('gate').classList.add('hidden'); $('app').classList.remove('hidden'); $('rolePill').textContent='Admin'; $('rolePill').classList.add('good'); listen(); });
-function workerKind(u){ const v=String(u.workerType||u.classification||u.compliance?.workerType||u.role||u.contractorStatus||u.employeeStatus||'').toLowerCase(); if(v.includes('w2')||v.includes('employee')) return 'employee_w2'; if(v.includes('waitlist')) return 'employee_waitlist'; if(v.includes('team_lead')) return 'team_lead'; if(v.includes('company')) return 'contractor_company'; return 'contractor_1099'; }
-function isWorkforce(u){ const r=String(u.role||'').toLowerCase(); return ['contractor','pending','employee','employee_w2','employee_waitlist','team_lead'].includes(r)||u.contractorStatus||u.employeeStatus||u.compliance; }
-function kindLabel(u){ const k=workerKind(u); const map={contractor_1099:'1099 Contractor',contractor_company:'Contractor Company',team_lead:'Team Lead',employee_w2:'Future W2 Employee',employee_waitlist:'Employee Waitlist'}; return map[k]||cap(k); }
 
-function serviceFromIntake(x){
-  const d=x.intakeData||x.intake||x.data||x;
-  const raw=x.serviceType||x.type||x.serviceCategory||d.serviceType||d.service||d.INTERNAL_app_intake_type||d.page||'';
-  const page=String(d.page||x.page||'').toLowerCase();
-  if(page.includes('organizing')) return 'organizing';
-  if(page.includes('decor')) return 'decor';
-  if(page.includes('holiday')) return 'holiday';
-  if(page.includes('staging')) return 'staging';
-  return normalizeService(raw);
-}
-function intakeList(){
-  const fromIntakes=(intakes||[]).map(x=>({...x,_sourceCollection:x._sourceCollection||'intakeRequests'}));
-  const fromRequests=(requests||[]).filter(r=>{
-    const rk=String(r.requestKind||'').toLowerCase();
-    const src=String(r.source||'').toLowerCase();
-    return rk.includes('intake') || src.includes('intake') || r.intakeData || r.intake || r.INTERNAL_app_intake_type;
-  }).map(x=>({...x,_sourceCollection:'bookingRequests'}));
-  const fromJobs=(jobs||[]).filter(j=>{
-    const src=String(j.source||'').toLowerCase();
-    return j.intakeData || j.intake || src.includes('intake') || src.includes('formspree');
-  }).map(x=>({...x,_sourceCollection:'jobs'}));
-  const seen=new Set();
-  return [...fromIntakes,...fromRequests,...fromJobs].filter(x=>{
-    const key=(x._sourceCollection||'')+':'+x.id;
-    if(seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  }).sort((a,b)=>{
-    const da=a.createdAt?.toDate?a.createdAt.toDate().getTime():0;
-    const db=b.createdAt?.toDate?b.createdAt.toDate().getTime():0;
-    return db-da;
-  });
-}
-function intakeData(x){ return x.intakeData||x.intake||x.data||x; }
-function intakeClientName(x){ const d=intakeData(x); return x.clientName||x.name||d.name||x.clientEmail||d.email||'Website Client'; }
-function intakeClientEmail(x){ const d=intakeData(x); return x.clientEmail||x.email||d.email||''; }
-function intakeSummary(x){
-  const d=intakeData(x);
-  return x.summary || x.REQUEST_SUMMARY_CLEAR || d.REQUEST_SUMMARY_CLEAR || d.requestSummaryClear || d.notes || x.notes || '';
-}
-function intakeClearDetails(x){
-  const d=intakeData(x);
-  return [
-    d.CLIENT_CONTACT_CLEAR||x.CLIENT_CONTACT_CLEAR,
-    d.PROPERTY_DETAILS_CLEAR||x.PROPERTY_DETAILS_CLEAR,
-    d.HOME_LAYOUT_CLEAR||x.HOME_LAYOUT_CLEAR,
-    d.ORGANIZING_AREAS_CLEAR||x.ORGANIZING_AREAS_CLEAR,
-    d.ORGANIZING_GOALS_CLEAR||x.ORGANIZING_GOALS_CLEAR,
-    d.DECOR_SCOPE_CLEAR||x.DECOR_SCOPE_CLEAR,
-    d.STYLE_GOALS_CLEAR||x.STYLE_GOALS_CLEAR,
-    d.HOLIDAY_SCOPE_CLEAR||x.HOLIDAY_SCOPE_CLEAR,
-    d.INSTALL_TIMELINE_CLEAR||x.INSTALL_TIMELINE_CLEAR,
-    d.STAGING_SCOPE_CLEAR||x.STAGING_SCOPE_CLEAR,
-    d.LISTING_TIMELINE_CLEAR||x.LISTING_TIMELINE_CLEAR,
-    d.SPECIALTY_ADDONS_CLEAR||x.SPECIALTY_ADDONS_CLEAR,
-    d.SCHEDULING_PREFERENCES_CLEAR||x.SCHEDULING_PREFERENCES_CLEAR
-  ].filter(Boolean);
-}
-async function updateSourceDoc(item, patch){
-  const col=item._sourceCollection||'intakeRequests';
-  await updateDoc(doc(db,col,item.id),{...patch,updatedAt:serverTimestamp()});
-}
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Admin sections">
+      <button class="tabbtn active" data-tab="open">Job Inbox</button>
+      <button class="tabbtn" data-tab="all">All Jobs</button>
+      <button class="tabbtn" data-tab="workflow">Job Workflow Center</button>
+      <button class="tabbtn" data-tab="create">Create Job</button>
+      <button class="tabbtn" data-tab="walkthroughs">Walkthroughs</button>
+      <button class="tabbtn" data-tab="quotes">Quote Queue</button>
+      <button class="tabbtn" data-tab="estimate">Estimate Hub</button>
+      <button class="tabbtn" data-tab="contractors">Contractors / Teams</button>
+      <button class="tabbtn" data-tab="apps">Applications</button>
+      <button class="tabbtn" data-tab="compliance">Compliance</button>
+      <button class="tabbtn" data-tab="clients">Clients</button>
+      <button class="tabbtn" data-tab="scheduling">Scheduling AI</button>
+      <button class="tabbtn" data-tab="calendar">Calendar</button>
+      <button class="tabbtn" data-tab="payments">Payments</button>
+      <button class="tabbtn" data-tab="settings">Settings</button>
+    </div>
 
-function applicationList(){ return users.filter(u=>{
-  const st=String(u.applicationStatus||'').toLowerCase();
-  const appType=String(u.application?.type||'').toLowerCase();
-  return appType==='contractor' || ['submitted','needs_review','approved_for_onboarding','rejected'].includes(st);
-}); }
-function kpis(){ const workforce=users.filter(isWorkforce); const contractors=workforce.filter(u=>workerKind(u)!=='employee_w2'&&workerKind(u)!=='employee_waitlist'); const employees=workforce.filter(u=>workerKind(u)==='employee_w2'||workerKind(u)==='employee_waitlist'); const clients=users.filter(u=>String(u.role||'').toLowerCase()==='client'); const apps=applicationList(); return {applications:apps.filter(u=>['submitted','needs_review'].includes(String(u.applicationStatus||'submitted').toLowerCase())).length,intakes:intakeList().filter(i=>['new','pending','submitted','reviewing',''].includes(String(i.status||'new').toLowerCase())).length,newReq:requests.filter(r=>['new','pending','reviewing'].includes(String(r.status||'new'))&&!String(r.requestKind||'').toLowerCase().includes('intake')).length, activeJobs:jobs.filter(j=>!['completed','cancelled','paid'].includes(String(j.status||''))).length, review:workforce.filter(needsReview).length, contractors:contractors.length, employees:employees.length, workforce:workforce.length, clients:clients.length, quotes:quotes.length}; }
-function renderHome(){ const k=kpis(); $('home').innerHTML=`<div class="app-card"><p class="mini-kicker">Today</p><h2 class="screen-title">Operations Command Center</h2><p class="screen-copy">A focused luxury operations view of what needs your attention first.</p><div class="grid" style="margin-top:16px"><div class="tile"><strong>${k.applications}</strong><h3>Applications</h3><p>New contractor applications awaiting review.</p></div><div class="tile"><strong>${k.intakes}</strong><h3>Website Intakes</h3><p>Cleaning, organizing, decor, holiday, and staging requests from the website.</p></div><div class="tile"><strong>${k.newReq}</strong><h3>Scheduling Requests</h3><p>New or waiting for review.</p></div><div class="tile"><strong>${k.review}</strong><h3>Compliance Reviews</h3><p>Contractor + future W2 files needing admin action.</p></div><div class="tile"><strong>${k.activeJobs}</strong><h3>Active Jobs</h3><p>Open, claimed, in progress, or submitted.</p></div><div class="tile"><strong>${k.contractors}</strong><h3>Contractors</h3><p>1099 contractors, companies, and team leads.</p></div><div class="tile"><strong>${k.employees}</strong><h3>W2 Readiness</h3><p>Employee waitlist and future payroll onboarding.</p></div></div></div><div class="app-card"><p class="mini-kicker">Priority Queue</p><h2 class="screen-title">Next actions</h2><div class="stack" style="margin-top:12px">${quickAction('Applications Review',`${k.applications} application(s) to review`,'applications')}${quickAction('Intake Inbox',`${k.intakes} website intake(s) to review`,'intakes')}${quickAction('Scheduling Requests',`${k.newReq} request(s) to review`,'scheduling')}${quickAction('Compliance Review',`${k.review} workforce file(s) need review`,'compliance')}${quickAction('Job Workflow',`${k.activeJobs} job(s) in motion`,'jobs')}${quickAction('Admin Settings','Manage your own profile and account access','settings')}</div></div>`; }
-function quickAction(title,text,section){return `<div class="card"><div class="card-head"><div><h3>${title}</h3><p class="screen-copy" style="margin:4px 0 0">${text}</p></div><button class="btn btn-primary" data-jump="${section}">Open</button></div></div>`}
-
-const SERVICE_LABELS={
-  cleaning:'Cleaning',
-  move_in_out:'Move-In / Move-Out',
-  airbnb:'Airbnb Turnover',
-  commercial:'Commercial Cleaning',
-  organizing:'Home Organizing',
-  decor:'Interior Decorating / Styling',
-  holiday:'Holiday Decorating',
-  staging:'Staging & Styling',
-  carpet_upholstery_grout:'Carpet, Upholstery & Grout Request'
-};
-function normalizeService(s){
-  const v=String(s||'').toLowerCase().trim();
-  if(['clean','cleaning','deep_clean','standard_clean'].includes(v)) return 'cleaning';
-  if(['moveout','move_out','move-in-out','move in out','move_in','move_in_out'].includes(v)) return 'move_in_out';
-  if(['airbnb','turnover','short_term_rental'].includes(v)) return 'airbnb';
-  if(['commercial','office'].includes(v)) return 'commercial';
-  if(['organize','organizing','organization','home_organizing'].includes(v)) return 'organizing';
-  if(['staging','home_staging','stage','staging_styling'].includes(v)) return 'staging';
-  if(['carpet_upholstery_grout','carpet','upholstery','grout','specialty_cleaning'].includes(v)) return 'carpet_upholstery_grout';
-  if(['decor','decorating','styling','interior','interior_decorating','design'].includes(v)) return 'decor';
-  if(['holiday','holiday_decor','christmas','event','events'].includes(v)) return 'holiday';
-  return v || 'cleaning';
-}
-function svcLabel(s){ return SERVICE_LABELS[normalizeService(s)]||cap(s); }
-function appServices(u){
-  const raw = u.appliedServiceTypes || u.serviceTypes || u.application?.serviceTypes || u.application?.services || [];
-  const list = Array.isArray(raw) ? raw : String(raw||'').split(',');
-  return [...new Set(list.map(normalizeService).filter(Boolean))];
-}
-function approvedServices(u){
-  const raw = u.approvedServiceTypes || u.approvedServices || [];
-  const list = Array.isArray(raw) ? raw : String(raw||'').split(',');
-  return [...new Set(list.map(normalizeService).filter(Boolean))];
-}
-function serviceChecksHTML(u){
-  const applied = appServices(u);
-  const approved = approvedServices(u);
-  if(!applied.length) return '<p class="service-note">No service categories were saved on this application. Choose a service on the application record before approval.</p>';
-  return `<div class="service-checks">${applied.map(s=>{
-    const checked = approved.length ? approved.includes(s) : true;
-    return `<label class="service-check"><input type="checkbox" data-service-check value="${s}" ${checked?'checked':''}> ${svcLabel(s)}</label>`;
-  }).join('')}</div><p class="service-note">Only checked services will unlock in the contractor portal. Applied services stay saved for your records.</p>`;
-}
-function selectedServices(card){
-  return [...card.querySelectorAll('[data-service-check]:checked')].map(i=>normalizeService(i.value));
-}
-function serviceMetaSpans(list){ return (list||[]).map(x=>`<span>${svcLabel(x)}</span>`).join(''); }
-function screeningFor(u){ return u.application?.aiScreening || u.aiScreening || {}; }
-function appStatusClass(u){ const st=String(u.applicationStatus||'submitted').toLowerCase(); if(st==='approved_for_onboarding') return 'good'; if(st==='rejected') return 'danger'; if(st==='needs_review') return 'warn'; return ''; }
-function portfolioLinks(u){ const files=u.application?.portfolio || []; if(!Array.isArray(files)||!files.length) return '<span class="hint">No portfolio files saved.</span>'; return `<div class="doc-files">${files.map((f,i)=>`<a href="${safeUrl(f.url)}" target="_blank" rel="noopener">${f.name||`Portfolio ${i+1}`}</a>`).join('')}</div>`; }
-function answerSections(u){ const data=u.application?.serviceAnswers || {}; const keys=Object.keys(data); if(!keys.length) return '<div class="empty">No service interview answers saved.</div>'; return keys.map(service=>`<div class="answer-block"><strong>${svcLabel(service)} Interview</strong>${(data[service]||[]).map(item=>`<p><b>${item.question||''}</b><br>${item.answer||'No answer provided.'}</p>`).join('')}</div>`).join(''); }
-function renderApplications(){ const list=applicationList().sort((a,b)=>String(a.applicationStatus||'submitted').localeCompare(String(b.applicationStatus||'submitted'))); $('applications').innerHTML=`<div class="app-card"><p class="mini-kicker">First Review</p><h2 class="screen-title">Applications Review</h2><p class="screen-copy">Review contractor applications, service selections, portfolio uploads, screening score, and interview answers before onboarding access is granted.</p></div><div class="stack">${list.length?list.map(applicationCard).join(''):'<div class="empty">No contractor applications yet.</div>'}</div>`; wireApplications(); }
-function applicationCard(u){
-  const app=u.application||{};
-  const s=screeningFor(u);
-  const applied=appServices(u);
-  const approved=approvedServices(u);
-  const status=String(u.applicationStatus||'submitted');
-  return `<div class="card" data-app-user="${u.id}">
-    <div class="card-head">
-      <div>
-        <h3>${u.fullName||u.displayName||u.email||'Applicant'}</h3>
-        <div class="meta"><span>${u.email||''}</span>${u.phone?`<span>${u.phone}</span>`:''}${u.city||u.zip?`<span>${[u.city,u.zip].filter(Boolean).join(' ')}</span>`:''}<span>${cap(status)}</span>${serviceMetaSpans(applied)}</div>
+    <!-- Filter/search -->
+    <div class="bar">
+      <div class="filters" id="filterChips" aria-label="Filter by service type"></div>
+      <div class="search">
+        <input id="searchBox" type="search" placeholder="Search jobs: zip, summary, notes…" />
+        <button id="clearSearch" class="btn btn-outline" type="button">Clear</button>
       </div>
-      <span class="status-pill ${appStatusClass(u)}">${cap(status)}</span>
     </div>
-    <div class="split">
-      <div class="doc-mini"><strong>Screening</strong><span class="score">${Number.isFinite(Number(s.score))?Number(s.score):'—'}${Number.isFinite(Number(s.score))?'/100':''}</span><p class="screen-copy">${s.recommendation||'No screening recommendation saved yet.'}</p></div>
-      <div class="doc-mini"><strong>Requirements</strong><span class="hint">Insurance: ${cap(app.insured||'not answered')}</span><span class="hint">Transportation: ${cap(app.transportation||'not answered')}</span><span class="hint">Background Check: ${cap(app.backgroundOk||'not answered')}</span><span class="hint">Experience: ${app.yearsExperience??'—'} year(s)</span></div>
+
+    <!-- Panels -->
+    <div class="panels">
+      <section id="panel-open" class="panel active" aria-live="polite">
+        <div id="listOpen" class="grid"></div>
+      </section>
+
+      <section id="panel-all" class="panel" aria-live="polite">
+        <div id="listAll" class="grid"></div>
+      </section>
+
+
+      <section id="panel-workflow" class="panel" aria-live="polite">
+        <div class="workflow-hero">
+          <div class="toprow">
+            <div>
+              <h2>Job Workflow Center</h2>
+              <p>Track every accepted job from assignment through check-in, photos, checklist completion, admin review, client package, payout, and closeout.</p>
+            </div>
+            <span class="rolepill">Operations Pipeline</span>
+          </div>
+          <div class="workflow-kpis">
+            <div class="workflow-kpi"><strong id="wfTotal">0</strong><span>Total Jobs</span></div>
+            <div class="workflow-kpi"><strong id="wfActive">0</strong><span>Active Workflow</span></div>
+            <div class="workflow-kpi"><strong id="wfNeedsReview">0</strong><span>Needs Admin Review</span></div>
+            <div class="workflow-kpi"><strong id="wfNeedsRework">0</strong><span>Needs Rework</span></div>
+            <div class="workflow-kpi"><strong id="wfPayout">0</strong><span>Payout Pending</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Workflow Filters</strong>
+            <span class="rolepill">AI Scheduling Ready</span>
+          </div>
+          <div class="workflow-controls">
+            <label class="small">Workflow Status
+              <select id="workflowStatusFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="pending_assignment">Pending Assignment</option>
+                <option value="assigned">Assigned</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="en_route">En Route</option>
+                <option value="checked_in">Checked In</option>
+                <option value="before_photos_submitted">Before Photos Submitted</option>
+                <option value="in_progress">In Progress</option>
+                <option value="checklist_completed">Checklist Completed</option>
+                <option value="after_photos_submitted">After Photos Submitted</option>
+                <option value="submitted_for_review">Submitted For Review</option>
+                <option value="needs_rework">Needs Rework</option>
+                <option value="approved">Approved</option>
+                <option value="completion_package_sent">Completion Package Sent</option>
+                <option value="payout_pending">Payout Pending</option>
+                <option value="paid">Paid</option>
+                <option value="completed">Completed</option>
+              </select>
+            </label>
+            <label class="small">Worker Type / Assignment
+              <select id="workflowAssignmentFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="unassigned">Unassigned</option>
+                <option value="assigned">Assigned</option>
+                <option value="solo_contractor">Solo Contractor</option>
+                <option value="contractor_company">Contractor Company</option>
+                <option value="team_lead">Team Lead</option>
+                <option value="w2_employee">W2 Employee</option>
+              </select>
+            </label>
+            <label class="small">Search Workflow
+              <input id="workflowSearch" class="admin-input" placeholder="Client, ZIP, service, status, notes..." />
+            </label>
+          </div>
+        </div>
+
+        <div id="listWorkflow" class="grid"></div>
+      </section>
+
+      <section id="panel-create" class="panel">
+        <form id="createForm" class="form-grid" autocomplete="off">
+          <label>Service Type
+            <select name="serviceType" required>
+              <option value="cleaning">Cleaning</option>
+              <option value="organizing">Organizing</option>
+              <option value="staging">Staging</option>
+              <option value="decor">Interior Decorating</option>
+              <option value="holiday">Holiday/Event Decorating</option>
+              <option value="airbnb">Airbnb Turnover</option>
+              <option value="commercial">Commercial</option>
+              <option value="carpet">Carpet/Upholstery Vendor</option>
+                <option value="staging_vendor">Staging Vendor / CORT Coordination</option>
+            </select>
+          </label>
+          <label>Status
+            <select name="status">
+              <option value="open">open</option>
+              <option value="walkthrough_needed">walkthrough_needed</option>
+              <option value="estimate_pending">estimate_pending</option>
+              <option value="claimed">claimed</option>
+              <option value="in_progress">in_progress</option>
+              <option value="submitted">submitted</option>
+              <option value="approved">approved</option>
+              <option value="paid">paid</option>
+            </select>
+          </label>
+
+          <label>Zip / Area <input name="zip" placeholder="77573" /></label>
+          <label>Client UID (optional) <input name="clientId" placeholder="users/{uid}" /></label>
+          <label>Contractors Needed <input name="contractorsNeeded" type="number" min="1" value="1" required /></label>
+          <label>Flat Rate (shown to client) <input name="flatRate" type="number" min="0" step="1" placeholder="275" /></label>
+          <label>Team Hours (est) <input name="estimatedTeamHours" type="number" min="0" step=".5" placeholder="3.5" /></label>
+
+          <!-- Exact scheduling -->
+          <label>Service Date <input name="serviceDate" type="date" /></label>
+          <label>Arrival Time <input name="serviceTime" type="time" /></label>
+
+          <label>Summary <input name="summary" placeholder="3 bed / 2 bath – initial deep clean." /></label>
+          <label style="grid-column:1/-1">Notes (internal)
+            <textarea name="notes" rows="3" placeholder="entry codes, parking notes — keep PII out of top-level doc"></textarea>
+          </label>
+
+          <div style="grid-column:1/-1;display:flex;gap:10px;align-items:center">
+            <button class="btn btn-solid" type="submit">Create Job</button>
+            <span id="createMsg" class="hint"></span>
+          </div>
+        </form>
+        <p class="hint" style="margin-top:10px">Reminder: put any sensitive client details inside <code>jobs/{id}/private/{doc}</code> (admin-only).</p>
+      </section>
+
+      <section id="panel-contractors" class="panel" aria-live="polite">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow"><strong>Team Scheduling Profiles</strong><span class="rolepill">Availability + Territory + Capacity</span></div>
+          <p class="small">Use this section to view each contractor’s TFT-only availability, ZIP preferences, travel rules, capacity, service capabilities, and hidden W2-ready worker type.</p>
+        </div>
+        <div id="listContractors" class="grid"></div>
+      </section>
+
+      <section id="panel-clients" class="panel" aria-live="polite">
+        <div id="listClients" class="grid"></div>
+      </section>
+
+      <section id="panel-apps" class="panel" aria-live="polite">
+        <div id="listApps" class="grid"></div>
+      </section>
+
+
+      <section id="panel-compliance" class="panel" aria-live="polite">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Compliance & Onboarding Center</strong>
+            <span class="rolepill">Admin Only</span>
+          </div>
+          <p class="small">Assign worker type, review uploaded documents, approve or request updates, track insurance, background checks, QuickBooks W-9 status, and activate workers when ready.</p>
+        </div>
+
+        <div class="compliance-summary">
+          <div class="compliance-kpi"><strong id="kpiWorkers">0</strong><span>Total Workers</span></div>
+          <div class="compliance-kpi"><strong id="kpiActiveWorkers">0</strong><span>Active / Approved</span></div>
+          <div class="compliance-kpi"><strong id="kpiMissingDocs">0</strong><span>Missing Required Docs</span></div>
+          <div class="compliance-kpi"><strong id="kpiExpiringCoi">0</strong><span>COI Expiring / Expired</span></div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Worker Filters</strong>
+            <span class="rolepill">Review Queue</span>
+          </div>
+          <div class="compliance-controls">
+            <label class="small">Search
+              <input id="complianceSearch" class="admin-input" placeholder="Name, email, service, status..." />
+            </label>
+            <label class="small">Worker Type
+              <select id="complianceTypeFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="contractor_1099">1099 Contractor</option>
+                <option value="employee_w2">W2 Employee</option>
+                <option value="team_lead">Team Lead</option>
+                <option value="organizer">Organizer</option>
+                <option value="decorator">Decorator</option>
+                <option value="stager">Stager</option>
+                <option value="walkthrough_specialist">Walkthrough Specialist</option>
+                <option value="admin_assistant">Admin Assistant</option>
+              </select>
+            </label>
+            <label class="small">Compliance Status
+              <select id="complianceStatusFilter" class="admin-select">
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="hold">Hold</option>
+                <option value="pending_documents">Pending Documents</option>
+                <option value="pending_review">Pending Review</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div id="listCompliance" class="grid"></div>
+      </section>
+
+
+     <!-- Quick Estimate (REPLACE THIS WHOLE SECTION) -->
+<section id="panel-estimate" class="panel">
+  <div class="card" style="padding:16px">
+    <div class="row" style="margin-bottom:10px;gap:10px;align-items:flex-end;flex-wrap:wrap">
+      <label>Category
+        <select id="estCategory">
+          <option value="residential" selected>Residential</option>
+          <option value="airbnb">Airbnb Turnover (Hybrid)</option>
+          <option value="commercial">Commercial (Office / Medical / Vet)</option>
+        </select>
+      </label>
+
+      <!-- Residential service -->
+      <label id="resServiceWrap">Service
+        <select id="resService">
+          <option value="standard" selected>Standard Clean</option>
+          <option value="initial">Initial Clean</option>
+          <option value="deep">Deep Clean</option>
+          <option value="move">Move-In / Move-Out</option>
+        </select>
+      </label>
+
+      <!-- Commercial sub-type -->
+      <label id="comTypeWrap" style="display:none">Type
+        <select id="comType">
+          <option value="office" selected>Office</option>
+          <option value="medical">Medical / Clinic</option>
+          <option value="vet">Veterinary</option>
+        </select>
+      </label>
+
+      <button id="estCalcBtn" class="btn btn-solid" type="button">Calculate</button>
+      <span class="hint">Soil level + common areas + pet impact are supported.</span>
     </div>
-    <div class="service-approval">
-      <strong>Approve Service Categories</strong>
-      <p class="service-note">Applicant applied for: ${applied.length?applied.map(svcLabel).join(', '):'No service categories saved'}.${approved.length?` Currently approved: ${approved.map(svcLabel).join(', ')}.`:''}</p>
-      ${serviceChecksHTML(u)}
+
+    <!-- Shared size + options -->
+    <div class="form-grid" style="margin-top:8px">
+      <label>Home / Site Size (sq ft)
+        <input id="sqft" type="number" min="200" step="10" value="1600">
+      </label>
+
+      <label>Subcontractor Estimate (optional)
+        <input id="subEstimate" type="number" min="0" step="1" placeholder="Example: 255">
+      </label>
+
+      <label id="bedsWrap">Beds
+        <input id="beds" type="number" min="0" value="3">
+      </label>
+
+      <label id="bathsWrap">Baths
+        <input id="baths" type="number" min="0" value="2">
+      </label>
+
+      <!-- Residential soil names (your choice: C) -->
+      <label id="soilResWrap">Soil Level (Residential)
+        <select id="soilRes">
+          <option value="standard" selected>Standard</option>
+          <option value="lived">Lived-In</option>
+          <option value="dirty">Dirty</option>
+          <option value="major">Major Impact</option>
+        </select>
+      </label>
+
+      <!-- Commercial soil names (your choice: A) -->
+      <label id="soilComWrap" style="display:none">Soil Level (Commercial)
+        <select id="soilCom">
+          <option value="light" selected>Light</option>
+          <option value="moderate">Moderate</option>
+          <option value="heavy">Heavy</option>
+          <option value="severe">Severe</option>
+        </select>
+      </label>
+
+      <!-- Airbnb hybrid bits -->
+      <label id="airLaundryWrap" style="display:none">Laundry Bundles (sets)
+        <input id="airLaundry" type="number" min="0" value="2">
+      </label>
+      <label id="airTurnsWrap" style="display:none">Bedrooms in Listing
+        <input id="airBeds" type="number" min="0" value="2">
+      </label>
+
+      <label>Stories
+        <select id="stories"><option>1</option><option selected>2</option></select>
+      </label>
+
+      <label>Common Areas Only?
+        <select id="commonOnly">
+          <option value="no" selected>No</option>
+          <option value="yes">Yes (Living/Kitchen/Halls/Baths)</option>
+        </select>
+      </label>
+
+      <!-- Pet Impact quick picker (hidden in total per your choice B) -->
+      <label>Pet Impact
+        <select id="petImpact">
+          <option value="none" selected>None</option>
+          <option value="light">Light</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+          <option value="foster">Foster / Rescue</option>
+        </select>
+      </label>
+
+      <!-- Add-ons (per-item, your “Premium” tier) -->
+      <label>Ceiling Fans (count)
+        <input id="addFans" type="number" min="0" value="0">
+      </label>
+      <label>Blinds (count)
+        <input id="addBlinds" type="number" min="0" value="0">
+      </label>
+      <label>Windows (interior panes)
+        <input id="addWindows" type="number" min="0" value="0">
+      </label>
+      <label>Ovens (count)
+        <input id="addOvens" type="number" min="0" value="0">
+      </label>
+      <label>Fridges (count)
+        <input id="addFridges" type="number" min="0" value="0">
+      </label>
+
+      <label style="grid-column:1/-1">Notes (optional)
+        <input id="estNotes" placeholder="Entry, parking, special requests (admin only)">
+      </label>
     </div>
-    <div class="split">
-      <div class="doc-mini"><strong>Why TFT</strong><p class="screen-copy">${app.whyTFT||'No answer provided.'}</p></div>
-      <div class="doc-mini"><strong>Service Area & Availability</strong><p class="screen-copy">${app.serviceAreas||'No service area provided.'}</p><p class="screen-copy">${app.availability||'No availability provided.'}</p></div>
+
+    <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
+      <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
     </div>
-    <div class="doc-grid">
-      <div class="doc-mini"><strong>Strengths</strong>${(s.strengths||[]).length?(s.strengths||[]).map(x=>`<span class="hint">• ${x}</span>`).join(''):'<span class="hint">No strengths generated.</span>'}</div>
-      <div class="doc-mini"><strong>Concerns</strong>${(s.concerns||[]).length?(s.concerns||[]).map(x=>`<span class="hint">• ${x}</span>`).join(''):'<span class="hint">No concerns generated.</span>'}</div>
-      <div class="doc-mini"><strong>Portfolio</strong>${portfolioLinks(u)}</div>
+  </div>
+</section>
+
+      
+      <section id="panel-walkthroughs" class="panel">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Walkthrough Queue</strong>
+            <span class="rolepill">Review → Quote Queue</span>
+          </div>
+          <p class="small">Review submitted walkthroughs, media, contractor estimates, notes, and the auto-calculated TFT +30% draft quote. Approved walkthroughs create quote records for the Quote Queue.</p>
+          <div class="meta">
+            <span>Pending Review</span>
+            <span>Approved Quotes</span>
+            <span>Revisions</span>
+            <span>Declines</span>
+          </div>
+        </div>
+        <div id="listWalkthroughs" class="grid" aria-live="polite"></div>
+      </section>
+
+      <section id="panel-quotes" class="panel">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow">
+            <strong>Quote Queue</strong>
+            <span class="rolepill">Approved → Sent → Accepted</span>
+          </div>
+          <p class="small">Approved walkthroughs land here as client quote drafts. Later this will connect to client approval, deposits, Stripe, and booking automation.</p>
+        </div>
+        <div id="listQuotes" class="grid" aria-live="polite"></div>
+      </section>
+
+        <section id="panel-scheduling" class="panel">
+          <div class="grid">
+            <article class="card">
+              <div class="toprow"><strong>Scheduling AI</strong><span class="rolepill">Framework Ready</span></div>
+              <p class="small">Future AI dispatcher will recommend booking slots based on client preferences, worker availability, ZIP/day rules, estimated job duration, and drive-time buffers.</p>
+              <ul class="placeholder-list">
+                <li>Client preferred days/times</li><li>Contractor TFT availability slots</li><li>ZIP/territory preferences by day</li><li>Estimated cleaning/organizing/staging duration</li><li>Travel time + route clustering</li><li>Max jobs/day and max hours/day</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="toprow"><strong>1099 Availability Mode</strong><span class="rolepill">Active Model</span></div>
+              <p class="small">For subcontractors with their own companies. They provide TFT availability slots only, not their full outside business calendar.</p>
+              <ul class="placeholder-list">
+                <li>Manual weekly availability</li><li>Recurring availability templates</li><li>Unavailable/vacation days</li><li>Preferred arrival times</li><li>Service areas + ZIP preferences</li><li>Capacity by job type</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="toprow"><strong>Hidden W2 Shift Mode</strong><span class="rolepill">Built for Later</span></div>
+              <p class="small">This stays hidden until you hire employees. The architecture will support employee shifts, crews, lunch breaks, PTO, and payroll-friendly scheduling.</p>
+              <ul class="placeholder-list">
+                <li>Worker type: 1099 contractor or W2 employee</li><li>Shift start/end times</li><li>Lunch/break windows</li><li>PTO / blocked days</li><li>Solo, pair, crew, team lead assignments</li><li>Future overtime and payroll export logic</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="toprow"><strong>Staging + CORT Coordination</strong><span class="rolepill">Vendor Ready</span></div>
+              <p class="small">For staging jobs, TFT can coordinate CORT-style furniture rental without owning full inventory at first.</p>
+              <ul class="placeholder-list">
+                <li>Vacant staging rental coordination</li><li>Occupied styling / refresh</li><li>Decor inventory needs</li><li>Install team scheduling</li><li>Pickup/removal scheduling</li><li>Rental vendor notes and approvals</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="panel-calendar" class="panel">
+        <div class="card">
+          <div class="toprow"><strong>Calendar</strong><span class="rolepill">Square now → Stripe later</span></div>
+          <p class="small">Phase 1 can keep Square. Phase 2 becomes a native TFT booking calendar.</p>
+          <a class="btn btn-solid" target="_blank" rel="noopener" href="https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9">Open Square Calendar</a>
+        </div>
+      </section>
+
+      <section id="panel-payments" class="panel">
+        <div class="card">
+          <div class="toprow"><strong>Payments / Invoices</strong><span class="rolepill">Future Stripe</span></div>
+          <p class="small">Square stays for now. Later this becomes Stripe deposits, invoices, cancellation fees, memberships, and payment history.</p>
+        </div>
+      </section>
+
+      <section id="panel-settings" class="panel">
+        <div class="card">
+          <div class="toprow"><strong>Settings</strong><span class="rolepill">Coming Soon</span></div>
+          <p class="small">Service areas, contractor categories, application requirements, pricing rules, and automation settings will live here.</p>
+        </div>
+      </section>
+
+
+  <!-- Admin Helper Chat (UI) -->
+  <div id="admin-help-launcher" aria-label="Open admin help">❓</div>
+  <div id="admin-help" aria-live="polite" aria-label="Admin help chat">
+    <div class="ah-head">
+      <div>
+        <div class="ah-title">Admin Help</div>
+        <div class="ah-sub">Short answers + quick links</div>
+      </div>
+      <button class="ah-close" aria-label="Close">×</button>
     </div>
-    <details><summary class="btn btn-soft" style="width:max-content">View interview answers</summary><div class="stack" style="margin-top:10px">${answerSections(u)}</div></details>
-    <div class="actions"><button class="btn btn-primary" data-app-approve>Approve Selected Services</button><button class="btn btn-soft" data-app-review>Needs Review</button><button class="btn btn-danger" data-app-reject>Reject</button></div>
-  </div>`;
-}
-function wireApplications(){
-  document.querySelectorAll('[data-app-approve]').forEach(b=>b.addEventListener('click',()=>{
-    const card=b.closest('[data-app-user]');
-    const approved=selectedServices(card);
-    if(!approved.length){ alert('Select at least one service category to approve.'); return; }
-    setApplicationStatus(card.dataset.appUser,'approved_for_onboarding',approved);
-  }));
-  document.querySelectorAll('[data-app-review]').forEach(b=>b.addEventListener('click',()=>setApplicationStatus(b.closest('[data-app-user]').dataset.appUser,'needs_review')));
-  document.querySelectorAll('[data-app-reject]').forEach(b=>b.addEventListener('click',()=>setApplicationStatus(b.closest('[data-app-user]').dataset.appUser,'rejected')));
-}
-async function addNotification(uid,title,message,type='application'){ try{ await addDoc(collection(db,'notifications'),{userId:uid,title,message,type,read:false,createdAt:serverTimestamp(),createdBy:me?.email||me?.uid||'admin',actionUrl:type==='application'?'contractor-dashboard.html':''}); }catch(e){ console.warn('Notification not created',e); } }
-async function setApplicationStatus(uid,status,approved=[]){
-  const u=users.find(x=>x.id===uid)||{};
-  const applied=appServices(u);
-  const selected=[...new Set((approved||[]).map(normalizeService).filter(Boolean))];
-  const patch={applicationStatus:status,applicationReviewedAt:serverTimestamp(),applicationReviewedBy:me.email||me.uid,updatedAt:serverTimestamp()};
-  if(status==='approved_for_onboarding'){
-    if(!selected.length){ alert('Select at least one approved service before onboarding.'); return; }
-    Object.assign(patch,{
-      role:'contractor',
-      contractorStage:'onboarding',
-      contractorStatus:'pending_documents',
-      portalAccess:'onboarding_only',
-      accountStatus:'active',
-      isActive:true,
-      appliedServiceTypes:applied,
-      serviceTypes:applied.length?applied:selected,
-      approvedServiceTypes:selected,
-      approvedServices:selected,
-      approvedServiceLabels:selected.map(svcLabel),
-      approvedServiceTypesUpdatedAt:serverTimestamp(),
-      approvedServiceTypesUpdatedBy:me.email||me.uid,
-      'compliance.status':'pending_documents',
-      'compliance.updatedAt':serverTimestamp()
+    <div id="ah-thread" class="ah-thread"></div>
+    <div class="ah-quick">
+      <button data-q="how quote">How do I quote?</button>
+      <button data-q="organizing">Organizing time?</button>
+      <button data-q="assign">Assign a job</button>
+      <button data-q="status">Statuses</button>
+      <button data-q="booking">Booking link</button>
+      <button data-q="gameday">Game Day fields</button>
+      <button data-q="birthday">Birthday fields</button>
+      <button data-q="christmas">Christmas fields</button>
+      <button data-q="holiday">Holiday cheat sheet</button>
+    </div>
+    <div class="ah-input">
+      <input id="ah-input" type="text" placeholder="Ask a quick question…" />
+      <button class="ah-send" id="ah-send">Send</button>
+    </div>
+  </div>
+
+  <!-- Pricing calculators (exposes calc* fns used by estimator) -->
+  <script src="script.js" defer></script>
+
+  <!-- App logic -->
+  <script type="module">
+    import { auth, db } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      collection, query, where, orderBy, onSnapshot, limit,
+      doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+      serverTimestamp, runTransaction, Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    // ---- Auth gate ----
+    const whoami = document.getElementById('whoami');
+    const btnOut = document.getElementById('signOutBtn');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { location.href = "login.html?next=" + encodeURIComponent("admin-dashboard.html"); return; }
+      whoami.textContent = user.email || user.uid;
+
+      const roleSnap = await getDoc(doc(db, "users", user.uid));
+      const role = (roleSnap.exists() ? (roleSnap.data().role || "") : "").toLowerCase();
+      if (role !== "admin") { location.href = "contractor-dashboard.html"; return; }
+      init();
     });
-  }
-  if(status==='needs_review'){ Object.assign(patch,{role:'pending',contractorStage:'application_review'}); }
-  if(status==='rejected'){ Object.assign(patch,{role:'pending',contractorStage:'application_rejected',contractorStatus:'rejected'}); }
-  await updateDoc(doc(db,'users',uid),patch);
-  if(status==='approved_for_onboarding') await addNotification(uid,'Approved for onboarding',`Your application was approved for: ${selected.map(svcLabel).join(', ')}. Please complete your contractor onboarding packet.`,'application_approved');
-  if(status==='needs_review') await addNotification(uid,'Application needs review','Your application is still under review. The Finishing Touch may request more information.','application_review');
-  if(status==='rejected') await addNotification(uid,'Application update','Thank you for applying. Your application was not selected for onboarding at this time.','application_rejected');
-  showToast(status==='approved_for_onboarding'?`Approved for ${selected.map(svcLabel).join(', ')}`:`Application ${cap(status)}`);
-}
+
+    btnOut.addEventListener('click', async (e) => {
+      e.preventDefault(); await signOut(auth); location.href = "index.html";
+    });
+
+    // ---- UI state ----
+    const ALL_TYPES = ["cleaning","organizing","staging","decor","holiday","airbnb","commercial","carpet","staging_vendor","admin"];
+    const chipsWrap = document.getElementById('filterChips');
+    const searchBox = document.getElementById('searchBox');
+    const clearSearch = document.getElementById('clearSearch');
+    const tabs = Array.from(document.querySelectorAll(".tabbtn"));
+    const panels = Array.from(document.querySelectorAll(".panel"));
+    const elOpen = document.getElementById('listOpen');
+    const elAll  = document.getElementById('listAll');
+    const elWorkflow = document.getElementById('listWorkflow');
+    const elCons = document.getElementById('listContractors');
+    const elClients = document.getElementById('listClients');
+    const elApps = document.getElementById('listApps');
+    const elWalkthroughs = document.getElementById('listWalkthroughs');
+    const elQuotes = document.getElementById('listQuotes');
+    const elCompliance = document.getElementById('listCompliance');
+    const complianceSearch = document.getElementById('complianceSearch');
+    const complianceTypeFilter = document.getElementById('complianceTypeFilter');
+    const complianceStatusFilter = document.getElementById('complianceStatusFilter');
+    const workflowStatusFilter = document.getElementById('workflowStatusFilter');
+    const workflowAssignmentFilter = document.getElementById('workflowAssignmentFilter');
+    const workflowSearch = document.getElementById('workflowSearch');
+
+    let activeType = "all";
+    let searchTerm = "";
+    let workflowSearchTerm = "";
+    let lastOpen = [], lastAll = [];
+    let lastComplianceWorkers = [];
+
+    function setTab(key){
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab===key));
+      panels.forEach(p => p.classList.toggle("active", p.id === "panel-"+key));
+    }
+    tabs.forEach(t => t.addEventListener("click", () => setTab(t.dataset.tab)));
+
+    function renderChips(){
+      chipsWrap.innerHTML = "";
+      ["all", ...ALL_TYPES].forEach(t => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip" + (t===activeType ? " active" : "");
+        b.textContent = t==="all" ? "All" : (t[0].toUpperCase()+t.slice(1));
+        b.addEventListener("click", () => { activeType = t; drawOpen(lastOpen); drawAll(lastAll); drawWorkflow(lastAll); });
+        chipsWrap.appendChild(b);
+      });
+    }
+
+    searchBox.addEventListener("input", () => { searchTerm = searchBox.value.trim().toLowerCase(); drawOpen(lastOpen); drawAll(lastAll); drawWorkflow(lastAll); });
+    clearSearch.addEventListener("click", () => { searchBox.value=""; searchTerm=""; drawOpen(lastOpen); drawAll(lastAll); drawWorkflow(lastAll); });
+
+    // ---- Helpers ----
+    function cap(s){ return s ? (s[0].toUpperCase()+s.slice(1)) : ""; }
+    function fmt(n){ return (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : ""; }
+    function matchFilters(j){
+      const type = (j.serviceType||"").toLowerCase();
+      const okType = (activeType==="all") || (type===activeType);
+      if (!okType) return false;
+      if (!searchTerm) return true;
+      const hay = JSON.stringify(j).toLowerCase();
+      return hay.includes(searchTerm);
+    }
+    function slots(j){
+      const need = Number(j.contractorsNeeded || 1);
+      const have = Array.isArray(j.contractorIds) ? j.contractorIds.length : (j.contractorId ? 1 : 0);
+      const left = Math.max(0, need - have);
+      return {need,have,left};
+    }
+    function fmtDate(ts){
+      if (!ts?.toDate) return {date:"", time:""};
+      const d=ts.toDate();
+      return {
+        date: d.toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'}),
+        time: d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})
+      };
+    }
+
+    function jobCard(j){
+      const {need, left} = slots(j);
+      const zip = j.zip || j.area || j.city || "";
+      const dt = fmtDate(j.serviceDate);
+      const title = cap(j.serviceType||"job");
+      const payLine = j.flatRate!=null ? `<span>Client est: <strong>${fmt(j.flatRate)}</strong></span>` : "";
+      const leftTxt = need>1 ? `• ${left} of ${need} slots left` : "";
+
+      return `
+        <div class="card" data-id="${j.id}">
+          <div class="toprow">
+            <strong>${title}</strong>
+            <span class="small">Status: <code>${j.status||''}</code></span>
+          </div>
+          <div class="meta">
+            ${zip?`<span>📍 ${zip}</span>`:""}
+            ${dt.date?`<span>🗓️ ${dt.date}</span>`:""}
+            ${dt.time?`<span>🕘 ${dt.time}</span>`:""}
+            ${j.estimatedTeamHours?`<span>⏱️ ${j.estimatedTeamHours} hrs</span>`:""}
+            ${leftTxt}
+            ${payLine}
+          </div>
+          ${j.summary?`<div>${j.summary}</div>`:""}
+          ${j.notes?`<div class="small" style="opacity:.8">${j.notes}</div>`:""}
+
+          <div class="actions">
+            <button class="btn btn-outline" data-act="assign-self">Assign me</button>
+            <button class="btn btn-outline" data-act="assign-by-email">Assign by email</button>
+            <button class="btn btn-outline" data-act="unassign">Unassign</button>
+            <select class="btn" data-act="status">
+              ${["open","claimed","in_progress","submitted","approved","paid"].map(s=>`<option value="${s}" ${j.status===s?"selected":""}>${s}</option>`).join("")}
+            </select>
+            <button class="btn btn-outline" data-act="private">Private note</button>
+            <button class="btn btn-danger" data-act="delete">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawOpen(list){
+      const filtered = list.filter(matchFilters);
+      elOpen.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No open jobs match.</div>`;
+      hookJobActions(elOpen, filtered);
+    }
+    function drawAll(list){
+      const filtered = list.filter(matchFilters);
+      elAll.innerHTML = filtered.length ? filtered.map(jobCard).join("") : `<div class="empty">No jobs match.</div>`;
+      hookJobActions(elAll, filtered);
+    }
+
+    
+    function safeText(value, fallback="Not provided"){
+      if (value === undefined || value === null || value === "") return fallback;
+      if (Array.isArray(value)) return value.length ? value.join(", ") : fallback;
+      return String(value);
+    }
+
+    async function loadContractorSettings(uid){
+      const sections = ["availability", "territory", "capacity"];
+      const result = {};
+
+      for (const section of sections) {
+        try {
+          const snap = await getDoc(doc(db, "users", uid, "contractorSettings", section));
+          result[section] = snap.exists() ? snap.data() : {};
+        } catch (e) {
+          console.warn("Could not load contractor setting:", section, e);
+          result[section] = {};
+        }
+      }
+
+      return result;
+    }
+
+    function settingsHTML(settings){
+      const availability = settings.availability || {};
+      const territory = settings.territory || {};
+      const capacity = settings.capacity || {};
+
+      return `
+        <div class="profile-box">
+          <strong>Team Scheduling Profile</strong>
+          <div class="profile-grid">
+            <div class="profile-mini">
+              <h4>Availability</h4>
+              <p><strong>Type:</strong> ${safeText(availability.availabilityType)}
+<strong>Preferred Times:</strong> ${safeText(availability.preferredStartTimes)}
+<strong>Available Slots:</strong> ${safeText(availability.availableSlots)}
+<strong>Blocked Days:</strong> ${safeText(availability.blockedDays)}</p>
+            </div>
+            <div class="profile-mini">
+              <h4>Territory</h4>
+              <p><strong>Preferred ZIPs:</strong> ${safeText(territory.preferredZips)}
+<strong>Day / ZIP Rules:</strong> ${safeText(territory.dayZipRules)}
+<strong>Travel Radius:</strong> ${safeText(territory.travelRadius)}
+<strong>Avoid Areas:</strong> ${safeText(territory.avoidAreas)}</p>
+            </div>
+            <div class="profile-mini">
+              <h4>Capacity</h4>
+              <p><strong>Worker Type:</strong> ${safeText(capacity.workerType || "1099_contractor")}
+<strong>Work Style:</strong> ${safeText(capacity.workStyle)}
+<strong>Max Homes/Day:</strong> ${safeText(capacity.maxHomesPerDay)}
+<strong>Max Hours/Day:</strong> ${safeText(capacity.maxHoursPerDay)}
+<strong>Preferred Size:</strong> ${safeText(capacity.preferredJobSize)}
+<strong>Heavy Clean:</strong> ${safeText(capacity.heavyCleanWilling)}
+<strong>Capabilities:</strong> ${safeText(capacity.serviceCapabilities)}
+<strong>Notes:</strong> ${safeText(capacity.capacityNotes)}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawPeople(container, people, role){
+      if (!container) return;
+      if (!people.length){ container.innerHTML = `<div class="empty">No ${role}s found.</div>`; return; }
+
+      container.innerHTML = people.map(p=>`
+        <div class="card" data-uid="${p.id}">
+          <div class="toprow">
+            <strong>${p.displayName || p.email || p.id}</strong>
+            <span class="rolepill">${p.role || ""}</span>
+          </div>
+          <div class="meta">
+            ${p.email?`<span>📧 ${p.email}</span>`:""}
+            ${Array.isArray(p.serviceTypes)&&p.serviceTypes.length?`<span>🧰 ${p.serviceTypes.join(", ")}</span>`:""}
+            ${p.applicationStatus?`<span>Status: ${p.applicationStatus}</span>`:""}
+          </div>
+          ${role==="contractor"?`<div class="actions">
+            <button class="btn btn-outline" data-uid="${p.id}" data-act="copy-id">Copy UID</button>
+            <button class="btn btn-solid" data-uid="${p.id}" data-act="load-profile">View Scheduling Profile</button>
+          </div>
+          <div class="contractor-profile" id="profile-${p.id}"></div>`:""}
+        </div>
+      `).join("");
+
+      container.querySelectorAll('[data-act="copy-id"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          try{ await navigator.clipboard.writeText(b.dataset.uid); b.textContent="Copied!"; setTimeout(()=>b.textContent="Copy UID",900);}catch{}
+        });
+      });
+
+      container.querySelectorAll('[data-act="load-profile"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const uid = b.dataset.uid;
+          const target = document.getElementById(`profile-${uid}`);
+          if (!target) return;
+
+          b.disabled = true;
+          const oldText = b.textContent;
+          b.textContent = "Loading…";
+
+          try{
+            const settings = await loadContractorSettings(uid);
+            target.innerHTML = settingsHTML(settings);
+          }catch(e){
+            console.warn(e);
+            target.innerHTML = `<div class="profile-box">Could not load scheduling profile.</div>`;
+          }finally{
+            b.disabled = false;
+            b.textContent = oldText;
+          }
+        });
+      });
+    }
 
 
-function renderIntakes(){
-  const list=intakeList();
-  $('intakes').innerHTML=`<div class="app-card"><p class="mini-kicker">Website Requests</p><h2 class="screen-title">Intake Inbox</h2><p class="screen-copy">These are website intake submissions that still go through Formspree/Zapier as your backup, while also saving structured data for the app. Review, draft a quote, or convert to a job when ready.</p><div class="meta" style="margin-top:12px"><span>Cleaning</span><span>Organizing</span><span>Decor</span><span>Holiday</span><span>Staging</span></div></div><div class="stack">${list.length?list.map(intakeCard).join(''):'<div class="empty">No website intakes found yet. Once forms are submitted through the updated pages, they will appear here if Firestore save is allowed.</div>'}</div>`;
-  wireIntakes();
-}
-function intakeCard(x){
-  const d=intakeData(x);
-  const details=intakeClearDetails(x);
-  const summary=intakeSummary(x);
-  const st=String(x.intakeStatus||x.status||'new');
-  return `<div class="card" data-intake="${x.id}" data-intake-col="${x._sourceCollection||'intakeRequests'}">
-    <div class="card-head">
-      <div>
-        <h3>${intakeClientName(x)}</h3>
-        <div class="meta"><span>${svcLabel(serviceFromIntake(x))}</span><span>${cap(st)}</span>${intakeClientEmail(x)?`<span>${intakeClientEmail(x)}</span>`:''}${d.phone?`<span>${d.phone}</span>`:''}${x._sourceCollection?`<span>${cap(x._sourceCollection)}</span>`:''}</div>
-      </div>
-      <span class="status-pill ${['reviewing','quote_drafted','converted_to_job','job_created'].includes(st)?'good':''}">${dateText(x.createdAt)||'New'}</span>
-    </div>
-    ${summary?`<p class="screen-copy">${summary}</p>`:''}
-    ${details.length?`<div class="doc-grid">${details.map((line,i)=>`<div class="doc-mini"><strong>Detail ${i+1}</strong><span class="hint">${line}</span></div>`).join('')}</div>`:''}
-    <div class="actions">
-      <button class="btn btn-soft" data-intake-status="reviewing">Reviewing</button>
-      <button class="btn btn-outline" data-intake-quote>Draft Quote</button>
-      <button class="btn btn-primary" data-intake-job>Create Job</button>
-      <button class="btn btn-danger" data-intake-status="archived">Archive</button>
-    </div>
-  </div>`;
-}
-function getIntakeItemFromCard(card){
-  const col=card.dataset.intakeCol;
-  const id=card.dataset.intake;
-  return intakeList().find(x=>x.id===id && (x._sourceCollection||'intakeRequests')===col);
-}
-function wireIntakes(){
-  document.querySelectorAll('[data-intake-status]').forEach(b=>b.addEventListener('click',async()=>{
-    const item=getIntakeItemFromCard(b.closest('[data-intake]'));
-    if(!item)return;
-    await updateSourceDoc(item,{status:b.dataset.intakeStatus,intakeStatus:b.dataset.intakeStatus});
-    showToast('Intake updated');
-  }));
-  document.querySelectorAll('[data-intake-quote]').forEach(b=>b.addEventListener('click',()=>createQuoteFromIntakeCard(b.closest('[data-intake]'))));
-  document.querySelectorAll('[data-intake-job]').forEach(b=>b.addEventListener('click',()=>createJobFromIntakeCard(b.closest('[data-intake]'))));
-}
-async function createQuoteFromIntakeCard(card){
-  const item=getIntakeItemFromCard(card);
-  if(!item)return;
-  const d=intakeData(item);
-  const amount=prompt('Client-facing quote amount? Optional.','');
-  await addDoc(collection(db,'quotes'),{
-    source:'website_intake',
-    intakeSourceCollection:item._sourceCollection||'intakeRequests',
-    intakeId:item.id,
-    status:'draft',
-    clientName:intakeClientName(item),
-    clientEmail:intakeClientEmail(item),
-    serviceType:serviceFromIntake(item),
-    serviceLabel:svcLabel(serviceFromIntake(item)),
-    clientQuote:amount?Number(amount):null,
-    notes:intakeSummary(item)||d.notes||'',
-    intakeData:d,
-    createdAt:serverTimestamp(),
-    updatedAt:serverTimestamp()
-  });
-  await updateSourceDoc(item,{status:'quote_drafted',intakeStatus:'quote_drafted'});
-  showToast('Quote drafted from intake');
-}
-async function createJobFromIntakeCard(card){
-  const item=getIntakeItemFromCard(card);
-  if(!item)return;
-  const d=intakeData(item);
-  if((item._sourceCollection||'')==='jobs'){
-    await updateSourceDoc(item,{status:'open',workflowStatus:'open',intakeStatus:'converted_to_job'});
-    showToast('Intake job opened');
-    return;
-  }
-  const flat=prompt('Client flat rate / quote amount? Optional.','');
-  const hours=prompt('Estimated team hours? Optional.','');
-  const payload={
-    status:'open',
-    workflowStatus:'open',
-    source:'admin_from_website_intake',
-    intakeSourceCollection:item._sourceCollection||'intakeRequests',
-    intakeId:item.id,
-    clientName:intakeClientName(item),
-    clientEmail:intakeClientEmail(item),
-    clientUid:item.clientUid||item.userId||'',
-    serviceType:serviceFromIntake(item),
-    summary:intakeSummary(item)||d.notes||'',
-    flatRate:flat?Number(flat):null,
-    estimatedTeamHours:hours?Number(hours):null,
-    intakeData:d,
-    createdAt:serverTimestamp(),
-    updatedAt:serverTimestamp()
-  };
-  await addDoc(collection(db,'jobs'),stripNull(payload));
-  await updateSourceDoc(item,{status:'converted_to_job',intakeStatus:'converted_to_job'});
-  showToast('Job created from intake');
-}
+    function serviceLabel(types){
+      if (!Array.isArray(types) || !types.length) return "Not selected";
+      return types.map(t => cap(String(t).replaceAll("_"," "))).join(", ");
+    }
 
-function renderScheduling(){ const list=requests.filter(r=>!r.requestKind||r.requestKind==='scheduling_request'||r.source==='client_dashboard'); $('scheduling').innerHTML=`<div class="app-card"><p class="mini-kicker">Scheduling</p><h2 class="screen-title">Client requests</h2><p class="screen-copy">Turn client availability requests into confirmed jobs.</p></div><div class="stack">${list.length?list.map(requestCard).join(''):'<div class="empty">No scheduling requests yet.</div>'}</div>`; wireRequestButtons(); }
-function requestCard(r){return `<div class="card" data-req="${r.id}"><div class="card-head"><div><h3>${cap(r.requestType||'Scheduling Request')}</h3><div class="meta"><span>${cap(r.status||'new')}</span>${r.serviceType?`<span>${cap(r.serviceType)}</span>`:''}${r.preferredDate?`<span>${dateText(r.preferredDate)}</span>`:''}${r.preferredWindow?`<span>${cap(r.preferredWindow)}</span>`:''}</div></div><span class="status-pill">${r.clientName||r.clientEmail||'Client'}</span></div>${r.notes?`<p class="screen-copy">${r.notes}</p>`:''}<div class="actions"><button class="btn btn-soft" data-req-status="reviewing">Reviewing</button><button class="btn btn-outline" data-req-status="contractor_contacted">Contractor Contacted</button><button class="btn btn-outline" data-req-status="options_sent">Options Sent</button><button class="btn btn-primary" data-req-status="confirmed">Confirmed</button><button class="btn btn-danger" data-req-status="declined">Declined</button><button class="btn btn-dark" data-create-job>Create Job</button></div></div>`}
-function wireRequestButtons(){ document.querySelectorAll('[data-req-status]').forEach(b=>b.addEventListener('click',async()=>{const id=b.closest('[data-req]').dataset.req; await updateDoc(doc(db,'bookingRequests',id),{status:b.dataset.reqStatus,updatedAt:serverTimestamp()}); showToast('Request updated');})); document.querySelectorAll('[data-create-job]').forEach(b=>b.addEventListener('click',()=>createJobFromRequest(b.closest('[data-req]').dataset.req))); }
-async function createJobFromRequest(id){ const r=requests.find(x=>x.id===id); if(!r)return; const flat=prompt('Client flat rate / quote amount? Optional.',''); const hours=prompt('Estimated team hours? Optional.',''); const payload={status:'open',workflowStatus:'open',source:'admin_from_scheduling_request',bookingRequestId:id,clientId:r.clientUid||r.clientId||'',clientUid:r.clientUid||r.clientId||'',clientEmail:r.clientEmail||'',serviceType:r.serviceType||'cleaning',summary:r.notes||'',preferredDate:r.preferredDate||'',arrivalWindow:r.preferredWindow||'',flatRate:flat?Number(flat):null,estimatedTeamHours:hours?Number(hours):null,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}; if(r.preferredDate){try{payload.serviceDate=Timestamp.fromDate(new Date(r.preferredDate+'T09:00:00'))}catch{}} await addDoc(collection(db,'jobs'),stripNull(payload)); await updateDoc(doc(db,'bookingRequests',id),{status:'job_created',updatedAt:serverTimestamp()}); showToast('Job created'); }
-function docs(u){return u.compliance?.documents||{}} function agreement(u){return u.compliance?.agreement||{}} function docDone(u,type){const d=docs(u)[type]; return !!(d?.url||d?.front?.url||d?.back?.url||(Array.isArray(d?.files)&&d.files.length));} function adminOk(u,type){const d=type==='agreement'?agreement(u):docs(u)[type]; return ['approved','verified','active'].includes(String(d?.adminStatus||'').toLowerCase())}
-function requiredDocsFor(u){ const k=workerKind(u); if(k==='employee_w2') return ['id','w4','i9','agreement']; return ['id','w9','coi','agreement']; }
-function needsReview(u){return requiredDocsFor(u).some(t=>t==='agreement'?agreement(u)?.signatureName:docDone(u,t))||String(u.contractorStatus||u.employeeStatus||u.onboardingStatus||'').includes('review')}
-function completionPct(u){const required=requiredDocsFor(u); const checks=required.map(t=>t==='agreement'?!!agreement(u)?.signatureName:docDone(u,t)); return Math.round(checks.filter(Boolean).length/checks.length*100)}
-function renderCompliance(){ const list=users.filter(isWorkforce).sort((a,b)=>completionPct(b)-completionPct(a)); $('compliance').innerHTML=`<div class="app-card"><p class="mini-kicker">Review</p><h2 class="screen-title">Workforce compliance</h2><p class="screen-copy">Contractor onboarding is active now. W2/employee readiness stays here for later so you can use it when you are ready.</p><div class="meta" style="margin-top:12px"><span>1099: ID, W-9, COI, Agreement</span><span>W2 later: ID, W-4, I-9, Agreement</span><span>Admin controls activation</span></div></div><div class="stack">${list.length?list.map(complianceCard).join(''):'<div class="empty">No workforce files yet.</div>'}</div>`; wireCompliance(); }
-function docsGridFor(u){return requiredDocsFor(u).map(t=>t==='agreement'?agreementMini(u):docMini(u,t,{id:'Identity',w9:'W-9',coi:'COI',w4:'W-4',i9:'I-9'}[t]||cap(t))).join('')}
-function complianceCard(u){ const isActive=String(u.contractorStatus||u.employeeStatus||u.compliance?.status||'').toLowerCase()==='active'; return `<div class="card" data-user="${u.id}"><div class="card-head"><div><h3>${u.legalName||u.fullName||u.displayName||u.email||'Worker'}</h3><div class="meta"><span>${u.email||''}</span><span>${kindLabel(u)}</span><span>${cap(u.contractorStatus||u.employeeStatus||u.onboardingStatus||u.role||'Needs Review')}</span><span>${completionPct(u)}% submitted</span>${approvedServices(u).length?`<span>Approved: ${approvedServices(u).map(svcLabel).join(', ')}</span>`:''}</div></div><span class="status-pill ${isActive?'good':''}">${cap(u.contractorStatus||u.employeeStatus||u.onboardingStatus||'Needs Review')}</span></div><div class="doc-grid">${docsGridFor(u)}</div><div class="actions"><button class="btn btn-primary" data-mark-active>Mark Active</button><button class="btn btn-soft" data-mark-review>Needs Update</button><button class="btn btn-danger" data-mark-hold>Hold</button><button class="btn btn-outline" data-mark-waitlist>Employee Waitlist</button></div></div>`}
-function fileLinks(fileObj){ if(!fileObj)return ''; let out=[]; if(fileObj.url) out.push(['File',fileObj.url]); if(fileObj.front?.url) out.push(['Front',fileObj.front.url]); if(fileObj.back?.url) out.push(['Back',fileObj.back.url]); if(Array.isArray(fileObj.files)) fileObj.files.forEach((f,i)=>{if(f.url)out.push([f.name||`File ${i+1}`,f.url])}); return out.length?`<div class="doc-files">${out.map(([n,u])=>`<a href="${safeUrl(u)}" target="_blank" rel="noopener">${n}</a>`).join('')}</div>`:'<span class="hint">No file link saved</span>'; }
-function docMini(u,type,label){ const d=docs(u)[type]||{}; return `<div class="doc-mini" data-doc-type="${type}"><div class="card-head"><strong>${label}</strong><span class="status-pill ${adminOk(u,type)?'good':''}">${cap(d.adminStatus|| (docDone(u,type)?'pending_review':'not_uploaded'))}</span></div>${type==='coi'&&d.expiration?`<span class="hint">Expires: ${d.expiration}</span>`:''}${fileLinks(d)}<div class="actions"><button class="btn btn-soft" data-doc-approve="${type}">Approve</button><button class="btn btn-danger" data-doc-reject="${type}">Reject</button></div></div>`}
-function agreementMini(u){ const a=agreement(u)||{}; const initials=a.initials?Object.keys(a.initials).length:0; return `<div class="doc-mini"><div class="card-head"><strong>Agreement</strong><span class="status-pill ${adminOk(u,'agreement')?'good':''}">${cap(a.adminStatus|| (a.signatureName?'pending_review':'not_signed'))}</span></div>${a.signatureName?`<span class="hint">Signed by ${a.signatureName}<br>${a.signedByEmail||''}</span>`:'<span class="hint">Not signed yet</span>'}<span class="hint">Initialed sections: ${initials}</span>${a.acknowledgments?`<div class="agreement-scroll">${Object.entries(a.acknowledgments).map(([k,v])=>`<div>${v?'Yes':'No'} ${cap(k)}</div>`).join('')}</div>`:''}<div class="actions"><button class="btn btn-soft" data-agreement-approve>Approve</button><button class="btn btn-danger" data-agreement-reject>Reject</button></div></div>`}
-function wireCompliance(){ document.querySelectorAll('[data-doc-approve]').forEach(b=>b.addEventListener('click',()=>setDocStatus(b.closest('[data-user]').dataset.user,b.dataset.docApprove,'approved'))); document.querySelectorAll('[data-doc-reject]').forEach(b=>b.addEventListener('click',()=>setDocStatus(b.closest('[data-user]').dataset.user,b.dataset.docReject,'needs_update'))); document.querySelectorAll('[data-agreement-approve]').forEach(b=>b.addEventListener('click',()=>setAgreementStatus(b.closest('[data-user]').dataset.user,'approved'))); document.querySelectorAll('[data-agreement-reject]').forEach(b=>b.addEventListener('click',()=>setAgreementStatus(b.closest('[data-user]').dataset.user,'needs_update'))); document.querySelectorAll('[data-mark-active]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'active'))); document.querySelectorAll('[data-mark-review]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'needs_update'))); document.querySelectorAll('[data-mark-hold]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'hold'))); document.querySelectorAll('[data-mark-waitlist]').forEach(b=>b.addEventListener('click',()=>markContractor(b.closest('[data-user]').dataset.user,'employee_waitlist'))); }
-async function setDocStatus(uid,type,status){ await updateDoc(doc(db,'users',uid),{[`compliance.documents.${type}.adminStatus`]:status,[`compliance.documents.${type}.reviewedAt`]:serverTimestamp(),[`compliance.documents.${type}.reviewedBy`]:me.email||me.uid,'compliance.updatedAt':serverTimestamp(),updatedAt:serverTimestamp()}); showToast(`${cap(type)} ${cap(status)}`); }
-async function setAgreementStatus(uid,status){ await updateDoc(doc(db,'users',uid),{'compliance.agreement.adminStatus':status,'compliance.agreement.reviewedAt':serverTimestamp(),'compliance.agreement.reviewedBy':me.email||me.uid,'compliance.updatedAt':serverTimestamp(),updatedAt:serverTimestamp()}); showToast(`Agreement ${cap(status)}`); }
-async function markContractor(uid,status){ const u=users.find(x=>x.id===uid)||{}; const k=workerKind(u); const patch={onboardingStatus:status==='active'?'active':'review_required','compliance.status':status,updatedAt:serverTimestamp()}; if(k==='employee_w2'||status==='employee_waitlist'){ patch.employeeStatus=status; patch.workerType=status==='employee_waitlist'?'employee_waitlist':'employee_w2'; patch.classification=patch.workerType; if(status==='employee_waitlist') patch.role='employee_waitlist'; } else { patch.contractorStatus=status; patch.workerType=k; patch.classification=k; } if(status==='active'){
-  patch.role=(k==='employee_w2')?'employee':'contractor';
-  patch.activeAt=serverTimestamp();
-  if(!approvedServices(u).length && appServices(u).length){
-    patch.approvedServiceTypes=appServices(u);
-    patch.approvedServices=appServices(u);
-    patch.approvedServiceLabels=appServices(u).map(svcLabel);
-  }
-}
-await updateDoc(doc(db,'users',uid),patch); showToast(`Worker marked ${cap(status)}`); }
-function renderJobs(){ const list=jobs; $('jobs').innerHTML=`<div class="app-card"><p class="mini-kicker">Workflow</p><h2 class="screen-title">Jobs</h2><p class="screen-copy">Track open, claimed, in-progress, submitted, and completed work.</p></div><div class="stack">${list.length?list.map(jobCard).join(''):'<div class="empty">No jobs yet.</div>'}</div>`; wireJobs(); }
-function jobCard(j){return `<div class="card" data-job="${j.id}"><div class="card-head"><div><h3>${svcLabel(j.serviceType||'Job')}</h3><div class="meta"><span>${cap(j.status||'open')}</span>${j.workflowStatus?`<span>${cap(j.workflowStatus)}</span>`:''}${j.serviceDate?`<span>${dateText(j.serviceDate)}</span>`:''}${j.zip?`<span>${j.zip}</span>`:''}${j.flatRate?`<span>${money(j.flatRate)}</span>`:''}</div></div><span class="status-pill">${j.contractorEmails?.length||j.contractorIds?.length||0} assigned</span></div>${j.summary||j.notes?`<p class="screen-copy">${j.summary||j.notes}</p>`:''}<div class="actions"><button class="btn btn-soft" data-job-status="open">Open</button><button class="btn btn-outline" data-job-status="claimed">Claimed</button><button class="btn btn-outline" data-job-status="in_progress">In Progress</button><button class="btn btn-primary" data-job-status="completed">Complete</button></div></div>`}
-function wireJobs(){document.querySelectorAll('[data-job-status]').forEach(b=>b.addEventListener('click',async()=>{const id=b.closest('[data-job]').dataset.job; await updateDoc(doc(db,'jobs',id),{status:b.dataset.jobStatus,workflowStatus:b.dataset.jobStatus,updatedAt:serverTimestamp()}); showToast('Job updated');}))}
-function renderPeople(){ const workforce=users.filter(isWorkforce); const contractors=workforce.filter(u=>workerKind(u)!=='employee_w2'&&workerKind(u)!=='employee_waitlist'); const employees=workforce.filter(u=>workerKind(u)==='employee_w2'||workerKind(u)==='employee_waitlist'); const clients=users.filter(u=>String(u.role||'').toLowerCase()==='client'); $('people').innerHTML=`<div class="app-card"><p class="mini-kicker">People</p><h2 class="screen-title">People Directory</h2><p class="screen-copy">Clients, contractors, and future employee/waitlist records stay separated but visible to admin. Use Archive / Remove Access when someone should no longer use a portal, while keeping backend records for tax, compliance, payments, and job history.</p></div><div class="split"><div class="app-card"><h2 class="screen-title">Contractors</h2><div class="stack" style="margin-top:12px">${contractors.length?contractors.map(personCard).join(''):'<div class="empty">No contractors yet.</div>'}</div></div><div class="app-card"><h2 class="screen-title">W2 / Employee Readiness</h2><div class="stack" style="margin-top:12px">${employees.length?employees.map(personCard).join(''):'<div class="empty">No employee waitlist records yet.</div>'}</div></div></div><div class="app-card"><h2 class="screen-title">Clients</h2><div class="stack" style="margin-top:12px">${clients.length?clients.map(personCard).join(''):'<div class="empty">No clients yet.</div>'}</div></div>`; wirePeople(); }
-function personCard(u){ const archived=String(u.accountStatus||'').toLowerCase()==='archived'||String(u.portalAccess||'').toLowerCase()==='removed'; return `<div class="card" data-person="${u.id}"><div class="card-head"><div><h3>${u.legalName||u.fullName||u.displayName||u.email||'User'}</h3><div class="meta"><span>${u.email||''}</span><span>${kindLabel(u)}</span><span>${cap(u.role||'')}</span>${u.contractorStatus?`<span>${cap(u.contractorStatus)}</span>`:''}${u.employeeStatus?`<span>${cap(u.employeeStatus)}</span>`:''}${u.accountStatus?`<span>${cap(u.accountStatus)}</span>`:''}${u.portalAccess?`<span>Portal: ${cap(u.portalAccess)}</span>`:''}${approvedServices(u).length?`<span>Approved: ${approvedServices(u).map(svcLabel).join(', ')}</span>`:''}</div></div><span class="status-pill ${archived?'danger':'good'}">${archived?'Access Removed':'Active Record'}</span></div><div class="actions"><button class="btn btn-danger" data-archive-person ${archived?'disabled':''}>Archive / Remove Access</button><button class="btn btn-soft" data-reactivate-person ${archived?'':'disabled'}>Restore Portal Flag</button></div></div>`}
-function wirePeople(){ document.querySelectorAll('[data-archive-person]').forEach(b=>b.addEventListener('click',()=>archivePerson(b.closest('[data-person]').dataset.person))); document.querySelectorAll('[data-reactivate-person]').forEach(b=>b.addEventListener('click',()=>restorePerson(b.closest('[data-person]').dataset.person))); }
-async function archivePerson(uid){ const u=users.find(x=>x.id===uid)||{}; if(!uid||uid===me?.uid){ alert('Use Admin Settings to delete your own admin login.'); return; } const reason=prompt(`Archive and remove portal access for ${u.email||u.fullName||'this profile'}? Backend records will be kept. Reason:`, 'no longer active'); if(reason===null)return; await updateDoc(doc(db,'users',uid),{accountStatus:'archived',portalAccess:'removed',isActive:false,archivedReason:reason||'admin_removed_access',archivedAt:serverTimestamp(),archivedBy:me.email||me.uid,updatedAt:serverTimestamp()}); await addNotification(uid,'Portal access removed','Your portal access has been removed. Business records may be retained by The Finishing Touch.','account_archived'); showToast('Portal access removed'); }
-async function restorePerson(uid){ const reason=prompt('Restore this profile portal flag? This does not recreate a deleted Firebase login if one was deleted.', 'reactivated by admin'); if(reason===null)return; await updateDoc(doc(db,'users',uid),{accountStatus:'active',portalAccess:'allowed',isActive:true,reactivatedReason:reason||'admin_reactivated',reactivatedAt:serverTimestamp(),reactivatedBy:me.email||me.uid,updatedAt:serverTimestamp()}); showToast('Portal flag restored'); }
-function renderQuotes(){ $('quotes').innerHTML=`<div class="app-card"><p class="mini-kicker">Quotes</p><h2 class="screen-title">Quote Queue</h2><p class="screen-copy">Draft, approve, and track client quotes.</p></div><div class="stack">${quotes.length?quotes.map(q=>`<div class="card"><div class="card-head"><h3>${q.clientName||q.clientEmail||'Quote'}</h3><span class="status-pill">${cap(q.status||'draft')}</span></div><div class="meta">${q.serviceType?`<span>${cap(q.serviceType)}</span>`:''}${q.total||q.clientQuote?`<span>${money(q.total||q.clientQuote)}</span>`:''}</div>${q.notes?`<p class="screen-copy">${q.notes}</p>`:''}</div>`).join(''):'<div class="empty">No quotes yet.</div>'}</div>`; }
-function projectTypeLabel(w){
-  const service=normalizeService(w.serviceType||'');
-  if(w.projectCategory==='service_project_notes'){
-    if(service==='organizing') return 'Organizing Notes';
-    if(service==='decor') return 'Styling Notes';
-    if(service==='holiday') return 'Holiday Notes';
-    return 'Project Notes';
-  }
-  if(['cleaning','move_in_out','airbnb','commercial'].includes(service)) return 'Cleaning Walkthrough';
-  return svcLabel(service)||'Walkthrough';
-}
-function renderWalkthroughs(){
-  $('walkthroughs').innerHTML=`<div class="app-card"><p class="mini-kicker">Walkthroughs & Project Notes</p><h2 class="screen-title">Walkthrough Review</h2><p class="screen-copy">Contractor-submitted cleaning walkthroughs, organizing notes, styling notes, holiday install/takedown notes, photos, and estimate recommendations.</p></div><div class="stack">${walkthroughs.length?walkthroughs.map(w=>`<div class="card"><div class="card-head"><div><h3>${w.clientName||projectTypeLabel(w)}</h3><div class="meta"><span>${cap(w.status||'pending_review')}</span><span>${projectTypeLabel(w)}</span>${w.serviceType?`<span>${svcLabel(w.serviceType)}</span>`:''}${w.contractorEstimate?`<span>Sub ${money(w.contractorEstimate)}</span>`:''}${w.tftClientQuote?`<span>TFT ${money(w.tftClientQuote)}</span>`:''}</div></div><span class="status-pill">${w.submittedByEmail||''}</span></div>${w.propertyAddress?`<p class="screen-copy">${w.propertyAddress}</p>`:''}${w.schedulingNotes?`<p class="screen-copy"><strong>Scheduling:</strong> ${w.schedulingNotes}</p>`:''}${w.notes?`<p class="screen-copy">${w.notes}</p>`:''}${Array.isArray(w.files)&&w.files.length?`<div class="doc-files">${w.files.map((f,i)=>`<a href="${safeUrl(f.url)}" target="_blank" rel="noopener">${f.name||`File ${i+1}`}</a>`).join('')}</div>`:''}<div class="actions"><button class="btn btn-primary" data-walk-quote="${w.id}">Create Quote</button></div></div>`).join(''):'<div class="empty">No walkthroughs or project notes yet.</div>'}</div>`;
-  document.querySelectorAll('[data-walk-quote]').forEach(b=>b.addEventListener('click',()=>createQuoteFromWalk(b.dataset.walkQuote)));
-}
-async function createQuoteFromWalk(id){ const w=walkthroughs.find(x=>x.id===id); if(!w)return; await addDoc(collection(db,'quotes'),{source:'walkthrough',walkthroughId:id,status:'draft',clientName:w.clientName||'',serviceType:w.serviceType||'',serviceLabel:svcLabel(w.serviceType||''),projectCategory:w.projectCategory||'',contractorEstimate:w.contractorEstimate||null,clientQuote:w.tftClientQuote||null,notes:w.notes||'',createdAt:serverTimestamp(),updatedAt:serverTimestamp()}); await updateDoc(doc(db,'walkthroughs',id),{status:'quote_drafted',updatedAt:serverTimestamp()}); showToast('Quote drafted'); }
-function renderSettings(){ $('settings').innerHTML=`<div class="app-card"><p class="mini-kicker">Admin Profile</p><h2 class="screen-title">Admin Settings</h2><p class="screen-copy">Manage your own admin account access. Use the delete page only for your own login. To remove someone else's access, use People Directory.</p><div class="grid" style="margin-top:16px"><div class="tile"><strong>${me?.email?'Signed in':'—'}</strong><h3>Current Admin</h3><p>${me?.email||me?.uid||'No admin signed in'}</p></div><div class="tile"><strong>${cap(meData?.role||'admin')}</strong><h3>Role</h3><p>Admin access is required for this Operations Suite.</p></div></div></div><div class="app-card danger-zone"><p class="mini-kicker">Danger Zone</p><h2 class="screen-title">Delete My Admin Login</h2><p class="screen-copy">This is for deleting your own signed-in admin login only. You will be asked to type your current password. The backend profile is archived for business records instead of erased.</p><div class="setting-row"><div><h3>Delete my account</h3><p>Use this when you are testing, resetting an account, or intentionally removing your own login access.</p></div><a class="btn btn-danger" href="delete-my-account.html">Delete My Account</a></div></div><div class="app-card"><p class="mini-kicker">Admin Controls</p><h2 class="screen-title">Removing someone else's access</h2><p class="screen-copy">Go to People Directory and choose Archive / Remove Access on a contractor, employee waitlist record, or client. That does not require their password and keeps backend records for taxes, compliance, payments, and job history.</p><div class="actions"><button class="btn btn-primary" data-jump="people">Open People Directory</button><a class="btn btn-outline" href="index.html">Home Website</a></div></div>`; }
-function render(){ if(!$('app')||$('app').classList.contains('hidden'))return; if(activeSection==='home')renderHome(); if(activeSection==='applications')renderApplications(); if(activeSection==='intakes')renderIntakes(); if(activeSection==='scheduling')renderScheduling(); if(activeSection==='compliance')renderCompliance(); if(activeSection==='jobs')renderJobs(); if(activeSection==='people')renderPeople(); if(activeSection==='quotes')renderQuotes(); if(activeSection==='walkthroughs')renderWalkthroughs(); if(activeSection==='settings')renderSettings(); document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>showSection(b.dataset.jump))); }
-function stripNull(obj){return Object.fromEntries(Object.entries(obj).filter(([,v])=>v!==null&&v!==undefined&&v!==''));}
-</script>
+    function aiApplicantSummary(a){
+      const types = Array.isArray(a.serviceTypes) ? a.serviceTypes : [];
+      const hasExperience = Number(a.yearsExperience || a.experienceYears || 0) >= 1;
+      const hasInsurance = !!(a.insurance || a.hasInsurance || a.insuranceStatus || a.coiUrl);
+      const hasPortfolio = !!(a.portfolioUrl || a.socialHandle || a.workSamples || a.beforeAfterPhotos || a.references);
+      const answers = JSON.stringify(a).toLowerCase();
+
+      let score = 0;
+      if (hasExperience) score += 30;
+      if (hasInsurance) score += 25;
+      if (hasPortfolio) score += 25;
+      if (types.length) score += 10;
+      if (answers.includes("reliable") || answers.includes("detail") || answers.includes("professional")) score += 10;
+
+      const redFlags = [];
+      if (!hasExperience) redFlags.push("Experience unclear or under 1 year");
+      if (!hasInsurance) redFlags.push("Insurance / COI not confirmed");
+      if (!hasPortfolio) redFlags.push("Work verification missing");
+      if (!types.length) redFlags.push("No service category selected");
+
+      const label = score >= 75 ? "Strong Candidate" : (score >= 45 ? "Needs Review" : "Likely Not a Fit");
+      const tone = score >= 75 ? "🟢" : (score >= 45 ? "🟡" : "🔴");
+
+      return { score, label, tone, redFlags };
+    }
+
+    function drawApps(apps){
+      const el = document.getElementById('listApps');
+      if (!el) return;
+      if (!apps.length){ el.innerHTML = `<div class="empty">No pending applications.</div>`; return; }
+
+      el.innerHTML = apps.map(a=>{
+        const ai = aiApplicantSummary(a);
+        return `
+          <div class="card">
+            <div class="toprow">
+              <strong>${a.displayName || a.fullName || a.email || a.id}</strong>
+              <span class="rolepill">${ai.tone} ${ai.label}</span>
+            </div>
+            <div class="meta">
+              ${a.email?`<span>📧 ${a.email}</span>`:""}
+              <span>🧰 ${serviceLabel(a.serviceTypes)}</span>
+              <span>AI Score: ${ai.score}/100</span>
+            </div>
+            <div class="small">
+              <strong>AI Screening Notes:</strong><br>
+              ${ai.redFlags.length ? ai.redFlags.map(r=>`• ${r}`).join("<br>") : "• Application appears complete enough for interview review."}
+            </div>
+            <div class="actions">
+              <button class="btn btn-solid" data-act="approve" data-uid="${a.id}">Approve → Team</button>
+              <button class="btn btn-outline" data-act="interview" data-uid="${a.id}">AI Interview Questions</button>
+              <button class="btn btn-outline" data-act="review" data-uid="${a.id}">Needs Review</button>
+              <button class="btn btn-danger" data-act="reject" data-uid="${a.id}">Reject</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      el.querySelectorAll('[data-act="approve"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const role = prompt("Approve as which role? Examples: contractor, organizer, decorator, stager, admin_assistant, walkthrough_specialist", "contractor");
+          if (!role) return;
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:role.trim(), applicationStatus:"approved", approvedAt:serverTimestamp(), updatedAt: serverTimestamp() }); alert("Approved."); }
+          catch(e){ alert("Could not approve."); console.warn(e); }
+        });
+      });
+
+      el.querySelectorAll('[data-act="interview"]').forEach(b=>{
+        b.addEventListener("click", ()=>{
+          alert("AI Interview Assistant – Next Build\n\nThis will generate role-specific questions based on applicant category, missing details, and red flags.\n\nExamples:\n• Describe your process from arrival to completion.\n• How do you handle a client saying something was missed?\n• What supplies/tools do you bring?\n• Share proof of prior work, references, or portfolio.");
+        });
+      });
+
+      el.querySelectorAll('[data-act="review"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { applicationStatus:"needs_review", updatedAt: serverTimestamp() }); alert("Marked needs review."); }
+          catch(e){ alert("Could not update."); console.warn(e); }
+        });
+      });
+
+      el.querySelectorAll('[data-act="reject"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          if (!confirm("Reject this application?")) return;
+          try{ await updateDoc(doc(db,"users",b.dataset.uid), { role:"rejected", applicationStatus:"rejected", updatedAt: serverTimestamp() }); alert("Rejected."); }
+          catch(e){ alert("Could not reject."); console.warn(e); }
+        });
+      });
+    }
+
+
+
+    function money(n){
+      const x = Number(n || 0);
+      return Number.isFinite(x) ? `$${Math.round(x)}` : "$0";
+    }
+
+    function readable(value){
+      return String(value || "")
+        .replaceAll("_"," ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function mediaLinks(items, label){
+      if (!Array.isArray(items) || !items.length) return `<span class="small">No ${label} uploaded.</span>`;
+      return `<div class="walk-media-grid">` + items.map((m, i) => `
+        <a class="walk-media-link" href="${m.url}" target="_blank" rel="noopener">${label.slice(0,-1)} ${i+1}</a>
+      `).join("") + `</div>`;
+    }
+
+    function walkthroughCard(w){
+      const estimate = Number(w.contractorEstimate || 0);
+      const quote = Number(w.tftClientQuote || Math.round(estimate * 1.30));
+      const photos = Array.isArray(w.photos) ? w.photos : [];
+      const videos = Array.isArray(w.videos) ? w.videos : [];
+      const status = w.status || "pending_admin_review";
+
+      return `
+        <div class="card" data-walkid="${w.id}">
+          <div class="toprow">
+            <strong>${w.clientName || "Walkthrough"}</strong>
+            <span class="rolepill">${readable(status)}</span>
+          </div>
+          <div class="meta">
+            ${w.propertyAddress ? `<span>📍 ${w.propertyAddress}</span>` : ""}
+            ${w.serviceType ? `<span>🧹 ${readable(w.serviceType)}</span>` : ""}
+            ${w.conditionRating ? `<span>Condition: ${readable(w.conditionRating)}</span>` : ""}
+            ${w.submittedByEmail ? `<span>By: ${w.submittedByEmail}</span>` : ""}
+          </div>
+          <div class="quote-box">
+            <strong>Estimate Snapshot</strong><br>
+            Contractor estimate: <strong>${money(estimate)}</strong><br>
+            TFT +30% draft quote: <strong>${money(quote)}</strong><br>
+            Recommended hours: <strong>${w.recommendedHours || "Not provided"}</strong><br>
+            Recommended team size: <strong>${w.recommendedTeamSize || "Not provided"}</strong>
+          </div>
+          <div class="small">
+            <strong>Home Details:</strong><br>
+            Sq ft: ${w.sqft || "Not provided"} • Beds: ${w.beds || "0"} • Baths: ${w.baths || "0"} • Stories: ${w.stories || "Not provided"}<br>
+            Pets: ${w.pets || "Not provided"}
+          </div>
+          ${w.recommendedService ? `<div class="small"><strong>Recommended Service:</strong><br>${w.recommendedService}</div>` : ""}
+          ${w.notes ? `<div class="small"><strong>Notes:</strong><br>${w.notes}</div>` : ""}
+          ${w.addOnsRecommended ? `<div class="small"><strong>Add-ons Recommended:</strong><br>${w.addOnsRecommended}</div>` : ""}
+          ${w.concerns ? `<div class="small"><strong>Concerns / Damage Notes:</strong><br>${w.concerns}</div>` : ""}
+          <div><strong class="small">Photos</strong>${mediaLinks(photos, "photos")}</div>
+          <div><strong class="small">Videos</strong>${mediaLinks(videos, "videos")}</div>
+          <textarea class="review-note" data-field="reviewNote" placeholder="Admin note for approval/revision/decline..."></textarea>
+          <div class="actions">
+            <button class="btn btn-solid" data-act="approve-walk">Approve → Create Quote</button>
+            <button class="btn btn-outline" data-act="revise-walk">Request Revision</button>
+            <button class="btn btn-danger" data-act="decline-walk">Decline</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function quoteCard(q){
+      return `
+        <div class="card" data-quoteid="${q.id}">
+          <div class="toprow">
+            <strong>${q.clientName || "Client Quote"}</strong>
+            <span class="rolepill">${readable(q.status || "quote_draft")}</span>
+          </div>
+          <div class="meta">
+            ${q.propertyAddress ? `<span>📍 ${q.propertyAddress}</span>` : ""}
+            ${q.serviceType ? `<span>🧹 ${readable(q.serviceType)}</span>` : ""}
+            ${q.sourceWalkthroughId ? `<span>Walkthrough: ${q.sourceWalkthroughId}</span>` : ""}
+          </div>
+          <div class="quote-box">
+            <strong>Quote Draft</strong><br>
+            Contractor estimate/internal payout: <strong>${money(q.contractorEstimate)}</strong><br>
+            Client quote: <strong>${money(q.clientQuote)}</strong><br>
+            TFT margin draft: <strong>${money(Number(q.clientQuote || 0) - Number(q.contractorEstimate || 0))}</strong><br>
+            Recommended hours: <strong>${q.recommendedHours || "Not provided"}</strong><br>
+            Recommended team size: <strong>${q.recommendedTeamSize || "Not provided"}</strong>
+          </div>
+          ${q.summary ? `<div class="small"><strong>Quote Summary:</strong><br>${q.summary}</div>` : ""}
+          ${q.adminNote ? `<div class="small"><strong>Admin Note:</strong><br>${q.adminNote}</div>` : ""}
+          <div class="actions">
+            <button class="btn btn-solid" data-act="mark-sent">Mark Sent</button>
+            <button class="btn btn-outline" data-act="mark-accepted">Mark Accepted</button>
+            <button class="btn btn-danger" data-act="mark-declined">Mark Declined</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawWalkthroughs(list){
+      if (!elWalkthroughs) return;
+      if (!list.length){ elWalkthroughs.innerHTML = `<div class="empty">No walkthroughs submitted yet.</div>`; return; }
+      elWalkthroughs.innerHTML = list.map(walkthroughCard).join("");
+      hookWalkthroughActions(elWalkthroughs, list);
+    }
+
+    function drawQuotes(list){
+      if (!elQuotes) return;
+      if (!list.length){ elQuotes.innerHTML = `<div class="empty">No quote drafts yet.</div>`; return; }
+      elQuotes.innerHTML = list.map(quoteCard).join("");
+      hookQuoteActions(elQuotes, list);
+    }
+
+    function hookWalkthroughActions(container, list){
+      const byId = new Map(list.map(w => [w.id, w]));
+
+      container.querySelectorAll('[data-act="approve-walk"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-walkid]");
+          const id = card?.dataset.walkid;
+          const w = byId.get(id);
+          if (!w) return;
+          const adminNote = card.querySelector('[data-field="reviewNote"]')?.value?.trim() || "";
+          const contractorEstimate = Number(w.contractorEstimate || 0);
+          const clientQuote = Number(w.tftClientQuote || Math.round(contractorEstimate * 1.30));
+          btn.disabled = true;
+          btn.textContent = "Approving…";
+          try {
+            const quotePayload = {
+              sourceWalkthroughId: id,
+              status: "quote_draft",
+              clientName: w.clientName || "",
+              propertyAddress: w.propertyAddress || "",
+              serviceType: w.serviceType || "",
+              conditionRating: w.conditionRating || "",
+              contractorEstimate,
+              clientQuote,
+              tftMargin: clientQuote - contractorEstimate,
+              recommendedService: w.recommendedService || "",
+              recommendedHours: w.recommendedHours || 0,
+              recommendedTeamSize: w.recommendedTeamSize || 1,
+              sqft: w.sqft || 0,
+              beds: w.beds || 0,
+              baths: w.baths || 0,
+              stories: w.stories || "",
+              pets: w.pets || "",
+              notes: w.notes || "",
+              addOnsRecommended: w.addOnsRecommended || "",
+              concerns: w.concerns || "",
+              photos: Array.isArray(w.photos) ? w.photos : [],
+              videos: Array.isArray(w.videos) ? w.videos : [],
+              submittedByUid: w.submittedByUid || "",
+              submittedByEmail: w.submittedByEmail || "",
+              adminNote,
+              summary: `${readable(w.serviceType)} for ${w.clientName || "client"} — draft quote ${money(clientQuote)}.`,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            };
+            const quoteRef = await addDoc(collection(db, "quotes"), quotePayload);
+            await updateDoc(doc(db, "walkthroughs", id), {
+              status: "approved_quote_created",
+              quoteId: quoteRef.id,
+              adminNote,
+              approvedAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+            alert("Approved. Quote draft created in Quote Queue.");
+          } catch (e) {
+            console.warn(e);
+            alert("Could not approve walkthrough.");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Approve → Create Quote";
+          }
+        });
+      });
+
+      container.querySelectorAll('[data-act="revise-walk"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-walkid]");
+          const id = card?.dataset.walkid;
+          const adminNote = card.querySelector('[data-field="reviewNote"]')?.value?.trim() || "";
+          if (!adminNote) { alert("Please add a revision note first."); return; }
+          try {
+            await updateDoc(doc(db, "walkthroughs", id), {
+              status: "revision_requested",
+              adminNote,
+              updatedAt: serverTimestamp()
+            });
+            alert("Revision requested.");
+          } catch(e) { console.warn(e); alert("Could not request revision."); }
+        });
+      });
+
+      container.querySelectorAll('[data-act="decline-walk"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-walkid]");
+          const id = card?.dataset.walkid;
+          const adminNote = card.querySelector('[data-field="reviewNote"]')?.value?.trim() || "";
+          if (!confirm("Decline this walkthrough?")) return;
+          try {
+            await updateDoc(doc(db, "walkthroughs", id), {
+              status: "declined",
+              adminNote,
+              declinedAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+            alert("Walkthrough declined.");
+          } catch(e) { console.warn(e); alert("Could not decline walkthrough."); }
+        });
+      });
+    }
+
+    function hookQuoteActions(container, list){
+      container.querySelectorAll('[data-act="mark-sent"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.closest("[data-quoteid]")?.dataset.quoteid;
+          try {
+            await updateDoc(doc(db, "quotes", id), { status:"quote_sent", sentAt:serverTimestamp(), updatedAt:serverTimestamp() });
+            alert("Marked sent.");
+          } catch(e) { console.warn(e); alert("Could not update quote."); }
+        });
+      });
+      container.querySelectorAll('[data-act="mark-accepted"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.closest("[data-quoteid]")?.dataset.quoteid;
+          try {
+            await updateDoc(doc(db, "quotes", id), { status:"quote_accepted", acceptedAt:serverTimestamp(), updatedAt:serverTimestamp() });
+            alert("Marked accepted.");
+          } catch(e) { console.warn(e); alert("Could not update quote."); }
+        });
+      });
+      container.querySelectorAll('[data-act="mark-declined"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.closest("[data-quoteid]")?.dataset.quoteid;
+          if (!confirm("Mark quote declined?")) return;
+          try {
+            await updateDoc(doc(db, "quotes", id), { status:"quote_declined", declinedAt:serverTimestamp(), updatedAt:serverTimestamp() });
+            alert("Marked declined.");
+          } catch(e) { console.warn(e); alert("Could not update quote."); }
+        });
+      });
+    }
+
+
+
+    function normalizeType(value){
+      const v = String(value || "").toLowerCase();
+      if (v.includes("w2") || v.includes("employee")) return "employee_w2";
+      if (v.includes("1099") || v.includes("contractor")) return "contractor_1099";
+      return v || "contractor_1099";
+    }
+
+    function workerTypeDisplay(value){
+      const v = normalizeType(value);
+      const map = {
+        contractor_1099: "1099 Contractor",
+        employee_w2: "W2 Employee",
+        team_lead: "Team Lead",
+        organizer: "Organizer",
+        decorator: "Decorator",
+        stager: "Stager",
+        walkthrough_specialist: "Walkthrough Specialist",
+        admin_assistant: "Admin Assistant",
+        cleaning_technician: "Cleaning Technician"
+      };
+      return map[v] || readable(v || "contractor_1099");
+    }
+
+    function complianceDocStatus(docs, type){
+      const docItem = docs?.[type];
+      if (!docItem) return "missing";
+      if (docItem.adminStatus) return docItem.adminStatus;
+      if (docItem.url || (Array.isArray(docItem.files) && docItem.files.length)) return "pending_review";
+      return "missing";
+    }
+
+    function hasDoc(docs, type){
+      const d = docs?.[type];
+      return !!(d?.url || (Array.isArray(d?.files) && d.files.length));
+    }
+
+    function requiredDocsFor(workerType){
+      const t = normalizeType(workerType);
+      return t === "employee_w2" ? ["id","w4","i9","agreement"] : ["id","w9","coi","agreement"];
+    }
+
+    function coiWarning(docItem){
+      const exp = docItem?.expiration;
+      if (!exp) return { label:"No expiration", level:"warn" };
+      const today = new Date();
+      const target = new Date(exp + "T00:00:00");
+      const diff = Math.ceil((target - today) / (1000*60*60*24));
+      if (diff < 0) return { label:`Expired ${Math.abs(diff)} days ago`, level:"bad" };
+      if (diff <= 30) return { label:`Expires in ${diff} days`, level:"warn" };
+      return { label:`Active until ${exp}`, level:"good" };
+    }
+
+    function complianceStatusFor(worker){
+      const compliance = worker.compliance || {};
+      const docs = compliance.documents || {};
+      const workerType = worker.workerType || worker.classification || compliance.workerType || worker.role || "";
+      const required = requiredDocsFor(workerType);
+      const missing = required.filter(type => !hasDoc(docs, type));
+      const pending = required.filter(type => complianceDocStatus(docs, type) === "pending_review");
+      const rejected = required.filter(type => complianceDocStatus(docs, type) === "rejected");
+      const manual = compliance.status || worker.complianceStatus || "";
+
+      if (manual === "active") return { label:"Active", key:"active", level:"good", missing, pending, rejected };
+      if (manual === "hold") return { label:"Hold", key:"hold", level:"bad", missing, pending, rejected };
+      if (rejected.length) return { label:"Needs Update", key:"pending_documents", level:"bad", missing, pending, rejected };
+      if (missing.length) return { label:"Missing Docs", key:"pending_documents", level:"warn", missing, pending, rejected };
+      if (pending.length) return { label:"Pending Review", key:"pending_review", level:"warn", missing, pending, rejected };
+      return { label:"Ready for Activation", key:"pending_review", level:"good", missing, pending, rejected };
+    }
+
+    function docReviewCard(uid, docs, type){
+      const item = docs?.[type] || {};
+      const files = Array.isArray(item.files) ? item.files : (item.url ? [{url:item.url, name:item.name || type}] : []);
+      const status = complianceDocStatus(docs, type);
+      const titleMap = {
+        id:"ID",
+        w9:"W-9",
+        coi:"COI",
+        w4:"W-4",
+        i9:"I-9",
+        agreement:"Agreement Packet",
+        portfolio:"Portfolio"
+      };
+
+      const links = files.length
+        ? files.map((f,i)=>`<a class="doc-link" href="${f.url}" target="_blank" rel="noopener">${f.name || `${titleMap[type]} ${i+1}`}</a>`).join("<br>")
+        : `<span class="small">No file uploaded.</span>`;
+
+      return `
+        <div class="doc-review-card">
+          <strong>${titleMap[type] || readable(type)}</strong>
+          <span class="status-pill">${readable(status)}</span>
+          ${type === "coi" && item.expiration ? `<span class="small">Expires: ${item.expiration}</span>` : ""}
+          <div>${links}</div>
+          <div class="actions">
+            <button class="btn btn-outline" data-doc-action="approve" data-uid="${uid}" data-doc-type="${type}">Approve</button>
+            <button class="btn btn-danger" data-doc-action="reject" data-uid="${uid}" data-doc-type="${type}">Reject</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function workerComplianceCard(worker){
+      const compliance = worker.compliance || {};
+      const docs = compliance.documents || {};
+      const workerType = worker.workerType || worker.classification || compliance.workerType || worker.role || "contractor_1099";
+      const required = requiredDocsFor(workerType);
+      const status = complianceStatusFor(worker);
+      const coi = docs.coi || {};
+      const coiWarn = coiWarning(coi);
+      const serviceTypes = Array.isArray(worker.serviceTypes) ? worker.serviceTypes.join(", ") : "Not selected";
+
+      return `
+        <div class="card" data-uid="${worker.id}">
+          <div class="toprow">
+            <strong>${worker.displayName || worker.legalName || worker.email || worker.id}</strong>
+            <span class="status-pill status-${status.level}">${status.label}</span>
+          </div>
+
+          <div class="meta">
+            ${worker.email ? `<span>📧 ${worker.email}</span>` : ""}
+            <span>Type: ${workerTypeDisplay(workerType)}</span>
+            <span>Services: ${serviceTypes}</span>
+            <span>COI: ${coiWarn.label}</span>
+          </div>
+
+          <div class="quote-box">
+            <strong>Compliance Snapshot</strong><br>
+            Required: <strong>${required.map(readable).join(", ")}</strong><br>
+            Missing: <strong>${status.missing.length ? status.missing.map(readable).join(", ") : "None"}</strong><br>
+            Pending Review: <strong>${status.pending.length ? status.pending.map(readable).join(", ") : "None"}</strong><br>
+            Background: <strong>${readable(compliance.background?.status || worker.backgroundStatus || "not_set")}</strong><br>
+            QuickBooks W-9: <strong>${readable(compliance.quickbooksW9Status || "not_invited")}</strong>
+          </div>
+
+          <div class="compliance-controls">
+            <label class="small">Worker Type
+              <select class="admin-select" data-compliance-field="workerType">
+                ${[
+                  ["contractor_1099","1099 Contractor"],
+                  ["employee_w2","W2 Employee"],
+                  ["team_lead","Team Lead"],
+                  ["organizer","Organizer"],
+                  ["decorator","Decorator"],
+                  ["stager","Stager"],
+                  ["walkthrough_specialist","Walkthrough Specialist"],
+                  ["admin_assistant","Admin Assistant"],
+                  ["cleaning_technician","Cleaning Technician"]
+                ].map(([value,label])=>`<option value="${value}" ${normalizeType(workerType)===value ? "selected" : ""}>${label}</option>`).join("")}
+              </select>
+            </label>
+
+            <label class="small">Compliance Status
+              <select class="admin-select" data-compliance-field="status">
+                ${["pending_documents","pending_review","active","hold"].map(value=>`<option value="${value}" ${(compliance.status || "")===value ? "selected" : ""}>${readable(value)}</option>`).join("")}
+              </select>
+            </label>
+
+            <label class="small">Background
+              <select class="admin-select" data-compliance-field="backgroundStatus">
+                ${["not_started","pending","clear","failed","expired"].map(value=>`<option value="${value}" ${(compliance.background?.status || worker.backgroundStatus || "")===value ? "selected" : ""}>${readable(value)}</option>`).join("")}
+              </select>
+            </label>
+
+            <label class="small">QuickBooks W-9
+              <select class="admin-select" data-compliance-field="quickbooksW9Status">
+                ${["not_invited","invited","complete","needs_correction"].map(value=>`<option value="${value}" ${(compliance.quickbooksW9Status || "")===value ? "selected" : ""}>${readable(value)}</option>`).join("")}
+              </select>
+            </label>
+          </div>
+
+          <div class="doc-review-grid">
+            ${["id","w9","coi","w4","i9","agreement","portfolio"].map(type => docReviewCard(worker.id, docs, type)).join("")}
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-solid" data-compliance-action="save-worker" data-uid="${worker.id}">Save Worker Settings</button>
+            <button class="btn btn-outline" data-compliance-action="activate" data-uid="${worker.id}">Activate</button>
+            <button class="btn btn-danger" data-compliance-action="hold" data-uid="${worker.id}">Place On Hold</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateComplianceKpis(list){
+      const total = list.length;
+      let active = 0;
+      let missing = 0;
+      let expiring = 0;
+
+      list.forEach(w => {
+        const status = complianceStatusFor(w);
+        if (status.key === "active" || w.compliance?.status === "active") active++;
+        if (status.missing.length) missing++;
+        const coi = w.compliance?.documents?.coi || {};
+        const warn = coiWarning(coi);
+        if (warn.level === "warn" || warn.level === "bad") expiring++;
+      });
+
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = String(value); };
+      set("kpiWorkers", total);
+      set("kpiActiveWorkers", active);
+      set("kpiMissingDocs", missing);
+      set("kpiExpiringCoi", expiring);
+    }
+
+    function drawCompliance(list){
+      if (!elCompliance) return;
+
+      const q = (complianceSearch?.value || "").trim().toLowerCase();
+      const typeFilter = complianceTypeFilter?.value || "all";
+      const statusFilter = complianceStatusFilter?.value || "all";
+
+      const filtered = list.filter(w => {
+        const workerType = normalizeType(w.workerType || w.classification || w.compliance?.workerType || w.role || "contractor_1099");
+        const status = complianceStatusFor(w);
+        const hay = JSON.stringify(w).toLowerCase();
+
+        const okType = typeFilter === "all" || workerType === typeFilter || String(w.role || "").toLowerCase() === typeFilter;
+        const okStatus = statusFilter === "all" || status.key === statusFilter || w.compliance?.status === statusFilter;
+        const okSearch = !q || hay.includes(q);
+
+        return okType && okStatus && okSearch;
+      });
+
+      updateComplianceKpis(list);
+      elCompliance.innerHTML = filtered.length ? filtered.map(workerComplianceCard).join("") : `<div class="empty">No workers match this compliance filter.</div>`;
+      hookComplianceActions(elCompliance);
+    }
+
+    async function updateWorkerCompliance(uid, patch){
+      await setDoc(doc(db, "users", uid), {
+        ...patch,
+        compliance: {
+          ...(patch.compliance || {}),
+          updatedAt: serverTimestamp()
+        },
+        updatedAt: serverTimestamp()
+      }, { merge:true });
+    }
+
+    function hookComplianceActions(container){
+      container.querySelectorAll('[data-compliance-action="save-worker"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest("[data-uid]");
+          const uid = btn.dataset.uid;
+          const workerType = card.querySelector('[data-compliance-field="workerType"]')?.value || "contractor_1099";
+          const status = card.querySelector('[data-compliance-field="status"]')?.value || "pending_documents";
+          const backgroundStatus = card.querySelector('[data-compliance-field="backgroundStatus"]')?.value || "not_started";
+          const quickbooksW9Status = card.querySelector('[data-compliance-field="quickbooksW9Status"]')?.value || "not_invited";
+
+          try {
+            await updateWorkerCompliance(uid, {
+              workerType,
+              classification: workerType,
+              complianceStatus: status,
+              compliance: {
+                workerType,
+                status,
+                quickbooksW9Status,
+                background: { status: backgroundStatus }
+              }
+            });
+            alert("Worker compliance settings saved.");
+          } catch(e) {
+            console.warn(e);
+            alert("Could not save worker settings.");
+          }
+        });
+      });
+
+      container.querySelectorAll('[data-compliance-action="activate"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          try {
+            await updateWorkerCompliance(btn.dataset.uid, { complianceStatus:"active", compliance:{ status:"active" } });
+            alert("Worker activated.");
+          } catch(e) { console.warn(e); alert("Could not activate worker."); }
+        });
+      });
+
+      container.querySelectorAll('[data-compliance-action="hold"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Place this worker on hold? They should not be assigned jobs while on hold.")) return;
+          try {
+            await updateWorkerCompliance(btn.dataset.uid, { complianceStatus:"hold", compliance:{ status:"hold" } });
+            alert("Worker placed on hold.");
+          } catch(e) { console.warn(e); alert("Could not place worker on hold."); }
+        });
+      });
+
+      container.querySelectorAll('[data-doc-action]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const uid = btn.dataset.uid;
+          const type = btn.dataset.docType;
+          const action = btn.dataset.docAction;
+          const status = action === "approve" ? "approved" : "rejected";
+
+          try {
+            await setDoc(doc(db, "users", uid), {
+              compliance: {
+                documents: {
+                  [type]: {
+                    adminStatus: status,
+                    reviewedAt: serverTimestamp()
+                  }
+                },
+                updatedAt: serverTimestamp()
+              },
+              updatedAt: serverTimestamp()
+            }, { merge:true });
+            alert(`${readable(type)} marked ${status}.`);
+          } catch(e) {
+            console.warn(e);
+            alert("Could not update document status.");
+          }
+        });
+      });
+    }
+
+    function wireComplianceFilters(){
+      complianceSearch?.addEventListener("input", () => drawCompliance(lastComplianceWorkers));
+      complianceTypeFilter?.addEventListener("change", () => drawCompliance(lastComplianceWorkers));
+      complianceStatusFilter?.addEventListener("change", () => drawCompliance(lastComplianceWorkers));
+    }
+
+
+    // ---- Job Workflow Center ----
+    const WORKFLOW_STEPS = [
+      "pending_assignment",
+      "assigned",
+      "scheduled",
+      "en_route",
+      "checked_in",
+      "before_photos_submitted",
+      "in_progress",
+      "checklist_completed",
+      "after_photos_submitted",
+      "submitted_for_review",
+      "needs_rework",
+      "approved",
+      "completion_package_sent",
+      "payout_pending",
+      "paid",
+      "completed"
+    ];
+
+    function workflowStatusFor(job){
+      const explicit = String(job.workflowStatus || "").trim();
+      if (explicit) return explicit;
+      const status = String(job.status || "open").toLowerCase();
+      if (status === "open") return "pending_assignment";
+      if (status === "claimed") return "assigned";
+      if (status === "in_progress") return "in_progress";
+      if (status === "submitted") return "submitted_for_review";
+      if (status === "approved") return "approved";
+      if (status === "paid") return "paid";
+      return status || "pending_assignment";
+    }
+
+    function workflowPercent(status){
+      const index = WORKFLOW_STEPS.indexOf(status);
+      if (index < 0) return 8;
+      return Math.round(((index + 1) / WORKFLOW_STEPS.length) * 100);
+    }
+
+    function workflowStageLabel(status){
+      return readable(status || "pending_assignment");
+    }
+
+    function assignmentTypeFor(job){
+      if (job.assignedToType) return String(job.assignedToType).toLowerCase();
+      if (job.contractorCompanyId) return "contractor_company";
+      if (job.teamLeadId) return "team_lead";
+      if (Array.isArray(job.contractorIds) && job.contractorIds.length) return "solo_contractor";
+      if (job.contractorId) return "solo_contractor";
+      return "unassigned";
+    }
+
+    function workflowMatches(job){
+      const status = workflowStatusFor(job);
+      const statusFilter = workflowStatusFilter?.value || "all";
+      const assignFilter = workflowAssignmentFilter?.value || "all";
+      const type = (job.serviceType || "").toLowerCase();
+      const assignment = assignmentTypeFor(job);
+      const ids = Array.isArray(job.contractorIds) ? job.contractorIds : (job.contractorId ? [job.contractorId] : []);
+
+      if (activeType !== "all" && type !== activeType) return false;
+      if (statusFilter !== "all" && status !== statusFilter) return false;
+      if (assignFilter === "unassigned" && ids.length) return false;
+      if (assignFilter === "assigned" && !ids.length) return false;
+      if (!["all","unassigned","assigned"].includes(assignFilter) && assignment !== assignFilter) return false;
+
+      const q = (workflowSearchTerm || searchTerm || "").trim().toLowerCase();
+      if (!q) return true;
+      return JSON.stringify(job).toLowerCase().includes(q) || status.toLowerCase().includes(q) || assignment.toLowerCase().includes(q);
+    }
+
+    function updateWorkflowKpis(list){
+      const jobs = Array.isArray(list) ? list : [];
+      const active = jobs.filter(j => !["paid","completed"].includes(workflowStatusFor(j))).length;
+      const needsReview = jobs.filter(j => workflowStatusFor(j) === "submitted_for_review").length;
+      const needsRework = jobs.filter(j => workflowStatusFor(j) === "needs_rework").length;
+      const payout = jobs.filter(j => workflowStatusFor(j) === "payout_pending").length;
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = String(value); };
+      set("wfTotal", jobs.length);
+      set("wfActive", active);
+      set("wfNeedsReview", needsReview);
+      set("wfNeedsRework", needsRework);
+      set("wfPayout", payout);
+    }
+
+    function workflowJobCard(job){
+      const status = workflowStatusFor(job);
+      const pct = workflowPercent(status);
+      const assignType = assignmentTypeFor(job);
+      const ids = Array.isArray(job.contractorIds) ? job.contractorIds : (job.contractorId ? [job.contractorId] : []);
+      const dt = fmtDate(job.serviceDate);
+      const zip = job.zip || job.area || job.city || "";
+      const title = cap(job.serviceType || "job");
+      const pay = job.contractorPay || job.payEach || job.contractorPayEach || job.payPerContractor || "";
+
+      return `
+        <div class="card" data-workflow-id="${job.id}">
+          <div class="toprow">
+            <strong>${title}</strong>
+            <span class="status-pill">${workflowStageLabel(status)}</span>
+          </div>
+          <div class="workflow-progress" aria-label="Workflow progress"><span style="width:${pct}%"></span></div>
+          <div class="meta">
+            ${zip ? `<span>📍 ${zip}</span>` : ""}
+            ${dt.date ? `<span>🗓️ ${dt.date}</span>` : ""}
+            ${dt.time ? `<span>🕘 ${dt.time}</span>` : ""}
+            ${job.estimatedTeamHours ? `<span>⏱️ ${job.estimatedTeamHours} hrs</span>` : ""}
+            ${job.flatRate != null ? `<span>Client: <strong>${fmt(job.flatRate)}</strong></span>` : ""}
+            ${pay ? `<span>Payout: <strong>${fmt(pay)}</strong></span>` : ""}
+          </div>
+          <div class="workflow-detail">
+            <strong>Assignment:</strong> ${readable(assignType)}<br>
+            <strong>Assigned IDs:</strong> ${ids.length ? ids.join(", ") : "Not assigned"}<br>
+            <strong>Photo Requirements:</strong> Before ${job.beforePhotosRequired === false ? "optional" : "required"} • After ${job.afterPhotosRequired === false ? "optional" : "required"}<br>
+            <strong>GPS:</strong> ${job.gpsCheckInRequired === false ? "Optional" : "Required"}<br>
+            <strong>Checklist:</strong> ${readable(job.checklistType || job.serviceType || "standard")}
+          </div>
+          ${job.summary ? `<div>${job.summary}</div>` : ""}
+          ${job.notes ? `<div class="small" style="opacity:.82">${job.notes}</div>` : ""}
+          <div class="actions">
+            <select class="workflow-select" data-workflow-action="status">
+              ${WORKFLOW_STEPS.map(s=>`<option value="${s}" ${s===status ? "selected" : ""}>${workflowStageLabel(s)}</option>`).join("")}
+            </select>
+            <button class="btn btn-outline" data-workflow-action="scheduled">Mark Scheduled</button>
+            <button class="btn btn-outline" data-workflow-action="review">Needs Review</button>
+            <button class="btn btn-danger" data-workflow-action="rework">Request Rework</button>
+            <button class="btn btn-solid" data-workflow-action="approve">Approve Job</button>
+            <button class="btn btn-outline" data-workflow-action="package">Package Sent</button>
+            <button class="btn btn-outline" data-workflow-action="payout">Payout Pending</button>
+            <button class="btn btn-solid" data-workflow-action="complete">Complete</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawWorkflow(list){
+      if (!elWorkflow) return;
+      const jobs = Array.isArray(list) ? list : [];
+      updateWorkflowKpis(jobs);
+      const filtered = jobs.filter(workflowMatches);
+      elWorkflow.innerHTML = filtered.length ? filtered.map(workflowJobCard).join("") : `<div class="empty">No jobs match this workflow view.</div>`;
+      hookWorkflowActions(elWorkflow);
+    }
+
+    async function updateWorkflowStatus(jobId, workflowStatus){
+      const statusMap = {
+        pending_assignment:"open",
+        assigned:"claimed",
+        scheduled:"claimed",
+        en_route:"claimed",
+        checked_in:"in_progress",
+        before_photos_submitted:"in_progress",
+        in_progress:"in_progress",
+        checklist_completed:"in_progress",
+        after_photos_submitted:"submitted",
+        submitted_for_review:"submitted",
+        needs_rework:"submitted",
+        approved:"approved",
+        completion_package_sent:"approved",
+        payout_pending:"approved",
+        paid:"paid",
+        completed:"paid"
+      };
+      const patch = {
+        workflowStatus,
+        status: statusMap[workflowStatus] || workflowStatus,
+        updatedAt: serverTimestamp(),
+        workflowUpdatedAt: serverTimestamp()
+      };
+      if (workflowStatus === "checked_in") patch.checkedInAt = serverTimestamp();
+      if (workflowStatus === "submitted_for_review") patch.submittedForReviewAt = serverTimestamp();
+      if (workflowStatus === "approved") patch.approvedAt = serverTimestamp();
+      if (workflowStatus === "completion_package_sent") patch.completionPackageSentAt = serverTimestamp();
+      if (workflowStatus === "paid") patch.paidAt = serverTimestamp();
+      if (workflowStatus === "completed") patch.completedAt = serverTimestamp();
+      await updateDoc(doc(db,"jobs",jobId), patch);
+    }
+
+    function hookWorkflowActions(container){
+      container.querySelectorAll('[data-workflow-action="status"]').forEach(sel => {
+        sel.addEventListener("change", async () => {
+          const jobId = sel.closest("[data-workflow-id]")?.dataset.workflowId;
+          if (!jobId) return;
+          try { await updateWorkflowStatus(jobId, sel.value); }
+          catch(e){ console.warn(e); alert("Could not update workflow status."); }
+        });
+      });
+      const actionMap = {
+        scheduled:"scheduled",
+        review:"submitted_for_review",
+        rework:"needs_rework",
+        approve:"approved",
+        package:"completion_package_sent",
+        payout:"payout_pending",
+        complete:"completed"
+      };
+      container.querySelectorAll('[data-workflow-action]').forEach(btn => {
+        if (btn.tagName === "SELECT") return;
+        btn.addEventListener("click", async () => {
+          const jobId = btn.closest("[data-workflow-id]")?.dataset.workflowId;
+          const next = actionMap[btn.dataset.workflowAction];
+          if (!jobId || !next) return;
+          if (next === "needs_rework" && !confirm("Request rework for this job?")) return;
+          try { await updateWorkflowStatus(jobId, next); alert(`Workflow updated: ${workflowStageLabel(next)}.`); }
+          catch(e){ console.warn(e); alert("Could not update workflow."); }
+        });
+      });
+    }
+
+    function wireWorkflowFilters(){
+      workflowSearch?.addEventListener("input", () => { workflowSearchTerm = workflowSearch.value.trim().toLowerCase(); drawWorkflow(lastAll); });
+      workflowStatusFilter?.addEventListener("change", () => drawWorkflow(lastAll));
+      workflowAssignmentFilter?.addEventListener("change", () => drawWorkflow(lastAll));
+    }
+
+
+    function hookJobActions(container, jobs){
+      const byId = new Map(jobs.map(j=>[j.id,j]));
+      container.querySelectorAll(".card .actions").forEach(row=>{
+        const id = row.closest(".card").dataset.id;
+        const job = byId.get(id);
+        if (!job) return;
+
+        row.querySelector('[data-act="assign-self"]')?.addEventListener("click", ()=>assignSelf(id));
+        row.querySelector('[data-act="assign-by-email"]')?.addEventListener("click", ()=>assignByEmail(id));
+        row.querySelector('[data-act="unassign"]')?.addEventListener("click", ()=>unassign(id));
+        row.querySelector('[data-act="private"]')?.addEventListener("click", ()=>editPrivate(id));
+        row.querySelector('[data-act="delete"]')?.addEventListener("click", ()=>delJob(id));
+        row.querySelector('[data-act="status"]')?.addEventListener("change", (e)=>setStatus(id, e.target.value));
+      });
+    }
+
+    // ---- Job actions ----
+    async function assignSelf(jobId){
+      const me = auth.currentUser; if (!me) return;
+      try{
+        await runTransaction(db, async tx=>{
+          const ref=doc(db,"jobs",jobId), snap=await tx.get(ref);
+          if (!snap.exists()) throw "Missing";
+          const j=snap.data();
+          const need=Number(j.contractorsNeeded||1);
+          const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:[];
+          if (!ids.includes(me.uid)) ids.push(me.uid);
+          const update = {
+            contractorIds: ids,
+            updatedAt: serverTimestamp(),
+            status: (ids.length>=need) ? "claimed" : "open",
+            claimedAt: (ids.length>=need) ? serverTimestamp() : j.claimedAt || null
+          };
+          tx.update(ref, update);
+        });
+        alert("Assigned.");
+      }catch(e){ alert("Could not assign."); console.warn(e); }
+    }
+
+    async function assignByEmail(jobId){
+      const email = prompt("Enter contractor email to assign:"); if (!email) return;
+      try{
+        const q = query(collection(db,"users"), where("email","==", email));
+        const snap = await getDocs(q);
+        if (snap.empty){ alert("No user with that email."); return; }
+        const u = { id: snap.docs[0].id, ...snap.docs[0].data() };
+        if ((u.role||"").toLowerCase()==="pending"){ alert("User is pending; approve first."); return; }
+
+        await runTransaction(db, async tx=>{
+          const ref=doc(db,"jobs",jobId), ds=await tx.get(ref);
+          if (!ds.exists()) throw "Missing";
+          const j=ds.data();
+          const need=Number(j.contractorsNeeded||1);
+          const ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:[];
+          if (!ids.includes(u.id)) ids.push(u.id);
+          const update = {
+            contractorIds: ids,
+            updatedAt: serverTimestamp(),
+            status: (ids.length>=need) ? "claimed" : "open",
+            claimedAt: (ids.length>=need) ? serverTimestamp() : j.claimedAt || null
+          };
+          tx.update(ref, update);
+        });
+        alert("Assigned.");
+      }catch(e){ alert("Could not assign."); console.warn(e); }
+    }
+
+    async function unassign(jobId){
+      const who = prompt("Remove which contractor UID? (leave blank to remove the last one)");
+      try{
+        await runTransaction(db, async tx=>{
+          const ref=doc(db,"jobs",jobId), ds=await tx.get(ref);
+          if (!ds.exists()) throw "Missing";
+          const j=ds.data();
+          let ids=Array.isArray(j.contractorIds)?[...j.contractorIds]:[];
+          if (!ids.length) return;
+          if (who){ ids = ids.filter(x=>x!==who); } else { ids.pop(); }
+          tx.update(ref, {
+            contractorIds: ids,
+            updatedAt: serverTimestamp(),
+            status: ids.length ? (j.status||"claimed") : "open"
+          });
+        });
+        alert("Unassigned.");
+      }catch(e){ alert("Could not unassign."); console.warn(e); }
+    }
+
+    async function setStatus(jobId, status){
+      try{ await updateDoc(doc(db,"jobs",jobId), { status, updatedAt: serverTimestamp() }); }
+      catch(e){ alert("Could not update status."); console.warn(e); }
+    }
+
+    async function delJob(jobId){
+      if (!confirm("Delete this job?")) return;
+      try{ await deleteDoc(doc(db,"jobs",jobId)); }
+      catch(e){ alert("Could not delete."); console.warn(e); }
+    }
+
+    async function editPrivate(jobId){
+      const note = prompt("Private note (replaces jobs/{id}/private/main.note). Leave blank to clear.");
+      try{
+        const ref = doc(db, "jobs", jobId, "private", "main");
+        await setDoc(ref, { note: (note||""), updatedAt: serverTimestamp() });
+        alert("Saved.");
+      }catch(e){ alert("Could not save private note."); console.warn(e); }
+    }
+
+    // ---- Create form ----
+    function wireCreateForm(){
+      const form = document.getElementById('createForm');
+      const msg  = document.getElementById('createMsg');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        msg.textContent = "Creating…";
+
+        const fd = new FormData(form);
+        const data = Object.fromEntries(fd.entries());
+
+        // Combine date + time into Firestore Timestamp
+        let serviceDateTs = null;
+        if (data.serviceDate) {
+          const [hh,mm] = (data.serviceTime || "09:00").split(":").map(n=>parseInt(n||0,10));
+          const [y,m,d] = data.serviceDate.split("-").map(n=>parseInt(n,10));
+          serviceDateTs = Timestamp.fromDate(new Date(y,(m||1)-1,d, hh||9, mm||0,0,0));
+        }
+
+        const job = {
+          serviceType: (data.serviceType||"").toLowerCase(),
+          status: (data.status||"open"),
+          zip: (data.zip||"").trim(),
+          area: (data.area||"").trim(),
+          summary: (data.summary||"").trim(),
+          notes: (data.notes||"").trim(),
+          flatRate: data.flatRate? Number(data.flatRate) : null,
+          estimatedTeamHours: data.estimatedTeamHours? Number(data.estimatedTeamHours) : null,
+          contractorsNeeded: Math.max(1, Number(data.contractorsNeeded||1)),
+          contractorIds: [],
+          clientId: (data.clientId||"").trim(),
+          serviceDate: serviceDateTs,
+          arriveEarlyMinutes: 15,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago",
+          reminderFlags: { dayBefore: false, dayOf: false },
+          workflowStatus: (data.status === "open") ? "pending_assignment" : ((data.status === "claimed") ? "assigned" : (data.status || "pending_assignment")),
+          checklistType: (data.serviceType || "cleaning").toLowerCase(),
+          beforePhotosRequired: true,
+          afterPhotosRequired: true,
+          gpsCheckInRequired: true,
+          clientCompletionPackageStatus: "not_started",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+
+        // cleanup empty props
+        Object.keys(job).forEach(k=>{ if (job[k]==="" || job[k]==null) delete job[k]; });
+
+        try{
+          await addDoc(collection(db,"jobs"), job);
+          msg.textContent = "Created ✔";
+          form.reset();
+          setTimeout(()=>msg.textContent="",1200);
+          setTab("open");
+        }catch(e){
+          msg.textContent = "Could not create job.";
+          console.warn(e);
+        }
+      });
+    }
+
+    // ---- Estimator ----
+    function wireEstimator(){
+      const btn = document.getElementById('estCalcBtn');
+      const out = document.getElementById('estOut');
+      const svc = document.getElementById('estService');
+
+      // New Estimate Hub fallback for the current admin layout
+      if (!svc && btn && out) {
+        const getNum = (id, fallback=0) => {
+          const el = document.getElementById(id);
+          const n = Number(el?.value || fallback);
+          return Number.isFinite(n) ? n : fallback;
+        };
+        const getVal = (id, fallback="") => document.getElementById(id)?.value || fallback;
+        const round5 = n => Math.round(n / 5) * 5;
+
+        btn.addEventListener("click", () => {
+          const category = getVal("estCategory","residential");
+          const sqft = Math.max(200, getNum("sqft",1600));
+          const service = getVal("resService","initial");
+          const soil = getVal("soilRes","standard");
+          const pet = getVal("petImpact","none");
+          const subEstimate = getNum("subEstimate",0);
+
+          const rates = { standard:.16, initial:.20, deep:.25, move:.32 };
+          const soils = { standard:1, lived:1.12, dirty:1.25, major:1.45, light:1, moderate:1.15, heavy:1.3, severe:1.55 };
+          const pets = { none:0, light:15, moderate:35, high:65, foster:95 };
+
+          let base = sqft * (rates[service] || .20) * (soils[soil] || 1);
+          if (category === "airbnb") base = Math.max(175, sqft * .22 + getNum("airLaundry",0)*18 + getNum("airBeds",0)*15);
+          if (category === "commercial") base = sqft * .16 * (soils[getVal("soilCom","light")] || 1);
+          if (getVal("commonOnly","no") === "yes") base *= .68;
+          if (getVal("stories","1") === "2") base += 20;
+          base += (pets[pet] || 0);
+          base += getNum("addFans",0)*8 + getNum("addBlinds",0)*10 + getNum("addWindows",0)*5 + getNum("addOvens",0)*35 + getNum("addFridges",0)*35;
+
+          const draft = round5(base);
+          const marked = subEstimate ? round5(subEstimate * 1.30) : null;
+
+          out.innerHTML = `
+            <strong>Internal Draft Estimate</strong><br>
+            System draft client estimate: <strong>$${draft}</strong><br>
+            <span class="hint">This is internal only. Approve before sending to client.</span>
+            ${subEstimate ? `<hr style="border:0;border-top:1px solid #eadfd8;margin:10px 0">Sub estimate: <strong>$${subEstimate}</strong><br>TFT +30% client quote: <strong>$${marked}</strong>` : ""}
+          `;
+        });
+        return;
+      }
+
+      if (!svc || !btn || !out) return;
+
+      function show(key){
+        document.getElementById('estCleaning').style.display  = (key==='cleaning' ? '' : 'none');
+        document.getElementById('estOrganizing').style.display= (key==='organizing' ? '' : 'none');
+        document.getElementById('estDecor').style.display     = (key==='decor' ? '' : 'none');
+        document.getElementById('estHoliday').style.display   = (key==='holiday' ? '' : 'none');
+      }
+      show(svc.value);
+      svc.addEventListener('change', ()=> show(svc.value));
+
+      function labelFromHours(teamHours, occ){
+        const tag = occ ? ` — ${occ}` : "";
+        if (teamHours <= 2.5) return `Holiday & Event (indoor${tag}) — Small (≈2–2.5 hr)`;
+        if (teamHours <= 4)   return `Holiday & Event (indoor${tag}) — Medium (≈3–4 hr)`;
+        if (teamHours <= 6)   return `Holiday & Event (indoor${tag}) — Large (≈5–6 hr)`;
+        return `Holiday & Event (indoor${tag}) — XL (6.5+ hr)`;
+      }
+
+      btn.addEventListener('click', () => {
+        const type = svc.value;
+        try{
+          if (type === 'cleaning'){
+            const data = {
+              sqft: document.getElementById('c_sqft').value,
+              service: document.getElementById('c_service').value,
+              beds: document.getElementById('c_beds').value,
+              baths: document.getElementById('c_baths').value,
+              other_rooms: document.getElementById('c_other').value,
+              stories: document.getElementById('c_stories').value,
+              frequency: document.getElementById('c_freq').value,
+              addons: document.getElementById('c_addons').value
+            };
+            const price = (window.calcCleaning ? calcCleaning(data) : 0);
+            const { teamHours } = (window.estimateHoursCleaning ? estimateHoursCleaning(data) : {teamHours:0});
+            const hint = (window.cleaningHint ? cleaningHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+
+          if (type === 'organizing'){
+            const data = {
+              org_area: document.getElementById('o_area').value,
+              org_size: document.getElementById('o_size').value,
+              spaces: document.getElementById('o_spaces').value,
+              complexity: document.getElementById('o_complex').value,
+              org_clutter: document.getElementById('o_clutter').value,
+              org_decision_speed: document.getElementById('o_decision').value,
+              org_volume: document.getElementById('o_volume').value,
+              org_containers: document.getElementById('o_cont').value,
+              addons: document.getElementById('o_addons').value
+            };
+            const price = (window.calcOrganizing ? calcOrganizing(data) : 0);
+            const { teamHours } = (window.estimateHoursOrganizing ? estimateHoursOrganizing(data) : {teamHours:0});
+            const hint = (window.organizingHint ? organizingHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+
+          if (type === 'decor'){
+            const data = {
+              room: document.getElementById('d_room').value,
+              count: document.getElementById('d_count').value,
+              decor_scope: document.getElementById('d_scope').value,
+              decor_type: document.getElementById('d_type').value,
+              addons: document.getElementById('d_addons').value
+            };
+            const price = (window.calcDecor ? calcDecor(data) : 0);
+            const { teamHours } = (window.estimateHoursDecor ? estimateHoursDecor(data) : {teamHours:0});
+            const hint = (window.decorHint ? decorHint(data, teamHours) : '');
+            out.innerHTML = `Estimate: <strong>$${price}</strong><br><span class="hint">${hint}</span>`;
+            return;
+          }
+
+          if (type === 'holiday'){
+            const occasion = (document.getElementById('h_occasion')?.value || '').trim();
+            const data = {
+              occasion,
+              trees: document.getElementById('h_trees').value,
+              tallest: document.getElementById('h_tallest').value,
+              tree_style: document.getElementById('h_style').value,
+              tree_ribbon: document.getElementById('h_ribbon').value,
+              wreaths: document.getElementById('h_wreaths').value,
+              garland_sections: document.getElementById('h_garland').value,
+              stair_sections: document.getElementById('h_stairs').value,
+              mantle: document.getElementById('h_mantle').value,
+              tablescapes: document.getElementById('h_tables').value,
+              storage: document.getElementById('h_storage').value,
+              shopping_trips: document.getElementById('h_trips').value,
+              teardown: document.getElementById('h_teardown').value
+            };
+            const res = (window.calcHoliday ? calcHoliday(data) : {price:0, teamHours:0, teardownHours:0, teardownPrice:0});
+            const fancyHint = labelFromHours(res.teamHours, occasion);
+            const lines = [
+              `Install est: <strong>$${res.price}</strong>`,
+              `Team time: ~${res.teamHours} hrs`,
+            ];
+            if (res.teardownHours){
+              lines.push(`Teardown: ~${res.teardownHours} hrs • approx <strong>$${res.teardownPrice}</strong>`);
+            }
+            lines.push(`<span class="hint">${fancyHint}</span>`);
+            out.innerHTML = lines.join('<br>');
+            return;
+          }
+
+          out.textContent = 'Pick a service.';
+        } catch (e){
+          console.warn(e);
+          out.textContent = 'Could not calculate. Check your inputs.';
+        }
+      });
+    }
+
+    // ---- Admin helper (no duplicate consts) ----
+    function wireAdminHelp(){
+      const launcher = document.getElementById('admin-help-launcher');
+      const panel    = document.getElementById('admin-help');
+      const thread   = document.getElementById('ah-thread');
+      const input    = document.getElementById('ah-input');
+      const send     = document.getElementById('ah-send');
+      const close    = document.querySelector('#admin-help .ah-close');
+      const quick    = document.querySelector('#admin-help .ah-quick');
+
+      const bookUrl = "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9";
+
+      function addMsg(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ah-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function greet(){
+        addMsg("Hi! Admin helper here. Ask about quoting, statuses, assigning, booking links — or type a holiday like <em>Game Day</em>, <em>Birthday</em>, or <em>Christmas</em> to see which fields to fill in.");
+      }
+      function detectIntent(t){
+        t=(t||"").toLowerCase();
+        if (/\b(game\s*day|gameday|super ?bowl|football|sports)\b/.test(t)) return "gameday";
+        if (/\b(birthday|bday)\b/.test(t)) return "birthday";
+        if (/\b(christmas|xmas)\b/.test(t)) return "christmas";
+        if (/\b(holiday|event|which fields|holiday cheat|help.*holiday)\b/.test(t)) return "holiday";
+        if (/quote|estimate|price|how do i quote/.test(t)) return "quote";
+        if (/organizing|closet|pantry|garage/.test(t)) return "organizing";
+        if (/assign|unassign|add.*contractor/.test(t)) return "assign";
+        if (/status|submitted|approved|paid|claimed/.test(t)) return "status";
+        if (/book|calendar|square/.test(t)) return "booking";
+        return "fallback";
+      }
+      function answer(intent){
+        const booking = `Send the calendar: <a href="${bookUrl}" target="_blank" rel="noopener">Open Square</a>.`;
+        const estTab = `Use the <strong>Estimate</strong> tab for a fast ballpark (no saving).`;
+
+        const GAME_DAY = [
+          "<strong>Game Day (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Game Day</strong>",
+          "Set: <em>Tablescapes</em> (coffee table, console, food bar), <em>Garland</em> (entry/TV wall), <em>Wreaths</em> if any.",
+          "<strong>No trees.</strong>"
+        ].join("<br>");
+
+        const BIRTHDAY = [
+          "<strong>Birthday (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Birthday</strong>",
+          "Use: <em>Tablescapes</em> (cake/gift table), <em>Garland</em>, <em>Mantle</em> if used.",
+          "<strong>No trees.</strong>"
+        ].join("<br>");
+
+        const CHRISTMAS = [
+          "<strong>Christmas (Holiday/Event):</strong>",
+          "Holiday/Event = <strong>Christmas</strong>",
+          "Set: <strong># Trees + Tallest Size + Style</strong> (add <em>Ribbon</em> if used).",
+          "Then add: <em>Wreaths</em> / <em>Garland</em> / <em>Stairs</em> / <em>Mantle</em> / <em>Tablescapes</em>."
+        ].join("<br>");
+
+        switch(intent){
+          case "gameday":   return GAME_DAY;
+          case "birthday":  return BIRTHDAY;
+          case "christmas": return CHRISTMAS;
+          case "holiday":
+            return [
+              "<strong>Holiday/Event cheat sheet</strong>",
+              GAME_DAY, "", BIRTHDAY, "", CHRISTMAS,
+              "<span class='small' style='opacity:.8'>Tip: Storage (Attic/Offsite) + Shopping Trips add time; optional Teardown quotes its own hours + $.</span>"
+            ].join("<br>");
+          case "quote":
+            return [
+              estTab,
+              "• Cleaning: size/service, beds/baths, add-ons → time hint.",
+              "• Organizing: area/size + clutter/decision → time hint.",
+              "• Decor/Holiday: pick elements; Christmas unlocks tree fields.",
+              booking
+            ].join("<br>");
+          case "organizing":
+            return [
+              "Organizing defaults: Medium area ≈ 3–4 hr team block.",
+              "Heavier clutter / slower decisions increase hours; bins/labels add a bit.",
+              estTab
+            ].join("<br>");
+          case "assign":
+            return [
+              "Open/All Jobs → card actions:",
+              "• <strong>Assign me</strong> adds you.",
+              "• <strong>Assign by email</strong> finds user by email and adds them.",
+              "• <strong>Unassign</strong> removes a UID.",
+              "Status flips to <em>claimed</em> when all slots are filled."
+            ].join("<br>");
+          case "status":
+            return [
+              "<code>open → claimed → in_progress → submitted → approved → paid</code>",
+              "Contractors progress jobs; you can override with the dropdown.",
+              "Use <em>Private note</em> for entry codes/PII."
+            ].join("<br>");
+          case "booking": return booking;
+          default:
+            return "Try: “Game Day fields”, “Birthday fields”, “Christmas fields”, or “Holiday cheat sheet”. Also: “How do I quote?”, “Assign a job”, “Statuses”, “Booking link”.";
+        }
+      }
+      function sendText(txt){
+        const t = (txt||"").trim(); if(!t) return;
+        addMsg(t, "me");
+        setTimeout(()=> addMsg(answer(detectIntent(t))), 120);
+      }
+
+      launcher.addEventListener('click', ()=>{
+        panel.style.display = 'block';
+        if (!thread.dataset.greeted){ greet(); thread.dataset.greeted="1"; }
+        input.focus();
+      });
+      close.addEventListener('click', ()=> panel.style.display='none');
+      send.addEventListener('click', ()=>{ sendText(input.value); input.value=""; });
+      input.addEventListener('keydown', (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendText(input.value); input.value=""; }});
+      quick.addEventListener('click', (e)=>{
+        if (!e.target.matches('button[data-q]')) return;
+        const q = e.target.getAttribute('data-q');
+        addMsg(e.target.textContent, "me");
+        setTimeout(()=> addMsg(answer(detectIntent(q))), 120);
+      });
+    }
+
+    // ---- Init ----
+    function init(){
+      renderChips();
+
+      // Live lists
+      onSnapshot(
+        query(collection(db,"jobs"), where("status","==","open")),
+        snap => {
+          const byCreatedDesc = (a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0);
+          lastOpen = snap.docs.map(d=>({id:d.id, ...d.data()})).sort(byCreatedDesc);
+          drawOpen(lastOpen);
+        }
+      );
+      onSnapshot(
+        query(collection(db,"jobs"), orderBy("createdAt","desc"), limit(200)),
+        snap => { lastAll = snap.docs.map(d=>({id:d.id, ...d.data()})); drawAll(lastAll); drawWorkflow(lastAll); }
+      );
+      onSnapshot(
+        query(collection(db,"users"), where("role","in",["contractor","admin"])),
+        snap => { drawPeople(elCons, snap.docs.map(d=>({id:d.id, ...d.data()})), "contractor"); }
+      );
+      onSnapshot(
+        query(collection(db,"users"), where("role","==","client")),
+        snap => { drawPeople(elClients, snap.docs.map(d=>({id:d.id, ...d.data()})), "client"); }
+      );
+      onSnapshot(
+        query(collection(db,"users"), where("role","==","pending")),
+        snap => { drawApps(snap.docs.map(d=>({id:d.id, ...d.data()}))); }
+      );
+
+
+      onSnapshot(
+        query(collection(db,"walkthroughs"), orderBy("createdAt","desc"), limit(100)),
+        snap => { drawWalkthroughs(snap.docs.map(d=>({id:d.id, ...d.data()}))); },
+        err => console.warn("walkthroughs listener error:", err)
+      );
+
+      onSnapshot(
+        query(collection(db,"quotes"), orderBy("createdAt","desc"), limit(100)),
+        snap => { drawQuotes(snap.docs.map(d=>({id:d.id, ...d.data()}))); },
+        err => console.warn("quotes listener error:", err)
+      );
+
+
+      onSnapshot(
+        query(collection(db,"users"), where("role","in",["contractor","admin","organizer","decorator","stager","walkthrough_specialist","admin_assistant","team_lead","cleaning_technician"])),
+        snap => {
+          lastComplianceWorkers = snap.docs.map(d=>({id:d.id, ...d.data()}));
+          drawCompliance(lastComplianceWorkers);
+        },
+        err => console.warn("compliance listener error:", err)
+      );
+
+      // Wire features
+      wireCreateForm();
+      wireEstimator();
+      wireAdminHelp();
+      wireComplianceFilters();
+      wireWorkflowFilters();
+
+      // Default to Open tab (safety)
+      setTab("open");
+    }
+  </script>
 </body>
 </html>
