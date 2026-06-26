@@ -367,6 +367,63 @@ a{color:inherit}
 .setting-row h3{font-family:"Playfair Display",serif;margin:0 0 5px}
 .setting-row p{margin:0;color:var(--muted);font-weight:650;line-height:1.5}
 
+
+.job-media-panel{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fffaf6;
+  padding:12px;
+  display:grid;
+  gap:10px;
+}
+.job-media-panel strong{
+  font-family:"Playfair Display",serif;
+  font-size:1.05rem;
+}
+.job-upload-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:10px;
+}
+.job-upload-card{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fffdf9;
+  padding:12px;
+  display:grid;
+  gap:8px;
+  min-width:0;
+}
+.job-upload-card input[type=file]{
+  width:100%;
+  border:1px solid var(--line2);
+  border-radius:14px;
+  padding:.65rem;
+  background:#fffaf6;
+}
+.job-upload-status{
+  color:var(--muted);
+  font-weight:850;
+  font-size:.84rem;
+  line-height:1.35;
+}
+.job-upload-progress{
+  height:10px;
+  background:#f3e8e4;
+  border:1px solid var(--line);
+  border-radius:999px;
+  overflow:hidden;
+  display:none;
+}
+.job-upload-progress span{
+  display:block;
+  width:0%;
+  height:100%;
+  background:linear-gradient(135deg,var(--taupe2),var(--champagne));
+  transition:width .18s ease;
+}
+.job-upload-card.is-uploading .job-upload-progress{display:block}
+
 @media(max-width:900px){
   .app-shell{grid-template-columns:1fr;width:min(100% - 16px,760px);margin-top:10px}
   .app-rail{position:relative;min-height:auto}
@@ -478,8 +535,8 @@ function showScreen(key){ Object.values(screens).forEach(s=>s.classList.remove('
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2200); }
 function cap(s){return String(s||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());}
 function cleanName(n){return String(n||'file').replace(/[^a-zA-Z0-9._-]/g,'_');}
-const SERVICE_LABELS={cleaning:'Cleaning',move_in_out:'Move-In / Move-Out',airbnb:'Airbnb Turnover',commercial:'Commercial Cleaning',organizing:'Home Organizing',decor:'Interior Decorating / Styling',holiday:'Holiday Decorating'};
-function normalizeService(s){const v=String(s||'').toLowerCase().trim(); if(['clean','cleaning','deep_clean','standard_clean'].includes(v))return'cleaning'; if(['moveout','move_out','move-in-out','move in out','move_in','move_in_out'].includes(v))return'move_in_out'; if(['airbnb','turnover','short_term_rental'].includes(v))return'airbnb'; if(['commercial','office'].includes(v))return'commercial'; if(['organize','organizing','organization','home_organizing'].includes(v))return'organizing'; if(['decor','decorating','styling','staging','interior','interior_decorating','design'].includes(v))return'decor'; if(['holiday','holiday_decor','christmas','event','events'].includes(v))return'holiday'; return v||'cleaning';}
+const SERVICE_LABELS={cleaning:'Cleaning',move_in_out:'Move-In / Move-Out',airbnb:'Airbnb Turnover',commercial:'Commercial Cleaning',organizing:'Home Organizing',decor:'Interior Decorating / Styling',staging:'Staging & Styling',holiday:'Holiday Decorating',virtual_design:'Virtual Design'};
+function normalizeService(s){const v=String(s||'').toLowerCase().trim(); if(v.includes('virtual')||v.includes('e-design')||v.includes('edesign')||v.includes('online design'))return'virtual_design'; if(['clean','cleaning','deep_clean','standard_clean'].includes(v))return'cleaning'; if(['moveout','move_out','move-in-out','move in out','move_in','move_in_out'].includes(v))return'move_in_out'; if(['airbnb','turnover','short_term_rental'].includes(v)||v.includes('short-term rental'))return'airbnb'; if(['commercial','office'].includes(v))return'commercial'; if(['organize','organizing','organization','home_organizing'].includes(v))return'organizing'; if(['staging','stage','home_staging','staging_styling'].includes(v))return'staging'; if(['decor','decorating','styling','interior','interior_decorating','design'].includes(v))return'decor'; if(['holiday','holiday_decor','christmas','event','events'].includes(v))return'holiday'; return v||'cleaning';}
 function contractorServices(){const raw=userData.approvedServiceTypes||userData.approvedServices||userData.serviceTypes||userData.application?.serviceTypes||[]; const list=Array.isArray(raw)?raw:String(raw||'').split(','); const normalized=[...new Set(list.map(normalizeService).filter(Boolean))]; return normalized.length?normalized:['cleaning'];}
 function serviceLabel(s){return SERVICE_LABELS[normalizeService(s)]||cap(s)}
 function hasService(s){return contractorServices().includes(normalizeService(s))}
@@ -571,15 +628,31 @@ function resetUploadProgress(docItem, type){
   setUploadProgress(docItem, type, 0, 'Ready to upload.');
   docItem?.classList.remove('is-uploading');
 }
+function uploadMaxSizeFor(file){
+  const type = String(file?.type || '').toLowerCase();
+
+  if(type.startsWith('video/')) return 100 * 1024 * 1024;
+  if(type === 'application/pdf') return 25 * 1024 * 1024;
+  if(type.startsWith('image/')) return 15 * 1024 * 1024;
+
+  return 20 * 1024 * 1024;
+}
+
+function uploadMaxSizeLabel(file){
+  const max = uploadMaxSizeFor(file);
+  return max >= 100 * 1024 * 1024 ? '100MB' : (max >= 25 * 1024 * 1024 ? '25MB' : '15MB');
+}
+
 function uploadOneFile(path, file, label, onProgress){
-  if(file.size > 20 * 1024 * 1024) throw new Error(`${label} is too large. Please choose a file under 20MB.`);
+  const max = uploadMaxSizeFor(file);
+  if(file.size > max) throw new Error(`${label} is too large. Please choose a file under ${uploadMaxSizeLabel(file)}.`);
   const r = storageRef(storage, path);
   return new Promise((resolve, reject)=>{
     const task = uploadBytesResumable(r, file);
     const timer = setTimeout(()=>{
       try{ task.cancel(); }catch{}
       reject(new Error(`${label} is taking too long. Please check your connection, then try again.`));
-    }, 120000);
+    }, 180000);
     task.on('state_changed',
       snapshot=>{
         const pct = snapshot.totalBytes ? Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100) : 0;
@@ -717,6 +790,130 @@ function renderActiveApp(){
  renderJobs(); renderWalkthrough(); renderAvailability(); renderDocumentsView(); renderResources(); renderSettings();
 }
 function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if(!['home','documents','settings'].includes(b.dataset.view)) b.classList.add('locked'); }); $('view-home').innerHTML=`<p class="mini-kicker">Onboarding</p><h2 class="screen-title">Finish onboarding first</h2><p class="screen-copy">Jobs, availability, territory, and workflow unlock after The Finishing Touch reviews your documents and marks your contractor profile active.</p><div class="actions"><button class="btn btn-primary" type="button" onclick="document.getElementById('onboardingScreen').classList.add('active');document.getElementById('appScreen').classList.remove('active')">Go to Onboarding</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderDocumentsView(); renderSettings(); }
+
+function jobMediaPanel(j, mine){
+  if(!mine) return '';
+
+  return `<div class="job-media-panel">
+    <strong>Before / After / Issue Photos</strong>
+    <p class="hint" style="margin:0">Upload required job documentation here. Photos, videos, and PDFs are saved to the job file for admin review.</p>
+    <div class="job-upload-grid">
+      ${jobUploadCard(j.id,'before','Before Photos','Upload before starting work.')}
+      ${jobUploadCard(j.id,'after','After Photos','Upload after the job is complete.')}
+      ${jobUploadCard(j.id,'incidents','Issue / Damage Photos','Use for damage, heavy buildup, access issues, or scope concerns.')}
+    </div>
+  </div>`;
+}
+
+function jobUploadCard(jobId, kind, title, help){
+  return `<div class="job-upload-card" data-job-upload-card="${jobId}-${kind}">
+    <strong>${title}</strong>
+    <span class="hint">${help}</span>
+    <input id="job-${jobId}-${kind}" type="file" accept="image/*,video/*,.pdf" multiple>
+    <div class="job-upload-progress"><span data-job-upload-bar="${jobId}-${kind}"></span></div>
+    <span class="job-upload-status" data-job-upload-status="${jobId}-${kind}">Ready to upload.</span>
+    <button class="btn btn-soft" type="button" data-job-upload="${jobId}" data-upload-kind="${kind}">Upload ${title}</button>
+  </div>`;
+}
+
+function jobUploadStatus(jobId, kind, text, pct=null){
+  const key = `${jobId}-${kind}`;
+  const card = document.querySelector(`[data-job-upload-card="${key}"]`);
+  const status = document.querySelector(`[data-job-upload-status="${key}"]`);
+  const bar = document.querySelector(`[data-job-upload-bar="${key}"]`);
+
+  if(card) card.classList.add('is-uploading');
+  if(status) status.textContent = text;
+  if(bar && pct != null) bar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+}
+
+function jobUploadDone(jobId, kind, text){
+  const key = `${jobId}-${kind}`;
+  const card = document.querySelector(`[data-job-upload-card="${key}"]`);
+  const status = document.querySelector(`[data-job-upload-status="${key}"]`);
+  const bar = document.querySelector(`[data-job-upload-bar="${key}"]`);
+
+  if(card) card.classList.remove('is-uploading');
+  if(status) status.textContent = text;
+  if(bar) bar.style.width = '0%';
+}
+
+async function uploadJobMedia(jobId, kind, button){
+  if(!me){ alert('Please sign in first.'); return; }
+
+  const job = visibleMyJobs().find(j => j.id === jobId);
+  if(!job){
+    alert('This job is not assigned to your contractor account.');
+    return;
+  }
+
+  const input = document.getElementById(`job-${jobId}-${kind}`);
+  const files = Array.from(input?.files || []);
+
+  if(!files.length){
+    alert('Please choose at least one photo, video, or PDF first.');
+    return;
+  }
+
+  const originalText = button?.textContent || 'Upload';
+  if(button){
+    button.disabled = true;
+    button.textContent = 'Uploading…';
+  }
+
+  try{
+    const uploaded = [];
+
+    for(let i=0;i<files.length;i++){
+      const file = files[i];
+      const safe = cleanName(file.name);
+      const path = `jobs/${jobId}/${kind}/${Date.now()}-${i}-${safe}`;
+
+      const meta = await uploadOneFile(path, file, `${kind} file ${i+1}`, (pct)=>{
+        const baseStart = Math.round((i / files.length) * 100);
+        const baseEnd = Math.round(((i + 1) / files.length) * 100);
+        const overall = Math.round(baseStart + ((baseEnd - baseStart) * pct / 100));
+
+        jobUploadStatus(jobId, kind, `Uploading ${i+1}/${files.length}: ${pct}%`, overall);
+
+        if(button) button.textContent = `${overall}%`;
+      });
+
+      uploaded.push(meta);
+    }
+
+    await addDoc(collection(db,'jobs',jobId,'photos'), stripUndefined({
+      kind,
+      photoCategory:kind,
+      files:uploaded,
+      fileCount:uploaded.length,
+      serviceType:job.serviceType || '',
+      uploadedByUid:me.uid,
+      uploadedByEmail:me.email || '',
+      uploadedByName:userData.legalName || userData.fullName || userData.displayName || '',
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    }));
+
+    jobUploadDone(jobId, kind, `${uploaded.length} file${uploaded.length===1?'':'s'} uploaded for admin review.`);
+    if(input) input.value = '';
+    toast(`${cap(kind)} files uploaded`);
+  }catch(err){
+    console.warn('Job media upload failed:', err);
+    let msg = err?.message || 'Could not upload files. Please try again.';
+    if(err?.code === 'storage/unauthorized') msg = 'Upload blocked by Firebase Storage rules. Make sure the updated storage.rules are published and this job is assigned to you.';
+    if(err?.code === 'permission-denied') msg = 'Firestore blocked the photo record. Make sure this job is assigned to you and the Firestore job photo rules are published.';
+    alert(msg);
+    jobUploadDone(jobId, kind, 'Upload failed. Try again.');
+  }finally{
+    if(button){
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+}
+
+
 function renderJobs(){
  const box=$('view-jobs'), open=visibleOpenJobs(), mine=visibleMyJobs(), services=contractorServices().map(serviceLabel).join(', ');
  box.innerHTML=`<p class="mini-kicker">Work</p><h2 class="screen-title">Opportunities & Assignments</h2><p class="screen-copy">Only opportunities matching your approved services are shown here: <strong>${services}</strong>.</p><div class="grid"><div><h3>Open Work</h3><div id="openJobList"></div></div><div><h3>My Work</h3><div id="myJobList"></div></div></div>`;
@@ -724,6 +921,7 @@ function renderJobs(){
  $('myJobList').innerHTML=mine.length?mine.map(jobCard).join(''):'<div class="empty">No accepted work yet.</div>';
  document.querySelectorAll('[data-claim]').forEach(b=>b.addEventListener('click',()=>claimJob(b.dataset.claim,b)));
  document.querySelectorAll('[data-ics]').forEach(b=>b.addEventListener('click',()=>downloadICS(mine.find(j=>j.id===b.dataset.ics))));
+ document.querySelectorAll('[data-job-upload]').forEach(b=>b.addEventListener('click',()=>uploadJobMedia(b.dataset.jobUpload,b.dataset.uploadKind,b)));
 }
 function jobCard(j){ const dt=j.serviceDate?.toDate?.(); const when=dt?dt.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):(j.date||j.window||''); const mine=(Array.isArray(j.contractorIds)&&j.contractorIds.includes(me?.uid))||j.contractorId===me?.uid; return `<div class="job-card"><strong>${cap(j.serviceType||'Job')}</strong><div class="meta">${j.zip?`<span>Area: ${j.zip}</span>`:''}${when?`<span>Date: ${when}</span>`:''}${j.flatRate?`<span>$${Math.round(Number(j.flatRate))}</span>`:''}<span>${cap(j.status||'open')}</span></div>${j.summary?`<p class="hint">${j.summary}</p>`:''}<div class="actions">${!mine?`<button class="btn btn-primary" data-claim="${j.id}">Claim</button>`:`<button class="btn btn-outline" data-ics="${j.id}">Add to Calendar</button>`}<button class="btn btn-soft" type="button" onclick="alert('Messaging coming soon')">Message Admin</button></div></div>`; }
 function projectGuidance(service){
