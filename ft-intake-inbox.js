@@ -79,7 +79,7 @@ function injectUI() {
   // --- tab switching (self-managed so it coexists with the dashboard's own tabs) ---
   function showIntake() {
     document.querySelectorAll(".tabbtn").forEach((t) => t.classList.toggle("active", t === tabBtn));
-    document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === "panel-intake")));
+    document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === "panel-intake"));
   }
   tabBtn.addEventListener("click", showIntake);
   // when any OTHER tab is clicked, make sure our tab/panel turn off
