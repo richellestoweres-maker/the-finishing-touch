@@ -3,7 +3,8 @@
 // Formspree/Zapier is still handled by each intake form separately.
 // Include on intake pages with: <script type="module" src="ft-auto.js"></script>
 
-import { auth, db } from "./ft-firebase.js";
+import { auth, db, storage } from "./ft-firebase.js";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 import {
   collection,
   addDoc,
@@ -239,6 +240,36 @@ function getClientPhone(intakeData = {}, opts = {}){
  * The actual job should be created later from:
  * Admin Dashboard → Intake Inbox → Create Job
  */
+async function uploadIntakeMedia(intakeData = {}, clientEmail = ""){
+  const result = { photoUrls: [], videoUrls: [] };
+  try {
+    const inputs = Array.from(document.querySelectorAll('input[type="file"]'));
+    const stamp = Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+    const emailSlug = (clientEmail || "anon").replace(/[^a-z0-9]/gi, "_").slice(0, 40);
+    for (const input of inputs){
+      const files = input.files ? Array.from(input.files) : [];
+      if (!files.length) continue;
+      const accept = (input.getAttribute("accept") || "").toLowerCase();
+      const name = (input.getAttribute("name") || "").toLowerCase();
+      const isVideo = accept.includes("video") || name.includes("video");
+      for (const file of files){
+        try {
+          const safeName = (file.name || "upload").replace(/[^a-z0-9._-]/gi, "_");
+          const path = "intake-media/" + emailSlug + "/" + stamp + "/" + safeName;
+          const snap = await uploadBytes(storageRef(storage, path), file);
+          const url = await getDownloadURL(snap.ref);
+          (isVideo ? result.videoUrls : result.photoUrls).push(url);
+        } catch (err){
+          console.warn("Intake media upload failed for a file:", err);
+        }
+      }
+    }
+  } catch (err){
+    console.warn("Intake media step skipped:", err);
+  }
+  return result;
+}
+
 async function createJobFromIntake(opts = {}){
   const user = auth.currentUser || null;
 
@@ -248,6 +279,8 @@ async function createJobFromIntake(opts = {}){
   const summary = buildBasicSummary(serviceType, intakeData, opts.summary);
   const clientContactClear = intakeData.CLIENT_CONTACT_CLEAR || buildClientContactClear(intakeData);
   const page = getPrimaryPage(intakeData, opts);
+
+  const media = await uploadIntakeMedia(intakeData, getClientEmail(intakeData, user, opts));
 
   const payload = cleanObject({
     requestKind: "website_intake",
@@ -269,6 +302,10 @@ async function createJobFromIntake(opts = {}){
     page,
     estimate,
     intakeData,
+    mediaPhotoUrls: media.photoUrls,
+    mediaVideoUrls: media.videoUrls,
+    mediaCount: media.photoUrls.length + media.videoUrls.length,
+    hasMedia: (media.photoUrls.length + media.videoUrls.length) > 0,
 
     SERVICE_CATEGORY_CLEAR: intakeData.SERVICE_CATEGORY_CLEAR || serviceLabel(serviceType),
     CLIENT_CONTACT_CLEAR: clientContactClear,
