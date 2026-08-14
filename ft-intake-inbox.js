@@ -100,6 +100,15 @@ function contactLine(r) {
      r.clientPhone && `Phone: ${r.clientPhone}`].filter(Boolean).join(" · ");
 }
 
+function mediaHtml(r){
+  var photos = Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls : [];
+  var videos = Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls : [];
+  if (!photos.length && !videos.length) return "";
+  var out = photos.map(function(u){ return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(u)+'" style="width:66px;height:66px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0"></a>'; }).join("");
+  out += videos.map(function(u,i){ return '<a href="'+esc(u)+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#2563eb;padding:6px 10px;border:1px solid #e2e8f0;border-radius:8px">Video '+(i+1)+'</a>'; }).join("");
+  return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px">'+out+'</div>';
+}
+
 function card(r) {
   const title = r.serviceLabel || r.serviceType || "Quote request";
   const st = r.intakeStatus || r.status || "new";
@@ -118,6 +127,7 @@ function card(r) {
       ${layout ? `<div class="intake-meta">🏠 ${esc(layout)}</div>` : ""}
       ${addons ? `<div class="intake-meta">✨ ${esc(addons)}</div>` : ""}
       ${summary ? `<div class="intake-sum">${esc(summary)}</div>` : ""}
+      ${mediaHtml(r)}
       <div class="intake-actions">
         <button class="btn btn-outline" data-act="createJob" ${converted ? "disabled" : ""}>${converted ? "✓ Job created" : "＋ Create Job"}</button>
         ${st === "new" ? `<button class="btn btn-outline" data-act="review">Mark reviewed</button>` : ""}
