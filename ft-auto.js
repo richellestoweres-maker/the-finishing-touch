@@ -4,6 +4,7 @@
 // Include on intake pages with: <script type="module" src="ft-auto.js"></script>
 
 import { auth, db, storage } from "./ft-firebase.js";
+import { signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 import {
   collection,
@@ -244,6 +245,10 @@ async function uploadIntakeMedia(intakeData = {}, clientEmail = ""){
   const result = { photoUrls: [], videoUrls: [] };
   try {
     const inputs = Array.from(document.querySelectorAll('input[type="file"]'));
+    const hasFiles = inputs.some(function(i){ return i.files && i.files.length; });
+    if (hasFiles && !auth.currentUser) {
+      try { await signInAnonymously(auth); await auth.currentUser.getIdToken(true); } catch (e) { console.warn("Anon sign-in for upload failed:", e); }
+    }
     const stamp = Date.now() + "-" + Math.random().toString(36).slice(2, 8);
     const emailSlug = (clientEmail || "anon").replace(/[^a-z0-9]/gi, "_").slice(0, 40);
     for (const input of inputs){
