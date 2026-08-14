@@ -256,7 +256,7 @@ async function uploadIntakeMedia(intakeData = {}, clientEmail = ""){
         try {
           const safeName = (file.name || "upload").replace(/[^a-z0-9._-]/gi, "_");
           const path = "intake-media/" + emailSlug + "/" + stamp + "/" + safeName;
-          const snap = await uploadBytes(storageRef(storage, path), file);
+          const snap = await uploadBytes(storageRef(storage, path), file, { contentType: file.type || "application/octet-stream" });
           const url = await getDownloadURL(snap.ref);
           (isVideo ? result.videoUrls : result.photoUrls).push(url);
         } catch (err){
