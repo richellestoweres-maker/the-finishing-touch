@@ -9,8 +9,78 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gsta
 import {
   collection,
   addDoc,
+  doc,
+  setDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+/* ---------- Marketing opt-in ("the feed") ----------
+   Adds a consent checkbox + optional birthday to the intake form, and upserts a
+   subscribers/{emailSlug} record when the person opts in. Used later for holiday,
+   birthday, and specials emails (with unsubscribe). Purely additive to the intake. */
+const FT_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function injectMarketingFields(){
+  try{
+    if (document.getElementById("ft-mkt-block")) return;
+    const form = document.querySelector("form");
+    if (!form) return;
+    const block = document.createElement("div");
+    block.id = "ft-mkt-block";
+    block.style.cssText = "margin:16px 0;padding:13px 15px;border:1px solid #e6dccd;border-radius:12px;background:#fffdf9;font-family:inherit";
+    const dayOpts = ['<option value="">Day</option>'].concat(Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}</option>`)).join("");
+    const monOpts = ['<option value="">Month</option>'].concat(FT_MONTHS.map((m,i)=>`<option value="${i+1}">${m}</option>`)).join("");
+    block.innerHTML =
+      '<label style="display:flex;gap:9px;align-items:flex-start;font-size:14px;cursor:pointer;line-height:1.45">'
+      + '<input type="checkbox" id="ft-mkt-consent" style="margin-top:3px;width:16px;height:16px;flex:none">'
+      + '<span>Keep me posted — send me seasonal specials, updates, and a little something on my birthday 🎉</span></label>'
+      + '<div id="ft-mkt-bday" style="display:none;margin-top:11px;font-size:13px;color:#6c5f52">'
+      + '<span style="font-weight:700">My birthday (optional):</span> '
+      + '<select id="ft-mkt-bmonth" style="margin-left:6px;padding:6px 8px;border:1px solid #d8cdc0;border-radius:8px;font-family:inherit">'+monOpts+'</select> '
+      + '<select id="ft-mkt-bdayn" style="margin-left:4px;padding:6px 8px;border:1px solid #d8cdc0;border-radius:8px;font-family:inherit">'+dayOpts+'</select>'
+      + '<div style="margin-top:6px;font-size:11.5px;color:#98897b">We only use this to send you a birthday treat. You can unsubscribe anytime.</div></div>';
+    const submitBtn = form.querySelector('[type="submit"], button:not([type="button"])');
+    if (submitBtn && submitBtn.parentElement) submitBtn.parentElement.insertBefore(block, submitBtn);
+    else form.appendChild(block);
+    const consent = block.querySelector("#ft-mkt-consent");
+    const bday = block.querySelector("#ft-mkt-bday");
+    consent.addEventListener("change", () => { bday.style.display = consent.checked ? "" : "none"; });
+  } catch(e){ console.warn("Marketing field inject skipped:", e); }
+}
+
+function readMarketing(){
+  const consent = document.getElementById("ft-mkt-consent");
+  return {
+    consent: !!(consent && consent.checked),
+    birthMonth: safeString(document.getElementById("ft-mkt-bmonth")?.value),
+    birthDay: safeString(document.getElementById("ft-mkt-bdayn")?.value)
+  };
+}
+
+async function saveSubscriber(email, name, phone, page){
+  try{
+    const mk = readMarketing();
+    if (!mk.consent) return;
+    const em = safeString(email);
+    if (!em) return;
+    const slug = em.toLowerCase().replace(/[^a-z0-9]/gi, "_").slice(0, 60);
+    await setDoc(doc(db, "subscribers", slug), cleanObject({
+      email: em,
+      name: safeString(name),
+      phone: safeString(phone),
+      birthMonth: mk.birthMonth,
+      birthDay: mk.birthDay,
+      marketingConsent: true,
+      subscribed: true,
+      source: safeString(page) || "website",
+      updatedAt: serverTimestamp(),
+      createdAt: serverTimestamp()
+    }), { merge: true });
+  } catch(e){ console.warn("Subscriber save skipped:", e); }
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", injectMarketingFields);
+else injectMarketingFields();
 
 function safeString(value){
   return (value == null ? "" : String(value)).trim();
@@ -287,7 +357,19 @@ async function createJobFromIntake(opts = {}){
 
   const media = await uploadIntakeMedia(intakeData, getClientEmail(intakeData, user, opts));
 
+  // Marketing feed: add opted-in visitor to the subscribers list (independent of intake save).
+  const mk = readMarketing();
+  await saveSubscriber(
+    getClientEmail(intakeData, user, opts),
+    getClientName(intakeData, opts),
+    getClientPhone(intakeData, opts),
+    page
+  );
+
   const payload = cleanObject({
+    marketingConsent: mk.consent,
+    birthMonth: mk.birthMonth,
+    birthDay: mk.birthDay,
     requestKind: "website_intake",
     source: "website_intake_form",
     status: "new",
