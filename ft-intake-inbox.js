@@ -129,6 +129,7 @@ function card(r) {
       ${summary ? `<div class="intake-sum">${esc(summary)}</div>` : ""}
       ${mediaHtml(r)}
       <div class="intake-actions">
+        <button class="btn btn-outline" data-act="sendToSub" ${r.subQuoteRequested ? "disabled" : ""}>${r.subQuoteRequested ? "✓ Sent to sub" : "→ Send to sub for quote"}</button>
         <button class="btn btn-outline" data-act="createJob" ${converted ? "disabled" : ""}>${converted ? "✓ Job created" : "＋ Create Job"}</button>
         ${st === "new" ? `<button class="btn btn-outline" data-act="review">Mark reviewed</button>` : ""}
         <button class="btn btn-outline" data-act="archive">Archive</button>
@@ -168,6 +169,10 @@ function hookActions(wrap) {
             if (!confirm("Create an open job from this request?")) return;
             await createJob(rec);
             await updateDoc(doc(db, "intakeRequests", id), { intakeStatus: "converted", updatedAt: serverTimestamp() });
+          } else if (act === "sendToSub") {
+            if (!confirm("Send this to your subcontractor pool for a quote? They'll see the job details, photos, and general area — but NOT the client's name, contact, or exact address.")) return;
+            await createSubQuoteRequest(rec);
+            await updateDoc(doc(db, "intakeRequests", id), { subQuoteRequested: true, updatedAt: serverTimestamp() });
           }
         } catch (err) {
           alert("Sorry — that action was blocked (likely a Firestore rule). Details in the console.");
@@ -200,6 +205,37 @@ async function createJob(r) {
     createdBy: user?.email || user?.uid || "admin"
   };
   await addDoc(collection(db, "jobs"), payload);
+}
+
+function areaOf(r) {
+  const d = r.intakeData || {};
+  const zip = d.zip || d.zipcode || d.zip_code || r.zip || "";
+  const city = d.city || r.city || "";
+  return [zip, city].filter(Boolean).join(" · ");
+}
+
+async function createSubQuoteRequest(r) {
+  const user = auth.currentUser;
+  const payload = {
+    intakeId: r.id,
+    status: "awaiting_sub_quote",
+    serviceType: r.serviceType || "cleaning",
+    serviceLabel: r.serviceLabel || "",
+    scopeSummary: r.REQUEST_SUMMARY_CLEAR || r.summary || "",
+    layout: r.HOME_LAYOUT_CLEAR || r.PROPERTY_DETAILS_CLEAR || "",
+    addons: (r.SPECIALTY_ADDONS_CLEAR && r.SPECIALTY_ADDONS_CLEAR !== "None selected") ? r.SPECIALTY_ADDONS_CLEAR : "",
+    area: areaOf(r),
+    mediaPhotoUrls: Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls : [],
+    mediaVideoUrls: Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls : [],
+    subRate: null,
+    subUid: "",
+    subNote: "",
+    clientPrice: null,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    createdBy: user?.email || user?.uid || "admin"
+  };
+  await addDoc(collection(db, "quoteRequests"), payload);
 }
 
 /* ---------- boot (admin only) ---------- */
