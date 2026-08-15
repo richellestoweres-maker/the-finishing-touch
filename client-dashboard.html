@@ -862,9 +862,12 @@ function jobStatusLabel(j){
   return cap(status);
 }
 
+const SCHED_WIN={morning:"Morning (8–12)",midday:"Midday (11–2)",afternoon:"Afternoon (12–4)",evening:"Evening (4–7)",anytime:"Anytime that day"};
+function schedText(j){ if(!j.scheduledDate) return ""; const d=dateText(j.scheduledDate)||j.scheduledDate; const w=SCHED_WIN[j.scheduledWindow]||""; return w?(d+" · "+w):d; }
+
 function jobCard(j){
   const title = cap(j.serviceType || "Job");
-  const when = dateText(j.serviceDate) || j.window || j.arrivalWindow || "";
+  const when = schedText(j) || dateText(j.serviceDate) || j.window || j.arrivalWindow || "";
   const hours = j.estimatedTeamHours || j.teamHours || "";
   const price = (j.flatRate!=null) ? `Est: ${money(j.flatRate)}` : "";
   const area = j.zip || j.area || j.city || "";
