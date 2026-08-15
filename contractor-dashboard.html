@@ -957,5 +957,6 @@ function downloadICS(j){ if(!j?.serviceDate?.toDate){alert('No service date foun
 
 onAuthStateChanged(auth, async user=>{ if(!user){ me=null; $('rolePill').textContent='Signed out'; $('whoami').textContent=''; showScreen('signedOut'); return;} me=user; $('whoami').textContent=user.email||user.uid; const snap=await getDoc(doc(db,'users',user.uid)); userData=snap.exists()?snap.data():{}; const role=String(userData.role||'').toLowerCase(); const archived=String(userData.accountStatus||'').toLowerCase()==='archived'||String(userData.portalAccess||'').toLowerCase()==='removed'; $('rolePill').textContent=archived?'Access removed':(role?cap(role):'No role yet'); if(archived){ showScreen('pending'); return; } if(!(role==='contractor'||role==='admin')){ showScreen('pending'); return;} renderAllSteps(); if(isActive(userData)){ showScreen('app'); startJobListeners(); renderActiveApp(); setView('home'); } else { renderLockedApp(); showScreen('onboarding'); showStep(0); if(submitted(userData)) toast('Onboarding pending admin review'); }});
 </script>
+<script type="module" src="ft-contractor-quotes.js"></script>
 </body>
 </html>
