@@ -54,7 +54,21 @@ function injectUI() {
     #panel-intake .intake-meta{color:#64748b;font-size:12.5px;margin:2px 0}
     #panel-intake .intake-sum{font-size:13.5px;margin:8px 0}
     #panel-intake .intake-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    #panel-intake .intake-count{color:#64748b;font-size:13px;margin-bottom:12px}`;
+    #panel-intake .intake-count{color:#64748b;font-size:13px;margin-bottom:12px}
+    #panel-intake .qr-box{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc}
+    #panel-intake .qr-wait{color:#92400e;background:#fffbeb;border-color:#fde68a;font-size:13px;font-weight:600}
+    #panel-intake .qr-quoted{background:#f0fdf4;border-color:#bbf7d0}
+    #panel-intake .qr-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;margin:2px 0}
+    #panel-intake .qr-row strong{font-size:15px}
+    #panel-intake .qr-final{margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1;color:#166534}
+    #panel-intake .qr-note{font-size:12.5px;color:#475569;margin:4px 0}
+    #panel-intake .qr-sub{font-size:12px;color:#64748b;margin:10px 0 4px;font-weight:600}
+    #panel-intake .qr-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+    #panel-intake .qr-chip{cursor:pointer;font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:20px;border:1px solid #86efac;background:#dcfce7;color:#166534}
+    #panel-intake .qr-chip:hover{background:#bbf7d0}
+    #panel-intake .qr-setrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    #panel-intake .qr-cur{font-weight:700;color:#475569}
+    #panel-intake .qr-price{width:110px;padding:7px 9px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-weight:600}`;
   document.head.appendChild(style);
 
   // tab button — placed right after the first tab (Job Inbox)
@@ -109,6 +123,42 @@ function mediaHtml(r){
   return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px">'+out+'</div>';
 }
 
+const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/* ---------- admin pricing block (joins the sub's quoteRequests doc) ---------- */
+function pricingHtml(r) {
+  const q = subQuotes[r.id];
+  if (!q) return "";
+  if (q.status === "awaiting_sub_quote") {
+    return `<div class="qr-box qr-wait">⏳ Sent to your sub — waiting on their wholesale rate.</div>`;
+  }
+  const rate = Number(q.subRate);
+  if (!(rate > 0)) {
+    return `<div class="qr-box qr-wait">Sub responded, but no rate is on file yet.</div>`;
+  }
+  const p20 = rate * 1.2, p30 = rate * 1.3;
+  const isSet = q.clientPrice != null && q.clientPrice !== "";
+  const jobDone = q.status === "converted";
+  return `<div class="qr-box qr-quoted" data-qid="${esc(q.id)}" data-rate="${rate}">
+      <div class="qr-row"><span>Sub's wholesale rate</span><strong>${money(rate)}</strong></div>
+      ${q.subNote ? `<div class="qr-note">📝 ${esc(q.subNote)}</div>` : ""}
+      ${q.subAvailability ? `<div class="qr-note">📅 Available: ${esc(q.subAvailability)}</div>` : ""}
+      <div class="qr-sub">Your price to the client (your service fee on top):</div>
+      <div class="qr-chips">
+        <button class="qr-chip" data-act="pick" data-val="${p20.toFixed(2)}">+20% → ${money(p20)}</button>
+        <button class="qr-chip" data-act="pick" data-val="${p30.toFixed(2)}">+30% → ${money(p30)}</button>
+      </div>
+      <div class="qr-setrow">
+        <span class="qr-cur">$</span>
+        <input class="qr-price" type="number" min="0" step="0.01" value="${isSet ? Number(q.clientPrice).toFixed(2) : p30.toFixed(2)}">
+        <button class="btn btn-outline" data-act="setPrice">${isSet ? "Update price" : "Set client price"}</button>
+      </div>
+      ${isSet ? `<div class="qr-row qr-final"><span>Client price set</span><strong>${money(q.clientPrice)}</strong></div>
+        ${jobDone ? `<div class="qr-note" style="color:#166534;font-weight:700">✓ Job created at ${money(q.clientPrice)}</div>`
+          : `<button class="btn" data-act="jobFromQuote" style="margin-top:6px">＋ Create job at ${money(q.clientPrice)}</button>`}` : ""}
+    </div>`;
+}
+
 function card(r) {
   const title = r.serviceLabel || r.serviceType || "Quote request";
   const st = r.intakeStatus || r.status || "new";
@@ -128,6 +178,7 @@ function card(r) {
       ${addons ? `<div class="intake-meta">✨ ${esc(addons)}</div>` : ""}
       ${summary ? `<div class="intake-sum">${esc(summary)}</div>` : ""}
       ${mediaHtml(r)}
+      ${pricingHtml(r)}
       <div class="intake-actions">
         <button class="btn btn-outline" data-act="sendToSub" ${r.subQuoteRequested ? "disabled" : ""}>${r.subQuoteRequested ? "✓ Sent to sub" : "→ Send to sub for quote"}</button>
         <button class="btn btn-outline" data-act="createJob" ${converted ? "disabled" : ""}>${converted ? "✓ Job created" : "＋ Create Job"}</button>
@@ -138,6 +189,7 @@ function card(r) {
 }
 
 let latest = [];
+let subQuotes = {}; // keyed by intakeId -> quoteRequests doc
 
 function draw(list) {
   const wrap = document.getElementById("listIntake");
@@ -173,6 +225,26 @@ function hookActions(wrap) {
             if (!confirm("Send this to your subcontractor pool for a quote? They'll see the job details, photos, and general area — but NOT the client's name, contact, or exact address.")) return;
             await createSubQuoteRequest(rec);
             await updateDoc(doc(db, "intakeRequests", id), { subQuoteRequested: true, updatedAt: serverTimestamp() });
+          } else if (act === "pick") {
+            const inp = el.querySelector(".qr-price");
+            if (inp) inp.value = btn.dataset.val;
+            return; // no DB write
+          } else if (act === "setPrice") {
+            const box = el.querySelector(".qr-box");
+            const inp = el.querySelector(".qr-price");
+            const qid = box?.dataset.qid;
+            const val = Number(inp?.value);
+            if (!qid || !(val > 0)) { alert("Enter a client price above $0 first."); return; }
+            await updateDoc(doc(db, "quoteRequests", qid), { clientPrice: val, status: "priced", updatedAt: serverTimestamp() });
+          } else if (act === "jobFromQuote") {
+            const box = el.querySelector(".qr-box");
+            const qid = box?.dataset.qid;
+            const q = subQuotes[id];
+            if (!q || !qid) { alert("No sub quote found for this request."); return; }
+            if (!confirm(`Create a scheduled job at ${money(q.clientPrice)} (client price)? Your sub keeps ${money(q.subRate)}.`)) return;
+            await createJobFromQuote(rec, q);
+            await updateDoc(doc(db, "quoteRequests", qid), { status: "converted", updatedAt: serverTimestamp() });
+            await updateDoc(doc(db, "intakeRequests", id), { intakeStatus: "converted", updatedAt: serverTimestamp() });
           }
         } catch (err) {
           alert("Sorry — that action was blocked (likely a Firestore rule). Details in the console.");
@@ -207,6 +279,39 @@ async function createJob(r) {
   await addDoc(collection(db, "jobs"), payload);
 }
 
+async function createJobFromQuote(r, q) {
+  const user = auth.currentUser;
+  const payload = {
+    status: "assigned",
+    source: "quote",
+    intakeId: r.id,
+    quoteRequestId: q.id,
+    serviceType: r.serviceType || q.serviceType || "cleaning",
+    serviceLabel: r.serviceLabel || q.serviceLabel || "",
+    summary: r.REQUEST_SUMMARY_CLEAR || r.summary || q.scopeSummary || "",
+    notes: r.SPECIALTY_ADDON_NOTES_CLEAR || r.notes || "",
+    clientName: r.clientName || "",
+    clientEmail: r.clientEmail || "",
+    clientPhone: r.clientPhone || "",
+    clientUid: r.clientUid || "",
+    // pricing
+    subRate: Number(q.subRate) || null,
+    clientPrice: Number(q.clientPrice) || null,
+    serviceFee: (Number(q.clientPrice) && Number(q.subRate)) ? Number((q.clientPrice - q.subRate).toFixed(2)) : null,
+    // sub assignment (contractorIds lets the existing contractor dashboard pick it up)
+    subUid: q.subUid || "",
+    contractorIds: q.subUid ? [q.subUid] : [],
+    HOME_LAYOUT_CLEAR: r.HOME_LAYOUT_CLEAR || "",
+    PROPERTY_DETAILS_CLEAR: r.PROPERTY_DETAILS_CLEAR || "",
+    SPECIALTY_ADDONS_CLEAR: r.SPECIALTY_ADDONS_CLEAR || "",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    createdBy: user?.email || user?.uid || "admin"
+  };
+  await addDoc(collection(db, "jobs"), payload);
+}
+
+/* ---------- sub quote request (privacy-safe: no client PII) ---------- */
 function areaOf(r) {
   const d = r.intakeData || {};
   const zip = d.zip || d.zipcode || d.zip_code || r.zip || "";
@@ -234,6 +339,7 @@ async function createSubQuoteRequest(r) {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     createdBy: user?.email || user?.uid || "admin"
+    // Intentionally NO clientName / clientEmail / clientPhone / address — the sub never sees client PII.
   };
   await addDoc(collection(db, "quoteRequests"), payload);
 }
@@ -251,6 +357,16 @@ function boot() {
         const count = document.getElementById("intakeCount");
         if (count) count.textContent = "Couldn't load requests — this is usually a Firestore rule blocking admin read of intakeRequests. Tell Claude and it's a quick fix.";
       }
+    );
+    // sub quote responses — joined onto each intake card so you can price + convert
+    onSnapshot(
+      query(collection(db, "quoteRequests"), orderBy("createdAt", "desc"), limit(300)),
+      (snap) => {
+        subQuotes = {};
+        snap.docs.forEach((d) => { const q = { id: d.id, ...d.data() }; if (q.intakeId) subQuotes[q.intakeId] = q; });
+        draw(latest);
+      },
+      (err) => { console.warn("quoteRequests listener error:", err); }
     );
   });
 }
