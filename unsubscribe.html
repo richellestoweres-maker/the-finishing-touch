@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex"/>
+<title>Unsubscribe &mdash; The Finishing Touch</title>
+<link rel="stylesheet" href="styles.css"/>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#2b2622;line-height:1.65;max-width:620px;margin:0 auto;padding:56px 20px 70px;background:#faf7f2}
+h1{font-family:"Playfair Display",Georgia,serif;font-size:2rem;margin:0 0 8px}
+.updated{color:#8a7d6f;font-size:14px;margin-bottom:26px}
+.box{background:#fffdf9;border:1px solid #e8ded2;border-radius:14px;padding:20px 22px;margin:18px 0}
+p{font-size:15.5px}
+a{color:#2f5fa6}
+input{width:100%;padding:11px 13px;border:1px solid #ddd2c4;border-radius:10px;font-size:15px;font-family:inherit;box-sizing:border-box;background:#fff}
+button{margin-top:12px;background:#2b2622;color:#fffdf9;border:0;border-radius:999px;padding:11px 24px;font-size:15px;cursor:pointer;font-family:inherit}
+button[disabled]{opacity:.55;cursor:default}
+.ok{color:#15803d;font-weight:600}
+.err{color:#b91c1c;font-weight:600}
+.small{font-size:13px;color:#8a7d6f}
+</style>
+</head>
+<body>
+<h1>Unsubscribe</h1>
+<p class="updated">The Finishing Touch &middot; Serving Galveston, Harris, and Brazoria County</p>
+
+<div class="box" id="box">
+<div id="status">Checking your link&hellip;</div>
+<div id="form" style="display:none">
+<p style="margin-top:0">Enter the email address you'd like us to stop sending to:</p>
+<input id="email" type="email" placeholder="you@example.com" autocomplete="email"/>
+<button id="go">Unsubscribe me</button>
+</div>
+</div>
+
+<p class="small">This only stops marketing email &mdash; seasonal specials, updates, and birthday notes. We'll still email you about jobs you've actually booked, like confirmations and reminders. To stop text messages, reply STOP to any text.</p>
+<p class="small">Changed your mind, or unsubscribed by accident? Just email <a href="mailto:contact.thefinishingtouch.tx@gmail.com">contact.thefinishingtouch.tx@gmail.com</a> and we'll put you back on.</p>
+<p class="small">The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC &middot; <a href="privacy.html">Privacy policy</a></p>
+
+<script type="module">
+import { db } from "./ft-firebase.js";
+import { doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+const statusEl = document.getElementById("status");
+const formEl = document.getElementById("form");
+const slugFor = (e) => e.toLowerCase().replace(/[^a-z0-9]/gi, "_").slice(0, 60);
+const valid = (e) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);
+
+function say(html, cls) { statusEl.innerHTML = html; statusEl.className = cls || ""; }
+
+function askForEmail(msg) {
+say(msg || "");
+if (!msg) statusEl.style.display = "none";
+formEl.style.display = "block";
+}
+
+async function unsubscribe(raw) {
+const email = String(raw || "").trim().toLowerCase();
+if (!valid(email)) { askForEmail("<span class='err'>That doesn't look like an email address.</span>"); return; }
+statusEl.style.display = "block";
+say("Removing you from the list&hellip;");
+formEl.style.display = "none";
+try {
+await updateDoc(doc(db, "subscribers", slugFor(email)), { subscribed: false, updatedAt: serverTimestamp() });
+say(`<span class="ok">Done &mdash; you're unsubscribed.</span><br>We won't send marketing email to <strong>${email.replace(/[&<>"']/g, "")}</strong> anymore. Thank you for having let us into your home.`);
+} catch (err) {
+if (err && err.code === "not-found") {
+say(`<span class="ok">You're all set.</span><br>That address isn't on our marketing list, so there's nothing to remove.`);
+} else {
+console.warn("Unsubscribe error:", err);
+askForEmail("<span class='err'>Something went wrong on our end.</span> Try again, or email us and we'll take care of it by hand.");
+}
+}
+}
+
+document.getElementById("go").addEventListener("click", () => unsubscribe(document.getElementById("email").value));
+document.getElementById("email").addEventListener("keydown", (e) => { if (e.key === "Enter") unsubscribe(e.target.value); });
+
+const param = new URLSearchParams(location.search).get("e");
+if (param) unsubscribe(param);
+else askForEmail("");
+</script>
+</body>
+</html>
