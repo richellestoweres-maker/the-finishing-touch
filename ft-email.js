@@ -1,7 +1,9 @@
 // === The Finishing Touch — Email sending admin add-on ===
-// Two ways to send from the command center:
+// Two ways to send by hand from the command center:
 //   1. "Birthdays this month" — pick who gets a birthday note, send in one click.
 //   2. "Send a special" — write a subject + message, choose an audience, send.
+// For sends that happen on their own, see the Automations tab (ft-campaigns.js).
+//
 // Nothing is emailed directly from the browser. Every send writes a document to
 // the `mail` collection; the Firebase "Trigger Email from Firestore" extension
 // picks it up and delivers it from contact.thefinishingtouch.tx@gmail.com.
@@ -16,69 +18,16 @@ collection, query, orderBy, limit, onSnapshot,
 doc, updateDoc, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import {
+MONTHS, esc, validEmail, emailShell, bodyFromText,
+renderMessage, DEFAULT_BIRTHDAY, BIZ_ADDRESS
+} from "./ft-email-template.js";
 
-// ---------- business details used in every email ----------
-const SITE = "https://www.thefinishingtouch-tx.com";
-const BIZ_NAME = "The Finishing Touch";
-const BIZ_LEGAL = "The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC";
-const BIZ_AREA = "Serving Galveston, Harris, and Brazoria County";
-// CAN-SPAM requires a real postal address in commercial email. Fill this in.
-const BIZ_ADDRESS = "";
-
-const MONTHS = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const esc = (v) => (v == null ? "" : String(v)).replace(/[&<>"']/g, (c) => (
-{ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
-));
-const firstName = (s) => String(s?.name || "").trim().split(/\s+/)[0] || "there";
-const validEmail = (e) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(e || "").trim());
 const monthKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; };
 
-// ---------- email shell (branded wrapper every message goes inside) ----------
-function unsubUrl(email) { return `${SITE}/unsubscribe.html?e=${encodeURIComponent(String(email || "").trim().toLowerCase())}`; }
-
-function emailShell(innerHtml, toEmail) {
-const addr = BIZ_ADDRESS ? `<div>${esc(BIZ_ADDRESS)}</div>` : "";
-return `<!doctype html>
-<html><body style="margin:0;padding:0;background:#f3efe8;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3efe8;padding:28px 12px;">
-<tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fffdf9;border:1px solid #e8ded2;border-radius:14px;overflow:hidden;">
-<tr><td style="padding:26px 30px 6px 30px;text-align:center;">
-<div style="font-family:Georgia,'Playfair Display',serif;font-size:25px;color:#2b2622;letter-spacing:.01em;">The Finishing Touch</div>
-<div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a7d6f;margin-top:6px;">${esc(BIZ_AREA)}</div>
-</td></tr>
-<tr><td style="padding:14px 30px 26px 30px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15.5px;line-height:1.65;color:#2b2622;">
-${innerHtml}
-</td></tr>
-<tr><td style="padding:18px 30px 24px 30px;border-top:1px solid #eee5da;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.6;color:#8a7d6f;text-align:center;">
-<div>${esc(BIZ_NAME)} &middot; <a href="${SITE}" style="color:#8a7d6f;">thefinishingtouch-tx.com</a></div>
-<div>${esc(BIZ_LEGAL)}</div>
-${addr}
-<div style="margin-top:9px;">You're getting this because you asked to hear about specials and updates.<br>
-<a href="${unsubUrl(toEmail)}" style="color:#8a7d6f;text-decoration:underline;">Unsubscribe</a></div>
-</td></tr>
-</table>
-</td></tr>
-</table>
-</body></html>`;
-}
-
-// paragraphs + {{name}} token, from a plain textarea
-function bodyFromText(text, sub) {
-return String(text || "")
-.replace(/\{\{\s*name\s*\}\}/gi, firstName(sub))
-.split(/\n{2,}/)
-.map((p) => `<p style="margin:0 0 14px 0;">${esc(p.trim()).replace(/\n/g, "<br>")}</p>`)
-.join("");
-}
-
-function birthdayBody(sub) {
-return `<p style="margin:0 0 14px 0;font-family:Georgia,serif;font-size:20px;color:#2b2622;">Happy birthday, ${esc(firstName(sub))}!</p>
-<p style="margin:0 0 14px 0;">Everyone here at The Finishing Touch hopes your day is a good one — and that you get to spend it in a home that feels calm, cared for, and completely yours.</p>
-<p style="margin:0 0 14px 0;">As a little gift, here's <strong>15% off any service</strong> booked this month. Just mention your birthday when you reach out and we'll take care of the rest.</p>
-<p style="margin:0 0 18px 0;"><a href="${SITE}/contact.html" style="display:inline-block;background:#2b2622;color:#fffdf9;text-decoration:none;padding:11px 22px;border-radius:999px;font-size:14px;">Book your birthday treat</a></p>
-<p style="margin:0;">Warmly,<br>Richelle &amp; the Finishing Touch team</p>`;
-}
+// Kept in step with the Automations tab, so a note sent by hand reads exactly
+// the same as one the scheduler sends.
+let birthdayTpl = { ...DEFAULT_BIRTHDAY };
 
 // ---------- UI ----------
 function injectUI() {
@@ -124,11 +73,11 @@ const panel = document.createElement("section");
 panel.id = "panel-email";
 panel.className = "panel";
 panel.innerHTML = `
-${BIZ_ADDRESS ? "" : `<div class="em-warn"><strong>Heads up:</strong> marketing email legally needs a real postal address in the footer. Open <code>ft-email.js</code> and fill in <code>BIZ_ADDRESS</code> (a PO box is fine).</div>`}
+${BIZ_ADDRESS ? "" : `<div class="em-warn"><strong>Heads up:</strong> marketing email legally needs a real postal address in the footer. Open <code>ft-email-template.js</code> and fill in <code>BIZ_ADDRESS</code> (a PO box is fine).</div>`}
 
 <div class="em-card">
 <h3>Birthdays this month &mdash; ${esc(MONTHS[new Date().getMonth() + 1])}</h3>
-<div class="em-sub">Everyone on the feed with a birthday this month. Already-sent people are unticked automatically.</div>
+<div class="em-sub">Everyone on the feed with a birthday this month. Already-sent people are unticked automatically. The wording comes from the Automations tab.</div>
 <div class="em-list" id="emBdayList"></div>
 <div class="em-row" style="margin-top:12px">
 <button class="btn" id="emBdaySend">Send birthday note</button>
@@ -168,7 +117,7 @@ Blank lines start a new paragraph."></textarea>
 
 <div class="em-card">
 <h3>Recent sends</h3>
-<div class="em-sub">Straight from the mail queue. "Delivered" means the email actually went out.</div>
+<div class="em-sub">Straight from the mail queue &mdash; manual sends and automated ones both show up here. "Delivered" means the email actually went out.</div>
 <div id="emLogWrap"></div>
 </div>`;
 panelsWrap.appendChild(panel);
@@ -280,10 +229,11 @@ const btn = document.getElementById("emBdaySend");
 btn.disabled = true;
 note("emBdayNote", "Queueing…");
 try {
-const n = await queue(list, () => `Happy birthday from The Finishing Touch 🎂`, (s) => emailShell(birthdayBody(s), s.email), "birthday");
+const n = await queue(list, () => birthdayTpl.subject, (s) => renderMessage(birthdayTpl, s), "birthday");
 note("emBdayNote", `Queued ${n} ${n === 1 ? "email" : "emails"}. They'll go out within a minute.`, "ok");
 const mk = monthKey();
-await Promise.all(list.map((s) => updateDoc(doc(db, "subscribers", s.id), { lastBirthdayEmail: mk }).catch(() => {})));
+const yr = new Date().getFullYear();
+await Promise.all(list.map((s) => updateDoc(doc(db, "subscribers", s.id), { lastBirthdayEmail: mk, lastBirthdayAuto: yr }).catch(() => {})));
 } catch (err) {
 console.warn("Birthday send error:", err);
 note("emBdayNote", "Couldn't queue those (check the Firestore rule for the mail collection).", "err");
@@ -317,13 +267,13 @@ function paint(frameId, wrapId, html) {
 const wrap = document.getElementById(wrapId);
 const frame = document.getElementById(frameId);
 if (!wrap || !frame) return;
-wrap.style.display = wrap.style.display === "none" ? "block" : "block";
+wrap.style.display = "block";
 frame.srcdoc = html;
 }
 
 function previewBirthday() {
 const s = checkedBirthdays()[0] || birthdayList()[0] || { name: "Sample Client", email: "someone@example.com" };
-paint("emBdayFrame", "emBdayPrev", emailShell(birthdayBody(s), s.email));
+paint("emBdayFrame", "emBdayPrev", renderMessage(birthdayTpl, s));
 }
 
 function previewSpecial() {
@@ -354,6 +304,11 @@ function boot() {
 onAuthStateChanged(auth, (user) => {
 if (!user) return;
 if (!injectUI()) return;
+
+onSnapshot(doc(db, "settings", "automation"),
+(snap) => { const d = snap.data() || {}; if (d.birthday) birthdayTpl = { ...DEFAULT_BIRTHDAY, ...d.birthday }; },
+(err) => { console.warn("Automation settings listener error:", err); }
+);
 
 onSnapshot(
 query(collection(db, "subscribers"), orderBy("updatedAt", "desc"), limit(2000)),
