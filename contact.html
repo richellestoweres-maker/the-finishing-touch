@@ -181,6 +181,73 @@
         margin-left: 0;
       }
     }
+
+    /* Service picker */
+    .service-pick {
+      max-width: 720px;
+      margin: 18px auto 0;
+      padding: 20px 22px 22px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: var(--shadow, 0 12px 30px rgba(0,0,0,.08));
+    }
+    .service-pick h3 {
+      margin: 0 0 4px;
+      font-family: "Playfair Display", serif;
+      font-size: 1.2rem;
+      color: var(--taupe-900, #2e2a27);
+    }
+    .service-pick .pick-sub {
+      margin: 0 0 16px;
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: .9rem;
+      color: rgba(0,0,0,.6);
+    }
+    .pick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .pick-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid #ece3d9;
+      border-radius: 13px;
+      background: #fffdfb;
+      text-decoration: none;
+      color: var(--taupe-900, #2e2a27);
+      transition: border-color .16s ease, box-shadow .16s ease, transform .12s ease;
+    }
+    .pick-card:hover {
+      border-color: var(--accent, #d2bda9);
+      box-shadow: 0 8px 20px rgba(0,0,0,.07);
+      transform: translateY(-1px);
+    }
+    .pick-card i {
+      margin-top: 3px;
+      font-size: 1rem;
+      color: var(--accent, #b99b7d);
+      flex: 0 0 auto;
+    }
+    .pick-name {
+      display: block;
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 600;
+      font-size: .95rem;
+      margin-bottom: 2px;
+    }
+    .pick-desc {
+      display: block;
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: .82rem;
+      line-height: 1.4;
+      color: rgba(0,0,0,.58);
+    }
+    @media (max-width: 720px) {
+      .pick-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -203,7 +270,7 @@
 
   <!-- Hero -->
   <section class="page-hero">
-    <h1>Ready for a cleaning?</h1>
+    <h1>Tell us what your home needs</h1>
     <p>Fill out some info and we’ll be in touch shortly. We can’t wait to hear from you.</p>
     <a class="hero-call-btn" href="tel:12816203963">
       <i class="fas fa-phone"></i>
@@ -240,6 +307,56 @@
         </form>
       </section>
 
+      <!-- Pick a service -->
+      <section class="service-pick" id="choose">
+        <h3>Which service are you looking for?</h3>
+        <p class="pick-sub">Each one has its own short form so we can quote you accurately. Not sure? Send a message above and we will point you to the right one.</p>
+        <div class="pick-grid">
+          <a class="pick-card" href="intake-cleaning.html">
+            <i class="fas fa-broom" aria-hidden="true"></i>
+            <span>
+              <span class="pick-name">Cleaning</span>
+              <span class="pick-desc">Deep cleans, turnovers, and regular upkeep</span>
+            </span>
+          </a>
+          <a class="pick-card" href="intake-organizing.html">
+            <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
+            <span>
+              <span class="pick-name">Organizing</span>
+              <span class="pick-desc">Closets, pantries, playrooms, whole home resets</span>
+            </span>
+          </a>
+          <a class="pick-card" href="intake-staging.html">
+            <i class="fas fa-couch" aria-hidden="true"></i>
+            <span>
+              <span class="pick-name">Staging &amp; Styling</span>
+              <span class="pick-desc">Getting a home ready to list, or ready to live in</span>
+            </span>
+          </a>
+          <a class="pick-card" href="intake-decor.html">
+            <i class="fas fa-palette" aria-hidden="true"></i>
+            <span>
+              <span class="pick-name">Interior Decorating</span>
+              <span class="pick-desc">Furnishing and styling a room you love</span>
+            </span>
+          </a>
+          <a class="pick-card" href="intake-holiday.html">
+            <i class="fas fa-snowflake" aria-hidden="true"></i>
+            <span>
+              <span class="pick-name">Holiday Decorating</span>
+              <span class="pick-desc">Trees, mantels, garland, and takedown after</span>
+            </span>
+          </a>
+          <a class="pick-card" href="intake-virtualdesign.html">
+            <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+            <span>
+              <span class="pick-name">Virtual Design</span>
+              <span class="pick-desc">A designed plan you install yourself</span>
+            </span>
+          </a>
+        </div>
+      </section>
+
       <!-- Other ways to reach you -->
       <section class="contact-quick">
         <h3 class="contact-quick-title">Other ways to reach us</h3>
@@ -266,7 +383,7 @@
           </div>
 
           <div class="quick-item quick-intake">
-            <a class="btn btn-primary" href="intake-cleaning.html">
+            <a class="btn btn-primary" href="#choose">
               <i class="fas fa-clipboard-list" aria-hidden="true"></i>
               Start Intake
             </a>
