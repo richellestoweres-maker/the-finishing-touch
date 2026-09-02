@@ -39,8 +39,13 @@ function injectMarketingFields(){
       + '<select id="ft-mkt-bmonth" style="margin-left:6px;padding:6px 8px;border:1px solid #d8cdc0;border-radius:8px;font-family:inherit">'+monOpts+'</select> '
       + '<select id="ft-mkt-bdayn" style="margin-left:4px;padding:6px 8px;border:1px solid #d8cdc0;border-radius:8px;font-family:inherit">'+dayOpts+'</select>'
       + '<div style="margin-top:6px;font-size:11.5px;color:#98897b">We only use this to send you a birthday treat. You can unsubscribe anytime.</div></div>';
+    // Sit this just above the Consents box, where people are already reading and
+    // ticking things, instead of orphaned down by the submit button.
+    const consentFieldset = form.querySelector('fieldset[aria-labelledby="consentLegend"]')
+      || Array.from(form.querySelectorAll("fieldset")).find((fs) => /consent/i.test(fs.querySelector("legend")?.textContent || ""));
     const submitBtn = form.querySelector('[type="submit"], button:not([type="button"])');
-    if (submitBtn && submitBtn.parentElement) submitBtn.parentElement.insertBefore(block, submitBtn);
+    if (consentFieldset && consentFieldset.parentElement) consentFieldset.parentElement.insertBefore(block, consentFieldset);
+    else if (submitBtn && submitBtn.parentElement) submitBtn.parentElement.insertBefore(block, submitBtn);
     else form.appendChild(block);
     const consent = block.querySelector("#ft-mkt-consent");
     const bday = block.querySelector("#ft-mkt-bday");
