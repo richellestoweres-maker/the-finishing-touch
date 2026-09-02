@@ -12,7 +12,7 @@
 
 import { db, auth } from "./ft-firebase.js";
 import {
-collection, doc, addDoc, setDoc, updateDoc, deleteDoc,
+collection, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc,
 onSnapshot, query, orderBy, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
@@ -562,7 +562,13 @@ async function testSend(c, noteId) {
 const me = auth.currentUser?.email;
 if (!validEmail(me)) return note(noteId, "Couldn't work out your own email address.", "err");
 if (!c.subject || !c.body) return note(noteId, "Subject and message are both required.", "err");
-const sub = { name: "Sample Client", email: me };
+// use your own subscriber record so the test reads the way a real send will
+let sub = { name: auth.currentUser?.displayName || "Sample Client", email: me };
+try {
+const slug = me.toLowerCase().replace(/[^a-z0-9]/gi, "_").slice(0, 60);
+const snap = await getDoc(doc(db, "subscribers", slug));
+if (snap.exists() && snap.data().name) sub = { ...snap.data(), email: me };
+} catch (err) { console.warn("Couldn't read your subscriber record for the test:", err); }
 try {
 await addDoc(collection(db, "mail"), {
 to: me,
