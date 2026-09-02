@@ -176,7 +176,10 @@ const a = document.getElementById("emAud")?.value;
 if (a === "bday") return birthdayList();
 if (a === "me") {
 const e = auth.currentUser?.email;
-return validEmail(e) ? [{ id: "__me", email: e, name: "Test" }] : [];
+if (!validEmail(e)) return [];
+// prefer your own record on the feed, so a test send shows your real first name
+const mine = subs.find((s) => String(s.email || "").toLowerCase() === e.toLowerCase());
+return [mine || { id: "__me", email: e, name: "Test" }];
 }
 return subscribed();
 }
