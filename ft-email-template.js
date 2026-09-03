@@ -12,8 +12,8 @@ export const SITE = "https://www.thefinishingtouch-tx.com";
 export const BIZ_NAME = "The Finishing Touch";
 export const BIZ_LEGAL = "The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC";
 export const BIZ_AREA = "Serving Galveston, Harris, and Brazoria County";
-// CAN-SPAM requires a real postal address in commercial email. Fill this in.
-export const BIZ_ADDRESS = "";
+// CAN-SPAM requires a real postal address in commercial email.
+export const BIZ_ADDRESS = "903 Texas Ave, La Marque, TX 77568";
 
 export const MONTHS = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 export const MONTHS_SHORT = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
