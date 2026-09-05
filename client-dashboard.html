@@ -715,16 +715,20 @@ a{color:inherit}
       <article class="card">
         <h3>Your Birthday Treat</h3>
         <p>Share your birthday on any intake form, or on the signup at the bottom of our site, and we will send you $15 off any service booked that month. Every year, no code to remember. Just mention it when you reach out.</p>
-        <span class="status-pill good">Active</span>
+        <span class="status-pill" id="perkBirthdayPill">Checking…</span>
       </article>
       <article class="card">
         <h3>Seasonal Touches</h3>
-        <p>A few notes a year as the seasons turn, such as fall and holiday décor, spring deep cleans, and the occasional offer. Sent by email to clients on our list, and you can unsubscribe any time.</p>
-        <span class="status-pill good">Active</span>
+        <p>A few notes a year as the seasons turn, such as fall and holiday décor, spring deep cleans, and the occasional offer. Both perks arrive by email, so they only reach you if you are on the list.</p>
+        <span class="status-pill" id="perkSeasonalPill">Checking…</span>
+        <div style="margin-top:12px">
+          <button class="btn btn-outline" type="button" id="perkToggle" hidden></button>
+          <p id="perkNote" style="margin:8px 0 0;font-size:.85rem;color:#7b746e"></p>
+        </div>
       </article>
       <article class="card">
         <h3>VIP Home Care</h3>
-        <p>Priority scheduling for recurring clients, loyalty rewards, and add ons reserved for members. This one is still being built.</p>
+        <p>Priority scheduling, loyalty rewards, and add ons reserved for members. This one switches on once billing moves in house, with recurring plans and cards on file running through the site, so member perks can be applied automatically.</p>
         <span class="status-pill">Coming Soon</span>
       </article>
     </div>
@@ -794,7 +798,7 @@ import { auth, db } from "./ft-firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 import {
   collection, query, where, orderBy, onSnapshot, getDoc, doc,
-  addDoc, serverTimestamp, limit
+  addDoc, setDoc, serverTimestamp, limit
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 const el = {
@@ -1034,6 +1038,61 @@ onAuthStateChanged(auth, async (user) => {
 
   currentUser = user;
   if (el.profileEmail) el.profileEmail.textContent = user.email || "Signed in";
+
+  // ----- Membership & Perks status -----
+  // Both live perks arrive by email, so they follow this client's own record on
+  // the marketing list. Nothing is assumed: if they never opted in, it says so,
+  // and the button is how they turn it on or off.
+  const perkPills = [document.getElementById("perkBirthdayPill"), document.getElementById("perkSeasonalPill")].filter(Boolean);
+  const perkToggle = document.getElementById("perkToggle");
+  const perkNote = document.getElementById("perkNote");
+  const perkSlug = String(user.email || "").toLowerCase().replace(/[^a-z0-9]/gi, "_").slice(0, 60);
+
+  function paintPerks(on){
+    perkPills.forEach((pill) => {
+      pill.textContent = on ? "Active" : "Not active";
+      pill.className = on ? "status-pill good" : "status-pill";
+    });
+    if (perkToggle){
+      perkToggle.hidden = false;
+      perkToggle.dataset.on = on ? "1" : "0";
+      perkToggle.textContent = on ? "Turn these off" : "Turn these on";
+    }
+    if (perkNote) perkNote.textContent = on
+      ? "You are on the list. You can turn these off here or from any email we send."
+      : "You are not on the list yet, so these will not reach you.";
+  }
+
+  if (perkToggle){
+    perkToggle.addEventListener("click", async () => {
+      const turningOn = perkToggle.dataset.on !== "1";
+      perkToggle.disabled = true;
+      try {
+        await setDoc(doc(db, "subscribers", perkSlug), {
+          email: user.email || "",
+          subscribed: turningOn,
+          marketingConsent: turningOn,
+          source: "client_portal",
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+        paintPerks(turningOn);
+      } catch (err){
+        console.warn("perks toggle error:", err);
+        if (perkNote) perkNote.textContent = "Could not update that just now. Please try again in a moment.";
+      }
+      perkToggle.disabled = false;
+    });
+  }
+
+  if (perkSlug){
+    try {
+      const perkSnap = await getDoc(doc(db, "subscribers", perkSlug));
+      paintPerks(perkSnap.exists() && perkSnap.data().subscribed !== false);
+    } catch (err){
+      console.warn("perks status error:", err);
+      perkPills.forEach((pill) => { pill.textContent = "Unavailable"; pill.className = "status-pill"; });
+    }
+  }
 
   try {
     const snap = await getDoc(doc(db,"users",user.uid));
