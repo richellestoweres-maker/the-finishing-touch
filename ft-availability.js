@@ -479,6 +479,8 @@ export function mountAvailabilityEditor(el, uid, opts = {}) {
         ev.preventDefault();
         const dayKey = input.dataset.zipinput;
         const raw = input.value;
+        // Enter on an empty box is just someone tabbing through. Say nothing.
+        if (!raw.trim()) return;
         // Clear first: repainting removes this input, and a detached input still
         // fires focusout, which would re-submit the same ZIP as a duplicate.
         input.value = "";
