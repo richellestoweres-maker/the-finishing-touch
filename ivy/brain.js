@@ -78,9 +78,38 @@ const CREW_SECTIONS = [
   "crew_voice_examples", "crew_common_friction", "voice_examples"
 ];
 
-function knowledgeBlock(k, person) {
+// Commercial and post construction work behaves nothing like residential.
+// It arrives from a general contractor's project manager, it is priced per
+// square foot, and the worst thing Ivy can do is answer it with the
+// residential intake form. These sections are loaded whenever the thread
+// looks commercial, so she has the right playbook in front of her.
+const COMMERCIAL_SECTIONS = [
+  "commercial_arrives_by_email", "commercial_confirm_scope_before_quoting",
+  "commercial_quote_email_template", "commercial_start_time_is_negotiable",
+  "commercial_after_approval", "commercial_pricing_note"
+];
+
+// Cheap, deterministic signals that this is trade work rather than someone's
+// house. Deliberately generous: loading these on a residential thread costs a
+// few hundred tokens, while missing them on a real one costs the job.
+const COMMERCIAL_HINTS = /\b(sq\.? ?ft|square (?:feet|foot|footage)|floor ?plan|post[- ]construction|final clean(?:ing)?|punch ?list|general contractor|project manager|superintendent|job ?site|suite\b|build[- ]?out|tenant improvement|\bCOI\b|certificate of insurance|scope of work|work order|walk ?through with the gc)\b/i;
+
+function looksCommercial(person, history, incoming) {
+  if (person && (person.commercial === true || person.segment === "commercial")) return true;
+  const text = [incoming || ""]
+    .concat((history || []).slice(-6).map((m) => m && m.body ? m.body : ""))
+    .join("\n");
+  return COMMERCIAL_HINTS.test(text);
+}
+
+function knowledgeBlock(k, person, history, incoming) {
   const isCrew = person && person.kind === "contractor";
-  const order = isCrew ? BASE_SECTIONS.concat(CREW_SECTIONS) : BASE_SECTIONS;
+  let order = isCrew ? BASE_SECTIONS.concat(CREW_SECTIONS) : BASE_SECTIONS.slice();
+  if (looksCommercial(person, history, incoming)) {
+    for (const key of COMMERCIAL_SECTIONS) {
+      if (!order.includes(key)) order.push(key);
+    }
+  }
   return order
     .filter((key) => k[key])
     .map((key) => `## ${key.replace(/_/g, " ").toUpperCase()}\n${k[key]}`)
@@ -110,7 +139,7 @@ function whoBlock(person) {
  */
 export async function decide({ knowledge, person, history, incoming }) {
   const system = [
-    knowledgeBlock(knowledge, person),
+    knowledgeBlock(knowledge, person, history, incoming),
     "",
     "## HOW TO ANSWER",
     "You are replying by text message. Be brief. Answer only from the knowledge above.",
