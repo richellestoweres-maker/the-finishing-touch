@@ -56,14 +56,26 @@ const RESPOND_TOOL = {
   }
 };
 
-function knowledgeBlock(k) {
-  const order = [
-    "identity", "writing_style", "hours", "service_area", "services", "add_ons",
-    "important_distinctions", "the_intake_form", "photo_guidance", "payment",
-    "first_time_clients", "supplies_and_access", "not_included", "policies",
-    "escalation_rules", "contractor_rules", "subcontractor_voice", "voice_examples",
-    "negotiation_limits", "contact"
-  ];
+// Everything Ivy always needs to know.
+const BASE_SECTIONS = [
+  "identity", "writing_style", "hours", "service_area", "services", "add_ons",
+  "important_distinctions", "the_intake_form", "photo_guidance", "payment",
+  "first_time_clients", "supplies_and_access", "not_included", "policies",
+  "escalation_rules", "negotiation_limits", "contact"
+];
+
+// Only loaded when she is talking to the crew. A client conversation does not
+// need Richelle's negotiating history with Maggie, and leaving it out keeps
+// every client message cheaper and the instructions clearer.
+const CREW_SECTIONS = [
+  "contractor_rules", "subcontractor_voice", "client_privacy_with_crew",
+  "crew_quote_request_format", "price_reference_technique", "crew_voice_examples",
+  "crew_common_friction", "voice_examples"
+];
+
+function knowledgeBlock(k, person) {
+  const isCrew = person && person.kind === "contractor";
+  const order = isCrew ? BASE_SECTIONS.concat(CREW_SECTIONS) : BASE_SECTIONS;
   return order
     .filter((key) => k[key])
     .map((key) => `## ${key.replace(/_/g, " ").toUpperCase()}\n${k[key]}`)
@@ -93,7 +105,7 @@ function whoBlock(person) {
  */
 export async function decide({ knowledge, person, history, incoming }) {
   const system = [
-    knowledgeBlock(knowledge),
+    knowledgeBlock(knowledge, person),
     "",
     "## HOW TO ANSWER",
     "You are replying by text message. Be brief. Answer only from the knowledge above.",
