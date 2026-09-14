@@ -74,7 +74,8 @@ const CREW_SECTIONS = [
   "clarify_scope_before_asking", "always_give_full_location", "day_of_operations",
   "access_requirements", "payment_questions_from_crew", "mid_job_questions",
   "weekly_schedule_to_crew", "maggie_confirmation_rhythm", "richelle_is_also_a_client",
-  "crew_job_assignment_template", "client_preferences_block",
+  "crew_job_assignment_template", "client_preferences_block", "focus_areas",
+  "maggie_capacity_and_coverage",
   "photos_are_tied_to_payment", "crew_channels", "completion_check",
   "crew_voice_examples", "crew_common_friction", "voice_examples"
 ];
