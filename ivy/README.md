@@ -50,11 +50,39 @@ left in silence, and Richelle gets a text like:
 Ivy needs you. Glenda Cates (979) 264-4993 said: "what would a deep clean run me?"
 Why: asking for a price
 Her draft: "Richelle puts together every quote after seeing the space..."
-Reply OK WXYZ to send it, or NO WXYZ to bin it.
+Reply Y to send it, N to bin it.
 ```
 
-Replying `OK WXYZ` sends it. Replying `NO WXYZ` bins it. Nothing goes to a
-client without that.
+`Y` sends it, `N` bins it. That is the whole vocabulary, because typing on a
+phone between jobs should cost one keystroke. The only time more is needed is
+when two drafts are waiting at once, since a bare `Y` would then be ambiguous
+and guessing wrong means the wrong message reaches a client. Ivy numbers them
+and Richelle replies `Y1` or `N2`. Nothing goes to a client without that.
+
+---
+
+## Richelle's own thread
+
+The number Ivy texts from is also Richelle's private thread with her. Anything
+she sends that is not a bare `Y` or `N` is treated as her talking to Ivy, not
+as a command, and Ivy answers it properly: she has the whole knowledge base in
+that thread, she can say she does not know, and she can ask Richelle a question
+back when she genuinely needs one answered. She never escalates there, because
+Richelle is who she escalates to.
+
+---
+
+## Spanish
+
+Parts of the cleaning crew speak Spanish. Ivy replies in whatever language she
+is written to in, because making a crew read English is a good way to have an
+instruction misunderstood in someone's home.
+
+Richelle does not read Spanish, so every non-English exchange is mirrored to
+her in English as it happens: what was said to Ivy, and what Ivy said back.
+An approval request for a Spanish draft always shows her the English, with a
+note that it will send in Spanish, so she is never typing `Y` on something she
+cannot read.
 
 ---
 

@@ -30,7 +30,8 @@ const RESPOND_TOOL = {
     "Use mode 'escalate' for anything about money, pricing, scheduling, invoices, complaints, or " +
     "anything you are not sure about. When escalating, 'message' is the draft reply Richelle will " +
     "approve, and 'holding_reply' is the short note sent to the person right now so they are not " +
-    "left in silence.",
+    "left in silence. Always write 'message' and 'holding_reply' in the language the person wrote " +
+    "to you in, and always fill in the English fields so Richelle can read the exchange.",
   input_schema: {
     type: "object",
     properties: {
@@ -50,9 +51,25 @@ const RESPOND_TOOL = {
       learned_name: {
         type: "string",
         description: "If the person gave their name in this conversation and we did not already know it, put it here."
+      },
+      language: {
+        type: "string",
+        description: "The language you wrote 'message' in, as a two letter code. 'en' for English, 'es' for Spanish. Match the language the person wrote to you in."
+      },
+      message_english: {
+        type: "string",
+        description: "Required whenever language is not 'en'. A faithful English rendering of 'message', so Richelle can read what you are sending. Translate the meaning, not word for word."
+      },
+      holding_reply_english: {
+        type: "string",
+        description: "Required whenever language is not 'en' and you set a holding_reply. The English of that holding reply."
+      },
+      incoming_english: {
+        type: "string",
+        description: "Required whenever the person's own message was not in English. A faithful English rendering of what they said to you."
       }
     },
-    required: ["mode", "message"]
+    required: ["mode", "message", "language"]
   }
 };
 
@@ -105,7 +122,18 @@ function looksCommercial(person, history, incoming) {
 }
 
 function knowledgeBlock(k, person, history, incoming) {
+  const isOwner = person && person.kind === "owner";
   const isCrew = person && person.kind === "contractor";
+  // Richelle gets everything. She is the one person Ivy never has to keep a
+  // secret from, and half her questions will be about the crew or a quote.
+  if (isOwner) {
+    const all = BASE_SECTIONS.concat(CREW_SECTIONS, COMMERCIAL_SECTIONS);
+    const seen = new Set();
+    return all
+      .filter((key) => k[key] && !seen.has(key) && seen.add(key))
+      .map((key) => `## ${key.replace(/_/g, " ").toUpperCase()}\n${k[key]}`)
+      .join("\n\n");
+  }
   let order = isCrew ? BASE_SECTIONS.concat(CREW_SECTIONS) : BASE_SECTIONS.slice();
   if (looksCommercial(person, history, incoming)) {
     for (const key of COMMERCIAL_SECTIONS) {
@@ -119,6 +147,9 @@ function knowledgeBlock(k, person, history, incoming) {
 }
 
 function whoBlock(person) {
+  if (person && person.kind === "owner") {
+    return "This is Richelle, the owner. She is your boss, not a client. Talk to her plainly.";
+  }
   if (!person || person.kind === "unknown") {
     return "You do not recognise this number. Treat them as a new enquiry. Be warm, find out what they need, and get their name.";
   }
@@ -136,17 +167,76 @@ function whoBlock(person) {
 }
 
 /**
+ * What Ivy is told when the person texting her is Richelle herself.
+ *
+ * This thread is not client work. It is the two of them running the business,
+ * so the rules that protect clients from a wrong answer do not apply the same
+ * way: there is nobody to escalate to, and hedging at her wastes her time.
+ */
+function OWNER_INSTRUCTIONS(ctx) {
+  const waiting = (ctx && ctx.pendingDrafts) || [];
+  const lines = waiting.length
+    ? waiting.map((d, i) =>
+        `${i + 1}. to ${d.toName || d.toPhone}${d.language && d.language !== "en" ? " (sends in " + d.language + ")" : ""}: "${String(d.bodyEnglish || d.body || "").slice(0, 200)}" (reason: ${d.reason || "n/a"})`
+      ).join("\n")
+    : "(nothing waiting)";
+
+  return [
+    "## YOU ARE TEXTING RICHELLE",
+    "This is your private work thread with the owner. Nobody else sees it.",
+    "",
+    "She is running a business between school runs and job sites, so be short and be useful.",
+    "Answer the question she actually asked. No greeting, no sign off, no restating her question.",
+    "If the answer is a number or a name, lead with it.",
+    "",
+    "You may ask her questions here, and you should when you genuinely need something:",
+    "a price you cannot work out, a date only she can commit to, a judgement call about a client,",
+    "or which of two things she meant. Ask one question at a time and make it easy to answer.",
+    "Do not ask her to confirm things you can already see, and do not ask permission to do",
+    "something routine that your knowledge already covers.",
+    "",
+    "Never escalate in this thread. She is who you escalate to. If you do not know something,",
+    "say you do not know and say what you would need to find out.",
+    "Never invent a fact about her business. If it is not in your knowledge and not in this",
+    "thread, say so rather than guessing, because she will act on what you tell her.",
+    "You may disagree with her. If she is about to quote below what the sub costs, or send",
+    "something to a client that contradicts her own policy, say so before she sends it.",
+    "",
+    "Drafts currently waiting on her Y or N:",
+    lines,
+    "",
+    "If she is clearly answering about a draft, tell her to reply Y or N, or Y1 or N2 when",
+    "more than one is waiting. Do not approve or send anything yourself.",
+    "",
+    "Always answer by calling the respond tool, with mode 'send'. Never use 'escalate' here."
+  ].join("\n");
+}
+
+/**
  * Work out Ivy's response to one incoming message.
  * Returns { mode, message, holding_reply, reason, learned_name }.
  */
-export async function decide({ knowledge, person, history, incoming }) {
+export async function decide({ knowledge, person, history, incoming, ownerContext }) {
+  const isOwner = person && person.kind === "owner";
   const system = [
     knowledgeBlock(knowledge, person, history, incoming),
     "",
-    "## HOW TO ANSWER",
+    isOwner ? OWNER_INSTRUCTIONS(ownerContext) : "",
+    isOwner ? "" : "## HOW TO ANSWER",
     "You are replying by text message. Be brief. Answer only from the knowledge above.",
     "If the knowledge does not cover it, escalate rather than inventing an answer.",
-    "Always answer by calling the respond tool. Never reply with plain text."
+    "Always answer by calling the respond tool. Never reply with plain text.",
+    "",
+    "## LANGUAGE",
+    "Reply in whatever language the person wrote to you in. Parts of the cleaning crew speak Spanish,",
+    "and making them read English is a good way to have an instruction misunderstood in someone's home.",
+    "If they write in Spanish, write back in natural Texas Spanish, not a stiff translation, and keep the",
+    "same warmth and brevity you would use in English. If they mix the two, follow their lead.",
+    "Set 'language' to the code you wrote in. Whenever that is not 'en', you must also fill in",
+    "'message_english', 'holding_reply_english' if you set a holding reply, and 'incoming_english'.",
+    "Richelle does not read Spanish, so those English fields are the only way she can follow the",
+    "conversation or approve a draft. A missing English field means she is approving something she",
+    "cannot read, which is worse than a slow reply. Never leave them out."
   ].join("\n");
 
   const messages = [];
@@ -189,18 +279,28 @@ export async function decide({ knowledge, person, history, incoming }) {
       mode: "escalate",
       message: "",
       holding_reply: "Thanks for reaching out. Let me check with Richelle and come right back to you.",
-      reason: "Ivy could not form a structured answer"
+      reason: "Ivy could not form a structured answer",
+      language: "en",
+      message_english: "",
+      holding_reply_english: "",
+      incoming_english: ""
     };
   }
 
   const out = call.input || {};
-  const mode = out.mode === "send" ? "send" : "escalate";
+  // In the owner thread there is nobody above her to escalate to, so a model that
+  // picks "escalate" out of habit must still produce a reply she can read.
+  const mode = isOwner ? "send" : (out.mode === "send" ? "send" : "escalate");
   return {
     mode,
     message: String(out.message || "").trim(),
     holding_reply: String(out.holding_reply || "").trim(),
     reason: String(out.reason || "").trim(),
     learned_name: String(out.learned_name || "").trim(),
+    language: (String(out.language || "en").trim().toLowerCase() || "en").slice(0, 5),
+    message_english: String(out.message_english || "").trim(),
+    holding_reply_english: String(out.holding_reply_english || "").trim(),
+    incoming_english: String(out.incoming_english || "").trim(),
     usage: res.usage || null
   };
 }

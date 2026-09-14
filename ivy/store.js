@@ -160,7 +160,7 @@ export async function rememberContact(phone, patch) {
    Monday. The channel is recorded on each message, not on the thread.
    ------------------------------------------------------------------ */
 
-export async function appendMessage(key, { direction, channel, body, from, meta }) {
+export async function appendMessage(key, { direction, channel, body, from, meta, language, englishText }) {
   const convo = db.collection("conversations").doc(key);
   await convo.set(
     {
@@ -175,6 +175,10 @@ export async function appendMessage(key, { direction, channel, body, from, meta 
     direction,           // "in" from them, "out" from us
     channel,             // "sms" for now; "email" and "portal" later
     body: String(body || "").slice(0, 8000),
+    // When the exchange was not in English, englishText carries the translation so
+    // Richelle can read the thread back without needing Ivy to re-translate it.
+    language: language || "en",
+    englishText: String(englishText || "").slice(0, 8000),
     from: from || "",
     meta: meta || {},
     at: FieldValue.serverTimestamp()
@@ -195,15 +199,23 @@ export async function recentMessages(key, limit = 16) {
    "no <code>" to bin it. Approve from the dashboard works the same way.
    ------------------------------------------------------------------ */
 
-export async function createDraft({ toPhone, toName, body, reason, conversationKey, incoming }) {
+export async function createDraft({
+  toPhone, toName, body, reason, conversationKey, incoming,
+  language, bodyEnglish, incomingEnglish
+}) {
   const ref = await db.collection("ivyDrafts").add({
     status: "pending",
     toPhone: normalizePhone(toPhone),
     toName: toName || "",
     body,
+    // body is what actually sends. bodyEnglish is what Richelle reads before saying Y,
+    // so a Spanish draft is never approved sight unseen.
+    language: language || "en",
+    bodyEnglish: bodyEnglish || "",
     reason: reason || "",
     conversationKey: conversationKey || "",
     incoming: incoming || "",
+    incomingEnglish: incomingEnglish || "",
     channel: "sms",
     createdAt: FieldValue.serverTimestamp()
   });

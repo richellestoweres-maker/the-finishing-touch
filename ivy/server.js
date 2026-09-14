@@ -41,6 +41,12 @@ const TASK_KEY = process.env.TASK_KEY || "";
 
 const OPT_OUT = new Set(["STOP", "STOPALL", "UNSUBSCRIBE", "CANCEL", "END", "QUIT", "START", "UNSTOP", "HELP", "INFO"]);
 
+/** Turn a language code into something readable in a text to Richelle. */
+function languageName(code) {
+  const names = { en: "English", es: "Spanish" };
+  return names[String(code || "").toLowerCase()] || code || "another language";
+}
+
 /** Twilio wants XML back. An empty response means "I have nothing to say myself". */
 function noReply(res) {
   res.set("Content-Type", "text/xml");
@@ -94,7 +100,10 @@ app.get("/selftest", async (_req, res) => {
 
 function draftLine(draft, n) {
   const who = draft.toName || prettyPhone(draft.toPhone);
-  return `${n}. ${who}: "${String(draft.body || "").slice(0, 90)}"`;
+  // Richelle reads English. If the draft sends in Spanish, show her the English.
+  const shown = draft.bodyEnglish || draft.body || "";
+  const tag = draft.language && draft.language !== "en" ? ` [sends in ${draft.language}]` : "";
+  return `${n}. ${who}${tag}: "${String(shown).slice(0, 90)}"`;
 }
 
 async function sendDraft(draft) {
@@ -114,19 +123,38 @@ async function sendDraft(draft) {
   }
 }
 
+const OWNER_KEY = "owner";
+
 async function handleOwnerCommand(body) {
   const text = String(body || "").trim();
   const m = text.match(/^\s*(y|yes|ok|send|n|no|nope)\s*(\d{1,2})?\s*$/i);
 
+  // Anything that is not a bare approval is Richelle talking to Ivy. This is
+  // their working thread, so Ivy answers it properly instead of reciting a list.
   if (!m) {
-    const waiting = await listPendingDrafts();
-    if (!waiting.length) return "Nothing is waiting on you. Reply Y or N when I send you a draft.";
-    if (waiting.length === 1) {
-      return `One draft waiting.\n${draftLine(waiting[0], 1)}\nReply Y to send it, N to bin it.`;
-    }
-    return `${waiting.length} drafts waiting.\n` +
-      waiting.map((d, i) => draftLine(d, i + 1)).join("\n") +
-      `\nReply Y1 or N1, Y2 or N2, and so on.`;
+    const [knowledge, history, waiting] = await Promise.all([
+      getKnowledge(),
+      recentMessages(OWNER_KEY, 16),
+      listPendingDrafts()
+    ]);
+
+    await appendMessage(OWNER_KEY, { direction: "in", channel: "sms", body: text });
+
+    const outcome = await decide({
+      knowledge,
+      person: { kind: "owner", name: "Richelle" },
+      history,
+      incoming: text,
+      ownerContext: { pendingDrafts: waiting }
+    });
+
+    const reply = outcome.message ||
+      (waiting.length
+        ? `${waiting.length} waiting.\n` + waiting.map((d, i) => draftLine(d, i + 1)).join("\n")
+        : "Nothing waiting on you right now.");
+
+    await appendMessage(OWNER_KEY, { direction: "out", channel: "sms", body: reply });
+    return reply;
   }
 
   const approve = /^(y|yes|ok|send)$/i.test(m[1]);
@@ -177,7 +205,8 @@ app.post("/sms/inbound", async (req, res) => {
   if (OPT_OUT.has(body.toUpperCase())) return noReply(res);
 
   try {
-    // Richelle texting in is approvals, not a client conversation.
+    // Richelle texting in is her own thread with Ivy: approvals, and anything else
+    // she wants to ask. It is never treated as a client conversation.
     if (OWNER_PHONE && from === OWNER_PHONE) {
       const reply = await handleOwnerCommand(body);
       await sendSms(OWNER_PHONE, reply);
@@ -187,8 +216,6 @@ app.post("/sms/inbound", async (req, res) => {
     const person = await identify(from);
     const key = person.key || from;
 
-    await appendMessage(key, { direction: "in", channel: "sms", body, from });
-
     const [knowledge, history] = await Promise.all([
       getKnowledge(),
       recentMessages(key, 16)
@@ -197,17 +224,42 @@ app.post("/sms/inbound", async (req, res) => {
     const outcome = await decide({
       knowledge,
       person,
-      history: history.slice(0, -1), // the message we just stored is passed separately
+      history,
       incoming: body
+    });
+
+    const lang = outcome.language || "en";
+    const foreign = lang !== "en";
+
+    // Stored after deciding, because that is when we learn what language it was
+    // in and what it says in English.
+    await appendMessage(key, {
+      direction: "in", channel: "sms", body, from,
+      language: lang, englishText: outcome.incoming_english || ""
     });
 
     if (outcome.learned_name && !person.name) {
       await rememberContact(from, { name: outcome.learned_name });
     }
 
+    const who = person.name ? `${person.name} (${prettyPhone(from)})` : prettyPhone(from);
+
     if (outcome.mode === "send" && outcome.message) {
       await sendSms(from, outcome.message);
-      await appendMessage(key, { direction: "out", channel: "sms", body: outcome.message });
+      await appendMessage(key, {
+        direction: "out", channel: "sms", body: outcome.message,
+        language: lang, englishText: outcome.message_english || ""
+      });
+
+      // Richelle asked to see every non-English exchange as it happens, in English,
+      // so nothing is said on her behalf in a language she cannot read.
+      if (foreign) {
+        await notifyOwner(
+          `Ivy handled this in ${languageName(lang)}. English copy:\n` +
+          `${who} said: "${(outcome.incoming_english || body).slice(0, 300)}"\n` +
+          `Ivy replied: "${(outcome.message_english || outcome.message).slice(0, 300)}"`
+        );
+      }
       return noReply(res);
     }
 
@@ -217,7 +269,8 @@ app.post("/sms/inbound", async (req, res) => {
       "Thanks for reaching out. Let me check with Richelle and come right back to you.";
     await sendSms(from, holding);
     await appendMessage(key, {
-      direction: "out", channel: "sms", body: holding, meta: { holding: true }
+      direction: "out", channel: "sms", body: holding, meta: { holding: true },
+      language: lang, englishText: outcome.holding_reply_english || ""
     });
 
     await createDraft({
@@ -226,7 +279,10 @@ app.post("/sms/inbound", async (req, res) => {
       body: outcome.message || "",
       reason: outcome.reason || "needs your call",
       conversationKey: key,
-      incoming: body
+      incoming: body,
+      language: lang,
+      bodyEnglish: outcome.message_english || "",
+      incomingEnglish: outcome.incoming_english || ""
     });
 
     // If this is the only thing waiting she can just say Y. If others are
@@ -237,11 +293,13 @@ app.post("/sms/inbound", async (req, res) => {
       ? "Reply Y to send it, N to bin it."
       : `${waiting.length} are waiting now. Reply Y${position || waiting.length} to send this one, N${position || waiting.length} to bin it.`;
 
-    const who = person.name ? `${person.name} (${prettyPhone(from)})` : prettyPhone(from);
+    const saidEn = outcome.incoming_english || body;
+    const draftEn = outcome.message_english || outcome.message || "(none)";
     await notifyOwner(
-      `Ivy needs you. ${who} said: "${body.slice(0, 160)}"\n` +
+      `Ivy needs you. ${who} said: "${saidEn.slice(0, 160)}"\n` +
+      (foreign ? `(that was in ${languageName(lang)}; Ivy will reply in ${languageName(lang)})\n` : "") +
       `Why: ${outcome.reason || "not sure"}\n` +
-      `Her draft: "${(outcome.message || "(none)").slice(0, 400)}"\n` +
+      `Her draft: "${draftEn.slice(0, 400)}"\n` +
       howToAnswer
     );
 
