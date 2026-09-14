@@ -24,7 +24,7 @@
 import express from "express";
 import {
   getKnowledge, identify, rememberContact, appendMessage, recentMessages,
-  createDraft, findPendingDraftByCode, resolveDraft,
+  createDraft, listPendingDrafts, resolveDraft,
   queuedMessages, markQueuedMessage, firestoreCheck
 } from "./store.js";
 import { decide, anthropicCheck } from "./brain.js";
@@ -83,24 +83,21 @@ app.get("/selftest", async (_req, res) => {
 /* ==================================================================
    Richelle's approval replies
 
-   She gets a text like:  IVY needs you. Reply OK WXYZ to send.
-   She answers "ok wxyz" or "no wxyz".
+   She replies Y to send, N to bin. That is the whole vocabulary, because
+   typing on a phone between jobs should cost one keystroke.
+
+   The only time she has to say more is when two drafts are waiting at
+   once, since a bare Y would then be ambiguous and guessing wrong means
+   the wrong message reaches a client. In that case Ivy numbers them and
+   she replies Y1 or N2.
    ================================================================== */
 
-async function handleOwnerCommand(body) {
-  const m = String(body || "").trim().match(/^\s*(ok|yes|send|no|nope|stop it|reject)\s+([A-Za-z0-9]{4})\s*$/i);
-  if (!m) {
-    return "To approve a draft reply OK and the code, such as OK WXYZ. To bin it, NO WXYZ.";
-  }
-  const approve = /^(ok|yes|send)$/i.test(m[1]);
-  const draft = await findPendingDraftByCode(m[2]);
-  if (!draft) return `I can't find a waiting draft with code ${m[2].toUpperCase()}.`;
+function draftLine(draft, n) {
+  const who = draft.toName || prettyPhone(draft.toPhone);
+  return `${n}. ${who}: "${String(draft.body || "").slice(0, 90)}"`;
+}
 
-  if (!approve) {
-    await resolveDraft(draft.id, "rejected");
-    return `Binned it. Nothing was sent to ${draft.toName || prettyPhone(draft.toPhone)}.`;
-  }
-
+async function sendDraft(draft) {
   try {
     await sendSms(draft.toPhone, draft.body);
     await resolveDraft(draft.id, "sent");
@@ -115,6 +112,50 @@ async function handleOwnerCommand(body) {
     await resolveDraft(draft.id, "failed", { error: err.message });
     return `That didn't send: ${err.message}`;
   }
+}
+
+async function handleOwnerCommand(body) {
+  const text = String(body || "").trim();
+  const m = text.match(/^\s*(y|yes|ok|send|n|no|nope)\s*(\d{1,2})?\s*$/i);
+
+  if (!m) {
+    const waiting = await listPendingDrafts();
+    if (!waiting.length) return "Nothing is waiting on you. Reply Y or N when I send you a draft.";
+    if (waiting.length === 1) {
+      return `One draft waiting.\n${draftLine(waiting[0], 1)}\nReply Y to send it, N to bin it.`;
+    }
+    return `${waiting.length} drafts waiting.\n` +
+      waiting.map((d, i) => draftLine(d, i + 1)).join("\n") +
+      `\nReply Y1 or N1, Y2 or N2, and so on.`;
+  }
+
+  const approve = /^(y|yes|ok|send)$/i.test(m[1]);
+  const position = m[2] ? Number(m[2]) : null;
+  const waiting = await listPendingDrafts();
+
+  if (!waiting.length) return "Nothing is waiting on you right now.";
+
+  let draft;
+  if (position) {
+    draft = waiting[position - 1];
+    if (!draft) {
+      return `There's no number ${position}. ${waiting.length} waiting:\n` +
+        waiting.map((d, i) => draftLine(d, i + 1)).join("\n");
+    }
+  } else if (waiting.length === 1) {
+    draft = waiting[0];
+  } else {
+    // Ambiguous, and sending the wrong thing to a client is worse than one extra text.
+    return `${waiting.length} drafts are waiting, so I need to know which one.\n` +
+      waiting.map((d, i) => draftLine(d, i + 1)).join("\n") +
+      `\nReply ${approve ? "Y1, Y2" : "N1, N2"} and so on.`;
+  }
+
+  if (!approve) {
+    await resolveDraft(draft.id, "rejected");
+    return `Binned it. Nothing went to ${draft.toName || prettyPhone(draft.toPhone)}.`;
+  }
+  return await sendDraft(draft);
 }
 
 /* ==================================================================
@@ -179,7 +220,7 @@ app.post("/sms/inbound", async (req, res) => {
       direction: "out", channel: "sms", body: holding, meta: { holding: true }
     });
 
-    const draft = await createDraft({
+    await createDraft({
       toPhone: from,
       toName: person.name || "",
       body: outcome.message || "",
@@ -188,12 +229,20 @@ app.post("/sms/inbound", async (req, res) => {
       incoming: body
     });
 
+    // If this is the only thing waiting she can just say Y. If others are
+    // already queued, tell her the number now so she does not have to ask.
+    const waiting = await listPendingDrafts();
+    const position = waiting.findIndex((d) => d.toPhone === from && d.status === "pending") + 1;
+    const howToAnswer = waiting.length <= 1
+      ? "Reply Y to send it, N to bin it."
+      : `${waiting.length} are waiting now. Reply Y${position || waiting.length} to send this one, N${position || waiting.length} to bin it.`;
+
     const who = person.name ? `${person.name} (${prettyPhone(from)})` : prettyPhone(from);
     await notifyOwner(
       `Ivy needs you. ${who} said: "${body.slice(0, 160)}"\n` +
       `Why: ${outcome.reason || "not sure"}\n` +
       `Her draft: "${(outcome.message || "(none)").slice(0, 400)}"\n` +
-      `Reply OK ${draft.code} to send it, or NO ${draft.code} to bin it.`
+      howToAnswer
     );
 
     return noReply(res);

@@ -195,17 +195,8 @@ export async function recentMessages(key, limit = 16) {
    "no <code>" to bin it. Approve from the dashboard works the same way.
    ------------------------------------------------------------------ */
 
-const CODE_CHARS = "ACDEFHJKLMNPRTUVWXY34679"; // no look-alikes
-function shortCode() {
-  let s = "";
-  for (let i = 0; i < 4; i++) s += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
-  return s;
-}
-
 export async function createDraft({ toPhone, toName, body, reason, conversationKey, incoming }) {
-  const code = shortCode();
   const ref = await db.collection("ivyDrafts").add({
-    code,
     status: "pending",
     toPhone: normalizePhone(toPhone),
     toName: toName || "",
@@ -216,16 +207,23 @@ export async function createDraft({ toPhone, toName, body, reason, conversationK
     channel: "sms",
     createdAt: FieldValue.serverTimestamp()
   });
-  return { id: ref.id, code };
+  return { id: ref.id };
 }
 
-export async function findPendingDraftByCode(code) {
+/**
+ * Everything waiting on Richelle, oldest first.
+ *
+ * Order matters: she approves by replying Y, and when more than one is
+ * waiting she replies Y1 or Y2. Those numbers are positions in this list,
+ * so the ordering has to be stable and obvious. Oldest first means the
+ * numbering does not shuffle under her while she is reading it.
+ */
+export async function listPendingDrafts(limit = 5) {
   const q = await db.collection("ivyDrafts")
-    .where("code", "==", String(code || "").toUpperCase())
     .where("status", "==", "pending")
-    .limit(1).get();
-  if (q.empty) return null;
-  return { id: q.docs[0].id, ...q.docs[0].data() };
+    .orderBy("createdAt", "asc")
+    .limit(limit).get();
+  return q.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
 export async function resolveDraft(id, status, extra = {}) {

@@ -61,7 +61,8 @@ function knowledgeBlock(k) {
     "identity", "writing_style", "hours", "service_area", "services", "add_ons",
     "important_distinctions", "the_intake_form", "photo_guidance", "payment",
     "first_time_clients", "supplies_and_access", "not_included", "policies",
-    "escalation_rules", "contractor_rules", "contact"
+    "escalation_rules", "contractor_rules", "subcontractor_voice", "voice_examples",
+    "negotiation_limits", "contact"
   ];
   return order
     .filter((key) => k[key])
