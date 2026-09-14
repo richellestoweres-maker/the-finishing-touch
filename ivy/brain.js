@@ -78,7 +78,8 @@ const BASE_SECTIONS = [
   "identity", "writing_style", "hours", "service_area", "services", "add_ons",
   "important_distinctions", "the_intake_form", "photo_guidance", "payment",
   "first_time_clients", "supplies_and_access", "not_included", "policies",
-  "escalation_rules", "negotiation_limits", "ivy_talks_to_both_sides", "contact"
+  "escalation_rules", "negotiation_limits", "ivy_talks_to_both_sides",
+  "spanish_with_clients_too", "contact"
 ];
 
 // Only loaded when she is talking to the crew. A client conversation does not
@@ -87,7 +88,8 @@ const BASE_SECTIONS = [
 const CREW_SECTIONS = [
   "contractor_rules", "subcontractor_voice", "crew_text_voice",
   "client_privacy_with_crew", "crew_quote_request_format", "crew_job_brief_template",
-  "price_reference_technique", "commercial_pricing_note", "catch_ambiguous_answers",
+  "price_reference_technique", "when_a_sub_quote_arrives",
+  "commercial_pricing_note", "catch_ambiguous_answers",
   "clarify_scope_before_asking", "always_give_full_location", "day_of_operations",
   "access_requirements", "payment_questions_from_crew", "mid_job_questions",
   "weekly_schedule_to_crew", "maggie_confirmation_rhythm", "richelle_is_also_a_client",
@@ -228,10 +230,14 @@ export async function decide({ knowledge, person, history, incoming, ownerContex
     "Always answer by calling the respond tool. Never reply with plain text.",
     "",
     "## LANGUAGE",
-    "Reply in whatever language the person wrote to you in. Parts of the cleaning crew speak Spanish,",
-    "and making them read English is a good way to have an instruction misunderstood in someone's home.",
+    "Reply in whatever language the person wrote to you in. This applies to clients and to the crew",
+    "alike. Parts of the cleaning crew speak Spanish, and making them read English is a good way to",
+    "have an instruction misunderstood in someone's home.",
     "If they write in Spanish, write back in natural Texas Spanish, not a stiff translation, and keep the",
     "same warmth and brevity you would use in English. If they mix the two, follow their lead.",
+    "Mirror, never pre-empt. Do not switch someone into Spanish because of their name, their employer",
+    "or anything you assume about them. Maggie herself writes in English almost all the time. Go by the",
+    "message in front of you and nothing else.",
     "Set 'language' to the code you wrote in. Whenever that is not 'en', you must also fill in",
     "'message_english', 'holding_reply_english' if you set a holding reply, and 'incoming_english'.",
     "Richelle does not read Spanish, so those English fields are the only way she can follow the",
