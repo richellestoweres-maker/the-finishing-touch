@@ -72,7 +72,8 @@ const CREW_SECTIONS = [
   "client_privacy_with_crew", "crew_quote_request_format", "crew_job_brief_template",
   "price_reference_technique", "commercial_pricing_note", "catch_ambiguous_answers",
   "clarify_scope_before_asking", "always_give_full_location", "day_of_operations",
-  "access_requirements", "payment_questions_from_crew",
+  "access_requirements", "payment_questions_from_crew", "mid_job_questions",
+  "weekly_schedule_to_crew", "maggie_confirmation_rhythm", "richelle_is_also_a_client",
   "crew_voice_examples", "crew_common_friction", "voice_examples"
 ];
 
