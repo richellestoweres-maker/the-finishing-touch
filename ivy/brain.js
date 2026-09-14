@@ -68,9 +68,10 @@ const BASE_SECTIONS = [
 // need Richelle's negotiating history with Maggie, and leaving it out keeps
 // every client message cheaper and the instructions clearer.
 const CREW_SECTIONS = [
-  "contractor_rules", "subcontractor_voice", "client_privacy_with_crew",
-  "crew_quote_request_format", "price_reference_technique", "crew_voice_examples",
-  "crew_common_friction", "voice_examples"
+  "contractor_rules", "subcontractor_voice", "crew_text_voice",
+  "client_privacy_with_crew", "crew_quote_request_format", "crew_job_brief_template",
+  "price_reference_technique", "commercial_pricing_note", "catch_ambiguous_answers",
+  "crew_voice_examples", "crew_common_friction", "voice_examples"
 ];
 
 function knowledgeBlock(k, person) {
