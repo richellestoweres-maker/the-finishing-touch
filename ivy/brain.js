@@ -71,7 +71,8 @@ const CREW_SECTIONS = [
   "contractor_rules", "subcontractor_voice", "crew_text_voice",
   "client_privacy_with_crew", "crew_quote_request_format", "crew_job_brief_template",
   "price_reference_technique", "commercial_pricing_note", "catch_ambiguous_answers",
-  "clarify_scope_before_asking", "always_give_full_location",
+  "clarify_scope_before_asking", "always_give_full_location", "day_of_operations",
+  "access_requirements", "payment_questions_from_crew",
   "crew_voice_examples", "crew_common_friction", "voice_examples"
 ];
 
