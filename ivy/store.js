@@ -126,22 +126,41 @@ export async function identify(phone) {
   }
 
   // A client we have a job for.
+  //
+  // No orderBy here either, for the same reason as listPendingDrafts: pairing
+  // it with the where() makes it a composite query that needs an index, and
+  // because this one is inside a try/catch it would fail silently forever,
+  // quietly never recognising a real client. A few of their jobs are fetched
+  // and the newest picked in memory instead.
   if (!found) {
     try {
       const q = await db.collection("jobs")
         .where("clientPhone", "in", variants)
-        .orderBy("createdAt", "desc").limit(1).get();
+        .limit(20)
+        .get();
       if (!q.empty) {
-        const d = q.docs[0].data();
+        const millis = (v) => {
+          if (!v) return 0;
+          if (typeof v.toMillis === "function") return v.toMillis();
+          if (v._seconds) return v._seconds * 1000;
+          const t = new Date(v).getTime();
+          return Number.isFinite(t) ? t : 0;
+        };
+        const newest = q.docs
+          .map((doc) => ({ id: doc.id, data: doc.data() }))
+          .sort((a, b) => millis(b.data.createdAt) - millis(a.data.createdAt))[0];
+        const d = newest.data;
         found = {
           kind: "client",
           uid: d.clientUid || d.clientId || "",
           name: d.clientName || "",
           email: d.clientEmail || "",
-          lastJobId: q.docs[0].id
+          lastJobId: newest.id
         };
       }
-    } catch { /* missing index is fine, fall through */ }
+    } catch (err) {
+      console.error("[ivy] jobs lookup failed:", err.message);
+    }
   }
 
   // Someone who filled out an intake form.
@@ -259,11 +278,41 @@ export async function createDraft({
  * numbering does not shuffle under her while she is reading it.
  */
 export async function listPendingDrafts(limit = 5) {
-  const q = await db.collection("ivyDrafts")
-    .where("status", "==", "pending")
-    .orderBy("createdAt", "asc")
-    .limit(limit).get();
-  return q.docs.map((d) => ({ id: d.id, ...d.data() }));
+  // Deliberately no orderBy in the query.
+  //
+  // where(status) + orderBy(createdAt) is a composite query, and Firestore
+  // refuses it until someone builds a matching index. That failed in
+  // production and cost a client an answer, because this runs on the path
+  // that tells Richelle a draft is waiting.
+  //
+  // The pending queue is a handful of documents at most, so a single equality
+  // filter and an in-memory sort gives the same result with nothing to
+  // maintain and nothing to forget. Oldest first still holds, which is what
+  // keeps the Y1 / Y2 numbering stable while she is reading it.
+  try {
+    const q = await db.collection("ivyDrafts")
+      .where("status", "==", "pending")
+      .limit(50)
+      .get();
+
+    const toMillis = (d) => {
+      const v = d && d.createdAt;
+      if (!v) return 0;
+      if (typeof v.toMillis === "function") return v.toMillis();
+      if (v._seconds) return v._seconds * 1000;
+      const t = new Date(v).getTime();
+      return Number.isFinite(t) ? t : 0;
+    };
+
+    return q.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => toMillis(a) - toMillis(b))
+      .slice(0, limit);
+  } catch (err) {
+    // Never let the approval queue take down a reply to a client.
+    console.error("[ivy] could not list pending drafts:", err.message);
+    return [];
+  }
 }
 
 export async function resolveDraft(id, status, extra = {}) {
