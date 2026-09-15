@@ -79,7 +79,9 @@ const BASE_SECTIONS = [
   "important_distinctions", "the_intake_form", "photo_guidance", "payment",
   "first_time_clients", "supplies_and_access", "not_included", "policies",
   "escalation_rules", "negotiation_limits", "ivy_talks_to_both_sides",
-  "spanish_with_clients_too", "contact"
+  "spanish_with_clients_too", "airbnb_and_short_term_rentals",
+  "client_voice_examples", "tailored_form_guidance", "channel_length",
+  "signature_block", "contact"
 ];
 
 // Only loaded when she is talking to the crew. A client conversation does not

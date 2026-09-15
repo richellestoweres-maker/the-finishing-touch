@@ -48,6 +48,7 @@ const KNOWLEDGE_DOC = db.collection("settings").doc("ivy");
  */
 export async function getKnowledge() {
   const snap = await KNOWLEDGE_DOC.get();
+
   if (!snap.exists) {
     await KNOWLEDGE_DOC.set({
       ...defaultKnowledge,
@@ -56,7 +57,34 @@ export async function getKnowledge() {
     });
     return defaultKnowledge;
   }
-  return { ...defaultKnowledge, ...snap.data() };
+
+  const stored = snap.data() || {};
+
+  // Version gate.
+  //
+  // Firestore is the live copy, so normally it wins and edits made there take
+  // effect on the next message. But that means a correction committed to
+  // knowledge.json would never reach Ivy once the document exists, which is a
+  // silent failure: the file looks right, Ivy keeps saying the old thing.
+  //
+  // So when the file's version is newer than the stored one, the file wins for
+  // every section it defines, and the result is written back. Sections that
+  // exist only in Firestore are kept, so hand edits to anything the file does
+  // not mention survive a deploy.
+  const fileVersion = Number(defaultKnowledge.version || 0);
+  const storedVersion = Number(stored.version || 0);
+
+  if (fileVersion > storedVersion) {
+    const merged = { ...stored, ...defaultKnowledge };
+    await KNOWLEDGE_DOC.set(
+      { ...merged, updatedAt: FieldValue.serverTimestamp(), reseededFromFileAt: FieldValue.serverTimestamp() },
+      { merge: true }
+    );
+    console.log(`[ivy] knowledge reseeded from file: v${storedVersion} -> v${fileVersion}`);
+    return merged;
+  }
+
+  return { ...defaultKnowledge, ...stored };
 }
 
 /* ------------------------------------------------------------------
