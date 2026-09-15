@@ -125,8 +125,66 @@ async function sendDraft(draft) {
 
 const OWNER_KEY = "owner";
 
+/**
+ * Let Richelle see the client side from her own phone.
+ *
+ * Once her number is the owner number, every text she sends lands in her
+ * working thread with Ivy, which is right but means she can no longer watch
+ * what a stranger would actually receive. Rather than make her borrow a second
+ * phone to check her own business, she can prefix a message with TEST and Ivy
+ * runs it exactly as if it had arrived cold, then shows her the result.
+ *
+ * Nothing is sent to anyone, nothing is stored, no draft is queued. It is a
+ * dry run and it says so.
+ *
+ *   test do you clean airbnbs
+ *   test client can you come back thursday
+ *   test crew what's the door code for the kemah job
+ */
+async function handleTestCommand(text) {
+  const m = text.match(/^\s*test\b[:\s]*(?:(crew|contractor|client|prospect|new)\b[:\s]+)?([\s\S]*)$/i);
+  if (!m) return null;
+
+  const roleWord = (m[1] || "").toLowerCase();
+  const pretend = (m[2] || "").trim();
+  if (!pretend) return "Give me something to test, such as: test do you clean airbnbs";
+
+  const person =
+    roleWord === "crew" || roleWord === "contractor"
+      ? { kind: "contractor", name: "Maggie", key: "test" }
+      : roleWord === "client"
+        ? { kind: "client", name: "", key: "test" }
+        : { kind: "unknown", name: "", key: "test" };
+
+  const label =
+    person.kind === "contractor" ? "one of the crew"
+      : person.kind === "client" ? "an existing client"
+        : "someone new";
+
+  const knowledge = await getKnowledge();
+  const outcome = await decide({ knowledge, person, history: [], incoming: pretend });
+
+  const body = outcome.message_english || outcome.message || "(nothing)";
+  const langNote = outcome.language && outcome.language !== "en"
+    ? ` (she'd write it in ${languageName(outcome.language)})`
+    : "";
+
+  if (outcome.mode === "send") {
+    return `TEST, as ${label}. Nothing was sent.\n\nShe'd reply${langNote}:\n"${body}"`;
+  }
+  return `TEST, as ${label}. Nothing was sent.\n\n` +
+    `She'd hold them with: "${outcome.holding_reply_english || outcome.holding_reply}"\n` +
+    `Then ask you to approve${langNote}:\n"${body}"\n` +
+    `Why: ${outcome.reason || "not sure"}`;
+}
+
 async function handleOwnerCommand(body) {
   const text = String(body || "").trim();
+
+  // Dry run first, so a test never gets mistaken for a real instruction.
+  const test = await handleTestCommand(text);
+  if (test) return test;
+
   const m = text.match(/^\s*(y|yes|ok|send|n|no|nope)\s*(\d{1,2})?\s*$/i);
 
   // Anything that is not a bare approval is Richelle talking to Ivy. This is
