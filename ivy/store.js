@@ -88,6 +88,56 @@ export async function getKnowledge() {
 }
 
 /* ------------------------------------------------------------------
+   What Richelle has taught her
+
+   Corrections she sends by text used to live only in the conversation
+   history, which is a rolling window, so anything she taught Ivy scrolled
+   away and was forgotten. These are written into the knowledge document
+   instead, under a key that knowledge.json deliberately does not define,
+   so the version gate never overwrites them on a deploy.
+   ------------------------------------------------------------------ */
+
+/** Add something Richelle taught Ivy. Returns the saved entry. */
+export async function appendLearning(text) {
+  const clean = String(text || "").trim();
+  if (!clean) return null;
+
+  const entry = { text: clean, at: new Date().toISOString() };
+  await KNOWLEDGE_DOC.set(
+    {
+      learned: FieldValue.arrayUnion(entry),
+      updatedAt: FieldValue.serverTimestamp()
+    },
+    { merge: true }
+  );
+  return entry;
+}
+
+/** Everything she has been taught, oldest first. */
+export async function listLearnings() {
+  const snap = await KNOWLEDGE_DOC.get();
+  const raw = (snap.exists && snap.data().learned) || [];
+  return raw
+    .filter((e) => e && e.text)
+    .sort((a, b) => String(a.at || "").localeCompare(String(b.at || "")));
+}
+
+/**
+ * Drop one learned item by its position in that list, 1 based, which is how
+ * Ivy shows them to Richelle.
+ */
+export async function removeLearning(position) {
+  const all = await listLearnings();
+  const target = all[position - 1];
+  if (!target) return null;
+  await KNOWLEDGE_DOC.set(
+    { learned: all.filter((e) => e !== target), updatedAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
+  return target;
+}
+
+/* ------------------------------------------------------------------
    Who is this?
 
    Best effort. Numbers in older records were typed by hand in all sorts of

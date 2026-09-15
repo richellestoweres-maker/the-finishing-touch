@@ -25,7 +25,8 @@ import express from "express";
 import {
   getKnowledge, identify, rememberContact, appendMessage, recentMessages,
   createDraft, listPendingDrafts, resolveDraft,
-  queuedMessages, markQueuedMessage, firestoreCheck
+  queuedMessages, markQueuedMessage, firestoreCheck,
+  appendLearning, listLearnings, removeLearning
 } from "./store.js";
 import { decide, anthropicCheck } from "./brain.js";
 import {
@@ -178,12 +179,52 @@ async function handleTestCommand(text) {
     `Why: ${outcome.reason || "not sure"}`;
 }
 
+/**
+ * Explicit ways for Richelle to manage what Ivy has learned.
+ *
+ * She can also just correct Ivy in plain language and Ivy will save it
+ * herself. These are for when she wants to be certain, or wants to see or
+ * undo what is in there.
+ *
+ *   remember we never quote commercial without Maggie pricing it first
+ *   what have you learned
+ *   forget 3
+ */
+async function handleLearningCommand(text) {
+  const remember = text.match(/^\s*(?:remember|learn)\b[:\s]+([\s\S]+)$/i);
+  if (remember) {
+    const fact = remember[1].trim();
+    if (!fact) return "Tell me what to remember, such as: remember we don't take Venmo anymore";
+    const saved = await appendLearning(fact);
+    return saved ? `Saved. I'll remember: "${saved.text}"` : "That didn't save, try again.";
+  }
+
+  if (/^\s*(what have you learned|what did you learn|what do you know|list learned|learned)\s*\??\s*$/i.test(text)) {
+    const all = await listLearnings();
+    if (!all.length) return "Nothing yet. Tell me something and I'll keep it, or say: remember <thing>";
+    return `${all.length} thing${all.length === 1 ? "" : "s"} you've taught me:\n` +
+      all.map((e, i) => `${i + 1}. ${e.text}`).join("\n") +
+      `\nSay "forget 2" to drop one.`;
+  }
+
+  const forget = text.match(/^\s*forget\s+(\d{1,2})\s*$/i);
+  if (forget) {
+    const gone = await removeLearning(Number(forget[1]));
+    return gone ? `Dropped it: "${gone.text}"` : `There's no number ${forget[1]}. Say "what have you learned" to see the list.`;
+  }
+
+  return null;
+}
+
 async function handleOwnerCommand(body) {
   const text = String(body || "").trim();
 
   // Dry run first, so a test never gets mistaken for a real instruction.
   const test = await handleTestCommand(text);
   if (test) return test;
+
+  const learning = await handleLearningCommand(text);
+  if (learning) return learning;
 
   const m = text.match(/^\s*(y|yes|ok|send|n|no|nope)\s*(\d{1,2})?\s*$/i);
 
@@ -192,7 +233,7 @@ async function handleOwnerCommand(body) {
   if (!m) {
     const [knowledge, history, waiting] = await Promise.all([
       getKnowledge(),
-      recentMessages(OWNER_KEY, 16),
+      recentMessages(OWNER_KEY, 30),
       listPendingDrafts()
     ]);
 
@@ -206,10 +247,20 @@ async function handleOwnerCommand(body) {
       ownerContext: { pendingDrafts: waiting }
     });
 
-    const reply = outcome.message ||
+    let reply = outcome.message ||
       (waiting.length
         ? `${waiting.length} waiting.\n` + waiting.map((d, i) => draftLine(d, i + 1)).join("\n")
         : "Nothing waiting on you right now.");
+
+    // She corrected Ivy in plain language, so write it down before it scrolls away.
+    if (outcome.learn) {
+      try {
+        await appendLearning(outcome.learn);
+      } catch (err) {
+        console.error("[ivy] could not save a learning:", err.message);
+        reply += "\n(I couldn't save that one, tell me again in a moment.)";
+      }
+    }
 
     await appendMessage(OWNER_KEY, { direction: "out", channel: "sms", body: reply });
     return reply;

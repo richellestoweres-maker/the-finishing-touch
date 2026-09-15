@@ -67,6 +67,14 @@ const RESPOND_TOOL = {
       incoming_english: {
         type: "string",
         description: "Required whenever the person's own message was not in English. A faithful English rendering of what they said to you."
+      },
+      learn: {
+        type: "string",
+        description:
+          "ONLY when talking to Richelle, and only when she has just taught you something that should hold for the future: " +
+          "a correction to how you answered, a fact about the business you did not have, a rule about what to say or " +
+          "not say. Write it as a single standalone sentence that will still make sense months from now, with no " +
+          "reference to this conversation. Leave it empty if she was only asking or chatting."
       }
     },
     required: ["mode", "message", "language"]
@@ -123,6 +131,28 @@ function looksCommercial(person, history, incoming) {
     .concat((history || []).slice(-6).map((m) => m && m.body ? m.body : ""))
     .join("\n");
   return COMMERCIAL_HINTS.test(text);
+}
+
+/**
+ * What Richelle has taught Ivy by text, rendered into every prompt.
+ *
+ * These sit after the base knowledge and are marked as overriding it, because
+ * the whole point is that she can correct Ivy without waiting for a deploy.
+ */
+function learnedBlock(k) {
+  const learned = Array.isArray(k && k.learned) ? k.learned.filter((e) => e && e.text) : [];
+  if (!learned.length) return "";
+  const lines = learned
+    .slice()
+    .sort((a, b) => String(a.at || "").localeCompare(String(b.at || "")))
+    .map((e) => `- ${e.text}`)
+    .join("\n");
+  return (
+    "## WHAT RICHELLE HAS TAUGHT YOU\n" +
+    "These came directly from Richelle, after the fact, usually because you got something wrong.\n" +
+    "They override anything above them that contradicts them. Follow them exactly.\n" +
+    lines
+  );
 }
 
 function knowledgeBlock(k, person, history, incoming) {
@@ -199,6 +229,14 @@ function OWNER_INSTRUCTIONS(ctx) {
     "Do not ask her to confirm things you can already see, and do not ask permission to do",
     "something routine that your knowledge already covers.",
     "",
+    "When she teaches you something, set 'learn' as well as replying. That is the only way it survives,",
+    "because this conversation is a rolling window and anything not written down scrolls away and is lost.",
+    "Teaching looks like: correcting an answer you gave, telling you a fact about the business you did not",
+    "have, or telling you how she wants something said. Write it as one standalone sentence that will still",
+    "make sense months from now, not as a reply to this message. Then say in a few words what you saved,",
+    "so she can see it landed. Do not set 'learn' when she is only asking a question or thinking out loud,",
+    "and do not save the same thing twice if it is already in what she has taught you.",
+    "",
     "Never escalate in this thread. She is who you escalate to. If you do not know something,",
     "say you do not know and say what you would need to find out.",
     "Never invent a fact about her business. If it is not in your knowledge and not in this",
@@ -224,6 +262,8 @@ export async function decide({ knowledge, person, history, incoming, ownerContex
   const isOwner = person && person.kind === "owner";
   const system = [
     knowledgeBlock(knowledge, person, history, incoming),
+    "",
+    learnedBlock(knowledge),
     "",
     isOwner ? OWNER_INSTRUCTIONS(ownerContext) : "",
     isOwner ? "" : "## HOW TO ANSWER",
@@ -309,6 +349,7 @@ export async function decide({ knowledge, person, history, incoming, ownerContex
     message_english: String(out.message_english || "").trim(),
     holding_reply_english: String(out.holding_reply_english || "").trim(),
     incoming_english: String(out.incoming_english || "").trim(),
+    learn: isOwner ? String(out.learn || "").trim() : "",
     usage: res.usage || null
   };
 }
