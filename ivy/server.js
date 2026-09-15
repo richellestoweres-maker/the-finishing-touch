@@ -29,7 +29,7 @@ import {
 } from "./store.js";
 import { decide, anthropicCheck } from "./brain.js";
 import {
-  sendSms, verifyTwilioSignature, normalizePhone, prettyPhone, twilioCheck
+  sendSms, verifyTwilioSignature, normalizePhone, prettyPhone, twilioCheck, ownNumber
 } from "./sms.js";
 
 const app = express();
@@ -261,6 +261,13 @@ app.post("/sms/inbound", async (req, res) => {
   // Carriers require opt-out keywords to be handled by Twilio itself.
   // Ivy stays out of the way rather than replying over the top of it.
   if (OPT_OUT.has(body.toUpperCase())) return noReply(res);
+
+  // A message from our own number is either a loop or a spoof. Either way Ivy
+  // has nothing to say to herself.
+  if (from && from === ownNumber()) {
+    console.warn("[ivy] dropped a message that came from Ivy's own number");
+    return noReply(res);
+  }
 
   try {
     // Richelle texting in is her own thread with Ivy: approvals, and anything else

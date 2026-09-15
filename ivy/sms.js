@@ -78,6 +78,17 @@ export async function sendSms(to, body) {
   const dest = normalizePhone(to);
   if (!dest) throw new Error("No destination number");
   if (!FROM_NUMBER) throw new Error("TWILIO_FROM_NUMBER is not configured");
+
+  // Never text ourselves.
+  //
+  // This matters most at porting time. Richelle's business line becomes Ivy's
+  // own number, and anything already on file against it, a contact learned
+  // while testing, an old queued job message, would make Ivy send to herself.
+  // That arrives back through the webhook as a fresh inbound message, which
+  // she would answer, forever.
+  if (normalizePhone(to) === normalizePhone(FROM_NUMBER)) {
+    throw new Error("refusing to send to Ivy's own number");
+  }
   const trimmed = String(body || "").trim();
   if (!trimmed) throw new Error("Refusing to send an empty message");
 
@@ -123,4 +134,9 @@ export async function twilioCheck() {
   } catch (err) {
     return { ok: false, detail: err.message };
   }
+}
+
+/** Ivy's own number, so the inbound handler can recognise and drop self-messages. */
+export function ownNumber() {
+  return normalizePhone(FROM_NUMBER);
 }
