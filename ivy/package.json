@@ -4,10 +4,14 @@
   "private": true,
   "description": "Ivy, the admin assistant for The Finishing Touch. Answers client and contractor texts, drains the job notification queue, and escalates anything about money or scheduling to Richelle.",
   "type": "module",
-  "engines": { "node": ">=20" },
-  "scripts": { "start": "node server.js" },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.68.0",
+    "@anthropic-ai/sdk": "^0.125.0",
     "@google-cloud/firestore": "^7.11.0",
     "express": "^4.21.2",
     "twilio": "^5.4.0"
