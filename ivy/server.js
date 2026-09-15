@@ -26,7 +26,8 @@ import {
   getKnowledge, identify, rememberContact, appendMessage, recentMessages,
   createDraft, listPendingDrafts, resolveDraft,
   queuedMessages, markQueuedMessage, firestoreCheck,
-  appendLearning, listLearnings, removeLearning
+  appendLearning, listLearnings, removeLearning,
+  listContacts
 } from "./store.js";
 import { decide, anthropicCheck } from "./brain.js";
 import {
@@ -216,6 +217,73 @@ async function handleLearningCommand(text) {
   return null;
 }
 
+/**
+ * Teach Ivy who someone is, by text.
+ *
+ * These details stay out of the repo on purpose. The repo is public, and a
+ * subcontractor's mobile number and personal email are not Richelle's to
+ * publish. They go straight into the private contact store instead, which is
+ * the first thing identify() checks, so the next text from that number is
+ * recognised rather than treated as a stranger and sent the intake form.
+ *
+ *   crew Maggie 281-967-2543 fastcleaninghouston@gmail.com birthday July 15
+ *   client Robert M 555-123-4567
+ *   who do you know
+ */
+async function handleContactCommand(text) {
+  const m = text.match(/^\s*(crew|contractor|sub|client)\b[:\s]+([\s\S]+)$/i);
+
+  if (!m) {
+    if (/^\s*(who do you know|contacts|list contacts)\s*\??\s*$/i.test(text)) {
+      const all = await listContacts();
+      if (!all.length) return "Nobody yet. Add someone with: crew Maggie 281-967-2543";
+      return `${all.length} on file:\n` + all.map((c) =>
+        `${c.name}${c.kind === "contractor" ? " (crew)" : ""} ${prettyPhone(c.phone || c.key)}${c.email ? " " + c.email : ""}`
+      ).join("\n");
+    }
+    return null;
+  }
+
+  const word = m[1].toLowerCase();
+  const kind = word === "client" ? "client" : "contractor";
+  let rest = m[2].trim();
+
+  const email = (rest.match(/[\w.+-]+@[\w-]+\.[\w.]+/) || [])[0] || "";
+  if (email) rest = rest.replace(email, " ");
+
+  const bday = rest.match(/\bbirthday\b[:\s]*([A-Za-z]+\s*\d{1,2}|\d{1,2}[\/-]\d{1,2})/i);
+  const birthday = bday ? bday[1].trim() : "";
+  if (bday) rest = rest.replace(bday[0], " ");
+
+  // The leading bracket has to be part of the match, or "(281) 967-2543"
+  // leaves a stray "(" behind and the name comes out as "Maggie Gonzalez (".
+  const phoneRaw = (rest.match(/\+?\(?\d[\d\s().-]{8,}\d\)?/) || [])[0] || "";
+  if (phoneRaw) rest = rest.replace(phoneRaw, " ");
+  const phone = normalizePhone(phoneRaw);
+
+  const name = rest
+    .replace(/\s+/g, " ")
+    // Note the period is not stripped from the end: "Maggie G." is an initial,
+    // not stray punctuation.
+    .replace(/^[\s,.:;()-]+|[\s,:;()-]+$/g, "")
+    .trim();
+
+  if (!phone) return `I need a phone number to file someone under. Try: ${word} ${name || "Maggie"} 281-967-2543`;
+  if (!name) return "I need a name too, such as: crew Maggie 281-967-2543";
+
+  const patch = { kind, name };
+  if (email) patch.email = email;
+  if (birthday) patch.birthday = birthday;
+
+  await rememberContact(phone, patch);
+
+  const bits = [prettyPhone(phone)];
+  if (email) bits.push(email);
+  if (birthday) bits.push(`birthday ${birthday}`);
+  return `Got it. ${name}${kind === "contractor" ? ", crew" : ", client"}: ${bits.join(", ")}.\n` +
+    `I'll know it's ${name.split(" ")[0]} when they text.`;
+}
+
 async function handleOwnerCommand(body) {
   const text = String(body || "").trim();
 
@@ -225,6 +293,9 @@ async function handleOwnerCommand(body) {
 
   const learning = await handleLearningCommand(text);
   if (learning) return learning;
+
+  const contact = await handleContactCommand(text);
+  if (contact) return contact;
 
   const m = text.match(/^\s*(y|yes|ok|send|n|no|nope)\s*(\d{1,2})?\s*$/i);
 

@@ -239,6 +239,15 @@ export async function identify(phone) {
   return { key, ...person };
 }
 
+/** Everyone Ivy has been told about explicitly, newest first. */
+export async function listContacts(limit = 50) {
+  const snap = await db.collection("ivyContacts").limit(limit).get();
+  return snap.docs
+    .map((d) => ({ key: d.id, ...d.data() }))
+    .filter((c) => c.name)
+    .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+}
+
 /** Attach a name to a number once we learn it mid-conversation. */
 export async function rememberContact(phone, patch) {
   const key = normalizePhone(phone);
