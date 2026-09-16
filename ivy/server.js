@@ -210,6 +210,15 @@ async function handleLearningCommand(text) {
 
   // A bare number means one of the numbered lessons. A name or a phone means a
   // person, and that is handled by the contact commands instead.
+  // Testing leaves drafts stacked up, and there is no sense making her bin
+  // them one at a time.
+  if (/^\s*(clear|bin all|clear all|clear drafts|bin the drafts)\s*$/i.test(text)) {
+    const waiting = await listPendingDrafts(50);
+    if (!waiting.length) return "Nothing waiting on you.";
+    for (const dft of waiting) await resolveDraft(dft.id, "rejected");
+    return `Binned ${waiting.length}. Nothing went to anyone.`;
+  }
+
   const forget = text.match(/^\s*forget\s+(\d{1,2})\s*$/i);
   if (forget) {
     const gone = await removeLearning(Number(forget[1]));
@@ -499,7 +508,8 @@ app.post("/sms/inbound", async (req, res) => {
       incoming: body,
       language: lang,
       bodyEnglish: outcome.message_english || "",
-      incomingEnglish: outcome.incoming_english || ""
+      incomingEnglish: outcome.incoming_english || "",
+      noteForRichelle: outcome.note_for_richelle || ""
     });
 
     // If this is the only thing waiting she can just say Y. If others are
@@ -516,7 +526,8 @@ app.post("/sms/inbound", async (req, res) => {
       `Ivy needs you. ${who} said: "${saidEn.slice(0, 160)}"\n` +
       (foreign ? `(that was in ${languageName(lang)}; Ivy will reply in ${languageName(lang)})\n` : "") +
       `Why: ${outcome.reason || "not sure"}\n` +
-      `Her draft: "${draftEn.slice(0, 400)}"\n` +
+      (outcome.note_for_richelle ? `Ivy says: ${outcome.note_for_richelle.slice(0, 200)}\n` : "") +
+      `To send them: "${draftEn.slice(0, 400)}"\n` +
       howToAnswer
     );
 

@@ -28,17 +28,32 @@ const RESPOND_TOOL = {
   description:
     "Decide how to handle the message. Use mode 'send' for a routine reply you are confident in. " +
     "Use mode 'escalate' for anything about money, pricing, scheduling, invoices, complaints, or " +
-    "anything you are not sure about. When escalating, 'message' is the draft reply Richelle will " +
-    "approve, and 'holding_reply' is the short note sent to the person right now so they are not " +
-    "left in silence. Always write 'message' and 'holding_reply' in the language the person wrote " +
-    "to you in, and always fill in the English fields so Richelle can read the exchange.",
+    "anything you are not sure about. " +
+    "CRITICAL: 'message' is ALWAYS addressed to the person who just texted you, never to Richelle. " +
+    "On 'escalate' it is the reply that gets sent to THEM, word for word, the moment Richelle " +
+    "approves it. Write it as if you were speaking straight to them. Never write it as a note to " +
+    "Richelle, never say 'this client is asking', never ask Richelle a question inside it. If you " +
+    "want to say something to Richelle, put that in 'note_for_richelle'. " +
+    "'holding_reply' is the short line sent to the person right now so they are not left in silence. " +
+    "Always write 'message' and 'holding_reply' in the language the person wrote to you in, and " +
+    "always fill in the English fields so Richelle can read the exchange.",
   input_schema: {
     type: "object",
     properties: {
       mode: { type: "string", enum: ["send", "escalate"] },
       message: {
         type: "string",
-        description: "The reply text. On 'send' this goes straight out. On 'escalate' this is the draft for Richelle."
+        description:
+          "The reply, written TO the person who texted you, in your voice, ready to send as is. " +
+          "On 'send' it goes out immediately. On 'escalate' it waits for Richelle's Y and then goes " +
+          "to them unchanged, so it must read as a message to them and not as a note about them."
+      },
+      note_for_richelle: {
+        type: "string",
+        description:
+          "Optional, escalations only. Anything you want to say or ask Richelle about this, such as " +
+          "whether to confirm the date or check crew availability first. This is never sent to the " +
+          "person. Keep it to one line, and leave it empty if the reason already says it."
       },
       holding_reply: {
         type: "string",
@@ -350,6 +365,7 @@ export async function decide({ knowledge, person, history, incoming, ownerContex
     holding_reply_english: String(out.holding_reply_english || "").trim(),
     incoming_english: String(out.incoming_english || "").trim(),
     learn: isOwner ? String(out.learn || "").trim() : "",
+    note_for_richelle: String(out.note_for_richelle || "").trim(),
     usage: res.usage || null
   };
 }

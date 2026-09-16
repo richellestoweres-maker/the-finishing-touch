@@ -334,7 +334,7 @@ export async function recentMessages(key, limit = 16) {
 
 export async function createDraft({
   toPhone, toName, body, reason, conversationKey, incoming,
-  language, bodyEnglish, incomingEnglish
+  language, bodyEnglish, incomingEnglish, noteForRichelle
 }) {
   const ref = await db.collection("ivyDrafts").add({
     status: "pending",
@@ -349,6 +349,7 @@ export async function createDraft({
     conversationKey: conversationKey || "",
     incoming: incoming || "",
     incomingEnglish: incomingEnglish || "",
+    noteForRichelle: noteForRichelle || "",
     channel: "sms",
     createdAt: FieldValue.serverTimestamp()
   });
