@@ -101,7 +101,8 @@ const BASE_SECTIONS = [
   "identity", "writing_style", "hours", "service_area", "services", "add_ons",
   "important_distinctions", "the_intake_form", "photo_guidance", "payment",
   "first_time_clients", "supplies_and_access", "not_included", "policies",
-  "escalation_rules", "negotiation_limits", "ivy_talks_to_both_sides",
+  "escalation_rules", "never_imply_availability", "asking_us_to_come_back",
+  "negotiation_limits", "ivy_talks_to_both_sides",
   "spanish_with_clients_too", "airbnb_and_short_term_rentals",
   "client_voice_examples", "tailored_form_guidance", "channel_length",
   "signature_block", "contact"
