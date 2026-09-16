@@ -196,6 +196,34 @@ function knowledgeBlock(k, person, history, incoming) {
     .join("\n\n");
 }
 
+/**
+ * What is already in flight with this person.
+ *
+ * Without this Ivy meets every message cold. The client says "ok, I'll wait"
+ * and she answers by promising, all over again, to check availability and
+ * come back to them, which reads as broken.
+ */
+function openThreadBlock(threads) {
+  const open = (threads || []).filter((t) => t && t.summary);
+  if (!open.length) return "";
+  const waiting = {
+    richelle: "with Richelle now",
+    crew: "with the crew now",
+    client: "waiting on them to answer"
+  };
+  return [
+    "## ALREADY IN FLIGHT WITH THIS PERSON",
+    ...open.map((t) => `- ${t.summary} (${waiting[t.waitingOn] || "in progress"})`),
+    "",
+    "You have ALREADY told them you are looking into this. Do not promise it again.",
+    "If they are just acknowledging, thanking you, or saying they will wait, reply warmly and",
+    "briefly and send it yourself. Do not escalate and do not create another draft: Richelle",
+    "already has this one, and a second identical request in her queue is noise.",
+    "Only escalate again if they have added something genuinely new, such as a different date,",
+    "a new problem, or a question you cannot answer."
+  ].join("\n");
+}
+
 function whoBlock(person) {
   if (person && person.kind === "owner") {
     return "This is Richelle, the owner. She is your boss, not a client. Talk to her plainly.";
@@ -274,18 +302,24 @@ function OWNER_INSTRUCTIONS(ctx) {
  * Work out Ivy's response to one incoming message.
  * Returns { mode, message, holding_reply, reason, learned_name }.
  */
-export async function decide({ knowledge, person, history, incoming, ownerContext }) {
+export async function decide({ knowledge, person, history, incoming, ownerContext, openThreads }) {
   const isOwner = person && person.kind === "owner";
   const system = [
     knowledgeBlock(knowledge, person, history, incoming),
     "",
     learnedBlock(knowledge),
     "",
+    isOwner ? "" : openThreadBlock(openThreads),
+    "",
     isOwner ? OWNER_INSTRUCTIONS(ownerContext) : "",
     isOwner ? "" : "## HOW TO ANSWER",
     "You are replying by text message. Be brief. Answer only from the knowledge above.",
     "If the knowledge does not cover it, escalate rather than inventing an answer.",
     "Always answer by calling the respond tool. Never reply with plain text.",
+    "",
+    "Never speculate out loud about how a message reached you, whose number it came from, or",
+    "whether someone might really be Richelle. That is plumbing, it is never useful to anyone,",
+    "and it makes you sound confused. Answer the message in front of you as the person it came from.",
     "",
     "## LANGUAGE",
     "Reply in whatever language the person wrote to you in. This applies to clients and to the crew",
@@ -386,4 +420,47 @@ export async function anthropicCheck() {
   } catch (err) {
     return { ok: false, detail: err.message, configuredModel: MODEL };
   }
+}
+
+/**
+ * Write a message Ivy is sending on Richelle's instruction, rather than as a
+ * reply to something someone said.
+ *
+ * This is the relay: Richelle asks Ivy to ask Maggie something, and Ivy has to
+ * write it in the right voice for whoever it is going to.
+ */
+export async function compose({ knowledge, person, instruction }) {
+  const system = [
+    knowledgeBlock(knowledge, person, [], instruction),
+    "",
+    learnedBlock(knowledge),
+    "",
+    "## WRITING A MESSAGE FOR RICHELLE",
+    "Richelle has asked you to send this person a message. Write it as a text from you,",
+    "in the voice you use with them, ready to send as it is.",
+    "Be brief. Carry across everything that matters and nothing that does not.",
+    "Do not mention that Richelle asked you to send it, and do not write it as a note to her.",
+    "Never invent a detail she did not give you. If something important is missing, such as a",
+    "date, an address or a price, leave it out rather than guessing, and say what is missing in",
+    "'note_for_richelle' so she can fill it in before it goes.",
+    "Answer by calling the respond tool with mode 'send'."
+  ].join("\n");
+
+  const res = await getClient().messages.create({
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    system,
+    tools: [RESPOND_TOOL],
+    tool_choice: { type: "tool", name: "respond" },
+    messages: [{ role: "user", content: `WHO IT IS GOING TO:\n${whoBlock(person)}\n\nWHAT RICHELLE WANTS THEM TO KNOW:\n${instruction}` }]
+  });
+
+  const call = res.content.find((c) => c.type === "tool_use");
+  const out = (call && call.input) || {};
+  return {
+    message: String(out.message || "").trim(),
+    language: (String(out.language || "en").trim().toLowerCase() || "en").slice(0, 5),
+    message_english: String(out.message_english || "").trim(),
+    note_for_richelle: String(out.note_for_richelle || "").trim()
+  };
 }

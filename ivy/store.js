@@ -410,6 +410,57 @@ export async function resolveDraft(id, status, extra = {}) {
 }
 
 /* ------------------------------------------------------------------
+   Open threads
+
+   A scheduling question is not one message, it is a chain: the client asks,
+   Richelle checks with the crew, the crew answers, the client gets a time,
+   the crew gets told the time. Without somewhere to record that the chain is
+   running, Ivy meets every message fresh and re-promises things she has
+   already promised.
+   ------------------------------------------------------------------ */
+
+export async function openThread({ conversationKey, personPhone, personName, summary, waitingOn }) {
+  const ref = await db.collection("ivyThreads").add({
+    status: "open",
+    conversationKey: conversationKey || "",
+    personPhone: normalizePhone(personPhone) || "",
+    personName: personName || "",
+    summary: summary || "",
+    waitingOn: waitingOn || "richelle",
+    openedAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
+  });
+  return { id: ref.id };
+}
+
+/** Everything still open, optionally just for one person. */
+export async function listOpenThreads(conversationKey) {
+  try {
+    const q = await db.collection("ivyThreads").where("status", "==", "open").limit(50).get();
+    const all = q.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const filtered = conversationKey ? all.filter((t) => t.conversationKey === conversationKey) : all;
+    return filtered.sort((a, b) => {
+      const ms = (v) => (v && typeof v.toMillis === "function" ? v.toMillis() : 0);
+      return ms(a.openedAt) - ms(b.openedAt);
+    });
+  } catch (err) {
+    console.error("[ivy] could not list open threads:", err.message);
+    return [];
+  }
+}
+
+export async function updateThread(id, patch) {
+  await db.collection("ivyThreads").doc(id).set(
+    { ...patch, updatedAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
+}
+
+export async function closeThread(id) {
+  await updateThread(id, { status: "closed", closedAt: FieldValue.serverTimestamp() });
+}
+
+/* ------------------------------------------------------------------
    The job notification queue
 
    ft-job-run.js has been writing here every time a crew member says

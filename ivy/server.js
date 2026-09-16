@@ -27,9 +27,10 @@ import {
   createDraft, listPendingDrafts, resolveDraft,
   queuedMessages, markQueuedMessage, firestoreCheck,
   appendLearning, listLearnings, removeLearning,
-  listContacts, removeContact, findContactsByName
+  listContacts, removeContact, findContactsByName,
+  openThread, listOpenThreads, closeThread, identify as identifyContact
 } from "./store.js";
-import { decide, anthropicCheck } from "./brain.js";
+import { decide, compose, anthropicCheck } from "./brain.js";
 import {
   sendSms, verifyTwilioSignature, normalizePhone, prettyPhone, twilioCheck, ownNumber
 } from "./sms.js";
@@ -210,6 +211,24 @@ async function handleLearningCommand(text) {
 
   // A bare number means one of the numbered lessons. A name or a phone means a
   // person, and that is handled by the contact commands instead.
+  if (/^\s*(what'?s open|whats open|open threads|what are you waiting on|in flight)\s*\??\s*$/i.test(text)) {
+    const open = await listOpenThreads();
+    if (!open.length) return "Nothing open.";
+    const waitingOn = { richelle: "you", crew: "the crew", client: "them" };
+    return `${open.length} open:\n` + open.map((t, i) =>
+      `${i + 1}. ${t.personName || prettyPhone(t.personPhone)}: ${t.summary} (waiting on ${waitingOn[t.waitingOn] || "?"})`
+    ).join("\n") + `\nSay "done 1" when one is finished.`;
+  }
+
+  const doneMatch = text.match(/^\s*done\s+(\d{1,2})\s*$/i);
+  if (doneMatch) {
+    const open = await listOpenThreads();
+    const t = open[Number(doneMatch[1]) - 1];
+    if (!t) return `There's no number ${doneMatch[1]}. Say "what's open" to see the list.`;
+    await closeThread(t.id);
+    return `Closed: ${t.summary}`;
+  }
+
   // Testing leaves drafts stacked up, and there is no sense making her bin
   // them one at a time.
   if (/^\s*(clear|bin all|clear all|clear drafts|bin the drafts)\s*$/i.test(text)) {
@@ -323,6 +342,73 @@ async function handleContactCommand(text) {
     `I'll know it's ${name.split(" ")[0]} when they text.`;
 }
 
+/**
+ * Richelle sending a message through Ivy, rather than replying to one.
+ *
+ * This is the missing leg of the chain. A client asks for Thursday, Richelle
+ * needs to ask Maggie, Maggie answers, the client gets a time, the crew gets
+ * told the time. Until now Ivy could only ever answer people who texted her
+ * first, so every one of those hops had to be done by hand.
+ *
+ *   ask maggie if someone can come back to the danforth house thursday
+ *   tell maggie the kemah job moved to 9am
+ *
+ * It goes out as a draft like anything else, so nothing reaches anyone
+ * without a Y.
+ */
+async function handleRelayCommand(text) {
+  const m = text.match(/^\s*(?:ask|tell|text|message|let)\s+([A-Za-z][\w'.-]*)\s+(?:know\s+)?([\s\S]+)$/i);
+  if (!m) return null;
+
+  const who = m[1].trim();
+  const what = m[2].trim();
+  if (!what) return `What should I say to ${who}?`;
+
+  const matches = await findContactsByName(who);
+  if (!matches.length) {
+    return `I don't have anyone called ${who}. Add them with: crew ${who} 281-555-1234`;
+  }
+  if (matches.length > 1) {
+    return `I have ${matches.length} matching ${who}:\n` +
+      matches.map((c) => `${c.name} ${prettyPhone(c.phone || c.key)}`).join("\n") +
+      `\nSay which number and I'll write it.`;
+  }
+
+  const contact = matches[0];
+  const toPhone = contact.phone || contact.key;
+  const knowledge = await getKnowledge();
+
+  const drafted = await compose({
+    knowledge,
+    person: { kind: contact.kind || "contractor", name: contact.name, key: normalizePhone(toPhone) },
+    instruction: what
+  });
+
+  if (!drafted.message) return `I couldn't write that one. Say it again?`;
+
+  await createDraft({
+    toPhone,
+    toName: contact.name || "",
+    body: drafted.message,
+    reason: `you asked me to message ${contact.name}`,
+    conversationKey: normalizePhone(toPhone),
+    incoming: "",
+    language: drafted.language,
+    bodyEnglish: drafted.message_english || "",
+    noteForRichelle: drafted.note_for_richelle || ""
+  });
+
+  const waiting = await listPendingDrafts();
+  const position = waiting.findIndex((d) => d.toPhone === normalizePhone(toPhone)) + 1;
+  const how = waiting.length <= 1
+    ? "Y to send, N to bin."
+    : `Y${position || waiting.length} to send, N${position || waiting.length} to bin.`;
+
+  return `To ${contact.name}:\n"${drafted.message}"\n` +
+    (drafted.note_for_richelle ? `Ivy says: ${drafted.note_for_richelle}\n` : "") +
+    how;
+}
+
 async function handleOwnerCommand(body) {
   const text = String(body || "").trim();
 
@@ -335,6 +421,9 @@ async function handleOwnerCommand(body) {
 
   const contact = await handleContactCommand(text);
   if (contact) return contact;
+
+  const relay = await handleRelayCommand(text);
+  if (relay) return relay;
 
   const m = text.match(/^\s*(y|yes|ok|send|n|no|nope)\s*(\d{1,2})?\s*$/i);
 
@@ -442,16 +531,18 @@ app.post("/sms/inbound", async (req, res) => {
     const person = await identify(from);
     const key = person.key || from;
 
-    const [knowledge, history] = await Promise.all([
+    const [knowledge, history, openThreads] = await Promise.all([
       getKnowledge(),
-      recentMessages(key, 16)
+      recentMessages(key, 16),
+      listOpenThreads(key)
     ]);
 
     const outcome = await decide({
       knowledge,
       person,
       history,
-      incoming: body
+      incoming: body,
+      openThreads
     });
 
     const lang = outcome.language || "en";
@@ -511,6 +602,22 @@ app.post("/sms/inbound", async (req, res) => {
       incomingEnglish: outcome.incoming_english || "",
       noteForRichelle: outcome.note_for_richelle || ""
     });
+
+    // Record that this chain is running, so the next message from them does not
+    // get the same promise all over again. One per conversation is enough.
+    if (!openThreads.length) {
+      try {
+        await openThread({
+          conversationKey: key,
+          personPhone: from,
+          personName: person.name || "",
+          summary: outcome.reason || body.slice(0, 80),
+          waitingOn: "richelle"
+        });
+      } catch (err) {
+        console.error("[ivy] could not open a thread:", err.message);
+      }
+    }
 
     // If this is the only thing waiting she can just say Y. If others are
     // already queued, tell her the number now so she does not have to ask.
