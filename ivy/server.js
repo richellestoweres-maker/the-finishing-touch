@@ -27,7 +27,7 @@ import {
   createDraft, listPendingDrafts, resolveDraft,
   queuedMessages, markQueuedMessage, firestoreCheck,
   appendLearning, listLearnings, removeLearning,
-  listContacts
+  listContacts, removeContact, findContactsByName
 } from "./store.js";
 import { decide, anthropicCheck } from "./brain.js";
 import {
@@ -208,6 +208,8 @@ async function handleLearningCommand(text) {
       `\nSay "forget 2" to drop one.`;
   }
 
+  // A bare number means one of the numbered lessons. A name or a phone means a
+  // person, and that is handled by the contact commands instead.
   const forget = text.match(/^\s*forget\s+(\d{1,2})\s*$/i);
   if (forget) {
     const gone = await removeLearning(Number(forget[1]));
@@ -231,6 +233,34 @@ async function handleLearningCommand(text) {
  *   who do you know
  */
 async function handleContactCommand(text) {
+  // Taking someone off the books. "remove" always means a person, and
+  // "forget <a name>" is allowed too, since a bare number there already means
+  // one of the numbered lessons and a name can only mean a person.
+  const drop = text.match(/^\s*(?:remove|delete|drop|forget)\s+([\s\S]+)$/i);
+  if (drop && !/^\d{1,2}$/.test(drop[1].trim())) {
+    const target = drop[1].trim();
+    const asPhone = normalizePhone(target);
+
+    if (asPhone) {
+      const gone = await removeContact(asPhone);
+      return gone
+        ? `Removed ${gone.name || prettyPhone(asPhone)}. That number is a stranger to me again.`
+        : `I don't have ${prettyPhone(asPhone)} on file.`;
+    }
+
+    const matches = await findContactsByName(target);
+    if (!matches.length) return `I don't have anyone called ${target}. Say "who do you know" to see the list.`;
+    if (matches.length > 1) {
+      return `I have ${matches.length} matching ${target}:\n` +
+        matches.map((c) => `${c.name} ${prettyPhone(c.phone || c.key)}`).join("\n") +
+        `\nRemove by number, such as: remove ${prettyPhone(matches[0].phone || matches[0].key)}`;
+    }
+    const gone = await removeContact(matches[0].phone || matches[0].key);
+    return gone
+      ? `Removed ${gone.name}. That number is a stranger to me again.`
+      : `Couldn't remove ${target}, try again.`;
+  }
+
   const m = text.match(/^\s*(crew|contractor|sub|client)\b[:\s]+([\s\S]+)$/i);
 
   if (!m) {

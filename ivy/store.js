@@ -248,6 +248,33 @@ export async function listContacts(limit = 50) {
     .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
 }
 
+/**
+ * Take someone off the books.
+ *
+ * Deleting the record is the right move rather than blanking the fields,
+ * because identify() treats "no cached contact" as a cue to go and look them
+ * up properly again. A half empty record would just pin them as a stranger
+ * forever.
+ */
+export async function removeContact(phone) {
+  const key = normalizePhone(phone);
+  if (!key) return null;
+  const ref = db.collection("ivyContacts").doc(key);
+  const snap = await ref.get();
+  if (!snap.exists) return null;
+  const was = { key, ...snap.data() };
+  await ref.delete();
+  return was;
+}
+
+/** Find a saved contact by name, for when she says "remove Maggie". */
+export async function findContactsByName(name) {
+  const needle = String(name || "").trim().toLowerCase();
+  if (!needle) return [];
+  const all = await listContacts(200);
+  return all.filter((c) => String(c.name || "").toLowerCase().includes(needle));
+}
+
 /** Attach a name to a number once we learn it mid-conversation. */
 export async function rememberContact(phone, patch) {
   const key = normalizePhone(phone);
