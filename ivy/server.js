@@ -31,6 +31,7 @@ import {
   openThread, listOpenThreads, closeThread, identify as identifyContact
 } from "./store.js";
 import { decide, compose, anthropicCheck } from "./brain.js";
+import { greetingTwiml, thanksTwiml, emptyTwiml } from "./voice.js";
 import {
   sendSms, verifyTwilioSignature, normalizePhone, prettyPhone, twilioCheck, ownNumber
 } from "./sms.js";
@@ -651,6 +652,112 @@ app.post("/sms/inbound", async (req, res) => {
     );
     return noReply(res);
   }
+});
+
+/* ==================================================================
+   The phone
+
+   Not Ivy holding a conversation yet. A greeting, a voicemail, and Richelle
+   knowing straight away that someone called. That is enough to take the
+   business line off Beside, which is still quoting payment methods the
+   business dropped months ago, and enough that porting the number does not
+   drop every caller into silence.
+   ================================================================== */
+
+function publicBase(req) {
+  if (process.env.PUBLIC_URL) return process.env.PUBLIC_URL.replace(/\/+$/, "");
+  const host = req.header("X-Forwarded-Host") || req.get("host");
+  return `https://${host}`;
+}
+
+app.post("/voice/inbound", async (req, res) => {
+  if (!verifyTwilioSignature(req)) {
+    console.warn("[ivy] rejected a call webhook that was not signed by Twilio");
+    return res.status(403).send("bad signature");
+  }
+
+  const from = normalizePhone(req.body.From);
+  res.set("Content-Type", "text/xml");
+
+  try {
+    const base = publicBase(req);
+    const knowledge = await getKnowledge();
+
+    // Tell Richelle while the phone is still ringing, so a call she wants to
+    // take is not something she hears about after the voicemail lands.
+    if (from !== ownNumber()) {
+      const person = await identify(from).catch(() => ({ kind: "unknown" }));
+      const who = person.name ? `${person.name} (${prettyPhone(from)})` : prettyPhone(from);
+      notifyOwner(`${who} is calling the business line now.`).catch(() => {});
+    }
+
+    return res.send(greetingTwiml(knowledge, {
+      actionUrl: `${base}/voice/done`,
+      transcribeUrl: `${base}/voice/transcription`
+    }));
+  } catch (err) {
+    console.error("[ivy] voice greeting failed:", err.message);
+    // Never leave a caller in silence, even when something behind this breaks.
+    return res.send(greetingTwiml({}, {
+      actionUrl: `${publicBase(req)}/voice/done`,
+      transcribeUrl: `${publicBase(req)}/voice/transcription`
+    }));
+  }
+});
+
+app.post("/voice/done", async (req, res) => {
+  if (!verifyTwilioSignature(req)) return res.status(403).send("bad signature");
+  res.set("Content-Type", "text/xml");
+
+  const from = normalizePhone(req.body.From);
+  const recordingUrl = req.body.RecordingUrl || "";
+  const seconds = Number(req.body.RecordingDuration || 0);
+
+  // The transcription arrives separately and can take a while, so send the
+  // recording link now rather than making her wait for words.
+  try {
+    if (recordingUrl && seconds > 0) {
+      await appendMessage(from || "unknown", {
+        direction: "in", channel: "voice",
+        body: `[voicemail, ${seconds}s] ${recordingUrl}.mp3`, from
+      });
+      await notifyOwner(
+        `Voicemail from ${prettyPhone(from)}, ${seconds} seconds.\n${recordingUrl}.mp3\n` +
+        `I'll send the transcript when it comes through.`
+      );
+    }
+  } catch (err) {
+    console.error("[ivy] voicemail handling failed:", err.message);
+  }
+
+  return res.send(thanksTwiml());
+});
+
+app.post("/voice/transcription", async (req, res) => {
+  if (!verifyTwilioSignature(req)) return res.status(403).send("bad signature");
+
+  const from = normalizePhone(req.body.From || req.body.Caller);
+  const text = String(req.body.TranscriptionText || "").trim();
+  const status = req.body.TranscriptionStatus || "";
+
+  try {
+    if (text) {
+      await appendMessage(from || "unknown", {
+        direction: "in", channel: "voice", body: text, from,
+        meta: { transcription: true }
+      });
+      await notifyOwner(`Transcript of that voicemail from ${prettyPhone(from)}:\n"${text.slice(0, 600)}"`);
+    } else if (status && status !== "completed") {
+      await notifyOwner(
+        `That voicemail from ${prettyPhone(from)} couldn't be transcribed. The recording is in the message above.`
+      );
+    }
+  } catch (err) {
+    console.error("[ivy] transcription handling failed:", err.message);
+  }
+
+  res.set("Content-Type", "text/xml");
+  return res.send(emptyTwiml());
 });
 
 /* ==================================================================
