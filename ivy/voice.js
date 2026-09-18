@@ -25,6 +25,50 @@ export function twiml(body) {
 }
 
 /**
+ * One turn of a spoken conversation.
+ *
+ * Twilio transcribes what the caller said and posts it to `action`. We answer
+ * with what Ivy says next, then open another Gather. That loop is the whole
+ * call.
+ *
+ * speechTimeout="auto" lets Twilio decide when someone has finished talking
+ * rather than counting a fixed silence, which is the difference between
+ * feeling listened to and being cut off mid sentence.
+ */
+export function sayAndGatherTwiml(text, { actionUrl, hintList }) {
+  const say = `<Say voice="Polly.Joanna-Neural">${xmlEscape(text)}</Say>`;
+  const hints = hintList ? ` hints="${xmlEscape(hintList)}"` : "";
+  return twiml(
+    `<Gather input="speech" speechTimeout="auto" speechModel="phone_call" language="en-US"` +
+      ` action="${xmlEscape(actionUrl)}" method="POST"${hints}>` +
+      say +
+    `</Gather>` +
+    // Reached only if they said nothing at all.
+    `<Redirect method="POST">${xmlEscape(actionUrl)}?silent=1</Redirect>`
+  );
+}
+
+/** Say one last thing and end the call. */
+export function sayAndHangupTwiml(text) {
+  return twiml(`<Say voice="Polly.Joanna-Neural">${xmlEscape(text)}</Say><Hangup/>`);
+}
+
+/**
+ * Words the recogniser should expect.
+ *
+ * Phone-call speech models guess badly at trade words and local place names,
+ * and "Airbnb", "Kemah" and "post construction" are exactly the words this
+ * business gets called about.
+ */
+export const SPEECH_HINTS = [
+  "deep clean", "initial clean", "standard clean", "move out", "move in",
+  "Airbnb", "short term rental", "turnover", "post construction", "final clean",
+  "commercial", "organizing", "quote", "estimate", "reschedule", "cancel",
+  "Galveston", "League City", "Friendswood", "Kemah", "Texas City", "La Marque",
+  "Santa Fe", "Dickinson", "Alvin", "Danbury", "Clear Lake", "Webster"
+].join(",");
+
+/**
  * The greeting and the voicemail prompt.
  *
  * Both come from the knowledge base rather than from this file, so Richelle

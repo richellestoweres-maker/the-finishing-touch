@@ -465,3 +465,129 @@ export async function compose({ knowledge, person, instruction }) {
     note_for_richelle: String(out.note_for_richelle || "").trim()
   };
 }
+
+/**
+ * Ivy on the phone.
+ *
+ * Deliberately not the same call as decide(). Talking is a different medium
+ * from texting: a caller cannot skim, cannot re-read, and cannot see a link.
+ * Every constraint below exists because it is spoken aloud to someone holding
+ * a phone to their ear, waiting.
+ *
+ * The rules about money and dates are unchanged. She still cannot quote or
+ * book. On a call that is not a refusal, it is what a good receptionist does
+ * anyway: take the details and say the owner will come straight back.
+ */
+const SPEAK_TOOL = {
+  name: "speak",
+  description: "Say the next thing in a phone call, and decide whether the call is finished.",
+  input_schema: {
+    type: "object",
+    properties: {
+      say: {
+        type: "string",
+        description:
+          "What you say next, out loud. One or two sentences, never more. Plain spoken English " +
+          "with no bullet points, no lists, no formatting and no URLs, because a link read aloud " +
+          "is useless. If they need a link, offer to text it instead."
+      },
+      end_call: {
+        type: "boolean",
+        description:
+          "True only when the conversation is genuinely finished and you are saying goodbye, such " +
+          "as after they say thanks and that is all. Never true while they are still asking things."
+      },
+      text_them: {
+        type: "string",
+        description:
+          "Only when the caller has just AGREED on this call to being texted something. The text " +
+          "to send them, such as the intake form link. Empty otherwise. Never send one they did " +
+          "not ask for."
+      },
+      caller_name: {
+        type: "string",
+        description: "Their name, if they have given it during this call."
+      },
+      for_richelle: {
+        type: "string",
+        description:
+          "A one line note of anything Richelle needs from this call: what they want, a price or " +
+          "date question you could not answer, or a complaint. Empty if the call was purely " +
+          "informational and needs nothing from her."
+      }
+    },
+    required: ["say", "end_call"]
+  }
+};
+
+export async function speak({ knowledge, person, history, heard, turnCount }) {
+  const system = [
+    knowledgeBlock(knowledge, person, history, heard),
+    "",
+    learnedBlock(knowledge),
+    "",
+    "## YOU ARE ON THE PHONE",
+    "Someone has called the business and you are answering, like a front office assistant would.",
+    "",
+    "Speak the way a warm, competent receptionist speaks. One or two sentences at a time. Never",
+    "read a list out loud. Never say a web address: offer to text it instead, and only send it if",
+    "they say yes. Contractions, plain words, no corporate phrasing.",
+    "",
+    "Speech recognition is imperfect and you are reading a transcript of a real voice. If something",
+    "looks garbled, ask them to say it again rather than guessing at what they meant. If you catch",
+    "a name or a number, repeat it back so they can correct it.",
+    "",
+    "Everything you cannot do by text you still cannot do out loud. No prices, no estimates, no",
+    "booking, no promising a date or a time. On a call that is not an obstacle, it is the job: take",
+    "their name and what they need, tell them Richelle will come straight back to them, and put it",
+    "in 'for_richelle'. Never invent an answer because silence feels awkward.",
+    "",
+    "The single most useful thing you can do on a call is get them to the intake form. Offer to",
+    "text them the link. If they say yes, put the message in 'text_them'.",
+    "",
+    turnCount > 8
+      ? "This call has gone on a while. Start drawing it to a close warmly."
+      : "",
+    "Answer by calling the speak tool."
+  ].join("\n");
+
+  const messages = [];
+  for (const m of history || []) {
+    const role = m.direction === "in" ? "user" : "assistant";
+    const content = String(m.body || "").trim();
+    if (!content) continue;
+    const last = messages[messages.length - 1];
+    if (last && last.role === role) last.content += "\n" + content;
+    else messages.push({ role, content });
+  }
+  if (messages.length && messages[0].role === "assistant") messages.shift();
+
+  const finalUser = `WHO IS CALLING:\n${whoBlock(person)}\n\nWHAT THEY JUST SAID:\n${heard}`;
+  if (messages.length && messages[messages.length - 1].role === "user") {
+    messages[messages.length - 1].content += "\n\n" + finalUser;
+  } else {
+    messages.push({ role: "user", content: finalUser });
+  }
+
+  const res = await getClient().messages.create({
+    model: MODEL,
+    // Short on purpose. Every token here is a second the caller spends in
+    // silence waiting for her to start talking.
+    max_tokens: 300,
+    system,
+    tools: [SPEAK_TOOL],
+    tool_choice: { type: "tool", name: "speak" },
+    messages
+  });
+
+  const call = res.content.find((c) => c.type === "tool_use");
+  const out = (call && call.input) || {};
+  return {
+    say: String(out.say || "").trim() ||
+      "Sorry, I didn't quite catch that. Could you say it once more?",
+    end_call: Boolean(out.end_call),
+    text_them: String(out.text_them || "").trim(),
+    caller_name: String(out.caller_name || "").trim(),
+    for_richelle: String(out.for_richelle || "").trim()
+  };
+}

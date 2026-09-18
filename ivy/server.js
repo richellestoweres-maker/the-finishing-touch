@@ -30,8 +30,11 @@ import {
   listContacts, removeContact, findContactsByName,
   openThread, listOpenThreads, closeThread, identify as identifyContact
 } from "./store.js";
-import { decide, compose, anthropicCheck } from "./brain.js";
-import { greetingTwiml, thanksTwiml, emptyTwiml } from "./voice.js";
+import { decide, compose, speak, anthropicCheck } from "./brain.js";
+import {
+  greetingTwiml, thanksTwiml, emptyTwiml,
+  sayAndGatherTwiml, sayAndHangupTwiml, SPEECH_HINTS
+} from "./voice.js";
 import {
   sendSms, verifyTwilioSignature, normalizePhone, prettyPhone, twilioCheck, ownNumber
 } from "./sms.js";
@@ -678,29 +681,119 @@ app.post("/voice/inbound", async (req, res) => {
 
   const from = normalizePhone(req.body.From);
   res.set("Content-Type", "text/xml");
+  const base = publicBase(req);
 
   try {
-    const base = publicBase(req);
     const knowledge = await getKnowledge();
 
-    // Tell Richelle while the phone is still ringing, so a call she wants to
-    // take is not something she hears about after the voicemail lands.
     if (from !== ownNumber()) {
       const person = await identify(from).catch(() => ({ kind: "unknown" }));
       const who = person.name ? `${person.name} (${prettyPhone(from)})` : prettyPhone(from);
-      notifyOwner(`${who} is calling the business line now.`).catch(() => {});
+      notifyOwner(`${who} is on the phone with Ivy now.`).catch(() => {});
     }
 
-    return res.send(greetingTwiml(knowledge, {
-      actionUrl: `${base}/voice/done`,
-      transcribeUrl: `${base}/voice/transcription`
+    const opener = knowledge.voice_opener ||
+      "Thank you for calling The Finishing Touch, this is Ivy. How can I help you today?";
+
+    await appendMessage(from || "unknown", {
+      direction: "out", channel: "voice", body: opener, meta: { callOpener: true }
+    }).catch(() => {});
+
+    return res.send(sayAndGatherTwiml(opener, {
+      actionUrl: `${base}/voice/turn`,
+      hintList: SPEECH_HINTS
     }));
   } catch (err) {
     console.error("[ivy] voice greeting failed:", err.message);
-    // Never leave a caller in silence, even when something behind this breaks.
+    // If anything behind this is broken, fall back to taking a message rather
+    // than dropping the caller into silence.
     return res.send(greetingTwiml({}, {
-      actionUrl: `${publicBase(req)}/voice/done`,
-      transcribeUrl: `${publicBase(req)}/voice/transcription`
+      actionUrl: `${base}/voice/done`,
+      transcribeUrl: `${base}/voice/transcription`
+    }));
+  }
+});
+
+/**
+ * One turn of the call.
+ *
+ * Twilio posts what it heard, Ivy answers, and we open another Gather. The
+ * loop ends when she decides the call is done, when the caller stops saying
+ * anything, or when it has run long enough that a human would be wrapping up.
+ */
+app.post("/voice/turn", async (req, res) => {
+  if (!verifyTwilioSignature(req)) return res.status(403).send("bad signature");
+
+  res.set("Content-Type", "text/xml");
+  const base = publicBase(req);
+  const from = normalizePhone(req.body.From);
+  const key = from || "unknown";
+  const heard = String(req.body.SpeechResult || "").trim();
+  const silent = req.query.silent === "1" || !heard;
+
+  try {
+    // Nothing heard. Try once, then take a message rather than looping at
+    // someone who cannot be heard or has walked away.
+    if (silent) {
+      const misses = Number(req.query.misses || 0) + 1;
+      if (misses >= 2) {
+        const knowledge = await getKnowledge();
+        return res.send(greetingTwiml(knowledge, {
+          actionUrl: `${base}/voice/done`,
+          transcribeUrl: `${base}/voice/transcription`
+        }));
+      }
+      return res.send(sayAndGatherTwiml(
+        "Sorry, I didn't catch that. Are you still there?",
+        { actionUrl: `${base}/voice/turn?misses=${misses}`, hintList: SPEECH_HINTS }
+      ));
+    }
+
+    const [knowledge, person, history] = await Promise.all([
+      getKnowledge(),
+      identify(from).catch(() => ({ kind: "unknown", name: "" })),
+      recentMessages(key, 20)
+    ]);
+
+    await appendMessage(key, { direction: "in", channel: "voice", body: heard, from });
+
+    const turnCount = history.filter((m) => m.channel === "voice").length;
+    const out = await speak({ knowledge, person, history, heard, turnCount });
+
+    await appendMessage(key, { direction: "out", channel: "voice", body: out.say });
+
+    if (out.caller_name && !person.name) {
+      rememberContact(from, { name: out.caller_name }).catch(() => {});
+    }
+
+    // Only ever sent because they said yes to it on the call.
+    if (out.text_them) {
+      sendSms(from, out.text_them).catch((err) =>
+        console.error("[ivy] could not text the caller:", err.message));
+    }
+
+    if (out.for_richelle) {
+      const who = out.caller_name || person.name || prettyPhone(from);
+      notifyOwner(`From the call with ${who} (${prettyPhone(from)}):\n${out.for_richelle}`)
+        .catch(() => {});
+    }
+
+    if (out.end_call) return res.send(sayAndHangupTwiml(out.say));
+
+    return res.send(sayAndGatherTwiml(out.say, {
+      actionUrl: `${base}/voice/turn`,
+      hintList: SPEECH_HINTS
+    }));
+  } catch (err) {
+    console.error("[ivy] voice turn failed:", err.message);
+    notifyOwner(
+      `Ivy broke mid call with ${prettyPhone(from)} and had to take a message instead: ` +
+      `${String(err.message).slice(0, 150)}`
+    ).catch(() => {});
+    // Never hang up on someone because of an error. Fall back to voicemail.
+    return res.send(greetingTwiml({}, {
+      actionUrl: `${base}/voice/done`,
+      transcribeUrl: `${base}/voice/transcription`
     }));
   }
 });
