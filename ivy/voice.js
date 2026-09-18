@@ -35,8 +35,19 @@ export function twiml(body) {
  * rather than counting a fixed silence, which is the difference between
  * feeling listened to and being cut off mid sentence.
  */
-export function sayAndGatherTwiml(text, { actionUrl, hintList }) {
-  const say = `<Say voice="Polly.Joanna-Neural">${xmlEscape(text)}</Say>`;
+/**
+ * Which voice she speaks in.
+ *
+ * Not hardcoded, because nobody reading this code can hear it. Richelle can
+ * change it by text and ring the number to judge it herself, which is the only
+ * test that counts.
+ */
+export function ttsVoice(knowledge) {
+  return (knowledge && knowledge.voice_tts) || "Polly.Joanna-Generative";
+}
+
+export function sayAndGatherTwiml(text, { actionUrl, hintList, voice }) {
+  const say = `<Say voice="${xmlEscape(voice || "Polly.Joanna-Generative")}">${xmlEscape(text)}</Say>`;
   const hints = hintList ? ` hints="${xmlEscape(hintList)}"` : "";
   return twiml(
     `<Gather input="speech" speechTimeout="auto" speechModel="phone_call" language="en-US"` +
@@ -49,8 +60,8 @@ export function sayAndGatherTwiml(text, { actionUrl, hintList }) {
 }
 
 /** Say one last thing and end the call. */
-export function sayAndHangupTwiml(text) {
-  return twiml(`<Say voice="Polly.Joanna-Neural">${xmlEscape(text)}</Say><Hangup/>`);
+export function sayAndHangupTwiml(text, voice) {
+  return twiml(`<Say voice="${xmlEscape(voice || "Polly.Joanna-Generative")}">${xmlEscape(text)}</Say><Hangup/>`);
 }
 
 /**
@@ -85,7 +96,7 @@ export function greetingTwiml(knowledge, { actionUrl, transcribeUrl }) {
 
   // Polly voices sound like a person rather than a robot, which matters when
   // the whole brand is "boutique" rather than "call centre".
-  const say = (t) => `<Say voice="Polly.Joanna-Neural">${xmlEscape(t)}</Say>`;
+  const say = (t) => `<Say voice="${xmlEscape(ttsVoice(k))}">${xmlEscape(t)}</Say>`;
 
   return twiml(
     say(greeting) +
@@ -98,9 +109,9 @@ export function greetingTwiml(knowledge, { actionUrl, transcribeUrl }) {
 }
 
 /** What the caller hears once they have left a message. */
-export function thanksTwiml() {
+export function thanksTwiml(voice) {
   return twiml(
-    `<Say voice="Polly.Joanna-Neural">Thank you. We've got that and we'll be in touch very soon. Goodbye.</Say><Hangup/>`
+    `<Say voice="${xmlEscape(voice || "Polly.Joanna-Generative")}">Got it, thank you so much. We'll be in touch really soon. Bye now!</Say><Hangup/>`
   );
 }
 

@@ -97,6 +97,15 @@ export async function getKnowledge() {
    so the version gate never overwrites them on a deploy.
    ------------------------------------------------------------------ */
 
+/** Change a single setting in the knowledge document, such as which voice she speaks in. */
+export async function setKnowledgeValue(field, value) {
+  await KNOWLEDGE_DOC.set(
+    { [field]: value, updatedAt: FieldValue.serverTimestamp() },
+    { merge: true }
+  );
+  return { field, value };
+}
+
 /** Add something Richelle taught Ivy. Returns the saved entry. */
 export async function appendLearning(text) {
   const clean = String(text || "").trim();

@@ -27,13 +27,13 @@ import {
   createDraft, listPendingDrafts, resolveDraft,
   queuedMessages, markQueuedMessage, firestoreCheck,
   appendLearning, listLearnings, removeLearning,
-  listContacts, removeContact, findContactsByName,
+  listContacts, removeContact, findContactsByName, setKnowledgeValue,
   openThread, listOpenThreads, closeThread, identify as identifyContact
 } from "./store.js";
 import { decide, compose, speak, anthropicCheck } from "./brain.js";
 import {
   greetingTwiml, thanksTwiml, emptyTwiml,
-  sayAndGatherTwiml, sayAndHangupTwiml, SPEECH_HINTS
+  sayAndGatherTwiml, sayAndHangupTwiml, SPEECH_HINTS, ttsVoice
 } from "./voice.js";
 import {
   sendSms, verifyTwilioSignature, normalizePhone, prettyPhone, twilioCheck, ownNumber
@@ -231,6 +231,27 @@ async function handleLearningCommand(text) {
     if (!t) return `There's no number ${doneMatch[1]}. Say "what's open" to see the list.`;
     await closeThread(t.id);
     return `Closed: ${t.summary}`;
+  }
+
+  // Auditioning voices. Nobody writing this can hear them, so she changes it and
+  // rings the number to judge for herself.
+  const voiceSet = text.match(/^\s*voice\s+([\w.\-]+)\s*$/i);
+  if (voiceSet) {
+    await setKnowledgeValue("voice_tts", voiceSet[1]);
+    return `Voice set to ${voiceSet[1]}. Call the number and see what you think. ` +
+      `Say "voices" for more to try.`;
+  }
+
+  if (/^\s*voices\s*\??\s*$/i.test(text)) {
+    const k = await getKnowledge();
+    return `Right now: ${k.voice_tts || "Polly.Joanna-Generative"}\n` +
+      `Try any of these, then call:\n` +
+      `voice Polly.Joanna-Generative\n` +
+      `voice Polly.Danielle-Generative\n` +
+      `voice Polly.Ruth-Generative\n` +
+      `voice Polly.Salli-Neural\n` +
+      `voice Google.en-US-Chirp3-HD-Aoede\n` +
+      `voice Google.en-US-Chirp3-HD-Leda`;
   }
 
   // Testing leaves drafts stacked up, and there is no sense making her bin
@@ -701,7 +722,8 @@ app.post("/voice/inbound", async (req, res) => {
 
     return res.send(sayAndGatherTwiml(opener, {
       actionUrl: `${base}/voice/turn`,
-      hintList: SPEECH_HINTS
+      hintList: SPEECH_HINTS,
+      voice: ttsVoice(knowledge)
     }));
   } catch (err) {
     console.error("[ivy] voice greeting failed:", err.message);
@@ -743,9 +765,10 @@ app.post("/voice/turn", async (req, res) => {
           transcribeUrl: `${base}/voice/transcription`
         }));
       }
+      const k = await getKnowledge().catch(() => ({}));
       return res.send(sayAndGatherTwiml(
-        "Sorry, I didn't catch that. Are you still there?",
-        { actionUrl: `${base}/voice/turn?misses=${misses}`, hintList: SPEECH_HINTS }
+        "Sorry, I missed that. You still there?",
+        { actionUrl: `${base}/voice/turn?misses=${misses}`, hintList: SPEECH_HINTS, voice: ttsVoice(k) }
       ));
     }
 
@@ -778,11 +801,12 @@ app.post("/voice/turn", async (req, res) => {
         .catch(() => {});
     }
 
-    if (out.end_call) return res.send(sayAndHangupTwiml(out.say));
+    if (out.end_call) return res.send(sayAndHangupTwiml(out.say, ttsVoice(knowledge)));
 
     return res.send(sayAndGatherTwiml(out.say, {
       actionUrl: `${base}/voice/turn`,
-      hintList: SPEECH_HINTS
+      hintList: SPEECH_HINTS,
+      voice: ttsVoice(knowledge)
     }));
   } catch (err) {
     console.error("[ivy] voice turn failed:", err.message);
@@ -823,7 +847,8 @@ app.post("/voice/done", async (req, res) => {
     console.error("[ivy] voicemail handling failed:", err.message);
   }
 
-  return res.send(thanksTwiml());
+  const k = await getKnowledge().catch(() => ({}));
+  return res.send(thanksTwiml(ttsVoice(k)));
 });
 
 app.post("/voice/transcription", async (req, res) => {
