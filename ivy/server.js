@@ -235,23 +235,34 @@ async function handleLearningCommand(text) {
 
   // Auditioning voices. Nobody writing this can hear them, so she changes it and
   // rings the number to judge for herself.
-  const voiceSet = text.match(/^\s*voice\s+([\w.\-]+)\s*$/i);
-  if (voiceSet) {
-    await setKnowledgeValue("voice_tts", voiceSet[1]);
-    return `Voice set to ${voiceSet[1]}. Call the number and see what you think. ` +
-      `Say "voices" for more to try.`;
+  //
+  // Matched loosely on purpose. The first version demanded "voice <exact id>"
+  // and Richelle quite reasonably typed "change your voice to ..." and got
+  // nothing back. A command nobody can remember the shape of is a broken
+  // command, so a recognisable voice id anywhere in the message is enough,
+  // even on its own, which is what you naturally type after reading the list.
+  const VOICE_ID = /\b((?:Polly|Google|Amazon|ElevenLabs)\.[\w-]+(?:\.[\w-]+)*)\b/i;
+  const mentionsVoice = /\bvoices?\b|\bsound(s|ed)? like\b|\baccent\b/i.test(text);
+  const idInText = text.match(VOICE_ID);
+  const isBareId = idInText && text.trim() === idInText[1];
+
+  if (idInText && (mentionsVoice || isBareId)) {
+    await setKnowledgeValue("voice_tts", idInText[1]);
+    return `Voice set to ${idInText[1]}. Give the number a ring and see what you think. ` +
+      `Say "voices" if you want the list again.`;
   }
 
-  if (/^\s*voices\s*\??\s*$/i.test(text)) {
+  if (mentionsVoice && !idInText) {
     const k = await getKnowledge();
-    return `Right now: ${k.voice_tts || "Polly.Joanna-Generative"}\n` +
-      `Try any of these, then call:\n` +
-      `voice Polly.Joanna-Generative\n` +
-      `voice Polly.Danielle-Generative\n` +
-      `voice Polly.Ruth-Generative\n` +
-      `voice Polly.Salli-Neural\n` +
-      `voice Google.en-US-Chirp3-HD-Aoede\n` +
-      `voice Google.en-US-Chirp3-HD-Leda`;
+    return `Right now she's ${k.voice_tts || "Polly.Joanna-Generative"}.\n` +
+      `Send me any one of these on its own, then call:\n` +
+      `Polly.Joanna-Generative\n` +
+      `Polly.Danielle-Generative\n` +
+      `Polly.Ruth-Generative\n` +
+      `Polly.Matthew-Generative\n` +
+      `Google.en-US-Chirp3-HD-Aoede\n` +
+      `Google.en-US-Chirp3-HD-Leda\n` +
+      `Google.en-US-Chirp3-HD-Kore`;
   }
 
   // Testing leaves drafts stacked up, and there is no sense making her bin
