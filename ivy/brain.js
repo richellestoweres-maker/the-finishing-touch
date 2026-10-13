@@ -598,3 +598,102 @@ export async function speak({ knowledge, person, history, heard, turnCount }) {
     for_richelle: String(out.for_richelle || "").trim()
   };
 }
+
+/**
+ * Ivy reading a call or message that Beside handled.
+ *
+ * Beside answers the phone. Ivy never speaks here: she reads what Beside sends
+ * over through Zapier, works out what the person wanted, and files it so it is
+ * on the client's record. Nothing is sent to the caller from this step.
+ */
+const READ_CALL_TOOL = {
+  name: "log_call",
+  description: "File what happened on a call or message that Beside handled, for Richelle's records.",
+  input_schema: {
+    type: "object",
+    properties: {
+      caller_name: {
+        type: "string",
+        description: "The caller's name if it appears in the transcript or details. Empty if unknown. Never guess."
+      },
+      intent: {
+        type: "string",
+        enum: ["new_quote", "booking_request", "reschedule_or_cancel", "question", "complaint",
+               "existing_job", "crew", "vendor_or_sales", "spam", "other"],
+        description: "The main reason they got in touch."
+      },
+      summary: {
+        type: "string",
+        description: "One or two plain sentences on what they wanted and what was said. No dashes."
+      },
+      service: {
+        type: "string",
+        description: "The service they asked about, such as Deep Clean, Initial Clean, organizing, holiday decor, post construction. Empty if none."
+      },
+      requested_when: {
+        type: "string",
+        description: "Any date or time they asked for, exactly as they said it. Empty if none."
+      },
+      address_or_area: {
+        type: "string",
+        description: "Address, city or area they mentioned. Empty if none."
+      },
+      needs_richelle: {
+        type: "boolean",
+        description:
+          "True when Richelle has to do something: a price, a booking, a date, a complaint, a callback " +
+          "they asked for, or anything Beside could not answer. False for spam, sales calls, and calls " +
+          "that were fully handled."
+      },
+      for_richelle: {
+        type: "string",
+        description: "When needs_richelle is true, one line saying exactly what she needs to do next. Empty otherwise."
+      }
+    },
+    required: ["intent", "summary", "needs_richelle"]
+  }
+};
+
+export async function readCall({ knowledge, person, event, direction, transcript, besideSummary }) {
+  const system = [
+    knowledgeBlock(knowledge, person, [], transcript || besideSummary || ""),
+    "",
+    learnedBlock(knowledge),
+    "",
+    "## READING A BESIDE CALL",
+    "Beside, the phone app, handled this call or message. You did not take part in it.",
+    "Your only job is to file it accurately for Richelle by calling the log_call tool.",
+    "Use only what is in the details below. Never invent a name, date, address or price.",
+    "Write in plain English with no dashes used as punctuation."
+  ].join("\n");
+
+  const details = [
+    `KIND: ${event || "call"}`,
+    `DIRECTION: ${direction || "unknown"}`,
+    `WHO THIS NUMBER BELONGS TO:\n${whoBlock(person)}`,
+    besideSummary ? `BESIDE'S OWN SUMMARY:\n${besideSummary}` : "",
+    transcript ? `TRANSCRIPT OR MESSAGE:\n${String(transcript).slice(0, 12000)}` : ""
+  ].filter(Boolean).join("\n\n");
+
+  const res = await getClient().messages.create({
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    system,
+    tools: [READ_CALL_TOOL],
+    tool_choice: { type: "tool", name: "log_call" },
+    messages: [{ role: "user", content: details }]
+  });
+
+  const call = res.content.find((c) => c.type === "tool_use");
+  const out = (call && call.input) || {};
+  return {
+    caller_name: String(out.caller_name || "").trim(),
+    intent: String(out.intent || "other").trim(),
+    summary: String(out.summary || "").trim(),
+    service: String(out.service || "").trim(),
+    requested_when: String(out.requested_when || "").trim(),
+    address_or_area: String(out.address_or_area || "").trim(),
+    needs_richelle: Boolean(out.needs_richelle),
+    for_richelle: String(out.for_richelle || "").trim()
+  };
+}

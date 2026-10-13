@@ -500,3 +500,29 @@ export async function firestoreCheck() {
     return { ok: false, detail: err.message };
   }
 }
+
+/* ------------------------------------------------------------------
+   Beside events
+
+   Every call, lead, voicemail or message Beside reports through Zapier is
+   filed here, with Ivy's reading of it. Zapier can retry a delivery, so the
+   document id is Beside's own id when it sends one, and a repeat is ignored
+   rather than filed twice.
+   ------------------------------------------------------------------ */
+
+export async function claimBesideEvent(eventId) {
+  if (!eventId) return { ref: db.collection("besideEvents").doc(), fresh: true };
+  const ref = db.collection("besideEvents").doc(String(eventId).replace(/\//g, "_").slice(0, 200));
+  try {
+    await ref.create({ receivedAt: FieldValue.serverTimestamp(), status: "received" });
+    return { ref, fresh: true };
+  } catch (err) {
+    // ALREADY_EXISTS means Zapier sent this one before.
+    if (err.code === 6 || /already exists/i.test(err.message || "")) return { ref, fresh: false };
+    throw err;
+  }
+}
+
+export async function saveBesideEvent(ref, data) {
+  await ref.set({ ...data, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+}

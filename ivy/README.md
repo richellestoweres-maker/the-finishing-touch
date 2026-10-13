@@ -209,6 +209,29 @@ a client.
 Richelle rather than failing silently. The longer term plan is to replace the
 key with workload identity federation and delete it.
 
+## Beside calls, through Zapier
+
+Beside answers the business phone. A Zap sends every Beside call (and, if you
+add more Zaps, leads, voicemails and messages) to `POST /beside/inbound`. Ivy
+reads it, files it on that person's conversation next to their texts, saves the
+full details in the `besideEvents` collection, and texts Richelle only when
+there is something for her to do. She never contacts the caller from here,
+because Beside already spoke to them.
+
+Setup, once:
+
+1. Secret Manager: create `ivy-beside-key` holding a long random value.
+2. Cloud Run: expose it as the `BESIDE_KEY` environment variable, and give the
+   runtime service account Secret Accessor on it.
+3. Zapier: Beside **Call** trigger, then Webhooks by Zapier **POST** to
+   `https://<your-service-url>/beside/inbound`, payload type JSON, with a header
+   `X-Ivy-Key` set to the same value. Map these fields: `event` (type the word
+   `call`), `id`, `phone`, `name`, `direction`, `transcript`, `summary`,
+   `duration`, `recording_url`.
+
+`/selftest` shows `besideKeySet: true` once the key is in place. Without the
+key the endpoint refuses everything, so it is never open to the public.
+
 ---
 
 ## Files
@@ -219,4 +242,5 @@ key with workload identity federation and delete it.
 | `brain.js` | The one call to Claude, forced through a structured tool |
 | `store.js` | Every read and write to Firestore |
 | `sms.js` | Sending texts, verifying Twilio, tidying phone numbers |
+| `voice.js` | Phone call replies for Twilio |
 | `knowledge.json` | Her starting knowledge, seeded once into Firestore |

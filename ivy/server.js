@@ -10,6 +10,8 @@
 //   POST /sms/inbound       Twilio posts incoming texts here
 //   POST /tasks/drain-queue delivers the job notifications the crew has been
 //                           generating all along, which nothing has ever sent
+//   POST /beside/inbound    Zapier posts each Beside call, lead, voicemail or
+//                           message here; Ivy reads it and files it
 //
 // Environment she expects:
 //   ANTHROPIC_API_KEY       from Secret Manager: ivy-anthropic-api-key
@@ -20,17 +22,21 @@
 //   ANTHROPIC_MODEL         optional, defaults below
 //   PUBLIC_URL              optional, this service's own https URL
 //   TASK_KEY                optional shared secret for /tasks/* endpoints
+//   BESIDE_KEY              from Secret Manager: ivy-beside-key. Zapier sends it
+//                           in an X-Ivy-Key header. Without it /beside is closed.
 
 import express from "express";
+import crypto from "node:crypto";
 import {
   getKnowledge, identify, rememberContact, appendMessage, recentMessages,
   createDraft, listPendingDrafts, resolveDraft,
   queuedMessages, markQueuedMessage, firestoreCheck,
   appendLearning, listLearnings, removeLearning,
   listContacts, removeContact, findContactsByName, setKnowledgeValue,
-  openThread, listOpenThreads, closeThread, identify as identifyContact
+  openThread, listOpenThreads, closeThread, identify as identifyContact,
+  claimBesideEvent, saveBesideEvent
 } from "./store.js";
-import { decide, compose, speak, anthropicCheck } from "./brain.js";
+import { decide, compose, speak, anthropicCheck, readCall } from "./brain.js";
 import {
   greetingTwiml, thanksTwiml, emptyTwiml,
   sayAndGatherTwiml, sayAndHangupTwiml, SPEECH_HINTS, ttsVoice
@@ -45,6 +51,7 @@ app.use(express.json());
 
 const OWNER_PHONE = normalizePhone(process.env.OWNER_PHONE || "");
 const TASK_KEY = process.env.TASK_KEY || "";
+const BESIDE_KEY = process.env.BESIDE_KEY || "";
 
 const OPT_OUT = new Set(["STOP", "STOPALL", "UNSUBSCRIBE", "CANCEL", "END", "QUIT", "START", "UNSTOP", "HELP", "INFO"]);
 
@@ -89,7 +96,8 @@ app.get("/selftest", async (_req, res) => {
     firestore: store,
     anthropic: brain,
     twilio: sms,
-    ownerPhoneSet: Boolean(OWNER_PHONE)
+    ownerPhoneSet: Boolean(OWNER_PHONE),
+    besideKeySet: Boolean(BESIDE_KEY)
   });
 });
 
@@ -887,6 +895,152 @@ app.post("/voice/transcription", async (req, res) => {
 
   res.set("Content-Type", "text/xml");
   return res.send(emptyTwiml());
+});
+
+/* ==================================================================
+   Beside, through Zapier
+
+   Beside answers the business phone. Each time it finishes a call, takes a
+   lead, gets a voicemail or a message, a Zap posts the details here. Ivy reads
+   it, files it on that person's conversation so every channel lives in one
+   thread, and texts Richelle only when there is something for her to do.
+
+   Ivy never contacts the caller from here. Beside already spoke to them.
+
+   The Zap sends JSON. Every field is optional except a phone number or some
+   words to read, because Beside's fields vary by event:
+     event          call, lead, voicemail, message, voice_note, capture
+     id             Beside's id for the call or message, used to ignore repeats
+     phone          the other person's number
+     name           their name, if Beside has one
+     direction      inbound or outbound
+     transcript     the transcript or message text
+     summary        Beside's own summary, if it gives one
+     duration       seconds
+     recording_url  link to the recording
+   ================================================================== */
+
+function keyMatches(given) {
+  if (!BESIDE_KEY || !given) return false;
+  const a = Buffer.from(String(given));
+  const b = Buffer.from(BESIDE_KEY);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+function pick(body, ...names) {
+  for (const n of names) {
+    const v = body[n];
+    if (v !== undefined && v !== null && String(v).trim() !== "") return String(v).trim();
+  }
+  return "";
+}
+
+app.post("/beside/inbound", async (req, res) => {
+  if (!BESIDE_KEY) return res.status(503).json({ ok: false, error: "BESIDE_KEY is not set" });
+  if (!keyMatches(req.header("X-Ivy-Key"))) {
+    console.warn("[ivy] rejected a Beside post with a missing or wrong key");
+    return res.status(403).json({ ok: false, error: "bad key" });
+  }
+
+  const b = req.body || {};
+  const event = pick(b, "event", "type", "kind").toLowerCase() || "call";
+  const eventId = pick(b, "id", "call_id", "callId", "message_id", "event_id");
+  const rawPhone = pick(b, "phone", "phone_number", "from", "caller", "contact_phone", "number");
+  const phone = normalizePhone(rawPhone);
+  const givenName = pick(b, "name", "contact_name", "caller_name");
+  const direction = pick(b, "direction").toLowerCase();
+  const transcript = pick(b, "transcript", "transcription", "text", "body", "message");
+  const besideSummary = pick(b, "summary", "notes", "description");
+  const duration = Number(pick(b, "duration", "duration_seconds")) || 0;
+  const recordingUrl = pick(b, "recording_url", "recordingUrl", "audio_url");
+
+  if (!phone && !transcript && !besideSummary) {
+    return res.status(400).json({ ok: false, error: "nothing to file: no phone and no words" });
+  }
+
+  let claim;
+  try {
+    claim = await claimBesideEvent(eventId);
+  } catch (err) {
+    console.error("[ivy] could not claim a Beside event:", err.message);
+    return res.status(500).json({ ok: false, error: "storage" });
+  }
+  if (!claim.fresh) return res.json({ ok: true, duplicate: true });
+
+  try {
+    const person = phone ? await identify(phone) : { key: "", kind: "unknown", name: "" };
+    const knowledge = await getKnowledge();
+    const read = await readCall({ knowledge, person, event, direction, transcript, besideSummary });
+
+    const name = person.name || givenName || read.caller_name || "";
+    const key = person.key || phone || "beside-unknown";
+
+    // Learn the name if we did not have one, so the next text or call is recognised.
+    if (phone && !person.name && (givenName || read.caller_name)) {
+      await rememberContact(phone, { name: givenName || read.caller_name });
+    }
+
+    // Filed on the same conversation as their texts, so it is one thread per person.
+    const label = { call: "Call", voicemail: "Voicemail", message: "Message", lead: "New lead",
+                    voice_note: "Voice note", capture: "Note" }[event] || "Beside";
+    await appendMessage(key, {
+      direction: direction === "outbound" ? "out" : "in",
+      channel: "beside",
+      body: `[${label} via Beside${duration ? `, ${duration}s` : ""}] ${read.summary}`,
+      from: phone,
+      meta: {
+        source: "beside", event, besideId: eventId || "", intent: read.intent,
+        transcript: transcript.slice(0, 6000), recordingUrl
+      }
+    });
+
+    await saveBesideEvent(claim.ref, {
+      status: "filed",
+      event, besideId: eventId || "", direction, phone, name, personKind: person.kind || "unknown",
+      transcript: transcript.slice(0, 20000), besideSummary, duration, recordingUrl,
+      ivy: read
+    });
+
+    if (read.needs_richelle && read.intent !== "spam" && read.intent !== "vendor_or_sales") {
+      const who = name ? `${name}${phone ? ` ${prettyPhone(phone)}` : ""}` : (phone ? prettyPhone(phone) : "an unknown caller");
+      const extras = [
+        read.service ? `Service: ${read.service}` : "",
+        read.requested_when ? `When: ${read.requested_when}` : "",
+        read.address_or_area ? `Where: ${read.address_or_area}` : ""
+      ].filter(Boolean).join("\n");
+      await notifyOwner(
+        `${label} from ${who} on Beside:\n${read.summary}\n` +
+        (extras ? `${extras}\n` : "") +
+        (read.for_richelle ? `Next: ${read.for_richelle}` : "")
+      );
+
+      try {
+        const open = phone ? await listOpenThreads(key) : [];
+        if (phone && !open.length) {
+          await openThread({
+            conversationKey: key, personPhone: phone, personName: name,
+            summary: read.for_richelle || read.summary.slice(0, 80), waitingOn: "richelle"
+          });
+        }
+      } catch (err) {
+        console.error("[ivy] could not open a thread for a Beside call:", err.message);
+      }
+    }
+
+    return res.json({ ok: true, filed: true, intent: read.intent, needsRichelle: read.needs_richelle });
+  } catch (err) {
+    console.error("[ivy] Beside filing failed:", err);
+    await saveBesideEvent(claim.ref, { status: "failed", error: String(err.message).slice(0, 500), phone, transcript: transcript.slice(0, 20000) })
+      .catch(() => {});
+    const isAuth = /401|authentication|invalid.*api.*key|expired/i.test(err.message || "");
+    await notifyOwner(
+      isAuth
+        ? `Ivy's Claude API key is not working, so she could not file a Beside ${event} from ${prettyPhone(phone) || "an unknown number"}. Check the key in Secret Manager.`
+        : `Ivy could not file a Beside ${event} from ${prettyPhone(phone) || "an unknown number"}: ${String(err.message).slice(0, 200)}`
+    );
+    // 200 on purpose: the raw details are saved, and a 500 would make Zapier retry into the same error.
+    return res.json({ ok: false, saved: true, error: "filing failed, raw details kept" });
+  }
 });
 
 /* ==================================================================
