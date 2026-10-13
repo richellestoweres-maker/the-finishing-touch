@@ -911,11 +911,16 @@ app.post("/voice/transcription", async (req, res) => {
    words to read, because Beside's fields vary by event:
      event          call, lead, voicemail, message, voice_note, capture
      id             Beside's id for the call or message, used to ignore repeats
-     phone          the other person's number
-     name           their name, if Beside has one
+     from_phone     Beside's From Phone Number
+     from_name      Beside's From Name
+     to_phone       Beside's To Phone Number
+     to_name        Beside's To Name
+                    (Ivy picks the other person from these using direction;
+                    a plain phone and name also work)
      direction      inbound or outbound
      transcript     the transcript or message text
      summary        Beside's own summary, if it gives one
+     title          Beside's title for the call
      duration       seconds
      recording_url  link to the recording
    ================================================================== */
@@ -945,12 +950,18 @@ app.post("/beside/inbound", async (req, res) => {
   const b = req.body || {};
   const event = pick(b, "event", "type", "kind").toLowerCase() || "call";
   const eventId = pick(b, "id", "call_id", "callId", "message_id", "event_id");
-  const rawPhone = pick(b, "phone", "phone_number", "from", "caller", "contact_phone", "number");
-  const phone = normalizePhone(rawPhone);
-  const givenName = pick(b, "name", "contact_name", "caller_name");
   const direction = pick(b, "direction").toLowerCase();
+  // Beside sends both ends of the call. The other person is whoever is not us:
+  // the caller on an inbound call, the person dialled on an outbound one.
+  const outbound = direction === "outbound";
+  const rawPhone = pick(b, "phone", "phone_number", "contact_phone") ||
+    (outbound ? pick(b, "to_phone", "to") : pick(b, "from_phone", "from", "caller"));
+  const phone = normalizePhone(rawPhone);
+  const givenName = pick(b, "name", "contact_name", "caller_name") ||
+    (outbound ? pick(b, "to_name") : pick(b, "from_name"));
   const transcript = pick(b, "transcript", "transcription", "text", "body", "message");
-  const besideSummary = pick(b, "summary", "notes", "description");
+  const title = pick(b, "title");
+  const besideSummary = [title, pick(b, "summary", "notes", "description")].filter(Boolean).join("\n");
   const duration = Number(pick(b, "duration", "duration_seconds")) || 0;
   const recordingUrl = pick(b, "recording_url", "recordingUrl", "audio_url");
 

@@ -226,8 +226,9 @@ Setup, once:
 3. Zapier: Beside **Call** trigger, then Webhooks by Zapier **POST** to
    `https://<your-service-url>/beside/inbound`, payload type JSON, with a header
    `X-Ivy-Key` set to the same value. Map these fields: `event` (type the word
-   `call`), `id`, `phone`, `name`, `direction`, `transcript`, `summary`,
-   `duration`, `recording_url`.
+   `call`), `id`, `direction`, `from_phone`, `from_name`, `to_phone`,
+   `to_name`, `title`, `summary`, `transcript`. Ivy works out which end of
+   the call is the client from the direction.
 
 `/selftest` shows `besideKeySet: true` once the key is in place. Without the
 key the endpoint refuses everything, so it is never open to the public.
