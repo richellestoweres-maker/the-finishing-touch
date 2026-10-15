@@ -357,7 +357,12 @@ async function createJobFromIntake(opts = {}){
   const serviceType = normalizeServiceType(opts.type || opts.serviceType, intakeData);
   const estimate = opts.estimate || {};
   const summary = buildBasicSummary(serviceType, intakeData, opts.summary);
-  const clientContactClear = intakeData.CLIENT_CONTACT_CLEAR || buildClientContactClear(intakeData);
+  // Share the Touch referral program: who sent them, so the referrer gets their credit.
+  const referredBy = String(intakeData.referred_by || "").trim().slice(0, 120);
+  const baseContactClear = intakeData.CLIENT_CONTACT_CLEAR || buildClientContactClear(intakeData);
+  const clientContactClear = referredBy && !baseContactClear.includes("Referred by")
+    ? `${baseContactClear} | Referred by: ${referredBy}`
+    : baseContactClear;
   const page = getPrimaryPage(intakeData, opts);
 
   const media = await uploadIntakeMedia(intakeData, getClientEmail(intakeData, user, opts));
@@ -390,6 +395,7 @@ async function createJobFromIntake(opts = {}){
     clientEmail: getClientEmail(intakeData, user, opts),
     clientPhone: getClientPhone(intakeData, opts),
     clientUid: user?.uid || "",
+    referredBy,
 
     page,
     estimate,
