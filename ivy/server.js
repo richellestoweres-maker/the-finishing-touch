@@ -52,6 +52,13 @@ app.use(express.json());
 const OWNER_PHONE = normalizePhone(process.env.OWNER_PHONE || "");
 const TASK_KEY = process.env.TASK_KEY || "";
 const BESIDE_KEY = process.env.BESIDE_KEY || "";
+// The business's own numbers: the public line, the Beside line and Ivy's line.
+// Used to tell which end of a Beside call or text is the client.
+const OUR_NUMBERS = new Set(
+  (process.env.OUR_NUMBERS || "+12816203963,+12817176268")
+    .split(",").map((n) => normalizePhone(n)).filter(Boolean)
+);
+if (ownNumber()) OUR_NUMBERS.add(normalizePhone(ownNumber()));
 
 const OPT_OUT = new Set(["STOP", "STOPALL", "UNSUBSCRIBE", "CANCEL", "END", "QUIT", "START", "UNSTOP", "HELP", "INFO"]);
 
@@ -918,7 +925,8 @@ app.post("/voice/transcription", async (req, res) => {
                     (Ivy picks the other person from these using direction;
                     a plain phone and name also work)
      direction      inbound or outbound
-     transcript     the transcript or message text
+     transcript     the transcript (calls)
+     text           the message text (texts)
      summary        Beside's own summary, if it gives one
      title          Beside's title for the call
      duration       seconds
@@ -950,15 +958,24 @@ app.post("/beside/inbound", async (req, res) => {
   const b = req.body || {};
   const event = pick(b, "event", "type", "kind").toLowerCase() || "call";
   const eventId = pick(b, "id", "call_id", "callId", "message_id", "event_id");
-  const direction = pick(b, "direction").toLowerCase();
-  // Beside sends both ends of the call. The other person is whoever is not us:
-  // the caller on an inbound call, the person dialled on an outbound one.
-  const outbound = direction === "outbound";
-  const rawPhone = pick(b, "phone", "phone_number", "contact_phone") ||
-    (outbound ? pick(b, "to_phone", "to") : pick(b, "from_phone", "from", "caller"));
-  const phone = normalizePhone(rawPhone);
+  // Beside sends both ends of the conversation. The other person is whichever
+  // end is not one of our own numbers. Beside's direction label cannot be
+  // trusted for this: texts Richelle sent out have arrived marked "inbound".
+  const fromPhone = normalizePhone(pick(b, "from_phone", "from", "caller"));
+  const toPhone = normalizePhone(pick(b, "to_phone", "to"));
+  const fromIsUs = OUR_NUMBERS.has(fromPhone);
+  const toIsUs = OUR_NUMBERS.has(toPhone);
+  let outbound;
+  if (fromIsUs && !toIsUs) outbound = true;
+  else if (toIsUs && !fromIsUs) outbound = false;
+  else outbound = pick(b, "direction").toLowerCase() === "outbound";
+  const direction = outbound ? "outbound" : "inbound";
+  const phone = normalizePhone(pick(b, "phone", "phone_number", "contact_phone")) ||
+    (outbound ? toPhone : fromPhone);
   const givenName = pick(b, "name", "contact_name", "caller_name") ||
     (outbound ? pick(b, "to_name") : pick(b, "from_name"));
+  // Talking to ourselves, such as a test call from the business line to itself.
+  const selfOnly = (fromIsUs || !fromPhone) && (toIsUs || !toPhone) && !pick(b, "phone", "phone_number", "contact_phone");
   const transcript = pick(b, "transcript", "transcription", "text", "body", "message");
   const title = pick(b, "title");
   const besideSummary = [title, pick(b, "summary", "notes", "description")].filter(Boolean).join("\n");
@@ -1012,7 +1029,8 @@ app.post("/beside/inbound", async (req, res) => {
       ivy: read
     });
 
-    if (read.needs_richelle && read.intent !== "spam" && read.intent !== "vendor_or_sales") {
+    // Something Richelle sent herself is filed but never alerted on: she already knows.
+    if (!outbound && !selfOnly && read.needs_richelle && read.intent !== "spam" && read.intent !== "vendor_or_sales") {
       const who = name ? `${name}${phone ? ` ${prettyPhone(phone)}` : ""}` : (phone ? prettyPhone(phone) : "an unknown caller");
       const extras = [
         read.service ? `Service: ${read.service}` : "",
