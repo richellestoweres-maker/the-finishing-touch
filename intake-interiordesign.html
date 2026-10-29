@@ -1,1 +1,1169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>In-Home Interior Design Intake | The Finishing Touch</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    :root{
+      --ftt-bg:#fbf8f4;
+      --ftt-panel:#fffdfa;
+      --ftt-border:#e9dfd4;
+      --ftt-border-dark:#d8c8b7;
+      --ftt-text:#2f2926;
+      --ftt-muted:#5f5651;
+      --ftt-soft:#7a7069;
+      --ftt-accent:#d2bda9;
+      --ftt-accent-dark:#b89e87;
+      --ftt-shadow:0 10px 30px rgba(62,44,31,.06);
+      --ftt-radius:22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--ftt-bg);
+      color: var(--ftt-text);
+    }
+
+    .intake-top {
+      width: min(980px, 92%);
+      margin: 18px auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .intake-top a {
+      text-decoration: none;
+    }
+
+    .intake-head {
+      text-align: center;
+      margin-top: 22px;
+      margin-bottom: 14px;
+      padding: 0 16px;
+    }
+
+    .intake-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      line-height: 1.15;
+      margin: 0 0 8px;
+      color: var(--ftt-text);
+    }
+
+    .intake-script {
+      font-family: "Allura", cursive;
+      font-size: 2rem;
+      margin: 0 0 12px;
+      color: #6c625d;
+    }
+
+    .microcopy {
+      width: min(780px, 92%);
+      margin: 0 auto;
+      color: #4f4742;
+      line-height: 1.75;
+      font-size: 1rem;
+    }
+
+    .intake-wrap {
+      width: min(980px, 92%);
+      margin: 0 auto 48px;
+    }
+
+    .intake-panel {
+      background: var(--ftt-panel);
+      border: 1px solid var(--ftt-border);
+      border-radius: var(--ftt-radius);
+      padding: 28px;
+      box-shadow: var(--ftt-shadow);
+    }
+
+    .section-divider {
+      border: 0;
+      border-top: 1px solid var(--ftt-border);
+      margin: 18px 0 10px;
+    }
+
+    .field-heading {
+      font-family: "Playfair Display", serif;
+      font-size: 1.35rem;
+      margin: 20px 0 6px;
+      color: var(--ftt-text);
+    }
+
+    .section-note {
+      font-size: .98rem;
+      color: var(--ftt-muted);
+      margin: 0 0 16px;
+      line-height: 1.6;
+    }
+
+    .hint,
+    .file-note,
+    .tiny,
+    .inline-note {
+      display: block;
+      font-size: .93rem;
+      color: var(--ftt-soft);
+      line-height: 1.6;
+    }
+
+    .hint { margin-top: 7px; }
+    .file-note { margin-top: 8px; }
+    .tiny { margin: 8px 0 0; }
+    .inline-note { margin-top: 2px; }
+
+    form.grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      width: 100%;
+      font-family: "Manrope", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--ftt-text);
+      line-height: 1.45;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    select,
+    textarea,
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      border: 1px solid var(--ftt-border-dark);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ftt-text);
+      padding: 14px 14px;
+      font: inherit;
+      min-height: 52px;
+      transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    textarea {
+      min-height: 132px;
+      resize: vertical;
+      padding-top: 14px;
+    }
+
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, #7c7068 50%),
+        linear-gradient(135deg, #7c7068 50%, transparent 50%);
+      background-position:
+        calc(100% - 20px) calc(50% - 3px),
+        calc(100% - 14px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 42px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--ftt-accent-dark);
+      box-shadow: 0 0 0 4px rgba(210, 189, 169, .18);
+      background: #fff;
+    }
+
+    input[type="file"] {
+      padding: 12px 14px;
+      min-height: auto;
+      background: #fff;
+    }
+
+    .required-badge,
+    .optional-badge {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 3px 8px;
+      vertical-align: middle;
+    }
+
+    .required-badge {
+      color: #7b6553;
+      background: #f3ebe2;
+    }
+
+    .optional-badge {
+      color: #7a7069;
+      background: #f4f1ed;
+    }
+
+    .soft-box {
+      border: 1px solid var(--ftt-border);
+      background: #fcf8f3;
+      border-radius: 16px;
+      padding: 16px;
+      color: #4f4742;
+      line-height: 1.7;
+    }
+
+    .soft-box strong {
+      color: var(--ftt-text);
+    }
+
+    .group-label {
+      font-family: "Manrope", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--ftt-text);
+      margin: 0 0 10px;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice-grid.days {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--ftt-border-dark);
+      border-radius: 14px;
+      background: #fff;
+      padding: 12px 14px;
+      font-size: .96rem;
+      line-height: 1.35;
+      color: #4f4742;
+      cursor: pointer;
+      transition: border-color .18s ease, background-color .18s ease;
+    }
+
+    .choice:has(input:checked) {
+      border-color: var(--ftt-accent-dark);
+      background: #fbf5ee;
+      color: var(--ftt-text);
+    }
+
+    .choice input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      min-height: 18px;
+      flex: 0 0 18px;
+      margin: 0;
+      accent-color: #b89e87;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .checkbox-group {
+      display: grid;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: .98rem;
+      line-height: 1.6;
+      color: #4f4742;
+    }
+
+    .check-row input[type="checkbox"] {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      min-height: 18px;
+      flex: 0 0 18px;
+      accent-color: #b89e87;
+    }
+
+    .submit-row {
+      margin-top: 6px;
+      display: grid;
+      gap: 10px;
+      justify-items: start;
+    }
+
+    .btn-solid {
+      background: linear-gradient(180deg, #e0cbb7, #ccb49d);
+      color: #2a2624;
+      border: 1px solid #8f7761;
+      border-radius: 999px;
+      padding: 14px 24px;
+      min-height: 54px;
+      font-weight: 800;
+      font-family: "Playfair Display", serif;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(62,44,31,.10);
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+
+    .btn-solid:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(62,44,31,.14);
+      opacity: .98;
+    }
+
+    .status {
+      font-size: .95rem;
+      color: var(--ftt-muted);
+    }
+
+    @media (max-width: 860px) {
+      .choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .choice-grid.days { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .intake-panel {
+        padding: 20px;
+      }
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .intake-top {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .choice-grid,
+      .choice-grid.days {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    #ftt-chat-launcher,
+    #ftt-chat {
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+        <a class="btn btn-outline" href="client-dashboard.html">Client Portal</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="intake-top">
+    <a class="btn btn-outline" href="interiordesign.html">← Back to In-Home Interior Design</a>
+    <a class="btn btn-outline" href="terms.html#client-terms">View Service Terms</a>
+  </div>
+
+  <div class="intake-head">
+    <h1 class="intake-title">In-Home Interior Design Intake</h1>
+    <p class="intake-script">Designed in Person, Finished with Care</p>
+    <p class="microcopy">
+      Tell us about your home, your style, and what you'd love the space to feel like. Once we review your answers, we'll reach out to confirm your in-home consultation.
+    </p>
+  </div>
+
+  <main class="intake-wrap">
+    <div class="intake-panel">
+      <form id="intakeFormInteriorDesign" class="grid-1"
+            method="POST"
+            action="https://formspree.io/f/mzzaogbv"
+            enctype="multipart/form-data"
+            novalidate>
+        <input type="hidden" name="_subject" value="New In-Home Interior Design Intake · The Finishing Touch" />
+        <input type="hidden" name="page" value="intake-interiordesign.html" />
+
+        <!-- CONTACT -->
+        <h2 class="field-heading">Contact Information</h2>
+
+        <div class="grid-2">
+          <label for="name">Full Name
+            <input id="name" type="text" name="name" autocomplete="name" required>
+          </label>
+
+          <label for="email">Email
+            <input id="email" type="email" name="email" autocomplete="email" required>
+          </label>
+
+          <label for="phone">Phone
+            <input id="phone" type="tel" name="phone" autocomplete="tel" required>
+          </label>
+
+          <label for="preferred_contact">Best Way to Reach You
+            <select id="preferred_contact" name="preferred_contact">
+              <option value="" selected>Select…</option>
+              <option>Call</option>
+              <option>Text</option>
+              <option>Email</option>
+            </select>
+          </label>
+
+          <label for="referred_by">Referred by a friend? (optional)
+            <input id="referred_by" type="text" name="referred_by" autocomplete="off" placeholder="Their name, so we can thank them">
+          </label>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- PROPERTY -->
+        <h2 class="field-heading">Your Home</h2>
+        <p class="section-note">This is where your consultation will take place.</p>
+
+        <label for="street">Street Address
+          <input id="street" type="text" name="street" autocomplete="address-line1" required>
+        </label>
+
+        <div class="grid-3">
+          <label for="city">City
+            <input id="city" type="text" name="city" autocomplete="address-level2" required>
+          </label>
+
+          <label for="state">State
+            <input id="state" type="text" name="state" autocomplete="address-level1" value="TX" required>
+          </label>
+
+          <label for="zip">ZIP Code
+            <input id="zip" type="text" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" required>
+          </label>
+        </div>
+
+        <div class="soft-box">
+          Our standard service area is Houston to Galveston. Homes outside it may carry a travel fee, which we'll quote with your estimate.
+        </div>
+
+        <div class="grid-2">
+          <label for="property_type">Property Type
+            <select id="property_type" name="property_type" required>
+              <option value="" selected disabled>Select one…</option>
+              <option>Single-Family Home</option>
+              <option>Townhome</option>
+              <option>Condo / Apartment</option>
+              <option>New Construction</option>
+              <option>Airbnb / Short-Term Rental</option>
+              <option>Office / Commercial Space</option>
+            </select>
+          </label>
+
+          <label for="home_status">Current Status of the Home
+            <select id="home_status" name="home_status">
+              <option value="" selected>Select…</option>
+              <option>Lived in</option>
+              <option>Moving in soon</option>
+              <option>Under construction</option>
+              <option>Remodel in progress</option>
+              <option>Vacant</option>
+            </select>
+          </label>
+
+          <label for="own_rent">Do you own or rent?
+            <select id="own_rent" name="own_rent" required>
+              <option value="" selected disabled>Select one…</option>
+              <option>Own</option>
+              <option>Rent</option>
+            </select>
+          </label>
+
+          <label for="landlord_approval" id="landlordWrap" class="is-hidden">Landlord approval for paint or hanging items on walls?
+            <select id="landlord_approval" name="landlord_approval">
+              <option value="" selected>Select…</option>
+              <option>Yes, approved</option>
+              <option>No, nothing permanent</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+
+          <label for="sqft">Approximate Square Footage
+            <input id="sqft" type="text" name="sqft" inputmode="numeric" placeholder="e.g., 2,200">
+          </label>
+
+          <label for="stories">Number of Stories
+            <select id="stories" name="stories">
+              <option value="" selected>Select…</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3+</option>
+            </select>
+          </label>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- PROJECT -->
+        <h2 class="field-heading">Project Details</h2>
+
+        <div class="grid-2">
+          <label for="id_service">Service Type
+            <select id="id_service" name="id_service" required>
+              <option value="" selected disabled>Select one…</option>
+              <option>Design Consultation Only</option>
+              <option>Decorating &amp; Styling</option>
+              <option>Full Room Design</option>
+              <option>Multi-Room / Whole Home Design</option>
+              <option>New Build or Remodel Selections</option>
+              <option>Airbnb / Short-Term Rental Design</option>
+            </select>
+          </label>
+
+          <label for="id_rooms">Number of Rooms / Areas
+            <select id="id_rooms" name="id_rooms" required>
+              <option value="" selected disabled>Select…</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8+</option>
+            </select>
+          </label>
+        </div>
+
+        <label for="id_room_types">Spaces Included
+          <input id="id_room_types" type="text" name="id_room_types" placeholder="Living room, primary bedroom, nursery, entryway…">
+        </label>
+
+        <div>
+          <p class="group-label">What would you like help with? <span class="optional-badge">Select all that apply</span></p>
+          <div class="choice-grid">
+            <label class="choice"><input type="checkbox" name="id_scope" value="Furniture layout"> Furniture layout</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Furniture sourcing"> Furniture sourcing</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Paint colors"> Paint colors</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Lighting"> Lighting</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Window treatments"> Window treatments</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Rugs"> Rugs</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Art and wall decor"> Art &amp; wall decor</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Accessories and styling"> Accessories &amp; styling</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Bedding and textiles"> Bedding &amp; textiles</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Custom furniture or upholstery"> Custom furniture or upholstery</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Finishes and fixtures"> Finishes &amp; fixtures</label>
+            <label class="choice"><input type="checkbox" name="id_scope" value="Installation day"> Installation day</label>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <label for="id_budget">Estimated Furnishings / Decor Budget
+            <select id="id_budget" name="id_budget">
+              <option value="" selected>Select…</option>
+              <option>$1,000 to $3,000</option>
+              <option>$3,000 to $6,000</option>
+              <option>$6,000 to $10,000</option>
+              <option>$10,000 to $25,000</option>
+              <option>$25,000+</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+
+          <label for="id_timeline">Desired Timeline
+            <select id="id_timeline" name="id_timeline">
+              <option value="" selected>Select…</option>
+              <option>ASAP</option>
+              <option>Within 1 month</option>
+              <option>Within 1 to 3 months</option>
+              <option>Within 3 to 6 months</option>
+              <option>Flexible</option>
+            </select>
+          </label>
+        </div>
+
+        <label for="id_deadline">Any date you're working toward?
+          <input id="id_deadline" type="text" name="id_deadline" placeholder="Hosting the holidays, listing date, move-in date, baby's arrival…">
+        </label>
+
+        <hr class="section-divider">
+
+        <!-- STYLE -->
+        <h2 class="field-heading">Style &amp; Goals</h2>
+
+        <div class="grid-2">
+          <label for="id_style">Design Style
+            <input id="id_style" type="text" name="id_style" placeholder="Organic modern, classic, collected, warm minimal, coastal…">
+          </label>
+
+          <label for="id_goal">Main Goal for the Space
+            <input id="id_goal" type="text" name="id_goal" placeholder="Better flow, more polished, guest-ready, warmer, more functional…">
+          </label>
+
+          <label for="id_colors">Colors You Love or Want to Avoid
+            <input id="id_colors" type="text" name="id_colors" placeholder="Love warm neutrals and green, no gray…">
+          </label>
+
+          <label for="id_inspo_links">Inspiration Links
+            <input id="id_inspo_links" type="url" name="id_inspo_links" placeholder="Pinterest board, saved collection, etc.">
+          </label>
+        </div>
+
+        <label for="id_painpoints">What feels unfinished, frustrating, or hardest right now?
+          <textarea id="id_painpoints" name="id_painpoints" rows="4" placeholder="The layout feels awkward, nothing feels cohesive, I don't know what furniture works…"></textarea>
+        </label>
+
+        <hr class="section-divider">
+
+        <!-- HOUSEHOLD -->
+        <h2 class="field-heading">Your Space &amp; Household</h2>
+
+        <div class="grid-2">
+          <label for="id_existing">Existing Pieces to Keep
+            <textarea id="id_existing" name="id_existing" rows="4" placeholder="Sofa, rug, dining table, artwork, heirlooms, or anything you want incorporated."></textarea>
+          </label>
+
+          <label for="id_measurements">Measurements <span class="optional-badge">Optional</span>
+            <textarea id="id_measurements" name="id_measurements" rows="4" placeholder="We'll measure during the consultation. Share anything you already have."></textarea>
+          </label>
+        </div>
+
+        <div class="grid-2">
+          <label for="id_household">Who lives in the home?
+            <input id="id_household" type="text" name="id_household" placeholder="Two adults, a toddler, frequent guests…">
+          </label>
+
+          <label for="id_pets">Pets
+            <select id="id_pets" name="id_pets">
+              <option value="" selected>Select…</option>
+              <option>No pets</option>
+              <option>Dog(s)</option>
+              <option>Cat(s)</option>
+              <option>Dogs and cats</option>
+              <option>Other</option>
+            </select>
+          </label>
+        </div>
+
+        <label for="id_durability">How do you use the space day to day?
+          <input id="id_durability" type="text" name="id_durability" placeholder="Kid and pet friendly fabrics, lots of hosting, work from home…">
+        </label>
+
+        <div class="grid-2">
+          <label for="id_purchase_option">How would you like to move forward if approved?
+            <select id="id_purchase_option" name="id_purchase_option">
+              <option value="" selected>Select…</option>
+              <option>Design plan + shopping list I purchase myself</option>
+              <option>The Finishing Touch sources, purchases, and installs</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+
+          <label for="id_sourcing">Sourcing Preference
+            <select id="id_sourcing" name="id_sourcing">
+              <option value="" selected>Select…</option>
+              <option>Mostly new items</option>
+              <option>Mix of existing + new</option>
+              <option>Style what I already own as much as possible</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- CONSULTATION -->
+        <h2 class="field-heading">Book Your In-Home Consultation</h2>
+        <p class="section-note">Consultations are scheduled Monday through Friday. We'll confirm your exact time.</p>
+
+        <div>
+          <p class="group-label">Days that work for you <span class="required-badge">Pick at least one</span></p>
+          <div class="choice-grid days" id="consultDays">
+            <label class="choice"><input type="checkbox" name="consult_days" value="Monday"> Mon</label>
+            <label class="choice"><input type="checkbox" name="consult_days" value="Tuesday"> Tue</label>
+            <label class="choice"><input type="checkbox" name="consult_days" value="Wednesday"> Wed</label>
+            <label class="choice"><input type="checkbox" name="consult_days" value="Thursday"> Thu</label>
+            <label class="choice"><input type="checkbox" name="consult_days" value="Friday"> Fri</label>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <label for="consult_time">Preferred Time
+            <select id="consult_time" name="consult_time" required>
+              <option value="" selected disabled>Select…</option>
+              <option>Morning (9am to 12pm)</option>
+              <option>Midday (12pm to 2pm)</option>
+              <option>Afternoon (2pm to 5pm)</option>
+              <option>Any time</option>
+            </select>
+          </label>
+
+          <label for="consult_date1">First Choice Date
+            <input id="consult_date1" type="date" name="consult_date1">
+          </label>
+
+          <label for="consult_date2">Second Choice Date
+            <input id="consult_date2" type="date" name="consult_date2">
+          </label>
+        </div>
+
+        <div class="grid-2">
+          <label for="decision_makers">Who will be at the consultation?
+            <select id="decision_makers" name="decision_makers" required>
+              <option value="" selected disabled>Select one…</option>
+              <option>Just me</option>
+              <option>Me and my spouse / partner</option>
+              <option>Me and other family members</option>
+              <option>Someone else on my behalf</option>
+            </select>
+          </label>
+
+          <label for="decision_notes">Anyone else who needs to sign off?
+            <input id="decision_notes" type="text" name="decision_notes" placeholder="Spouse traveling that week, property manager, etc.">
+          </label>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- ACCESS -->
+        <h2 class="field-heading">Access &amp; Arrival</h2>
+
+        <div class="grid-3">
+          <label for="access_gate">Gate / HOA
+            <select id="access_gate" name="access_gate">
+              <option value="" selected>Select…</option>
+              <option>No gate</option>
+              <option>Gated, code needed</option>
+              <option>Guard gate, name on list</option>
+              <option>HOA with delivery or work hour rules</option>
+            </select>
+          </label>
+
+          <label for="access_parking">Parking
+            <select id="access_parking" name="access_parking">
+              <option value="" selected>Select…</option>
+              <option>Driveway</option>
+              <option>Street parking</option>
+              <option>Visitor / garage parking</option>
+              <option>Limited parking</option>
+            </select>
+          </label>
+
+          <label for="access_stairs">Stairs / Elevator
+            <select id="access_stairs" name="access_stairs">
+              <option value="" selected>Select…</option>
+              <option>Single level, no stairs</option>
+              <option>Stairs</option>
+              <option>Elevator</option>
+            </select>
+          </label>
+        </div>
+
+        <label for="access_notes">Entry or delivery notes
+          <input id="access_notes" type="text" name="access_notes" placeholder="Narrow doorways, tight staircase, which door to use, dogs to secure…">
+        </label>
+
+        <hr class="section-divider">
+
+        <!-- PHOTOS -->
+        <h2 class="field-heading">Photos &amp; Videos <span class="optional-badge">Optional</span></h2>
+        <p class="section-note">A few photos help us come prepared for your consultation.</p>
+
+        <label for="id_photos">Upload Photos
+          <input id="id_photos" type="file" name="id_photos" accept="image/*" multiple>
+          <span class="file-note">Wide shots of each room you'd like help with, plus any pieces you're keeping.</span>
+        </label>
+
+        <label for="id_videos">Upload Videos
+          <input id="id_videos" type="file" name="id_videos" accept="video/*" multiple>
+          <span class="file-note">If a video is too large, email it to <strong>contact.thefinishingtouch.tx@gmail.com</strong> or text it to <strong>(281) 620-3963</strong>.</span>
+        </label>
+
+        <label for="notes">Anything else we should know?
+          <textarea id="notes" name="notes" rows="4" placeholder="Must-have features, allergies to certain materials, anything that would help us prepare."></textarea>
+        </label>
+
+        <hr class="section-divider">
+
+        <!-- CONSENTS -->
+        <h2 class="field-heading">Final Acknowledgements</h2>
+
+        <div class="checkbox-group">
+          <label class="check-row" for="agree_in_person">
+            <input id="agree_in_person" type="checkbox" name="agree_in_person" required>
+            <span>I understand this is an in-home service and that an adult (18+) will be home for the consultation.</span>
+          </label>
+
+          <label class="check-row" for="consent_work_photos">
+            <input id="consent_work_photos" type="checkbox" name="consent_work_photos" required>
+            <span>I allow The Finishing Touch to take before/after photos for job verification and quality control. These will not be used for marketing unless I also consent below.</span>
+          </label>
+
+          <label class="check-row" for="consent_marketing_photos">
+            <input id="consent_marketing_photos" type="checkbox" name="consent_marketing_photos">
+            <span>Optional: I give permission to use select photos of my space for marketing (website/social). Street address and personal items will not be shown. I can revoke this in writing.</span>
+          </label>
+
+          <label class="check-row" for="consent_terms">
+            <input id="consent_terms" type="checkbox" name="consent_terms" required>
+            <span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+          </label>
+
+          <label class="check-row" for="consent_updates">
+            <input id="consent_updates" type="checkbox" name="consent_updates" value="Yes">
+            <span><strong>Yes, contact me about my service.</strong> I agree to receive calls, texts, and emails from The Finishing Touch (a DBA of Johnnie and Jane Boutique LLC) about my quote, scheduling, appointments, and project updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help at any time. Consent is not a condition of purchase. See our <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/sms-terms.html" target="_blank" rel="noopener">SMS Terms</a>.</span>
+          </label>
+
+          <label class="check-row" for="consent_marketing_sms">
+            <input id="consent_marketing_sms" type="checkbox" name="consent_marketing_sms" value="Yes">
+            <span><strong>Send me offers and seasonal specials.</strong> This is optional and separate from the service messages above. I agree to receive marketing and promotional texts and emails from The Finishing Touch (a DBA of Johnnie and Jane Boutique LLC). Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help at any time. Consent is not a condition of purchase. See our <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/sms-terms.html" target="_blank" rel="noopener">SMS Terms</a>.</span>
+          </label>
+        </div>
+
+        <div class="submit-row">
+          <button type="submit" class="btn-solid">Request My In-Home Consultation</button>
+          <div id="emailStatusInteriorDesign" class="status" aria-live="polite"></div>
+          <p class="tiny">We'll review your details and reach out to confirm your consultation time.</p>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 The Finishing Touch | In-home design, Houston to Galveston</p>
+      <p class="legal-dba" style="margin-top:6px;font-size:13px;opacity:.8">The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC</p>
+      <p style="margin:0;padding:0 0 16px;text-align:center;font-size:13px;font-weight:500;opacity:.85"><a href="privacy.html" style="color:inherit">Privacy Policy</a> | <a href="terms.html" style="color:inherit">Terms of Service</a> | <a href="sms-terms.html" style="color:inherit">SMS Terms</a></p>
+    </div>
+  </footer>
+
+  <script src="script.js?v=8" defer></script>
+
+  <script type="module" src="ft-auto.js"></script>
+
+  <script>
+    (function(){
+      const MAX_PHOTO_MB_EACH = 12;
+      const MAX_VIDEO_MB_EACH = 80;
+
+      function bytesToMB(bytes){
+        return bytes / (1024 * 1024);
+      }
+
+      function filesTooLarge(files, maxMb){
+        return Array.from(files || []).find(file => bytesToMB(file.size) > maxMb);
+      }
+
+      function listText(value){
+        if (Array.isArray(value)) return value.join(", ");
+        return value == null ? "" : String(value);
+      }
+
+      function isWeekend(dateStr){
+        if (!dateStr) return false;
+        const d = new Date(dateStr + "T12:00:00");
+        const day = d.getDay();
+        return day === 0 || day === 6;
+      }
+
+      function collectFormData(form){
+        const fd = new FormData(form);
+        const data = {};
+
+        fd.forEach((value, key) => {
+          if (key === "id_photos" || key === "id_videos") return;
+
+          if (data[key] != null){
+            if (Array.isArray(data[key])) data[key].push(value);
+            else data[key] = [data[key], value];
+          } else {
+            data[key] = value;
+          }
+        });
+
+        return { fd, data };
+      }
+
+      function setClearField(fd, data, key, value){
+        const cleanValue = value == null ? "" : String(value);
+        data[key] = cleanValue;
+        fd.set(key, cleanValue);
+      }
+
+      function buildClearFields(fd, data){
+        const fullAddress = [
+          data.street,
+          [data.city, data.state].filter(Boolean).join(", "),
+          data.zip
+        ].filter(Boolean).join(" ");
+
+        setClearField(fd, data, "address", fullAddress);
+        setClearField(fd, data, "location", [data.city, data.state].filter(Boolean).join(", "));
+
+        const clientContactClear = [
+          data.name ? `Name: ${data.name}` : null,
+          data.email ? `Email: ${data.email}` : null,
+          data.phone ? `Phone: ${data.phone}` : null,
+          data.preferred_contact ? `Prefers: ${data.preferred_contact}` : null,
+          fullAddress ? `Address: ${fullAddress}` : null
+        ].filter(Boolean).join(" | ");
+
+        const propertyClear = [
+          data.property_type ? `Property: ${data.property_type}` : null,
+          data.home_status ? `Status: ${data.home_status}` : null,
+          data.own_rent ? `Own/Rent: ${data.own_rent}` : null,
+          data.own_rent === "Rent" && data.landlord_approval ? `Landlord Approval: ${data.landlord_approval}` : null,
+          data.sqft ? `Sq Ft: ${data.sqft}` : null,
+          data.stories ? `Stories: ${data.stories}` : null,
+          data.access_gate ? `Gate/HOA: ${data.access_gate}` : null,
+          data.access_parking ? `Parking: ${data.access_parking}` : null,
+          data.access_stairs ? `Stairs/Elevator: ${data.access_stairs}` : null,
+          data.access_notes ? `Entry Notes: ${data.access_notes}` : null
+        ].filter(Boolean).join(" | ");
+
+        const decorScopeClear = [
+          data.id_service ? `Service Type: ${data.id_service}` : null,
+          data.id_rooms ? `Rooms/Areas: ${data.id_rooms}` : null,
+          data.id_room_types ? `Spaces Included: ${data.id_room_types}` : null,
+          data.id_scope ? `Help With: ${listText(data.id_scope)}` : null,
+          data.id_budget ? `Furnishings/Decor Budget: ${data.id_budget}` : null,
+          data.id_timeline ? `Timeline: ${data.id_timeline}` : null,
+          data.id_deadline ? `Working Toward: ${data.id_deadline}` : null
+        ].filter(Boolean).join(" | ");
+
+        const styleGoalsClear = [
+          data.id_style ? `Design Style: ${data.id_style}` : null,
+          data.id_goal ? `Main Goal: ${data.id_goal}` : null,
+          data.id_colors ? `Colors: ${data.id_colors}` : null,
+          data.id_inspo_links ? `Inspiration Links: ${data.id_inspo_links}` : null,
+          data.id_painpoints ? `Pain Points: ${data.id_painpoints}` : null
+        ].filter(Boolean).join(" | ");
+
+        const designDetailsClear = [
+          data.id_existing ? `Existing Pieces: ${data.id_existing}` : null,
+          data.id_measurements ? `Measurements: ${data.id_measurements}` : null,
+          data.id_household ? `Household: ${data.id_household}` : null,
+          data.id_pets ? `Pets: ${data.id_pets}` : null,
+          data.id_durability ? `Daily Use: ${data.id_durability}` : null,
+          data.id_purchase_option ? `Purchase Option: ${data.id_purchase_option}` : null,
+          data.id_sourcing ? `Sourcing: ${data.id_sourcing}` : null
+        ].filter(Boolean).join(" | ");
+
+        const schedulingClear = [
+          data.consult_days ? `Days: ${listText(data.consult_days)}` : null,
+          data.consult_time ? `Time: ${data.consult_time}` : null,
+          data.consult_date1 ? `1st Choice: ${data.consult_date1}` : null,
+          data.consult_date2 ? `2nd Choice: ${data.consult_date2}` : null,
+          data.decision_makers ? `Attending: ${data.decision_makers}` : null,
+          data.decision_notes ? `Sign Off: ${data.decision_notes}` : null
+        ].filter(Boolean).join(" | ");
+
+        const requestSummaryClear = [
+          "In-Home Interior Design Consultation",
+          decorScopeClear,
+          propertyClear,
+          schedulingClear,
+          styleGoalsClear,
+          designDetailsClear,
+          data.notes ? `Notes: ${data.notes}` : null
+        ].filter(Boolean).join(" | ");
+
+        const intakeId = `interior_design_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
+        setClearField(fd, data, "intake_id", intakeId);
+        setClearField(fd, data, "SERVICE_CATEGORY_CLEAR", "In-Home Interior Design");
+        setClearField(fd, data, "CLIENT_CONTACT_CLEAR", clientContactClear);
+        setClearField(fd, data, "PROPERTY_DETAILS_CLEAR", propertyClear);
+        setClearField(fd, data, "DECOR_SCOPE_CLEAR", decorScopeClear);
+        setClearField(fd, data, "STYLE_GOALS_CLEAR", styleGoalsClear);
+        setClearField(fd, data, "DESIGN_DETAILS_CLEAR", designDetailsClear);
+        setClearField(fd, data, "SCHEDULING_PREFERENCES_CLEAR", schedulingClear);
+        setClearField(fd, data, "REQUEST_SUMMARY_CLEAR", requestSummaryClear);
+        setClearField(fd, data, "INTERNAL_app_intake_type", "decor");
+        setClearField(fd, data, "INTERNAL_service_format", "in_person");
+
+        return { requestSummaryClear };
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("intakeFormInteriorDesign");
+        if (!form) return;
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const statusEl = document.getElementById("emailStatusInteriorDesign");
+        const photoInput = document.getElementById("id_photos");
+        const videoInput = document.getElementById("id_videos");
+        const ownRent = document.getElementById("own_rent");
+        const landlordWrap = document.getElementById("landlordWrap");
+        const date1 = document.getElementById("consult_date1");
+        const date2 = document.getElementById("consult_date2");
+        const dayBoxes = Array.from(form.querySelectorAll('input[name="consult_days"]'));
+
+        // Only show the landlord question for renters
+        function syncLandlord(){
+          const renting = ownRent.value === "Rent";
+          landlordWrap.classList.toggle("is-hidden", !renting);
+          if (!renting) document.getElementById("landlord_approval").value = "";
+        }
+        ownRent.addEventListener("change", syncLandlord);
+        syncLandlord();
+
+        // Earliest date is tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().slice(0, 10);
+        date1.min = minDate;
+        date2.min = minDate;
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+
+          if (statusEl) statusEl.textContent = "";
+
+          if (!form.checkValidity()){
+            form.reportValidity();
+            return;
+          }
+
+          if (!dayBoxes.some(box => box.checked)){
+            if (statusEl) statusEl.textContent = "Please pick at least one day that works for your consultation.";
+            dayBoxes[0].focus();
+            return;
+          }
+
+          if (isWeekend(date1.value) || isWeekend(date2.value)){
+            if (statusEl) statusEl.textContent = "Consultations are Monday through Friday. Please choose a weekday date.";
+            (isWeekend(date1.value) ? date1 : date2).focus();
+            return;
+          }
+
+          const oversizedPhoto = filesTooLarge(photoInput?.files, MAX_PHOTO_MB_EACH);
+          if (oversizedPhoto){
+            if (statusEl) statusEl.textContent = `One of your photos is too large. Please keep each photo under ${MAX_PHOTO_MB_EACH}MB.`;
+            return;
+          }
+
+          const oversizedVideo = filesTooLarge(videoInput?.files, MAX_VIDEO_MB_EACH);
+          if (oversizedVideo){
+            if (statusEl) statusEl.textContent = `One of your videos is too large. Please keep each video under ${MAX_VIDEO_MB_EACH}MB.`;
+            return;
+          }
+
+          if (submitBtn){
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting…";
+          }
+
+          const { fd, data } = collectFormData(form);
+          const { requestSummaryClear } = buildClearFields(fd, data);
+
+          try{
+            if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
+              await FTAuto.createJobFromIntake({
+                type: "decor",
+                serviceType: "decor",
+                intakeData: data,
+                summary: requestSummaryClear
+              });
+            }
+          } catch(err){
+            console.warn("Could not save interior design intake to app Intake Inbox (Formspree backup will still send):", err);
+          }
+
+          try{
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: { "Accept": "application/json" },
+              body: fd
+            });
+
+            if (response.ok){
+              if (statusEl) statusEl.textContent = "Thank you! We've received your request and will reach out soon to confirm your in-home consultation.";
+              form.reset();
+              syncLandlord();
+            } else {
+              if (statusEl) statusEl.textContent = "We received your intake in the app, but couldn't send the email backup right now. If needed, please email us directly.";
+            }
+          } catch(err){
+            console.warn(err);
+            if (statusEl) statusEl.textContent = "We received your intake, but your connection seems unstable. If you don't hear back soon, please email us directly.";
+          } finally {
+            if (submitBtn){
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Request My In-Home Consultation";
+            }
+          }
+        }, true);
+      });
+    })();
+  </script>
+
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector(".btn-auth");
+
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+
+      if (user) {
+        btn.textContent = "Sign out";
+        btn.href = "#";
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = "Sign in / Create account";
+        btn.href = "login.html";
+        btn.onclick = null;
+      }
+    });
+  </script>
+</body>
+</html>
