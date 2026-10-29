@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>In-Home Interior Design | The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body.page-interiordesign .container { width:min(1180px,94%); margin-inline:auto; }
+
+    .page-interiordesign .header-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; padding:10px 0;
+    }
+    .page-interiordesign .main-nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn-cream{
+      background:#d2bda9; color:#2a2624; border:0; border-radius:999px;
+      padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
+    }
+
+    /* ============= HERO ============= */
+    .id-hero{
+      position:relative;
+      color:#fff;
+    }
+    .id-hero-media{
+      position:relative;
+      overflow:hidden;
+    }
+    .id-hero-media img{
+      width:100%;
+      height:clamp(360px, 55vh, 520px);
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .id-hero-scrim{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.6));
+    }
+
+    .id-hero-content{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:0 20px;
+    }
+    .id-hero-inner{
+      max-width:min(780px,94%);
+      margin-inline:auto;
+      text-align:center;
+      color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,.3);
+    }
+
+    .id-hero-kicker{
+      font-family:"Allura", cursive;
+      font-size:1.9rem;
+      margin:0 0 .3rem;
+    }
+    .id-hero-title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2.2rem, 4vw, 3rem);
+      margin:0 0 .4rem;
+      color:#ffffff !important;
+    }
+    .id-hero-sub{
+      font-size:1.05rem;
+      max-width:34rem;
+      margin:0 auto 1.1rem;
+    }
+    .id-hero-tags{
+      font-size:.9rem;
+      opacity:.9;
+      margin-bottom:1rem;
+    }
+    .id-hero-tags strong{ font-weight:700; }
+
+    .btn-primary{
+      background:#f5eadf; color:#2a2624;
+      border-radius:999px; padding:.7rem 1.25rem;
+      border:0; font-weight:700; text-decoration:none;
+      display:inline-block;
+    }
+
+    .btn-ghost-link{
+      display:inline-block;
+      margin-top:.6rem;
+      color:#fff;
+      font-size:.92rem;
+      text-decoration:underline;
+      text-underline-offset:3px;
+    }
+
+    @media (max-width:780px){
+      .id-hero-kicker{ font-size:1.6rem; }
+      .id-hero-title{ font-size:2.1rem; line-height:1.2; }
+      .id-hero-sub{ font-size:.98rem; max-width:90%; }
+    }
+
+    /* ============= SECTIONS ============= */
+    .section{ padding:40px 0; }
+    .section h2{
+      font-family:"Playfair Display", serif;
+      margin:0 0 .75rem;
+      font-size:1.7rem;
+    }
+    .section p{ line-height:1.6; }
+
+    .two-col{
+      display:grid; grid-template-columns:1.1fr .9fr; gap:22px; align-items:flex-start;
+    }
+    @media (max-width:880px){
+      .two-col{ grid-template-columns:1fr; }
+    }
+
+    /* ============= GALLERY ============= */
+    .id-gallery{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .id-gallery img{
+      width:100%; height:180px; object-fit:cover;
+      border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.12);
+    }
+    @media (max-width:640px){
+      .id-gallery img{ height:210px; }
+    }
+
+    /* ============= CARD GRIDS ============= */
+    .id-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:12px;
+    }
+    @media (max-width:700px){
+      .id-grid{ grid-template-columns:1fr; }
+    }
+
+    .id-card{
+      background:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+    .id-card h3{
+      margin:.1rem 0 .35rem;
+      font-size:1.05rem;
+    }
+    .pill{
+      display:inline-block;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      background:#f3ebe2;
+      font-size:.8rem;
+      font-weight:600;
+      margin-bottom:.35rem;
+    }
+    .meta-line{
+      font-size:.9rem;
+      opacity:.85;
+      margin-bottom:.3rem;
+    }
+
+    .callout{
+      background:#fbf5ee;
+      border-radius:16px;
+      padding:16px 18px;
+      border:1px solid #ecdccc;
+      margin-top:14px;
+      font-size:.95rem;
+    }
+
+    /* ============= COMPARE ============= */
+    .id-compare{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:12px;
+    }
+    @media (max-width:700px){
+      .id-compare{ grid-template-columns:1fr; }
+    }
+    .id-compare .id-card a{
+      font-weight:700;
+      color:#2a2624;
+    }
+
+    .id-cta{
+      text-align:center;
+    }
+    .id-cta p{
+      max-width:540px;
+      margin:0 auto 1rem;
+    }
+
+    .site-footer{ margin-top:10px; }
+  </style>
+
+  <!-- Chat z-index safety -->
+  <style>
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
+</head>
+
+<body class="page-interiordesign">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="join-our-team.html">Join Our Team</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="id-hero">
+    <div class="id-hero-media">
+      <img src="Staged Living Room.png" alt="Styled living room with layered neutrals and warm lighting">
+      <div class="id-hero-scrim"></div>
+    </div>
+
+    <div class="container id-hero-content">
+      <div class="id-hero-inner">
+        <p class="id-hero-kicker">Designed in Person</p>
+        <h1 class="id-hero-title">In-Home Interior Design &amp; Decorating</h1>
+        <p class="id-hero-sub">
+          We come to you, walk your space, and create a design that fits how you actually live. Then we can source, deliver, and style it all for you.
+        </p>
+        <p class="id-hero-tags">
+          <strong>Houston to Galveston</strong> • homeowners, new builds, and short-term rentals
+        </p>
+        <a href="intake-interiordesign.html" class="btn-primary">Book an In-Home Consultation</a>
+        <br>
+        <a href="virtualdesign.html" class="btn-ghost-link">Not local? See Virtual Design</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About In-Home Design -->
+  <section class="section">
+    <div class="container two-col">
+      <div>
+        <h2>What's Included</h2>
+        <p>
+          Every project starts with an in-home consultation. We see the light, the flow, and the pieces you love in person, take measurements, and talk through your style, budget, and timeline.
+        </p>
+        <p>From there, you'll get:</p>
+        <ul>
+          <li>A design direction with colors, textures, and finishes</li>
+          <li>A furniture layout measured to your room</li>
+          <li>A curated list of furniture, lighting, and decor</li>
+          <li>Optional sourcing, ordering, and delivery coordination</li>
+          <li>An install day where we style everything in place</li>
+        </ul>
+      </div>
+      <div>
+        <div class="id-gallery">
+          <img src="Staged Bedroom.png" alt="Styled bedroom with soft bedding and layered pillows">
+          <img src="Staged Dining Room.png" alt="Styled dining room with a set table">
+          <img src="mood board.JPG" alt="Interior design moodboard with colors and textures">
+          <img src="Staged Bathroom.png" alt="Styled bathroom with towels and accessories">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section">
+    <div class="container">
+      <h2>In-Home Design Services</h2>
+
+      <div class="id-grid">
+        <div class="id-card">
+          <span class="pill">Start Here</span>
+          <h3>Design Consultation</h3>
+          <p class="meta-line">A focused visit for direction and next steps.</p>
+          <ul>
+            <li>Walkthrough of the rooms you choose</li>
+            <li>Layout, color, and furniture advice on the spot</li>
+            <li>Notes you can act on yourself</li>
+          </ul>
+        </div>
+
+        <div class="id-card">
+          <span class="pill">Refresh</span>
+          <h3>Decorating &amp; Styling</h3>
+          <p class="meta-line">For rooms that have the basics but don't feel finished.</p>
+          <ul>
+            <li>Styling with what you already own</li>
+            <li>Art, rugs, textiles, and accessories added</li>
+            <li>Shelves, beds, and surfaces styled in person</li>
+          </ul>
+        </div>
+
+        <div class="id-card">
+          <span class="pill">Full Design</span>
+          <h3>Full Room or Whole Home Design</h3>
+          <p class="meta-line">From the big pieces down to the finishing touches.</p>
+          <ul>
+            <li>Design direction and measured layout</li>
+            <li>Furniture, lighting, window treatments, and decor</li>
+            <li>Sourcing, delivery coordination, and install day</li>
+          </ul>
+        </div>
+
+        <div class="id-card">
+          <span class="pill">New Builds &amp; Rentals</span>
+          <h3>New Build, Remodel &amp; Airbnb Design</h3>
+          <p class="meta-line">For empty spaces and guest-ready homes.</p>
+          <ul>
+            <li>Paint, finish, and fixture selections</li>
+            <li>Furnishing a new or empty home</li>
+            <li>Durable, photo-ready design for short-term rentals</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        Pricing depends on the number of rooms, the level of design, and how much sourcing and installation you'd like. After your consultation, we'll send a tailored estimate before you commit.
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section">
+    <div class="container">
+      <h2>How It Works</h2>
+      <ol>
+        <li>
+          <strong>Complete the intake.</strong>
+          Share your rooms, style, budget range, and the days that work for your consultation.
+        </li>
+        <li>
+          <strong>We meet at your home.</strong>
+          We walk the space, take measurements, and talk through how you live and what you love.
+        </li>
+        <li>
+          <strong>You receive your design and estimate.</strong>
+          Layout, design direction, and a curated product list sized to your budget.
+        </li>
+        <li>
+          <strong>We bring it to life.</strong>
+          Purchase on your own, or let us source, coordinate delivery, and style everything on install day.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- In-Home vs Virtual -->
+  <section class="section">
+    <div class="container">
+      <h2>In-Home or Virtual?</h2>
+      <div class="id-compare">
+        <div class="id-card">
+          <span class="pill">In-Home</span>
+          <h3>We come to you</h3>
+          <p>Best for whole home projects, new builds, and anyone who wants us to handle sourcing and installation. Houston to Galveston.</p>
+          <a href="intake-interiordesign.html">Book an in-home consultation</a>
+        </div>
+        <div class="id-card">
+          <span class="pill">Virtual</span>
+          <h3>Designed online</h3>
+          <p>Best if you're outside our area or prefer to install yourself. You send photos and measurements, we send the plan.</p>
+          <a href="virtualdesign.html">Explore virtual design</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container id-cta">
+      <h2>Ready for a Home That Feels Finished?</h2>
+      <p>
+        Tell us about your space and pick the days that work for you. We'll reach out to confirm your consultation.
+      </p>
+      <a href="intake-interiordesign.html" class="btn-primary">Book an In-Home Consultation</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 The Finishing Touch | In-home design, Houston to Galveston</p>
+      <p class="legal-dba" style="margin-top:6px;font-size:13px;opacity:.8">The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC</p>
+      <p style="margin:0;padding:0 0 16px;text-align:center;font-size:13px;font-weight:500;opacity:.85"><a href="privacy.html" style="color:inherit">Privacy Policy</a> | <a href="terms.html" style="color:inherit">Terms of Service</a> | <a href="sms-terms.html" style="color:inherit">SMS Terms</a></p>
+    </div>
+  </footer>
+
+  <!-- Chat widget -->
+  <style>
+    #ftt-chat-launcher{
+      position:fixed; right:18px; bottom:18px;
+      width:54px; height:54px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.18);
+    }
+    #ftt-chat{
+      position:fixed; right:18px; bottom:84px;
+      width:340px; max-width:calc(100vw - 36px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
+    .ftt-title{ font-weight:800; color:#2e2a27 }
+    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
+    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
+    .ftt-thread{ height:300px; overflow:auto; padding:12px }
+    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
+    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
+    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
+    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
+    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
+    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
+    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
+    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
+    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+  </style>
+
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">Interior Design Concierge</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about in-home design, pricing, or how it works…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="services">What's included</button>
+      <button data-q="process">How it works</button>
+      <button data-q="area">Service area</button>
+      <button data-q="book">Book consultation</button>
+      <button data-q="human">Talk to a person</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const CFG = {
+        timezone: "America/Chicago",
+        bookUrl: "intake-interiordesign.html",
+        virtualUrl: "virtualdesign.html",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messenger: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+
+      const panel   = document.getElementById("ftt-chat");
+      const thread  = document.getElementById("ftt-thread");
+      const form    = document.getElementById("ftt-inputbar");
+      const input   = document.getElementById("ftt-input");
+      const quick   = document.querySelector(".ftt-quick");
+      const closeBtn= document.querySelector(".ftt-close");
+      const launcher= document.getElementById("ftt-chat-launcher");
+
+      function add(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much|fee)/.test(t)) return "pricing";
+        if (/(area|where|location|city|travel|houston|galveston)/.test(t)) return "area";
+        if (/(service|package|included|what do i get|what's included)/.test(t)) return "services";
+        if (/(how.*work|process|steps|what happens)/.test(t)) return "process";
+        if (/(book|start|intake|ready|consult|schedule|appointment)/.test(t)) return "book";
+        return "fallback";
+      }
+      function answer(intent){
+        const bookLink = `<a href="${CFG.bookUrl}">Book an In-Home Consultation</a>`;
+        switch(intent){
+          case "pricing":
+            return [
+              "In-home design is priced by the number of rooms, the level of design, and how much sourcing and installation you'd like.",
+              "After your consultation, we'll send a tailored estimate before you commit.",
+              "Start here: " + bookLink
+            ].join("<br>");
+          case "services":
+            return [
+              "We offer design consultations, decorating and styling, full room or whole home design, and new build, remodel, and Airbnb design.",
+              "Every project starts with a visit to your home.",
+              bookLink
+            ].join("<br>");
+          case "process":
+            return [
+              "<strong>How it works:</strong>",
+              "1) Complete the intake and pick the days that work for you.",
+              "2) We meet at your home, measure, and talk through your style and budget.",
+              "3) You receive your design and estimate.",
+              "4) Purchase on your own, or we source, deliver, and style it on install day."
+            ].join("<br>");
+          case "area":
+            return [
+              "In-home design covers Houston to Galveston. Homes outside that area may carry a travel fee, quoted with your estimate.",
+              `Farther away? <a href="${CFG.virtualUrl}">Virtual design</a> works anywhere.`
+            ].join("<br>");
+          case "book":
+            return "Ready when you are. " + bookLink + " to share your space and the days that work for you.";
+          case "human":
+            return isWithinBusinessHours()
+              ? `You can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> for the fastest reply, or email <a href="mailto:${CFG.email}">${CFG.email}</a>.`
+              : `We're currently offline, but you can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we'll reply as soon as we're back.`;
+          default:
+            return [
+              "Hi! I can help with questions about in-home interior design.",
+              "Try asking \"What's included?\" or \"Do you come to my area?\"",
+              "Say \"human\" anytime to talk to a person."
+            ].join("<br>");
+        }
+      }
+
+      launcher.addEventListener("click", ()=>{
+        const open = panel.style.display !== "block";
+        panel.style.display = open ? "block" : "none";
+        if (open && !thread.dataset.greeted){
+          add("Hi! I'm your interior design concierge for The Finishing Touch. Ask me about services, pricing, or booking a consultation. Say \"human\" anytime.","bot");
+          thread.dataset.greeted = "1";
+        }
+        if (open) input.focus();
+      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
+      form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        add(text, "me"); input.value = "";
+        setTimeout(()=> add(answer(detectIntent(text))), 120);
+      });
+      quick.addEventListener("click",(e)=>{
+        if (e.target.matches("button[data-q]")){
+          const map={pricing:"pricing",services:"services",process:"process",area:"area",book:"book",human:"human"};
+          const intent = map[e.target.getAttribute("data-q")] || "fallback";
+          add(e.target.textContent, "me");
+          setTimeout(()=> add(answer(intent)), 80);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Smart auth button -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
+</body>
+</html>
