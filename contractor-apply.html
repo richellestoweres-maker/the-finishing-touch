@@ -712,6 +712,12 @@
           <a class="btn btn-outline" href="contractor-dashboard.html">Open Contractor Portal</a>
         </section>
 
+        <section id="gateOwner" class="gate-card hidden">
+          <h2>You're signed in as the owner</h2>
+          <p>This is a preview. Submitting is turned off so your account stays an admin account. To test a real application, sign out and use a different email.</p>
+          <a class="btn btn-outline" href="admin-dashboard.html">Back to your dashboard</a>
+        </section>
+
         <form id="applyForm" class="hidden">
           <div class="progress-card">
             <div class="section-head">
@@ -956,6 +962,7 @@
     }
 
     let user = null;
+    let currentRole = "";
     let step = 0;
     const totalSteps = 6;
     let portfolio = [];
@@ -1172,6 +1179,10 @@
       const data = snap.exists() ? snap.data() : {};
       const role = String(data.role || "").toLowerCase();
       const appStatus = String(data.applicationStatus || "").toLowerCase();
+      currentRole = role;
+      // An admin can preview the form but never submit it, since submitting
+      // turns the account into a contractor applicant.
+      document.getElementById("gateOwner").classList.toggle("hidden", role !== "admin");
 
       if (role === "pending" || appStatus === "submitted" || appStatus === "needs_review") {
         gateSignedOut.classList.add("hidden");
@@ -1191,6 +1202,10 @@
 
     form.addEventListener("submit", async e => {
       e.preventDefault();
+      if (currentRole === "admin") {
+        document.getElementById("applyMsg").textContent = "Preview only. Owner accounts can't submit an application.";
+        return;
+      }
       if(!validateCurrentStep()) return;
 
       const fd = new FormData(form);
