@@ -1230,6 +1230,16 @@
       </label>
     </div>
 
+    <div id="estMarkupRow" style="margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <strong class="small" style="margin-right:4px">TFT markup</strong>
+      <button type="button" class="chip est-markup" data-pct="18">18%</button>
+      <button type="button" class="chip est-markup" data-pct="20">20%</button>
+      <button type="button" class="chip est-markup" data-pct="25">25%</button>
+      <button type="button" class="chip est-markup" data-pct="30">30%</button>
+      <button type="button" class="chip est-markup" data-pct="35">35%</button>
+      <button type="button" class="chip est-markup" data-pct="40">40%</button>
+    </div>
+
     <div id="estResult" class="card" style="margin-top:14px;background:#fffdfb;border:1px solid #e3d9ce">
       <div id="estOut" class="small">Fill fields and hit “Calculate”.</div>
     </div>
@@ -2690,6 +2700,19 @@
         const getVal = (id, fallback="") => document.getElementById(id)?.value || fallback;
         const round5 = n => Math.round(n / 5) * 5;
 
+        // Markup on the sub's estimate. Remembered on this computer, 30% until changed.
+        let markupPct = 30;
+        try { const saved = Number(localStorage.getItem("tftMarkupPct")); if ([18,20,25,30,35,40].includes(saved)) markupPct = saved; } catch {}
+        const markupBtns = Array.from(document.querySelectorAll(".est-markup"));
+        const showMarkup = () => markupBtns.forEach(b => b.classList.toggle("active", Number(b.dataset.pct) === markupPct));
+        showMarkup();
+        markupBtns.forEach(b => b.addEventListener("click", () => {
+          markupPct = Number(b.dataset.pct);
+          try { localStorage.setItem("tftMarkupPct", String(markupPct)); } catch {}
+          showMarkup();
+          btn.click();
+        }));
+
         btn.addEventListener("click", () => {
           const category = getVal("estCategory","residential");
           const sqft = Math.max(200, getNum("sqft",1600));
@@ -2711,13 +2734,13 @@
           base += getNum("addFans",0)*8 + getNum("addBlinds",0)*10 + getNum("addWindows",0)*5 + getNum("addOvens",0)*35 + getNum("addFridges",0)*35;
 
           const draft = round5(base);
-          const marked = subEstimate ? round5(subEstimate * 1.30) : null;
+          const marked = subEstimate ? round5(subEstimate * (1 + markupPct / 100)) : null;
 
           out.innerHTML = `
             <strong>Internal Draft Estimate</strong><br>
             System draft client estimate: <strong>$${draft}</strong><br>
             <span class="hint">This is internal only. Approve before sending to client.</span>
-            ${subEstimate ? `<hr style="border:0;border-top:1px solid #eadfd8;margin:10px 0">Sub estimate: <strong>$${subEstimate}</strong><br>TFT +30% client quote: <strong>$${marked}</strong>` : ""}
+            ${subEstimate ? `<hr style="border:0;border-top:1px solid #eadfd8;margin:10px 0">Sub estimate: <strong>$${subEstimate}</strong><br>TFT +${markupPct}% client quote: <strong>$${marked}</strong><br>Your margin: <strong>$${marked - subEstimate}</strong>` : ""}
           `;
         });
         return;
