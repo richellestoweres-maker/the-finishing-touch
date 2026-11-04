@@ -532,6 +532,7 @@
       content:"✦";
       flex:0 0 auto;
     }
+    .tabbtn[data-tab="today"]::before{content:"☀"}
     .tabbtn[data-tab="open"]::before{content:"⌂"}
     .tabbtn[data-tab="all"]::before{content:"☷"}
     .tabbtn[data-tab="workflow"]::before{content:"✓"}
@@ -875,7 +876,8 @@
 
     <!-- Tabs -->
     <div class="tabs" role="tablist" aria-label="Admin sections">
-      <button class="tabbtn active" data-tab="open">Job Inbox</button>
+      <button class="tabbtn active" data-tab="today">Today</button>
+      <button class="tabbtn" data-tab="open">Job Inbox</button>
       <button class="tabbtn" data-tab="all">All Jobs</button>
       <button class="tabbtn" data-tab="workflow">Job Workflow Center</button>
       <button class="tabbtn" data-tab="create">Create Job</button>
@@ -903,7 +905,11 @@
 
     <!-- Panels -->
     <div class="panels">
-      <section id="panel-open" class="panel active" aria-live="polite">
+      <section id="panel-today" class="panel active" aria-live="polite">
+        <div id="briefingRoot"></div>
+      </section>
+
+      <section id="panel-open" class="panel" aria-live="polite">
         <div id="listOpen" class="grid"></div>
       </section>
 
@@ -3022,5 +3028,6 @@
 <script type="module" src="ft-subscribers.js"></script>
 <script type="module" src="ft-email.js"></script>
 <script type="module" src="ft-campaigns.js"></script>
+<script type="module" src="ft-briefing.js"></script>
 </body>
 </html>
