@@ -12,6 +12,13 @@
 //                           generating all along, which nothing has ever sent
 //   POST /beside/inbound    Zapier posts each Beside call, lead, voicemail or
 //                           message here; Ivy reads it and files it
+//   POST /tasks/morning-brief  Cloud Scheduler calls this each weekday morning.
+//                           Ivy checks everything and texts Richelle what
+//                           needs her today (needs TASK_KEY)
+//   POST /briefing/run      the dashboard's Refresh button (needs a signed in
+//                           owner account)
+//   GET  /google/connect    one time: connect the business Gmail and Calendar,
+//                           read only (needs ?key=TASK_KEY)
 //
 // Environment she expects:
 //   ANTHROPIC_API_KEY       from Secret Manager: ivy-anthropic-api-key
@@ -24,6 +31,10 @@
 //   TASK_KEY                optional shared secret for /tasks/* endpoints
 //   BESIDE_KEY              from Secret Manager: ivy-beside-key. Zapier sends it
 //                           in an X-Ivy-Key header. Without it /beside is closed.
+//   GOOGLE_CLIENT_ID        plain value, for the read only Gmail and Calendar link
+//   GOOGLE_CLIENT_SECRET    from Secret Manager: ivy-google-client-secret
+//   SQUARE_ACCESS_TOKEN     from Secret Manager: ivy-square-token, read only use
+//   OWNER_EMAILS            optional, who may press Refresh on the dashboard
 
 import express from "express";
 import crypto from "node:crypto";
@@ -37,6 +48,10 @@ import {
   claimBesideEvent, saveBesideEvent
 } from "./store.js";
 import { decide, compose, speak, anthropicCheck, readCall } from "./brain.js";
+import { runBriefing } from "./briefing.js";
+import { consentUrl, finishConnect, googleConfigured, googleCheck } from "./google.js";
+import { squareCheck } from "./square.js";
+import { db, FieldValue } from "./store.js";
 import {
   greetingTwiml, thanksTwiml, emptyTwiml,
   sayAndGatherTwiml, sayAndHangupTwiml, SPEECH_HINTS, ttsVoice
@@ -94,8 +109,8 @@ async function notifyOwner(text) {
 app.get("/health", (_req, res) => res.json({ ok: true, service: "ivy" }));
 
 app.get("/selftest", async (_req, res) => {
-  const [store, brain, sms] = await Promise.all([
-    firestoreCheck(), anthropicCheck(), twilioCheck()
+  const [store, brain, sms, google, square] = await Promise.all([
+    firestoreCheck(), anthropicCheck(), twilioCheck(), googleCheck(), squareCheck()
   ]);
   const ok = store.ok && brain.ok && sms.ok;
   res.status(ok ? 200 : 503).json({
@@ -103,6 +118,9 @@ app.get("/selftest", async (_req, res) => {
     firestore: store,
     anthropic: brain,
     twilio: sms,
+    // Reported but not counted in "ok": the briefing still runs without them.
+    google,
+    square,
     ownerPhoneSet: Boolean(OWNER_PHONE),
     besideKeySet: Boolean(BESIDE_KEY)
   });
@@ -462,6 +480,17 @@ async function handleRelayCommand(text) {
 
 async function handleOwnerCommand(body) {
   const text = String(body || "").trim();
+
+  // "brief" by text gets a fresh briefing on the spot.
+  if (/^\s*(brief|briefing|morning brief|my brief|what do i need to do( today)?|what'?s on my plate( today)?)\s*[?.!]*\s*$/i.test(text)) {
+    try {
+      const { sms } = await runBriefing({ trigger: "text" });
+      return sms;
+    } catch (err) {
+      console.error("[ivy] briefing on request failed:", err);
+      return `I couldn't build the briefing just now: ${String(err.message).slice(0, 160)}`;
+    }
+  }
 
   // Dry run first, so a test never gets mistaken for a real instruction.
   const test = await handleTestCommand(text);
@@ -1118,6 +1147,138 @@ app.post("/tasks/drain-queue", async (req, res) => {
   } catch (err) {
     console.error("[ivy] drain failed:", err);
     res.status(500).json({ ok: false, error: err.message, ...results });
+  }
+});
+
+
+/* ==================================================================
+   The morning briefing
+
+   Cloud Scheduler posts to /tasks/morning-brief each weekday morning with
+   the X-Task-Key header. Ivy checks every connected system, writes up what
+   needs Richelle today, texts her the short version and saves the full one
+   for the Briefing tab on the dashboard.
+
+   This endpoint always demands the key, unlike the older task endpoint,
+   because each run costs money and texts Richelle's phone.
+   ================================================================== */
+
+app.post("/tasks/morning-brief", async (req, res) => {
+  if (!TASK_KEY) return res.status(503).json({ ok: false, error: "TASK_KEY is not set" });
+  if (req.header("X-Task-Key") !== TASK_KEY) return res.status(403).json({ ok: false, error: "bad task key" });
+
+  try {
+    const { sms, sources, writer } = await runBriefing({ trigger: "schedule" });
+    await notifyOwner(sms);
+    res.json({ ok: true, writer, sources });
+  } catch (err) {
+    console.error("[ivy] morning briefing failed:", err);
+    await notifyOwner(
+      `Good morning Richelle. Ivy couldn't put your briefing together today: ${String(err.message).slice(0, 160)}. ` +
+      `Text "brief" to try again.`
+    );
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+/* The dashboard's Refresh button.
+   The browser proves who is pressing it with the Firebase sign in it already
+   has, so no key ever has to live in the website's public code. */
+
+const OWNER_EMAILS = new Set(
+  (process.env.OWNER_EMAILS || "contact.thefinishingtouch.tx@gmail.com,richellestowe.res@gmail.com")
+    .split(",").map((e) => e.trim().toLowerCase()).filter(Boolean)
+);
+const FIREBASE_WEB_API_KEY = process.env.FIREBASE_WEB_API_KEY || "AIzaSyCfMOyKa2uT6BuMiST95Ry96Z7FUH_vYgQ";
+const DASHBOARD_ORIGINS = new Set([
+  "https://www.thefinishingtouch-tx.com",
+  "https://thefinishingtouch-tx.com"
+]);
+
+async function signedInOwner(req) {
+  const m = String(req.header("Authorization") || "").match(/^Bearer\s+(.+)$/);
+  if (!m) return null;
+  const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_WEB_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idToken: m[1] })
+  });
+  if (!r.ok) return null;
+  const data = await r.json();
+  const user = (data.users || [])[0];
+  const email = String(user?.email || "").toLowerCase();
+  return email && OWNER_EMAILS.has(email) ? email : null;
+}
+
+app.use("/briefing", (req, res, next) => {
+  const origin = req.header("Origin") || "";
+  if (DASHBOARD_ORIGINS.has(origin)) {
+    res.set("Access-Control-Allow-Origin", origin);
+    res.set("Vary", "Origin");
+    res.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
+    res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  }
+  if (req.method === "OPTIONS") return res.status(204).end();
+  next();
+});
+
+app.post("/briefing/run", async (req, res) => {
+  let who = null;
+  try { who = await signedInOwner(req); } catch { /* treated as not signed in */ }
+  if (!who) return res.status(403).json({ ok: false, error: "Sign in to the dashboard as the owner first." });
+
+  try {
+    const { writer, sources } = await runBriefing({ trigger: `dashboard:${who}` });
+    res.json({ ok: true, writer, sources });
+  } catch (err) {
+    console.error("[ivy] dashboard briefing failed:", err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+/* ==================================================================
+   Connecting Gmail and Google Calendar, read only
+
+   Richelle does this once: open
+     <ivy url>/google/connect?key=<TASK_KEY>
+   while signed in to the business Google account, and press Allow.
+   ================================================================== */
+
+const OAUTH_STATE = db.collection("ivyPrivate").doc("googleOAuthState");
+
+app.get("/google/connect", async (req, res) => {
+  if (!TASK_KEY || req.query.key !== TASK_KEY) return res.status(403).send("Add ?key= with Ivy's task key to the address.");
+  if (!googleConfigured()) return res.status(503).send("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET need to be set on Ivy first.");
+  const state = crypto.randomBytes(24).toString("hex");
+  await OAUTH_STATE.set({ state, at: FieldValue.serverTimestamp() });
+  res.redirect(consentUrl(`${publicBase(req)}/google/callback`, state));
+});
+
+function page(title, body) {
+  return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">` +
+    `<title>${title}</title><body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;margin:48px auto;padding:0 16px;color:#2e2c27">` +
+    `<h2>${title}</h2><p>${body}</p></body>`;
+}
+
+app.get("/google/callback", async (req, res) => {
+  try {
+    const snap = await OAUTH_STATE.get();
+    const expected = snap.exists ? snap.data().state : "";
+    if (!req.query.state || req.query.state !== expected) {
+      return res.status(403).send(page("That link expired", "Open the connect link again and press Allow."));
+    }
+    await OAUTH_STATE.delete();
+    if (req.query.error) {
+      return res.send(page("Not connected", "Google says the request was cancelled. Nothing changed."));
+    }
+    const { email } = await finishConnect(String(req.query.code || ""), `${publicBase(req)}/google/callback`);
+    notifyOwner(`Ivy can now read ${email || "the business"} Gmail and Calendar for your briefing. Read only, nothing is ever sent from it.`)
+      .catch(() => {});
+    res.send(page("Connected", `Ivy can now read ${email || "this account"}'s inbox and calendar for your morning briefing. ` +
+      `She can't send, delete or change anything there. You can close this page.`));
+  } catch (err) {
+    console.error("[ivy] google connect failed:", err);
+    res.status(500).send(page("Something went wrong", String(err.message).replace(/[<>&]/g, "")));
   }
 });
 
