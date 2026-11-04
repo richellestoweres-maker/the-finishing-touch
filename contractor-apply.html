@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contractor Application – The Finishing Touch</title>
+  <title>Join Our Team | The Finishing Touch</title>
 
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Allura&display=swap" rel="stylesheet">
@@ -236,7 +236,27 @@
     .step,
     .action-card{
       padding:24px;
+      display:flex;
+      gap:12px;
     }
+    .action-card .btn{
+      flex:1 1 0;
+      width:auto;
+      justify-content:center;
+      text-align:center;
+    }
+    .action-card .btn.hidden{ display:none; }
+    .optional-more{ margin:14px 0 4px; }
+    .optional-more summary{
+      cursor:pointer;
+      font-size:.92rem;
+      color:#7d4f59;
+      font-weight:700;
+      text-decoration:underline;
+      list-style:none;
+    }
+    .optional-more summary::-webkit-details-marker{ display:none; }
+    .optional-more[open] summary{ margin-bottom:10px; }
 
     .info-body h2,
     .application-body h2,
@@ -586,7 +606,6 @@
       .contractor-hero-content{ padding:58px 0; }
       .hero-actions{ display:grid; }
       .hero-actions .btn,
-      .action-card .btn,
       .gate-card .btn,
       .thanks-card .btn{
         width:100%;
@@ -604,7 +623,6 @@
       .action-card{ padding:20px; }
       .info-image{ min-height:190px; }
       .dot{ width:30px; }
-      .action-card{ display:grid; }
     }
   </style>
 </head>
@@ -646,12 +664,11 @@
   <section class="contractor-hero">
     <div class="container">
       <div class="contractor-hero-content">
-        <p class="script-kicker">Contractor interview</p>
-        <h1 class="contractor-title">Apply to Work Independently</h1>
-        <p class="contractor-sub">This application is the first review step for independent contractors interested in cleaning, organizing, styling, or holiday decorating opportunities with The Finishing Touch.</p>
+        <p class="script-kicker">Join our team</p>
+        <h1 class="contractor-title">Work with The Finishing Touch</h1>
+        <p class="contractor-sub">For independent cleaners, organizers, stylists, holiday decorators and home reset pros in Galveston, Harris and Brazoria County.</p>
         <div class="hero-actions">
           <a class="btn btn-quote" href="#application">Start Application</a>
-          <a class="btn btn-outline" href="join-our-team.html">View All Opportunities</a>
         </div>
       </div>
     </div>
@@ -660,10 +677,10 @@
   <section class="intro-band">
     <div class="container intro-copy">
       <div>
-        <p class="eyebrow">Independent contractor application</p>
-        <h2 class="section-title">A polished screening process before onboarding access is granted.</h2>
+        <p class="eyebrow">How it works</p>
+        <h2 class="section-title">Apply in about 15 minutes.</h2>
       </div>
-      <p class="section-text">Applications are reviewed before contractor portal onboarding unlocks. If approved, you will complete required documents, agreements, and compliance steps before work is assigned.</p>
+      <p class="section-text">Tell us about your work and the services you offer. We review every application personally. Once you're approved, your contractor portal opens for your W-9, insurance, ID and agreement, and then jobs start coming your way.</p>
     </div>
   </section>
 
@@ -672,21 +689,21 @@
       <aside class="info-card">
         <div class="info-image" aria-hidden="true"></div>
         <div class="info-body">
-          <h2>What this application is for</h2>
-          <p>This path is for independent professionals and businesses who manage their own availability, service area, tools, insurance, and project capacity.</p>
+          <h2>Who this is for</h2>
+          <p>Independent pros and small businesses who set their own schedule and bring their own tools.</p>
 
           <div class="detail-list">
             <div class="detail-item">
-              <strong>Application review</strong>
-              Your answers and portfolio are reviewed before onboarding is opened.
+              <strong>1. Create your account</strong>
+              One quick sign up with your email.
             </div>
             <div class="detail-item">
-              <strong>Multiple service paths</strong>
-              Apply for cleaning, organizing, interior styling, holiday decorating, or all applicable categories.
+              <strong>2. Apply</strong>
+              Your basics, the services you offer, and a few questions about your work.
             </div>
             <div class="detail-item">
-              <strong>Portal onboarding</strong>
-              If approved, you will receive access to complete W-9, COI, ID, and agreement steps.
+              <strong>3. Get set up</strong>
+              Once approved, finish your W-9, insurance, ID and agreement in your portal.
             </div>
           </div>
         </div>
@@ -695,14 +712,14 @@
       <div class="application-stack">
 
         <section id="gateSignedOut" class="gate-card">
-          <h2>Sign in or create an account first</h2>
-          <p>Applications are connected to a secure profile so your answers, portfolio, and review status stay organized.</p>
+          <h2>Create your account to start</h2>
+          <p>It keeps your application and its status in one place. Already have one? Just sign in.</p>
           <a class="btn btn-solid" href="login.html?next=contractor-apply.html">Sign in / Create account</a>
         </section>
 
         <section id="gateSubmitted" class="thanks-card hidden">
           <h2>Application submitted</h2>
-          <p>Your application is in admin review. If approved for onboarding, your contractor portal will unlock the next steps.</p>
+          <p>Thank you! We'll review it and reach out. Once you're approved, your contractor portal opens for the next steps.</p>
           <a class="btn btn-outline" href="contractor-dashboard.html">Open Contractor Portal</a>
         </section>
 
@@ -731,11 +748,11 @@
               </label>
 
               <label class="field">City
-                <input name="city" required placeholder="League City">
+                <input name="city" required placeholder="e.g. League City">
               </label>
 
               <label class="field">Primary ZIP
-                <input name="zip" required placeholder="77573">
+                <input name="zip" required placeholder="e.g. 77573">
               </label>
 
               <label class="field">Business Name, if applicable
@@ -749,8 +766,8 @@
           </section>
 
           <section class="step" data-step="1">
-            <h2>Service Areas + Contractor Basics</h2>
-            <p>Select every category you are applying for. Additional interview sections will appear based on your selections.</p>
+            <h2>Your services</h2>
+            <p>Pick everything you offer.</p>
 
             <div class="pills" role="group" aria-label="Services applying for">
               <label class="pill"><input type="checkbox" id="allServices"> All of the above</label>
@@ -792,18 +809,18 @@
               </label>
 
               <label class="field full">ZIP codes / cities you are willing to service
-                <textarea name="serviceAreas" required placeholder="Example: 77573, 77539, League City, Dickinson, Friendswood"></textarea>
+                <textarea name="serviceAreas" required placeholder="e.g. 77573, League City, Dickinson, Friendswood"></textarea>
               </label>
 
               <label class="field full">Availability / preferred schedule
-                <textarea name="availability" required placeholder="Example: Mon-Fri mornings, weekends only, etc."></textarea>
+                <textarea name="availability" required placeholder="e.g. weekday mornings, Tuesdays and Thursdays"></textarea>
               </label>
             </div>
           </section>
 
           <section class="step" data-step="2">
-            <h2>Portfolio / Previous Work</h2>
-            <p>Upload before/after photos, organizing projects, styling work, holiday installs, or other examples. This is part of the first interview review, not onboarding.</p>
+            <h2>Photos of your work</h2>
+            <p>Optional, but it helps. Before and after photos, organized spaces, styled rooms or holiday installs all work.</p>
 
             <label class="field">Portfolio photos or PDFs
               <input id="portfolioFiles" type="file" accept="image/*,.pdf" multiple>
@@ -816,22 +833,22 @@
           </section>
 
           <section class="step" data-step="3">
-            <h2>Cleaning Interview</h2>
+            <h2>A few cleaning questions</h2>
             <div id="cleaningQuestions" class="question-block service-section" data-service="cleaning"></div>
             <div class="alert no-service hidden">Select Cleaning Services in Step 2 to complete this section.</div>
           </section>
 
           <section class="step" data-step="4">
-            <h2>Specialty Interview</h2>
-            <p>These sections appear based on the service categories selected earlier.</p>
+            <h2>A few questions about your work</h2>
             <div id="organizingQuestions" class="question-block service-section" data-service="organizing"></div>
             <div id="decorQuestions" class="question-block service-section" data-service="decor"></div>
             <div id="holidayQuestions" class="question-block service-section" data-service="holiday"></div>
-            <div id="noCreativeServices" class="alert hidden">Select Organizing, Interior Decorating, or Holiday Decorating in Step 2 to complete this section.</div>
+            <div id="home_resetQuestions" class="question-block service-section" data-service="home_reset"></div>
+            <div id="noCreativeServices" class="alert hidden">Select Organizing, Interior Decorating, Holiday Decorating or Home Resets in Step 2 to complete this section.</div>
           </section>
 
           <section class="step" data-step="5">
-            <h2>Review + Submit</h2>
+            <h2>Submit</h2>
 
             <div class="alert">
               Your application will be reviewed privately by The Finishing Touch. Screening notes, admin scores, and review recommendations are only visible to admin.
@@ -852,7 +869,7 @@
 
           <div class="action-card">
             <button id="backBtn" class="btn btn-outline" type="button">Back</button>
-            <button id="nextBtn" class="btn btn-solid" type="button">Save & Continue</button>
+            <button id="nextBtn" class="btn btn-solid" type="button">Continue</button>
             <button id="submitBtn" class="btn btn-solid hidden" type="submit">Submit Application</button>
           </div>
         </form>
@@ -862,7 +879,7 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p>© 2025 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+      <p>© 2026 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
     </div>
   </footer>
 
@@ -874,56 +891,57 @@
     import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
     import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
+    // The first REQUIRED_PER_SERVICE questions for each service must be answered.
+    // The rest are optional, so applying for several services stays manageable.
+    const REQUIRED_PER_SERVICE = 3;
     const questions = {
       cleaning: [
-        "What cleaning products and chemicals are you most familiar with, and how do you use them safely?",
-        "How do you treat different materials like wood, marble, or granite differently?",
         "Can you describe your step-by-step process for cleaning a bathroom?",
-        "How do you prioritize tasks when you have a large area to clean in a limited time?",
-        "What do you do if you realize you won’t finish everything on the schedule?",
-        "How do you handle repetitive tasks without losing focus or quality?",
-        "How do you feel about cleaning while customers or staff are present?",
         "How would you handle a client who is unhappy with your cleaning?",
         "If you found a personal or valuable item while cleaning, what would you do?",
+        "What cleaning products and chemicals are you most familiar with, and how do you use them safely?",
+        "How do you treat different materials like wood, marble, or granite differently?",
+        "How do you prioritize tasks when you have a large area to clean in a limited time?",
+        "What do you do if you realize you won’t finish everything on the schedule?",
+        "How do you feel about cleaning while customers or staff are present?",
         "What makes you a reliable cleaning professional?"
       ],
       organizing: [
+        "Walk me through your process from initial consultation to final reveal.",
         "How do you handle clients who have a hard time letting go of items due to sentimental value?",
+        "How do you charge for your services, hourly or flat-rate project fees?",
         "What is your strategy for dealing with a client who feels overwhelmed or anxious about the organizing process?",
         "How do you adapt your systems for neurodivergent clients, clients with ADHD, disabilities, or special needs?",
         "How do you balance a Pinterest-perfect aesthetic with daily habits and functionality?",
-        "Walk me through your process from initial consultation to final reveal.",
         "How do you determine what storage solutions, labels, or containers are appropriate?",
         "What is your process for handling trash, donations, and consignment drop-offs?",
-        "How do you recommend getting started with a massively disorganized room?",
-        "How do you charge for your services, hourly or flat-rate project fees?",
         "How do you manage your time when a project takes longer than anticipated?",
         "What are your policies regarding client privacy, confidentiality, and before/after photography?"
       ],
       decor: [
-        "How would you describe your personal design style in 3-4 adjectives, and how do you adapt when a client’s taste is different?",
         "Walk me through your design process when starting a new project from scratch.",
-        "Tell me about a time a client’s requested aesthetic clashed with your personal preference. How did you handle it?",
-        "How do you translate a vague mood board into a cohesive room design?",
-        "Can you share examples that show versatility across different design styles?",
-        "How do you balance aesthetics with functionality in a high-traffic space?",
+        "How would you describe your personal design style in 3 or 4 words, and how do you adapt when a client’s taste is different?",
         "Describe a project where you worked within a tight budget. What sourcing strategies did you use?",
+        "How do you translate a vague mood board into a cohesive room design?",
+        "How do you balance aesthetics with functionality in a high-traffic space?",
         "How do you handle delays, backorders, damaged items, or vendor mistakes?",
-        "How do you communicate your design vision to tradespeople or installers?",
         "Which brands, vendors, trade resources, design software, or rendering tools are you comfortable using?"
       ],
       holiday: [
-        "Walk me through your portfolio of past holiday projects, especially similar scale homes or businesses.",
-        "How do you adapt your design style to match existing architecture or brand identity?",
-        "How do you balance holiday trends with a timeless, cohesive look?",
-        "Do you prefer custom design concepts or preset decoration packages?",
-        "Do you provide end-to-end services including installation, maintenance, and teardown?",
-        "What is your availability for installations and takedowns during busy holiday seasons?",
+        "Tell us about past holiday projects you’ve done, especially homes or businesses of a similar size.",
         "Are you comfortable with heights, ladders, complex rooflines, or exterior displays?",
-        "How do you handle maintenance if lights go out or decorations are damaged by weather?",
+        "What is your availability for installations and takedowns during the busy holiday season?",
+        "How do you balance holiday trends with a timeless, cohesive look?",
+        "Do you provide end-to-end services including installation, maintenance, and teardown?",
         "How do you pack, label, inventory, and store holiday items for future seasons?",
-        "What is included in your base pricing, and what triggers additional fees or change orders?",
         "Are you applying for residential, commercial, interior styling, exterior lighting, or all of these?"
+      ],
+      home_reset: [
+        "Walk us through how you’d reset a busy family home in two hours. Where do you start?",
+        "Which of these are you comfortable doing: laundry, changing bed linens, kitchen tidying, snack and produce prep, playroom and toy resets?",
+        "How do you work around a family that’s home while you’re there, including kids and pets?",
+        "How do you decide where things belong when the client hasn’t told you?",
+        "What would you do if you noticed something broken or a bigger cleaning need during a reset?"
       ]
     };
 
@@ -947,11 +965,18 @@
       Object.entries(questions).forEach(([service, list]) => {
         const target = document.getElementById(service + "Questions");
         if (!target) return;
-        target.innerHTML = `<h3>${service === "decor" ? "Interior Decorating" : service[0].toUpperCase()+service.slice(1)} Questions</h3>` + list.map((q,i)=>`
+        const titles = { cleaning: "Cleaning", organizing: "Organizing", decor: "Interior Decorating", holiday: "Holiday Decorating", home_reset: "Home Resets" };
+        const field = (q,i) => `
           <label class="field">${q}
-            <textarea class="short" name="${service}_q${i+1}" data-question="${q.replaceAll('"','&quot;')}"></textarea>
-          </label>
-        `).join("");
+            <textarea class="short" name="${service}_q${i+1}" data-question="${q.replaceAll('"','&quot;')}" data-req="${i < REQUIRED_PER_SERVICE ? "1" : ""}"></textarea>
+          </label>`;
+        target.innerHTML = `<h3>${titles[service] || service}</h3>` +
+          list.slice(0, REQUIRED_PER_SERVICE).map(field).join("") +
+          (list.length > REQUIRED_PER_SERVICE
+            ? `<details class="optional-more"><summary>Want to share more? (optional)</summary>` +
+              list.slice(REQUIRED_PER_SERVICE).map((q,i) => field(q, i + REQUIRED_PER_SERVICE)).join("") +
+              `</details>`
+            : "");
       });
     }
 
@@ -960,7 +985,7 @@
       document.querySelectorAll(".service-section").forEach(sec => {
         const on = services.includes(sec.dataset.service);
         sec.classList.toggle("hidden", !on);
-        sec.querySelectorAll("textarea").forEach(t => t.required = on);
+        sec.querySelectorAll("textarea").forEach(t => t.required = on && t.dataset.req === "1");
       });
       document.querySelector("#cleaningQuestions + .no-service")?.classList.toggle("hidden", services.includes("cleaning"));
       document.getElementById("noCreativeServices").classList.toggle("hidden", services.some(s=>["organizing","decor","holiday","home_reset"].includes(s)));
@@ -1053,8 +1078,15 @@
       return true;
     }
 
-    document.getElementById("backBtn").addEventListener("click", ()=>{ if(step>0) { step--; renderStepper(); } });
-    document.getElementById("nextBtn").addEventListener("click", ()=>{ if(!validateCurrentStep()) return; if(step<totalSteps-1) { step++; renderStepper(); } });
+    // Skip the cleaning or specialty questions when the applicant didn't pick those services.
+    function stepApplies(i){
+      const services = selectedServices();
+      if (i === 3) return services.includes("cleaning");
+      if (i === 4) return services.some(s => ["organizing","decor","holiday","home_reset"].includes(s));
+      return true;
+    }
+    document.getElementById("backBtn").addEventListener("click", ()=>{ let i = step - 1; while (i > 0 && !stepApplies(i)) i--; if (i >= 0) { step = i; renderStepper(); } });
+    document.getElementById("nextBtn").addEventListener("click", ()=>{ if(!validateCurrentStep()) return; let i = step + 1; while (i < totalSteps-1 && !stepApplies(i)) i++; if (i <= totalSteps-1) { step = i; renderStepper(); } });
 
     document.getElementById("allServices").addEventListener("change", e => {
       form.querySelectorAll('input[name="serviceTypes"]').forEach(cb => cb.checked = e.target.checked);
@@ -1211,7 +1243,7 @@
 
         try {
           const fs = new FormData();
-          fs.append("_subject","New Contractor Application — The Finishing Touch");
+          fs.append("_subject","New Contractor Application: The Finishing Touch");
           fs.append("type","contractor_application");
           fs.append("uid",user.uid);
           fs.append("name",payload.fullName);
