@@ -10,7 +10,7 @@
 import { db, auth } from "./ft-firebase.js";
 import {
   collection, query, where, onSnapshot,
-  doc, updateDoc, serverTimestamp
+  doc, getDoc, updateDoc, serverTimestamp, arrayUnion
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
@@ -145,7 +145,10 @@ function openCard(q) {
           <textarea class="qr-in qr-note-in" placeholder="Anything you want Richelle to know before she prices it for the client"></textarea>
         </div>
         <div class="qr-hint">Only The Finishing Touch sees your rate. Once you submit, it locks in and can't be changed here.</div>
-        <div><button class="btn btn-primary qr-submit" type="button">Submit my rate</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary qr-submit" type="button">Submit my rate</button>
+          <button class="btn btn-soft qr-pass" type="button">Pass on this one</button>
+        </div>
       </div>
     </div>`;
 }
@@ -168,12 +171,46 @@ function mineCard(q) {
 
 let openList = [];
 let mineList = [];
+let allOpen = [];
+let myServices = null; // null until loaded
+const passed = new Set();
+
+// Same service grouping the admin dashboard uses when picking who gets a job.
+function normService(v) {
+  const s = String(v || "").toLowerCase().trim().replace(/[\s-]+/g, "_");
+  if (!s) return "";
+  if (s.includes("reset") || s.includes("concierge")) return "home_reset";
+  if (s.includes("virtual") || s.includes("edesign")) return "virtual_design";
+  if (["move_in_out", "move_out", "move_in", "airbnb", "turnover", "commercial", "office", "post_construction"].includes(s) || s.includes("clean")) return "cleaning";
+  if (s.includes("organiz")) return "organizing";
+  if (s.includes("holiday") || s.includes("christmas")) return "holiday";
+  if (s.includes("stag")) return "staging";
+  if (s.includes("decor") || s.includes("styl") || s.includes("interior") || s === "design") return "decor";
+  return s;
+}
+
+/**
+ * Which open jobs this contractor should see.
+ * A job sent to named people shows only to them. Older jobs sent to everyone
+ * show only to contractors who do that kind of work.
+ */
+function filterOpen() {
+  const uid = auth.currentUser?.uid;
+  openList = allOpen.filter((q) => {
+    if (passed.has(q.id)) return false;
+    if (Array.isArray(q.declinedBy) && q.declinedBy.includes(uid)) return false;
+    if (Array.isArray(q.offeredTo) && q.offeredTo.length) return q.offeredTo.includes(uid);
+    if (!myServices) return false;
+    return myServices.includes(normService(q.serviceType || q.serviceLabel));
+  });
+}
 
 function draw() {
   const openWrap = document.getElementById("qrOpenList");
   const mineWrap = document.getElementById("qrMineWrap");
   const count = document.getElementById("qrCount");
   if (!openWrap) return;
+  filterOpen();
 
   count.textContent = openList.length
     ? `${openList.length} job${openList.length === 1 ? "" : "s"} waiting for your rate`
@@ -194,6 +231,23 @@ function hookSubmits(wrap) {
     const qid = el.dataset.qid;
     const btn = el.querySelector(".qr-submit");
     if (!btn) return;
+    const pass = el.querySelector(".qr-pass");
+    if (pass) pass.addEventListener("click", async () => {
+      if (!confirm("Pass on this job? It will be removed from your list.")) return;
+      pass.disabled = true;
+      try {
+        await updateDoc(doc(db, "quoteRequests", qid), {
+          declinedBy: arrayUnion(auth.currentUser.uid),
+          updatedAt: serverTimestamp()
+        });
+        passed.add(qid);
+        draw();
+      } catch (err) {
+        console.warn("Pass error:", err);
+        pass.disabled = false;
+        alert("Sorry, that didn't save. Please let Richelle know you're passing.");
+      }
+    });
     btn.addEventListener("click", async () => {
       const rate = Number(el.querySelector(".qr-rate-in")?.value);
       const avail = (el.querySelector(".qr-avail-in")?.value || "").trim();
@@ -238,11 +292,18 @@ let started = false;
 function startListeners(user) {
   if (started) return;
   started = true;
+  getDoc(doc(db, "users", user.uid)).then((snap) => {
+    const u = snap.exists() ? snap.data() : {};
+    const raw = u.approvedServiceTypes || u.approvedServices || u.serviceTypes || u.application?.serviceTypes || [];
+    const list = Array.isArray(raw) ? raw : String(raw).split(",");
+    myServices = [...new Set(list.map(normService).filter(Boolean))];
+    draw();
+  }).catch(() => { myServices = []; draw(); });
   // open requests to bid on
   onSnapshot(
     query(collection(db, "quoteRequests"), where("status", "==", "awaiting_sub_quote")),
     (snap) => {
-      openList = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+      allOpen = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
         .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       draw();
     },
