@@ -758,6 +758,7 @@
               <label class="pill"><input type="checkbox" name="serviceTypes" value="organizing"> Home Organizing</label>
               <label class="pill"><input type="checkbox" name="serviceTypes" value="decor"> Interior Decorating / Styling</label>
               <label class="pill"><input type="checkbox" name="serviceTypes" value="holiday"> Holiday Decorating</label>
+              <label class="pill"><input type="checkbox" name="serviceTypes" value="home_reset"> Home Resets</label>
             </div>
 
             <div class="grid" style="margin-top:14px">
@@ -962,7 +963,7 @@
         sec.querySelectorAll("textarea").forEach(t => t.required = on);
       });
       document.querySelector("#cleaningQuestions + .no-service")?.classList.toggle("hidden", services.includes("cleaning"));
-      document.getElementById("noCreativeServices").classList.toggle("hidden", services.some(s=>["organizing","decor","holiday"].includes(s)));
+      document.getElementById("noCreativeServices").classList.toggle("hidden", services.some(s=>["organizing","decor","holiday","home_reset"].includes(s)));
     }
 
     function renderStepper(){
