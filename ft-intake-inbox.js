@@ -9,8 +9,8 @@
 
 import { db, auth } from "./ft-firebase.js";
 import {
-  collection, query, orderBy, limit, onSnapshot,
-  doc, addDoc, updateDoc, serverTimestamp
+  collection, query, orderBy, limit, onSnapshot, where,
+  doc, addDoc, updateDoc, serverTimestamp, arrayUnion
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
@@ -68,7 +68,27 @@ function injectUI() {
     #panel-intake .qr-chip:hover{background:#bbf7d0}
     #panel-intake .qr-setrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
     #panel-intake .qr-cur{font-weight:700;color:#475569}
-    #panel-intake .qr-price{width:110px;padding:7px 9px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-weight:600}`;
+    #panel-intake .qr-price{width:110px;padding:7px 9px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-weight:600}
+    #panel-intake .sent-to{font-size:12.5px;color:#475569;margin-top:8px}
+    #subPicker{position:fixed;inset:0;z-index:9999;background:rgba(47,41,38,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto}
+    #subPicker .sp-box{background:#fffdfb;border-radius:22px;max-width:560px;width:100%;padding:22px;box-shadow:0 18px 45px rgba(68,54,45,.25);text-align:left}
+    #subPicker h3{font-family:"Playfair Display",serif;margin:0 0 4px;font-size:1.3rem;color:#2f2926}
+    #subPicker .sp-sub{color:#7a6f68;font-size:13.5px;margin:0 0 14px}
+    #subPicker .sp-row{border:1px solid #eadfd8;border-radius:14px;padding:11px 13px;margin-bottom:9px;background:#fff}
+    #subPicker .sp-main{display:flex;align-items:center;gap:10px;cursor:pointer}
+    #subPicker .sp-main input{width:18px;height:18px;accent-color:#2f2926}
+    #subPicker .sp-name{font-weight:700;color:#2f2926}
+    #subPicker .sp-email{font-size:12px;color:#7a6f68}
+    #subPicker .sp-chips{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0 0 28px}
+    #subPicker .sp-chip{font-size:11.5px;padding:2px 9px;border-radius:999px;background:#fff1f3;border:1px solid #f2d8dc;color:#7d4f59}
+    #subPicker .sp-edit{margin-left:auto;font-size:12px;background:none;border:0;color:#7d4f59;text-decoration:underline;cursor:pointer}
+    #subPicker .sp-svc{display:none;margin:9px 0 0 28px;padding-top:9px;border-top:1px dashed #eadfd8}
+    #subPicker .sp-svc.open{display:block}
+    #subPicker .sp-svc label{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;margin:0 12px 6px 0}
+    #subPicker .sp-toggle{font-size:13px;color:#7a6f68;margin:4px 0 12px;display:flex;align-items:center;gap:6px}
+    #subPicker .sp-empty{color:#7a6f68;font-size:13.5px;padding:14px;border:1px dashed #eadfd8;border-radius:14px}
+    #subPicker .sp-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+    #subPicker .sp-msg{font-size:12.5px;color:#7d4f59;margin-top:8px;min-height:1em}`;
   document.head.appendChild(style);
 
   // tab button — placed right after the first tab (Job Inbox)
@@ -179,8 +199,9 @@ function card(r) {
       ${summary ? `<div class="intake-sum">${esc(summary)}</div>` : ""}
       ${mediaHtml(r)}
       ${pricingHtml(r)}
+      ${sentNames(r).length ? `<div class="sent-to">Sent to: <strong>${esc(sentNames(r).join(", "))}</strong>${passNames(r).length ? ` · Passed: ${esc(passNames(r).join(", "))}` : ""}</div>` : ""}
       <div class="intake-actions">
-        <button class="btn btn-outline" data-act="sendToSub" ${r.subQuoteRequested ? "disabled" : ""}>${r.subQuoteRequested ? "✓ Sent to sub" : "→ Send to sub for quote"}</button>
+        <button class="btn btn-outline" data-act="sendToSub">${sentNames(r).length ? "＋ Send to another sub" : (r.subQuoteRequested ? "→ Send to a sub" : "→ Send to a sub for quote")}</button>
         <button class="btn btn-outline" data-act="createJob" ${converted ? "disabled" : ""}>${converted ? "✓ Job created" : "＋ Create Job"}</button>
         ${st === "new" ? `<button class="btn btn-outline" data-act="review">Mark reviewed</button>` : ""}
         <button class="btn btn-outline" data-act="archive">Archive</button>
@@ -222,9 +243,8 @@ function hookActions(wrap) {
             await createJob(rec);
             await updateDoc(doc(db, "intakeRequests", id), { intakeStatus: "converted", updatedAt: serverTimestamp() });
           } else if (act === "sendToSub") {
-            if (!confirm("Send this to your subcontractor pool for a quote? They'll see the job details, photos, and general area — but NOT the client's name, contact, or exact address.")) return;
-            await createSubQuoteRequest(rec);
-            await updateDoc(doc(db, "intakeRequests", id), { subQuoteRequested: true, updatedAt: serverTimestamp() });
+            openPicker(rec);
+            return;
           } else if (act === "pick") {
             const inp = el.querySelector(".qr-price");
             if (inp) inp.value = btn.dataset.val;
@@ -319,10 +339,12 @@ function areaOf(r) {
   return [zip, city].filter(Boolean).join(" · ");
 }
 
-async function createSubQuoteRequest(r) {
+async function createSubQuoteRequest(r, picked = []) {
   const user = auth.currentUser;
   const payload = {
     intakeId: r.id,
+    offeredTo: picked.map((c) => c.id),
+    offeredNames: picked.map((c) => c.name),
     status: "awaiting_sub_quote",
     serviceType: r.serviceType || "cleaning",
     serviceLabel: r.serviceLabel || "",
@@ -341,7 +363,234 @@ async function createSubQuoteRequest(r) {
     createdBy: user?.email || user?.uid || "admin"
     // Intentionally NO clientName / clientEmail / clientPhone / address — the sub never sees client PII.
   };
-  await addDoc(collection(db, "quoteRequests"), payload);
+  return addDoc(collection(db, "quoteRequests"), payload);
+}
+
+/* ---------- choosing which contractor gets a job ---------- */
+
+// Every service a contractor can be approved for. home_reset is new.
+const SERVICE_OPTIONS = [
+  ["cleaning", "Cleaning"],
+  ["organizing", "Organizing"],
+  ["decor", "Decorating / Styling"],
+  ["holiday", "Holiday Decorating"],
+  ["staging", "Staging"],
+  ["home_reset", "Home Reset"],
+  ["virtual_design", "Virtual Design"]
+];
+const SERVICE_NAME = Object.fromEntries(SERVICE_OPTIONS);
+
+// The same service can arrive under several names, from intake forms or applications.
+function normService(v) {
+  const s = String(v || "").toLowerCase().trim().replace(/[\s-]+/g, "_");
+  if (!s) return "";
+  if (s.includes("reset") || s.includes("concierge")) return "home_reset";
+  if (s.includes("virtual") || s.includes("design_e") || s.includes("edesign")) return "virtual_design";
+  if (["clean", "cleaning", "deep_clean", "standard_clean", "move_in_out", "move_out", "move_in", "airbnb",
+       "turnover", "commercial", "office", "post_construction", "carpet_upholstery_grout"].includes(s) || s.includes("clean")) return "cleaning";
+  if (s.includes("organiz")) return "organizing";
+  if (s.includes("holiday") || s.includes("christmas")) return "holiday";
+  if (s.includes("stag")) return "staging";
+  if (s.includes("decor") || s.includes("styl") || s.includes("interior") || s === "design") return "decor";
+  return s;
+}
+
+const CONTRACTOR_ROLES = ["contractor", "organizer", "decorator", "stager", "team_lead",
+  "cleaning_technician", "walkthrough_specialist", "admin_assistant"];
+
+let contractors = [];
+
+function contractorName(u) {
+  return u.displayName || u.name || u.fullName || u.application?.fullName ||
+    [u.firstName, u.lastName].filter(Boolean).join(" ") || u.email || "Contractor";
+}
+
+function contractorServicesOf(u) {
+  const raw = u.approvedServiceTypes || u.approvedServices || u.serviceTypes || u.application?.serviceTypes || [];
+  const list = Array.isArray(raw) ? raw : String(raw).split(",");
+  return [...new Set(list.map(normService).filter(Boolean))];
+}
+
+function isApproved(u) {
+  const c = u.compliance || {};
+  return u.applicationStatus === "approved" || u.contractorStatus === "active" || u.status === "active" ||
+    c.overallStatus === "active" || u.active === true;
+}
+
+function sentNames(r) {
+  const q = subQuotes[r.id];
+  return q && Array.isArray(q.offeredNames) ? q.offeredNames : [];
+}
+
+function passNames(r) {
+  const q = subQuotes[r.id];
+  if (!q || !Array.isArray(q.declinedBy)) return [];
+  return q.declinedBy.map((uid) => {
+    const c = contractors.find((x) => x.id === uid);
+    return c ? c.name : "";
+  }).filter(Boolean);
+}
+
+function listenContractors() {
+  onSnapshot(
+    query(collection(db, "users"), where("role", "in", CONTRACTOR_ROLES)),
+    (snap) => {
+      contractors = snap.docs.map((d) => {
+        const u = { id: d.id, ...d.data() };
+        return { id: u.id, name: contractorName(u), email: u.email || "", services: contractorServicesOf(u), approved: isApproved(u) };
+      }).sort((a, b) => a.name.localeCompare(b.name));
+    },
+    (err) => console.warn("contractor list error:", err)
+  );
+}
+
+function firstName(n) { return String(n || "").trim().split(/\s+/)[0] || "there"; }
+
+function jobEmail(r, picked) {
+  const service = SERVICE_NAME[normService(r.serviceType)] || r.serviceLabel || r.serviceType || "new";
+  const layout = r.HOME_LAYOUT_CLEAR || r.PROPERTY_DETAILS_CLEAR || "";
+  const addons = (r.SPECIALTY_ADDONS_CLEAR && r.SPECIALTY_ADDONS_CLEAR !== "None selected") ? r.SPECIALTY_ADDONS_CLEAR : "";
+  const scope = r.REQUEST_SUMMARY_CLEAR || r.summary || "";
+  const photos = (Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls.length : 0) +
+    (Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls.length : 0);
+  const hello = picked.length === 1 ? `Hi ${firstName(picked[0].name)},` : "Hi everyone,";
+  const lines = [
+    hello,
+    "",
+    `I have a new ${service} job I'd love for you to take a look at.`,
+    "",
+    areaOf(r) ? `Area: ${areaOf(r)}` : null,
+    layout ? `Home: ${layout}` : null,
+    addons ? `Add ons: ${addons}` : null,
+    scope ? `What they're looking for: ${scope}` : null,
+    photos ? `Photos and video: ${photos} in your portal` : null,
+    "",
+    "Sign in to your contractor portal and open Quote Requests. You can send me your rate and the days you're free, or tap Pass if it isn't a fit.",
+    "https://www.thefinishingtouch-tx.com/contractor-dashboard.html",
+    "",
+    "Thank you so much!",
+    "Richelle",
+    "The Finishing Touch"
+  ].filter((x) => x !== null).filter((x, i, a) => !(x === "" && a[i - 1] === ""));
+  const subject = `New ${service} job for you to look at`;
+  return { subject, body: lines.join("\n") };
+}
+
+function gmailComposeUrl(picked, subject, body) {
+  const p = new URLSearchParams({ view: "cm", fs: "1", su: subject, body });
+  const emails = picked.map((c) => c.email).filter(Boolean);
+  if (emails.length === 1) p.set("to", emails[0]);
+  else if (emails.length > 1) { p.set("to", "contact.thefinishingtouch.tx@gmail.com"); p.set("bcc", emails.join(",")); }
+  return `https://mail.google.com/mail/?authuser=contact.thefinishingtouch.tx@gmail.com&${p}`;
+}
+
+function openPicker(r) {
+  document.getElementById("subPicker")?.remove();
+  const jobService = normService(r.serviceType || r.serviceLabel);
+  const q = subQuotes[r.id];
+  const already = new Set(q && Array.isArray(q.offeredTo) ? q.offeredTo : []);
+  let showAll = false;
+
+  const wrap = document.createElement("div");
+  wrap.id = "subPicker";
+  wrap.innerHTML = `
+    <div class="sp-box" role="dialog" aria-label="Send to a sub">
+      <h3>Send to a sub</h3>
+      <p class="sp-sub">${esc(SERVICE_NAME[jobService] || r.serviceLabel || "Job")} · they'll see the job details and area, never the client's name or contact.</p>
+      <label class="sp-toggle"><input type="checkbox" id="spAll"> Show everyone, not just ${esc(SERVICE_NAME[jobService] || "matching")} contractors</label>
+      <div id="spList"></div>
+      <div class="sp-msg" id="spMsg"></div>
+      <div class="sp-actions">
+        <button class="btn btn-outline" type="button" id="spCancel">Cancel</button>
+        <button class="btn btn-solid" type="button" id="spSend">Send</button>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+
+  const listEl = wrap.querySelector("#spList");
+  const msg = wrap.querySelector("#spMsg");
+
+  function draw() {
+    const approved = contractors.filter((c) => c.approved && !already.has(c.id));
+    const shown = showAll ? approved : approved.filter((c) => c.services.includes(jobService));
+    if (!shown.length) {
+      listEl.innerHTML = `<div class="sp-empty">${approved.length
+        ? `None of your approved contractors are set up for ${esc(SERVICE_NAME[jobService] || "this service")} yet. Tick "Show everyone" to pick someone and set their services.`
+        : "No approved contractors yet. Once they sign up, approve them in Applications and they'll show here."}</div>`;
+      return;
+    }
+    listEl.innerHTML = shown.map((c) => `
+      <div class="sp-row" data-uid="${esc(c.id)}">
+        <label class="sp-main">
+          <input type="checkbox" class="sp-pick">
+          <span><span class="sp-name">${esc(c.name)}</span><br><span class="sp-email">${esc(c.email || "No email on file")}</span></span>
+          <button class="sp-edit" type="button">Services</button>
+        </label>
+        <div class="sp-chips">${c.services.length ? c.services.map((s) => `<span class="sp-chip">${esc(SERVICE_NAME[s] || s)}</span>`).join("") : '<span class="sp-email">No services set</span>'}</div>
+        <div class="sp-svc">
+          ${SERVICE_OPTIONS.map(([k, label]) => `<label><input type="checkbox" value="${k}" ${c.services.includes(k) ? "checked" : ""}> ${esc(label)}</label>`).join("")}
+          <div><button class="btn btn-outline sp-save" type="button">Save services</button></div>
+        </div>
+      </div>`).join("");
+
+    listEl.querySelectorAll(".sp-row").forEach((row) => {
+      row.querySelector(".sp-edit").addEventListener("click", (e) => {
+        e.preventDefault();
+        row.querySelector(".sp-svc").classList.toggle("open");
+      });
+      row.querySelector(".sp-save").addEventListener("click", async () => {
+        const chosen = [...row.querySelectorAll(".sp-svc input:checked")].map((x) => x.value);
+        try {
+          await updateDoc(doc(db, "users", row.dataset.uid), { approvedServiceTypes: chosen, updatedAt: serverTimestamp() });
+          const c = contractors.find((x) => x.id === row.dataset.uid);
+          if (c) c.services = chosen;
+          msg.textContent = "Services saved.";
+          draw();
+        } catch (err) {
+          console.warn(err);
+          msg.textContent = "Couldn't save those services.";
+        }
+      });
+    });
+  }
+
+  wrap.querySelector("#spAll").addEventListener("change", (e) => { showAll = e.target.checked; draw(); });
+  wrap.querySelector("#spCancel").addEventListener("click", () => wrap.remove());
+  wrap.addEventListener("click", (e) => { if (e.target === wrap) wrap.remove(); });
+
+  wrap.querySelector("#spSend").addEventListener("click", async () => {
+    const ids = [...listEl.querySelectorAll(".sp-row")].filter((row) => row.querySelector(".sp-pick").checked).map((row) => row.dataset.uid);
+    const picked = contractors.filter((c) => ids.includes(c.id));
+    if (!picked.length) { msg.textContent = "Tick at least one name first."; return; }
+
+    // Opened now, while the click still counts, or the browser blocks it as a popup.
+    const mailTab = window.open("about:blank", "_blank");
+    const btn = wrap.querySelector("#spSend");
+    btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      if (q) {
+        await updateDoc(doc(db, "quoteRequests", q.id), {
+          offeredTo: arrayUnion(...picked.map((c) => c.id)),
+          offeredNames: arrayUnion(...picked.map((c) => c.name)),
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await createSubQuoteRequest(r, picked);
+      }
+      await updateDoc(doc(db, "intakeRequests", r.id), { subQuoteRequested: true, updatedAt: serverTimestamp() });
+      const { subject, body } = jobEmail(r, picked);
+      const url = gmailComposeUrl(picked, subject, body);
+      if (mailTab) mailTab.location.href = url; else window.open(url, "_blank");
+      wrap.remove();
+    } catch (err) {
+      console.warn("send to sub error:", err);
+      if (mailTab) mailTab.close();
+      btn.disabled = false; btn.textContent = "Send";
+      msg.textContent = "That didn't save. Try again in a moment.";
+    }
+  });
+
+  draw();
 }
 
 /* ---------- boot (admin only) ---------- */
@@ -349,6 +598,7 @@ function boot() {
   onAuthStateChanged(auth, (user) => {
     if (!user) return; // dashboard's own guard will redirect
     if (!injectUI()) return;
+    listenContractors();
     onSnapshot(
       query(collection(db, "intakeRequests"), orderBy("createdAt", "desc"), limit(300)),
       (snap) => { latest = snap.docs.map((d) => ({ id: d.id, ...d.data() })); draw(latest); },
