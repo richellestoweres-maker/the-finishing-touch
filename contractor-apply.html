@@ -246,17 +246,6 @@
       text-align:center;
     }
     .action-card .btn.hidden{ display:none; }
-    .optional-more{ margin:14px 0 4px; }
-    .optional-more summary{
-      cursor:pointer;
-      font-size:.92rem;
-      color:#7d4f59;
-      font-weight:700;
-      text-decoration:underline;
-      list-style:none;
-    }
-    .optional-more summary::-webkit-details-marker{ display:none; }
-    .optional-more[open] summary{ margin-bottom:10px; }
 
     .info-body h2,
     .application-body h2,
@@ -891,9 +880,10 @@
     import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
     import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js";
 
-    // The first REQUIRED_PER_SERVICE questions for each service must be answered.
-    // The rest are optional, so applying for several services stays manageable.
-    const REQUIRED_PER_SERVICE = 3;
+    // Every question is kept here. Each applicant is asked QUESTIONS_PER_SERVICE of them,
+    // picked at random, for each service they choose. Pay is never asked: TFT offers a
+    // flat rate per job and the contractor accepts or passes, which the agreement covers.
+    const QUESTIONS_PER_SERVICE = 3;
     const questions = {
       cleaning: [
         "Can you describe your step-by-step process for cleaning a bathroom?",
@@ -903,36 +893,44 @@
         "How do you treat different materials like wood, marble, or granite differently?",
         "How do you prioritize tasks when you have a large area to clean in a limited time?",
         "What do you do if you realize you won’t finish everything on the schedule?",
+        "How do you handle repetitive tasks without losing focus or quality?",
         "How do you feel about cleaning while customers or staff are present?",
         "What makes you a reliable cleaning professional?"
       ],
       organizing: [
         "Walk me through your process from initial consultation to final reveal.",
+        "Tell us about an organizing project you’re proud of. What was the problem, what did you do, and how did it hold up for the client?",
         "How do you handle clients who have a hard time letting go of items due to sentimental value?",
-        "How do you charge for your services, hourly or flat-rate project fees?",
         "What is your strategy for dealing with a client who feels overwhelmed or anxious about the organizing process?",
         "How do you adapt your systems for neurodivergent clients, clients with ADHD, disabilities, or special needs?",
         "How do you balance a Pinterest-perfect aesthetic with daily habits and functionality?",
         "How do you determine what storage solutions, labels, or containers are appropriate?",
         "What is your process for handling trash, donations, and consignment drop-offs?",
+        "How do you recommend getting started with a massively disorganized room?",
         "How do you manage your time when a project takes longer than anticipated?",
         "What are your policies regarding client privacy, confidentiality, and before/after photography?"
       ],
       decor: [
         "Walk me through your design process when starting a new project from scratch.",
         "How would you describe your personal design style in 3 or 4 words, and how do you adapt when a client’s taste is different?",
-        "Describe a project where you worked within a tight budget. What sourcing strategies did you use?",
+        "Tell me about a time a client’s requested aesthetic clashed with your personal preference. How did you handle it?",
         "How do you translate a vague mood board into a cohesive room design?",
+        "Can you share examples that show versatility across different design styles?",
         "How do you balance aesthetics with functionality in a high-traffic space?",
+        "Describe a project where you worked within a tight budget. What sourcing strategies did you use?",
         "How do you handle delays, backorders, damaged items, or vendor mistakes?",
+        "How do you communicate your design vision to tradespeople or installers?",
         "Which brands, vendors, trade resources, design software, or rendering tools are you comfortable using?"
       ],
       holiday: [
         "Tell us about past holiday projects you’ve done, especially homes or businesses of a similar size.",
-        "Are you comfortable with heights, ladders, complex rooflines, or exterior displays?",
-        "What is your availability for installations and takedowns during the busy holiday season?",
+        "How do you adapt your design style to match existing architecture or brand identity?",
         "How do you balance holiday trends with a timeless, cohesive look?",
+        "Do you prefer custom design concepts or preset decoration packages?",
         "Do you provide end-to-end services including installation, maintenance, and teardown?",
+        "What is your availability for installations and takedowns during the busy holiday season?",
+        "Are you comfortable with heights, ladders, complex rooflines, or exterior displays?",
+        "How do you handle maintenance if lights go out or decorations are damaged by weather?",
         "How do you pack, label, inventory, and store holiday items for future seasons?",
         "Are you applying for residential, commercial, interior styling, exterior lighting, or all of these?"
       ],
@@ -944,6 +942,17 @@
         "What would you do if you noticed something broken or a bigger cleaning need during a reset?"
       ]
     };
+
+    // Which questions this applicant was given, by their place in the full list.
+    const askedIndexes = {};
+    function pickRandom(count, total){
+      const order = Array.from({ length: total }, (_, i) => i);
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      return order.slice(0, Math.min(count, total));
+    }
 
     let user = null;
     let step = 0;
@@ -966,17 +975,12 @@
         const target = document.getElementById(service + "Questions");
         if (!target) return;
         const titles = { cleaning: "Cleaning", organizing: "Organizing", decor: "Interior Decorating", holiday: "Holiday Decorating", home_reset: "Home Resets" };
-        const field = (q,i) => `
-          <label class="field">${q}
-            <textarea class="short" name="${service}_q${i+1}" data-question="${q.replaceAll('"','&quot;')}" data-req="${i < REQUIRED_PER_SERVICE ? "1" : ""}"></textarea>
-          </label>`;
+        askedIndexes[service] = pickRandom(QUESTIONS_PER_SERVICE, list.length);
         target.innerHTML = `<h3>${titles[service] || service}</h3>` +
-          list.slice(0, REQUIRED_PER_SERVICE).map(field).join("") +
-          (list.length > REQUIRED_PER_SERVICE
-            ? `<details class="optional-more"><summary>Want to share more? (optional)</summary>` +
-              list.slice(REQUIRED_PER_SERVICE).map((q,i) => field(q, i + REQUIRED_PER_SERVICE)).join("") +
-              `</details>`
-            : "");
+          askedIndexes[service].map((i) => `
+          <label class="field">${list[i]}
+            <textarea class="short" name="${service}_q${i+1}" data-question="${list[i].replaceAll('"','&quot;')}" data-req="1"></textarea>
+          </label>`).join("");
       });
     }
 
@@ -1197,8 +1201,8 @@
       const serviceAnswers = {};
 
       services.forEach(service => {
-        serviceAnswers[service] = (questions[service] || []).map((question, i)=>({
-          question,
+        serviceAnswers[service] = (askedIndexes[service] || []).map((i)=>({
+          question: questions[service][i],
           answer: String(fd.get(`${service}_q${i+1}`) || "").trim()
         }));
       });
