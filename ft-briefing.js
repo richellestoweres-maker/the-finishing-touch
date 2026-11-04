@@ -13,7 +13,8 @@ const IVY_URL = "https://ivy-591177706994.us-central1.run.app";
 const root = document.getElementById("briefingRoot");
 
 const css = `
-#briefingRoot{display:flex;flex-direction:column;gap:16px;max-width:860px}
+#briefingRoot{display:flex;flex-direction:column;gap:16px;max-width:860px;text-align:left}
+#briefingRoot .card,#briefingRoot h3,#briefingRoot ol,#briefingRoot ul,#briefingRoot li,#briefingRoot div{text-align:left}
 #briefingRoot .bf-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
 #briefingRoot .bf-date{font-size:.85rem;color:var(--portal-muted);letter-spacing:.04em;text-transform:uppercase}
 #briefingRoot .bf-headline{font-family:"Playfair Display",serif;font-size:1.55rem;line-height:1.25;color:var(--portal-ink);margin:4px 0 0}
