@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home Reset Intake | The Finishing Touch</title>
+
+  <!-- Fonts + Site CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body{background:#fbf8f4}
+    .intake-wrap{width:min(920px,92%);margin:28px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .intake-title{text-align:center;font-family:"Playfair Display",serif;margin:6px 0 2px}
+    .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
+    .intake-note{max-width:760px;margin:0 auto 18px;text-align:center;opacity:.9}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-1{display:grid;gap:14px}
+    .fieldset{border-top:1px solid #e8ddd1;margin-top:16px;padding-top:16px}
+    .submit-row{text-align:center;margin-top:16px}
+    .hint{font-size:.95rem; opacity:.9}
+
+    .quote-dropdown{position:relative;display:inline-block}
+    .quote-button, .btn.btn-solid{cursor:pointer}
+    .quote-menu{
+      position:absolute; right:0; top:calc(100% + 6px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:10px;
+      box-shadow:0 10px 30px rgba(0,0,0,.06);
+      padding:8px; min-width:220px; display:none; z-index:50;
+    }
+    .quote-menu a{display:block; padding:10px 12px; border-radius:8px; color:#2a2624; text-decoration:none}
+    .quote-menu a:hover{background:#f3ece6}
+    .quote-dropdown.open .quote-menu{display:block}
+
+    .mini-bar{width:min(920px,92%);margin:12px auto 0;text-align:center}
+
+    /* Success card */
+    .success-card{
+      margin-top:14px;
+      background:#fbf5ee;
+      border:1px solid #ecdccc;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:.98rem;
+      display:none;
+      text-align:center;
+    }
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+.check-grid label{display:flex;gap:.6rem;align-items:flex-start}
+@media (max-width:640px){.check-grid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="client-dashboard.html" class="brand-link">
+          <span class="vase-logo" aria-hidden="true"></span>
+          <span class="brand-name">The Finishing Touch</span>
+        </a>
+      </div>
+      <nav class="main-nav">
+        <a href="client-dashboard.html">Client Portal</a>
+        <div class="quote-dropdown" id="quoteDropdown">
+          <button class="btn btn-solid" id="quoteBtn" aria-expanded="false" aria-controls="quoteMenu">
+            Get Your Quote ▾
+          </button>
+          <div class="quote-menu" id="quoteMenu" role="menu" aria-hidden="true">
+            <a role="menuitem" href="intake-cleaning.html">Cleaning</a>
+            <a role="menuitem" href="intake-homereset.html">Home Resets</a>
+            <a role="menuitem" href="intake-organizing.html">Organizing</a>
+            <a role="menuitem" href="intake-interiordesign.html">Interior Design</a>
+            <a role="menuitem" href="intake-staging.html">Staging & Styling</a>
+            <a role="menuitem" href="intake-holiday.html">Holiday Decorating (Indoor)</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="mini-bar">
+    <a class="btn btn-outline" href="client-dashboard.html">← Back to Client Portal</a>
+  </div>
+
+  <main class="intake-wrap">
+<h1 class="intake-title">The Finishing Touch</h1>
+<div class="intake-script">Home Reset Intake Form</div>
+
+<p class="intake-note">
+Tell us about your household and the help you’d like, and we’ll follow up with your quote and available days.
+Home Resets start at $65 per hour with a 4 hour minimum, Monday through Friday.
+</p>
+
+<form id="intakeFormHomeReset" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" enctype="multipart/form-data" novalidate>
+<input type="hidden" name="_subject" value="New Home Reset Intake · The Finishing Touch" />
+<input type="hidden" name="page" value="intake-homereset.html" />
+
+<!-- Contact -->
+<div class="grid-2">
+<label>Full Name<input name="name" autocomplete="name" required></label>
+<label>Email<input name="email" type="email" autocomplete="email" required></label>
+<label>Service Address<input name="address" autocomplete="street-address" required></label>
+<label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
+<label>Referred by a friend? (optional)<input name="referred_by" autocomplete="off" placeholder="Their name, so we can thank them"></label>
+</div>
+
+<!-- Visit Details -->
+<div class="fieldset grid-2">
+<label>How Often
+<select name="hr_frequency" required>
+<option value="Weekly" selected>Weekly (recommended)</option>
+<option value="Every other week">Every other week</option>
+<option value="One time reset">One time reset</option>
+<option value="Not sure">Not sure yet</option>
+</select>
+</label>
+
+<label>Hours per Visit
+<select name="hr_hours" required>
+<option value="4" selected>4 hours (minimum)</option>
+<option value="5">5 hours</option>
+<option value="6">6 hours</option>
+<option value="Not sure">Not sure (recommend for me)</option>
+</select>
+</label>
+
+<label>Approx. Home Size (sq ft)
+<select name="home_sqft">
+<option value="">Prefer not to say</option>
+<option>Under 1,500</option>
+<option>1,500 to 2,500</option>
+<option>2,500 to 3,500</option>
+<option>3,500 to 4,500</option>
+<option>4,500+</option>
+</select>
+</label>
+
+<label>Will someone be home during visits?
+<select name="hr_home_during">
+<option>Yes</option>
+<option>No</option>
+<option selected>Sometimes</option>
+</select>
+</label>
+</div>
+
+<!-- Household -->
+<div class="fieldset grid-2">
+<label>Number of Children at Home
+<input name="hr_children" type="number" min="0" value="0">
+</label>
+
+<label>Children’s Ages (optional)
+<input name="hr_child_ages" placeholder="4 and 7">
+</label>
+
+<label>Pets
+<select name="hr_pets">
+<option selected>No pets</option>
+<option>Dog(s)</option>
+<option>Cat(s)</option>
+<option>Dogs and cats</option>
+<option>Other</option>
+</select>
+</label>
+
+<label>Cleaning Service
+<select name="hr_cleaning_service">
+<option>Just Home Resets for now</option>
+<option>I’d also like a monthly or twice monthly clean</option>
+<option>I already have cleaning with The Finishing Touch</option>
+<option>I have another cleaning service</option>
+</select>
+</label>
+</div>
+
+<!-- Tasks -->
+<fieldset class="fieldset grid-1">
+<legend style="font-weight:700;">What would you like help with?</legend>
+<div class="check-grid">
+<label><input type="checkbox" name="hr_tasks" value="Dishes and kitchen reset"> <span>Dishes and kitchen reset</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Wipe counters"> <span>Wipe counters</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Laundry: wash, dry, and fold"> <span>Laundry: wash, dry, and fold</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Put laundry away"> <span>Put laundry away</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Change bedding"> <span>Change bedding</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Snack and meal prep"> <span>Snack and meal prep</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Playroom reset"> <span>Playroom reset</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Kids’ bedrooms reset"> <span>Kids’ bedrooms reset</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Dog bed and couch covers"> <span>Dog bed and couch covers</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Light vacuuming"> <span>Light vacuuming</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Backpacks and drop zone reset"> <span>Backpacks and drop zone reset</span></label>
+<label><input type="checkbox" name="hr_tasks" value="Other (tell us in notes)"> <span>Other (tell us in notes)</span></label>
+</div>
+</fieldset>
+
+<div class="fieldset grid-2">
+<label>Laundry Loads per Visit
+<select name="hr_laundry_loads">
+<option>No laundry</option>
+<option selected>1 to 2 loads</option>
+<option>3 to 4 loads</option>
+<option>5 or more loads</option>
+</select>
+</label>
+
+<label>Products
+<select name="hr_products">
+<option selected>Use my household products</option>
+<option>Please bring basic supplies</option>
+<option>Not sure</option>
+</select>
+</label>
+</div>
+
+<label>Notes
+<textarea name="notes" rows="3" placeholder="Snack preferences, food allergies, where laundry goes, anything we should know"></textarea>
+</label>
+
+<!-- Scheduling -->
+<fieldset class="fieldset grid-1">
+<legend style="font-weight:700;">Preferred Days (Monday through Friday)</legend>
+<div class="check-grid">
+<label><input type="checkbox" name="hr_days" value="Monday"> <span>Monday</span></label>
+<label><input type="checkbox" name="hr_days" value="Tuesday"> <span>Tuesday</span></label>
+<label><input type="checkbox" name="hr_days" value="Wednesday"> <span>Wednesday</span></label>
+<label><input type="checkbox" name="hr_days" value="Thursday"> <span>Thursday</span></label>
+<label><input type="checkbox" name="hr_days" value="Friday"> <span>Friday</span></label>
+</div>
+</fieldset>
+
+<div class="grid-2">
+<label>Preferred Time
+<select name="hr_time">
+<option>Morning</option>
+<option>Midday</option>
+<option>Afternoon</option>
+<option selected>Flexible</option>
+</select>
+</label>
+
+<label>Ideal Start Date (optional)
+<input name="hr_start" type="date">
+</label>
+</div>
+
+<!-- Media Uploads -->
+<div class="fieldset grid-1">
+<p class="hint" style="margin:0 0 8px;">
+<strong>Photos/Video (optional):</strong> A few photos of your kitchen, laundry area, and playroom help us quote accurately.
+</p>
+
+<label>Upload Photos (optional)
+<input name="media_photos" id="mediaPhotos" type="file" accept="image/*" multiple>
+</label>
+
+<label>Upload Video (optional, short)
+<input name="media_video" id="mediaVideo" type="file" accept="video/*">
+</label>
+
+<p class="hint" id="uploadStatus" style="margin:6px 0 0;"></p>
+</div>
+
+<!-- Consents -->
+<fieldset class="fieldset grid-1" aria-labelledby="consentLegend">
+<legend id="consentLegend" style="font-weight:700;">Consents</legend>
+
+<label style="display:flex;gap:.6rem;align-items:flex-start;">
+<input type="checkbox" name="consent_sms_email" value="Yes" required>
+<span>Okay to contact me by email/SMS with scheduling and service updates.</span>
+</label>
+
+<label style="display:flex;gap:.6rem;align-items:flex-start;">
+<input type="checkbox" name="consent_photos_doc" value="Yes" required>
+<span>I consent to before/after photos for job documentation (internal only).</span>
+</label>
+
+<label style="display:flex;gap:.6rem;align-items:flex-start;">
+<input type="checkbox" name="consent_photos_marketing" value="Yes">
+<span>I also consent to selected photos being used for marketing (website/social).</span>
+</label>
+
+<label style="display:flex;gap:.6rem;align-items:flex-start;">
+<input type="checkbox" name="consent_terms" value="Yes" required>
+<span>I agree to the service terms (scheduling, access, cancellation, and safety). <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+</label>
+</fieldset>
+
+<!-- Submit -->
+<div class="submit-row">
+<button class="btn btn-solid" type="submit" id="hrSubmitBtn">Submit Home Reset Intake</button>
+<p id="emailStatusHomeReset" class="hint"></p>
+<div id="successCard" class="success-card" aria-live="polite"></div>
+</div>
+</form>
+</main>
+
+  <!-- Dropdown behavior -->
+  <script>
+    (function(){
+      const dd  = document.getElementById('quoteDropdown');
+      const btn = document.getElementById('quoteBtn');
+      const menu= document.getElementById('quoteMenu');
+      if (!dd || !btn || !menu) return;
+      function toggle(open){
+        dd.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        menu.setAttribute('aria-hidden', String(!open));
+      }
+      btn.addEventListener('click', (e)=>{ e.preventDefault(); toggle(!dd.classList.contains('open')); });
+      document.addEventListener('click', (e)=>{ if (!dd.contains(e.target)) toggle(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') toggle(false); });
+    })();
+  </script>
+
+  <script src="script.js?v=7" defer></script>
+  <script type="module" src="ft-auto.js"></script>
+
+  <!-- Submit: Formspree backup + app Intake Inbox save -->
+<script>
+(function(){
+var RATE = 65, SUB_MIN = 30, SUB_MAX = 35, MIN_HOURS = 4;
+function list(v){ if (v == null || v === "") return ""; return Array.isArray(v) ? v.join(", ") : String(v); }
+
+document.addEventListener('DOMContentLoaded', function(){
+var form = document.getElementById('intakeFormHomeReset');
+if (!form) return;
+
+var statusEl = document.getElementById('emailStatusHomeReset');
+var submitBtn = document.getElementById('hrSubmitBtn');
+var uploadStatus = document.getElementById('uploadStatus');
+var successCard = document.getElementById('successCard');
+var photosEl = document.getElementById('mediaPhotos');
+var videoEl = document.getElementById('mediaVideo');
+
+function setUploadHint(){
+var pc = photosEl && photosEl.files ? photosEl.files.length : 0;
+var vc = videoEl && videoEl.files ? videoEl.files.length : 0;
+if (!uploadStatus) return;
+uploadStatus.textContent = (!pc && !vc) ? "" : ("Selected: " + pc + " photo(s)" + (vc ? " + 1 video" : "") + ".");
+}
+if (photosEl) photosEl.addEventListener("change", setUploadHint);
+if (videoEl) videoEl.addEventListener("change", setUploadHint);
+
+form.addEventListener('submit', async function(e){
+e.preventDefault();
+e.stopImmediatePropagation();
+
+if (!form.checkValidity()){
+form.reportValidity();
+return;
+}
+
+if (statusEl) statusEl.textContent = "";
+if (successCard){ successCard.style.display = "none"; successCard.textContent = ""; }
+if (submitBtn){ submitBtn.disabled = true; submitBtn.textContent = "Submitting…"; }
+
+var fd = new FormData(form);
+var data = {};
+fd.forEach(function(v, k){
+if (k === "media_photos" || k === "media_video") return;
+if (data[k] != null){
+if (Array.isArray(data[k])) data[k].push(v);
+else data[k] = [data[k], v];
+} else {
+data[k] = v;
+}
+});
+
+var hoursPicked = parseInt(data.hr_hours, 10);
+var hours = (!hoursPicked || hoursPicked < MIN_HOURS) ? MIN_HOURS : hoursPicked;
+
+var scopeClear = [
+data.hr_tasks ? "Tasks: " + list(data.hr_tasks) : null,
+data.hr_laundry_loads ? "Laundry: " + data.hr_laundry_loads : null,
+data.hr_products ? "Products: " + data.hr_products : null
+].filter(Boolean).join(" | ");
+
+var householdClear = [
+data.home_sqft ? "Home Size: " + data.home_sqft : null,
+(data.hr_children !== undefined && data.hr_children !== "") ? "Children: " + data.hr_children : null,
+data.hr_child_ages ? "Ages: " + data.hr_child_ages : null,
+data.hr_pets ? "Pets: " + data.hr_pets : null,
+data.hr_home_during ? "Home During Visit: " + data.hr_home_during : null,
+data.hr_cleaning_service ? "Cleaning: " + data.hr_cleaning_service : null
+].filter(Boolean).join(" | ");
+
+var schedulingClear = [
+data.hr_frequency ? "Frequency: " + data.hr_frequency : null,
+data.hr_hours ? "Hours per Visit: " + data.hr_hours : null,
+data.hr_days ? "Days: " + list(data.hr_days) : null,
+data.hr_time ? "Time: " + data.hr_time : null,
+data.hr_start ? "Start: " + data.hr_start : null
+].filter(Boolean).join(" | ");
+
+var contactClear = [
+data.name ? "Name: " + data.name : null,
+data.email ? "Email: " + data.email : null,
+data.phone ? "Phone: " + data.phone : null,
+data.address ? "Address: " + data.address : null
+].filter(Boolean).join(" | ");
+
+var summaryClear = [
+"Home Reset",
+scopeClear,
+householdClear,
+schedulingClear,
+data.notes ? "Notes: " + data.notes : null
+].filter(Boolean).join(" | ");
+
+function setClear(key, value){
+var clean = value == null ? "" : String(value);
+data[key] = clean;
+fd.append(key, clean);
+}
+
+var clientPerVisit = RATE * hours;
+var subLow = SUB_MIN * hours;
+var subHigh = SUB_MAX * hours;
+
+setClear("intake_id", "hr_" + Date.now() + "_" + Math.random().toString(16).slice(2));
+setClear("SERVICE_CATEGORY_CLEAR", "Home Reset");
+setClear("CLIENT_CONTACT_CLEAR", contactClear);
+setClear("HOME_RESET_SCOPE_CLEAR", scopeClear);
+setClear("HOME_RESET_HOUSEHOLD_CLEAR", householdClear);
+setClear("SCHEDULING_PREFERENCES_CLEAR", schedulingClear);
+setClear("REQUEST_SUMMARY_CLEAR", summaryClear);
+setClear("INTERNAL_app_intake_type", "home_reset");
+setClear("INTERNAL_estimate_per_visit", "$" + clientPerVisit + " (" + hours + " hrs at $" + RATE + "/hr)" + (hoursPicked ? "" : ", hours not chosen so minimum shown"));
+setClear("INTERNAL_sub_pay_per_visit", "$" + subLow + " to $" + subHigh + " ($" + SUB_MIN + " to $" + SUB_MAX + "/hr)");
+setClear("INTERNAL_notes", "Light upkeep only: no mirrors, showers, toilets, or mopping. Weekdays only.");
+
+try{
+if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
+await FTAuto.createJobFromIntake({
+type: "home_reset",
+serviceType: "home_reset",
+intakeData: data,
+estimate: {
+hours: hours,
+ratePerHour: RATE,
+clientPerVisit: clientPerVisit,
+subPayLow: subLow,
+subPayHigh: subHigh
+},
+summary: summaryClear
+});
+}
+} catch(err){
+console.warn("Could not save home reset intake to app Intake Inbox (Formspree backup will still send):", err);
+}
+
+try{
+var resp = await fetch(form.action, {
+method: 'POST',
+headers: { 'Accept': 'application/json' },
+body: fd
+});
+
+if (resp.ok){
+if (successCard){
+successCard.textContent = "Thanks! We’ve received your Home Reset intake. We’ll review your details and follow up with your quote and available days.";
+successCard.style.display = "block";
+}
+form.reset();
+if (uploadStatus) uploadStatus.textContent = "";
+} else {
+if (statusEl) statusEl.textContent = "We received your intake, but couldn’t reach our inbox right now. If needed, please email us and reference your submission.";
+}
+} catch(err){
+console.warn(err);
+if (statusEl) statusEl.textContent = "We received your intake, but your connection seems unstable. If you don’t hear back soon, please email us directly.";
+} finally {
+if (submitBtn){ submitBtn.disabled = false; submitBtn.textContent = "Submit Home Reset Intake"; }
+}
+}, true);
+});
+})();
+</script>
+
+<!-- Optional shared chat guard -->
+  <script src="ftt-chat.js" defer></script>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+      <p class="legal-dba" style="margin-top:6px;font-size:13px;opacity:.8">The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC</p>
+      <p style="margin:0;padding:0 0 16px;text-align:center;font-size:13px;font-weight:500;opacity:.85"><a href="privacy.html" style="color:inherit">Privacy Policy</a> | <a href="terms.html" style="color:inherit">Terms of Service</a> | <a href="sms-terms.html" style="color:inherit">SMS Terms</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>

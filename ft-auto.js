@@ -113,6 +113,10 @@ function normalizeServiceType(type, intakeData = {}){
 
   const page = safeString(intakeData.page).toLowerCase();
 
+  if (page.includes("homereset") || raw.includes("home_reset") || raw.includes("home reset")){
+    return "home_reset";
+  }
+
   if (
     page.includes("virtual") ||
     raw.includes("virtual") ||
@@ -165,6 +169,7 @@ function serviceLabel(serviceType){
     airbnb: "Airbnb Turnover",
     commercial: "Commercial Cleaning",
     organizing: "Home Organizing",
+    home_reset: "Home Reset",
     decor: "Interior Decorating / Styling",
     holiday: "Holiday Decorating",
     staging: "Staging & Styling",
@@ -216,6 +221,16 @@ function buildBasicSummary(serviceType, data = {}, suppliedSummary = ""){
       data.ORGANIZING_GOALS_CLEAR || null,
       data.SCHEDULING_PREFERENCES_CLEAR || null,
       data.notes ? `Notes: ${data.notes}` : null
+    ].filter(Boolean).join(" | ");
+  }
+
+  if (serviceType === "home_reset"){
+    return [
+      "Home Reset",
+      data.HOME_RESET_SCOPE_CLEAR || null,
+      data.HOME_RESET_HOUSEHOLD_CLEAR || null,
+      data.SCHEDULING_PREFERENCES_CLEAR || null,
+      data.notes ? "Notes: " + data.notes : null
     ].filter(Boolean).join(" | ");
   }
 
@@ -417,6 +432,8 @@ async function createJobFromIntake(opts = {}){
     ORGANIZING_AREAS_CLEAR: intakeData.ORGANIZING_AREAS_CLEAR || "",
     ORGANIZING_GOALS_CLEAR: intakeData.ORGANIZING_GOALS_CLEAR || "",
     SCHEDULING_PREFERENCES_CLEAR: intakeData.SCHEDULING_PREFERENCES_CLEAR || "",
+    HOME_RESET_SCOPE_CLEAR: intakeData.HOME_RESET_SCOPE_CLEAR || "",
+    HOME_RESET_HOUSEHOLD_CLEAR: intakeData.HOME_RESET_HOUSEHOLD_CLEAR || "",
 
     DECOR_SCOPE_CLEAR: intakeData.DECOR_SCOPE_CLEAR || "",
     STYLE_GOALS_CLEAR: intakeData.STYLE_GOALS_CLEAR || "",

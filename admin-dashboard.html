@@ -989,6 +989,7 @@
             <select name="serviceType" required>
               <option value="cleaning">Cleaning</option>
               <option value="organizing">Organizing</option>
+              <option value="home_reset">Home Reset</option>
               <option value="staging">Staging</option>
               <option value="decor">Interior Decorating</option>
               <option value="holiday">Holiday/Event Decorating</option>
@@ -1391,7 +1392,7 @@
     });
 
     // ---- UI state ----
-    const ALL_TYPES = ["cleaning","organizing","staging","decor","holiday","airbnb","commercial","carpet","staging_vendor","admin"];
+    const ALL_TYPES = ["cleaning","organizing","home_reset","staging","decor","holiday","airbnb","commercial","carpet","staging_vendor","admin"];
     const chipsWrap = document.getElementById('filterChips');
     const searchBox = document.getElementById('searchBox');
     const clearSearch = document.getElementById('clearSearch');

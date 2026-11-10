@@ -26,6 +26,7 @@
     intakes: {
       cleaning:   "intake-cleaning.html",
       organizing: "intake-organizing.html",
+      homereset:  "intake-homereset.html",
       decor:      "intake-interiordesign.html",
       holiday:    "intake-holiday.html"
     }

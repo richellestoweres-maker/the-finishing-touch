@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home Resets | The Finishing Touch</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body.page-organizing .container { width:min(1180px,94%); margin-inline:auto; }
+
+    .page-organizing .header-inner{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 0;
+    }
+    .page-organizing .main-nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn-cream{
+      background:#d2bda9; color:#2a2624; border:0; border-radius:999px; padding:.55rem .9rem; font-weight:800; text-decoration:none; display:inline-block;
+    }
+
+    /* ============= HERO ============= */
+    .org-hero{
+      position:relative;
+      color:#fff;
+    }
+    .org-hero-media{
+      position:relative;
+      overflow:hidden;
+    }
+    .org-hero-media img{
+      width:100%;
+      height:clamp(360px, 55vh, 520px);
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .org-hero-scrim{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
+    }
+
+    .org-hero-content{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:0 20px;
+    }
+    .org-hero-inner{
+      max-width:min(780px,94%);
+      margin-inline:auto;
+      text-align:center;
+      color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,.3);
+    }
+
+    .org-hero-kicker{
+      font-family:"Allura", cursive;
+      font-size:1.9rem;
+      margin:0 0 .3rem;
+    }
+    .org-hero-title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(2.2rem, 4vw, 3rem);
+      margin:0 0 .4rem;
+      color:#ffffff !important;
+    }
+    .org-hero-sub{
+      font-size:1.05rem;
+      max-width:36rem;
+      margin:0 auto 1.1rem;
+    }
+    .btn-primary{
+      background:#f5eadf; color:#2a2624;
+      border-radius:999px; padding:.7rem 1.25rem;
+      border:0; font-weight:700; text-decoration:none;
+      display:inline-block;
+    }
+
+    @media (max-width:780px){
+      .org-hero-kicker{ font-size:1.6rem; }
+      .org-hero-title{ font-size:2.1rem; line-height:1.2; }
+      .org-hero-sub{ font-size:.98rem; max-width:90%; }
+    }
+
+    /* ============= SECTIONS ============= */
+    .section{ padding:40px 0; }
+    .section h2{
+      font-family:"Playfair Display", serif;
+      margin:0 0 .75rem;
+      font-size:1.7rem;
+    }
+    .section p{ line-height:1.6; }
+
+    .two-col{
+      display:grid; grid-template-columns:1.1fr .9fr; gap:22px; align-items:flex-start;
+    }
+    @media (max-width:880px){
+      .two-col{ grid-template-columns:1fr; }
+    }
+
+    /* ============= GALLERY ============= */
+    .org-gallery{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .org-gallery img{
+      width:100%; height:180px; object-fit:cover;
+      border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.12);
+    }
+    @media (max-width:640px){
+      .org-gallery img{ height:210px; }
+    }
+
+    /* ============= CARD GRIDS (2 ACROSS) ============= */
+    .org-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:12px;
+    }
+    @media (max-width:700px){
+      .org-grid{ grid-template-columns:1fr; }
+    }
+
+    .org-card{
+      background:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+    .org-card h3{
+      margin:.1rem 0 .35rem;
+      font-size:1.05rem;
+    }
+    .pill{
+      display:inline-block;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      background:#f3ebe2;
+      font-size:.8rem;
+      font-weight:600;
+      margin-bottom:.35rem;
+    }
+    .meta-line{
+      font-size:.9rem;
+      opacity:.85;
+      margin-bottom:.3rem;
+    }
+
+    .callout{
+      background:#fbf5ee;
+      border-radius:16px;
+      padding:16px 18px;
+      border:1px solid #ecdccc;
+      margin-top:14px;
+      font-size:.95rem;
+    }
+
+    .org-cta{ text-align:center; }
+    .org-cta p{ max-width:560px; margin:0 auto 1rem; }
+
+    .site-footer{ margin-top:10px; }
+  </style>
+
+  <!-- Chat z-index safety -->
+  <style>
+    #ftt-chat-launcher, #ftt-chat { z-index: 9999; }
+  </style>
+</head>
+
+<body class="page-organizing">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="vase-logo" aria-hidden="true"></span>
+        <span class="brand-name">The Finishing Touch</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#about">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="btn-cream" href="contractor-apply.html">Become a Contractor</a>
+        <a class="btn btn-auth" href="login.html">Sign in / Create account</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+<section class="org-hero">
+<div class="org-hero-media">
+<img src="bed-banner.png" alt="Freshly made bed with clean linens and a soft throw">
+<div class="org-hero-scrim"></div>
+</div>
+
+<div class="container org-hero-content">
+<div class="org-hero-inner">
+<p class="org-hero-kicker">The Weekly Reset</p>
+<h1 class="org-hero-title">Home Resets by The Finishing Touch</h1>
+<p class="org-hero-sub">
+Light household help for busy families. Dishes done, laundry folded, snacks prepped, and your home ready for the week ahead.
+</p>
+<a href="intake-homereset.html" class="btn-primary">Start Home Reset Intake</a>
+</div>
+</div>
+</section>
+
+<!-- About Home Resets -->
+<section class="section">
+<div class="container two-col">
+<div>
+<h2>Why We Offer Home Resets</h2>
+<p>
+As a busy mom, I once had someone come every Monday to reset our home. Dishes, laundry, snacks for the week, and the playroom put back together. It changed how our whole week felt, and now we offer that same help to you.
+</p>
+<p style="font-family:'Allura',cursive;font-size:1.6rem;margin:.2rem 0 1rem;">Richelle, Owner</p>
+<p>
+Home Resets are <strong>light upkeep, not cleaning</strong>. They pair beautifully with a monthly or twice monthly clean from our cleaning team.
+</p>
+<p>
+Home Resets start at <strong>$65 per hour</strong> with a <strong>4 hour minimum</strong> per visit. Your quote depends on home size, number of children, and the tasks you choose.
+</p>
+
+<div class="callout">
+<strong>Visits are Monday through Friday.</strong> Choose weekly or every other week to keep your home feeling reset, or book a one time reset when life gets busy.
+</div>
+</div>
+
+<div>
+<div class="org-gallery">
+<img src="organized playroom.png" alt="Playroom with toys back in labeled bins">
+<img src="organized linens.png" alt="Neatly folded towels and linens">
+<img src="pantry organization.png" alt="Pantry with snacks sorted and ready for the week">
+<img src="bed-banner.png" alt="Freshly made bed with clean linens">
+</div>
+</div>
+</div>
+</section>
+
+<!-- What's Included -->
+<section class="section">
+<div class="container">
+<h2>What’s Included</h2>
+<p>You choose the tasks that matter most to your household. Here’s what a Home Reset can cover.</p>
+
+<div class="org-grid">
+<div class="org-card">
+<span class="pill">Kitchen</span>
+<h3>Kitchen Reset</h3>
+<p>Dishes washed and put away, counters wiped, and the sink cleared.</p>
+</div>
+
+<div class="org-card">
+<span class="pill">Laundry</span>
+<h3>Wash, Dry, Fold</h3>
+<p>Laundry washed, dried, folded, and put away. Bedding changes on request.</p>
+</div>
+
+<div class="org-card">
+<span class="pill">Food Prep</span>
+<h3>Snack and Meal Prep</h3>
+<p>Snacks portioned, produce washed and cut, and lunches prepped for the week.</p>
+</div>
+
+<div class="org-card">
+<span class="pill">Kids’ Spaces</span>
+<h3>Playroom and Bedrooms</h3>
+<p>Toys back in their bins, books on the shelf, and beds made.</p>
+</div>
+
+<div class="org-card">
+<span class="pill">Pets</span>
+<h3>Pet Touches</h3>
+<p>Dog bed covers and couch covers washed and put back on.</p>
+</div>
+
+<div class="org-card">
+<span class="pill">Week Ahead</span>
+<h3>Ready for Monday</h3>
+<p>Light vacuuming, drop zones and backpacks reset, and the house ready for the week.</p>
+</div>
+</div>
+
+<div class="callout">
+<strong>Not included:</strong> mirrors, showers, toilets, or mopping. Those are part of our <a href="cleaning.html">cleaning services</a>, which you can book separately.
+</div>
+</div>
+</section>
+
+<!-- How it works -->
+<section class="section">
+<div class="container">
+<h2>How Home Resets Work</h2>
+<ol>
+<li><strong>Submit the Home Reset intake.</strong> Tell us about your household and the help you’d like.</li>
+<li><strong>We send your quote.</strong> It’s based on your home size, family, and task list.</li>
+<li><strong>We set your schedule.</strong> Weekly, every other week, or a one time reset, Monday through Friday.</li>
+<li><strong>Enjoy your week.</strong> Come home to a house that feels calm and ready.</li>
+</ol>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="section">
+<div class="container org-cta">
+<h2>Ready for Your Weekly Reset?</h2>
+<p>
+Fill out a quick intake and we’ll follow up with your quote and available days.
+</p>
+<a href="intake-homereset.html" class="btn-primary">Start Home Reset Intake</a>
+</div>
+</section>
+
+<!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+      <p class="legal-dba" style="margin-top:6px;font-size:13px;opacity:.8">The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC</p>
+      <p style="margin:0;padding:0 0 16px;text-align:center;font-size:13px;font-weight:500;opacity:.85"><a href="privacy.html" style="color:inherit">Privacy Policy</a> | <a href="terms.html" style="color:inherit">Terms of Service</a> | <a href="sms-terms.html" style="color:inherit">SMS Terms</a></p>
+    </div>
+  </footer>
+
+  <!-- Chat widget -->
+  <style>
+    #ftt-chat-launcher{
+      position:fixed; right:18px; bottom:18px;
+      width:54px; height:54px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:#2e2a27; color:#fff; font-size:22px; cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.18);
+    }
+    #ftt-chat{
+      position:fixed; right:18px; bottom:84px;
+      width:340px; max-width:calc(100vw - 36px);
+      background:#fff; border:1px solid #e8ddd1; border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.18); display:none;
+      font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .ftt-chat-header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #f0e9e2; background:#fffdfb; }
+    .ftt-title{ font-weight:800; color:#2e2a27 }
+    .ftt-subtitle{ font-size:.9rem; color:#7b746e }
+    .ftt-close{ border:0; background:#fff; font-size:22px; cursor:pointer; line-height:1 }
+    .ftt-thread{ height:300px; overflow:auto; padding:12px }
+    .ftt-bubble{ max-width:85%; padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.3 }
+    .ftt-bubble.bot{ background:#fbf8f4; color:#2e2a27 }
+    .ftt-bubble.me{ background:#2e2a27; color:#fff; margin-left:auto }
+    .ftt-inputbar{ display:flex; gap:8px; border-top:1px solid #f0e9e2; padding:10px }
+    .ftt-inputbar input{ flex:1; border:1px solid #e3d9ce; border-radius:999px; padding:.65rem .9rem; background:#fffdfb }
+    .ftt-inputbar button{ border:0; border-radius:999px; padding:.65rem .95rem; font-weight:800; background:#d2bda9; color:#2a2624; cursor:pointer }
+    .ftt-quick{ display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid #f0e9e2 }
+    .ftt-quick button{ border:1px solid #e3d9ce; background:#fff; border-radius:999px; padding:.35rem .7rem; cursor:pointer; font-weight:700 }
+    @media (max-width:420px){ .ftt-thread{ height:48vh } }
+  </style>
+
+  <div id="ftt-chat-launcher" aria-label="Open chat" role="button">💬</div>
+
+  <div id="ftt-chat" aria-live="polite" aria-label="Chat window">
+    <div class="ftt-chat-header">
+      <div>
+        <div class="ftt-title">The Finishing Touch</div>
+        <div class="ftt-subtitle">AI Concierge • human on request</div>
+      </div>
+      <button class="ftt-close" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="ftt-thread" class="ftt-thread"></div>
+
+    <form id="ftt-inputbar" class="ftt-inputbar" autocomplete="off">
+      <input id="ftt-input" name="message" type="text" placeholder="Ask about pricing, availability, services…" aria-label="Type your message" required />
+      <button class="ftt-send" type="submit">Send</button>
+    </form>
+
+    <div class="ftt-quick">
+      <button data-q="pricing">Pricing</button>
+      <button data-q="availability">Availability</button>
+      <button data-q="services">Services</button>
+      <button data-q="book">Book now</button>
+      <button data-q="human">Talk to a person</button>
+      <button data-q="help">Help me choose</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const CFG = {
+        timezone: "America/Chicago",
+        intakeAnchor: "intake-homereset.html",
+        bookUrl: "https://book.squareup.com/appointments/kbcbv6uu1d7qd7/location/L2P303Y0SXTD9",
+        email: "contact.thefinishingtouch.tx@gmail.com",
+        messenger: "https://m.me/thefinishingtouch.tx",
+        hours: { days:[1,2,3,4,5], open:"09:00", close:"17:00" }
+      };
+
+      function isWithinBusinessHours(){
+        try{
+          const now = new Date();
+          const opt = { timeZone: CFG.timezone, hour12:false, weekday:"short", hour:"2-digit", minute:"2-digit" };
+          const parts = new Intl.DateTimeFormat("en-US", opt).formatToParts(now);
+          const hh=+(parts.find(p=>p.type==="hour")?.value||"0");
+          const mm=+(parts.find(p=>p.type==="minute")?.value||"0");
+          const dayShort=parts.find(p=>p.type==="weekday")?.value||"";
+          const dayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+          const wd = dayMap[dayShort] ?? now.getDay();
+          const [oH,oM]=CFG.hours.open.split(":").map(Number);
+          const [cH,cM]=CFG.hours.close.split(":").map(Number);
+          const after=(hh>oH)||(hh===oH&&mm>=oM), before=(hh<cH)||(hh===cH&&mm<=cM);
+          return CFG.hours.days.includes(wd) && after && before;
+        } catch { return false; }
+      }
+
+      const panel   = document.getElementById("ftt-chat");
+      const thread  = document.getElementById("ftt-thread");
+      const form    = document.getElementById("ftt-inputbar");
+      const input   = document.getElementById("ftt-input");
+      const quick   = document.querySelector(".ftt-quick");
+      const closeBtn= document.querySelector(".ftt-close");
+      const launcher= document.getElementById("ftt-chat-launcher");
+
+      function add(html, who="bot"){
+        const b=document.createElement("div");
+        b.className=`ftt-bubble ${who}`; b.innerHTML=html;
+        thread.appendChild(b); thread.scrollTop=thread.scrollHeight;
+      }
+      function detectIntent(text){
+        const t=text.toLowerCase();
+        if (/(human|person|agent|representative|call|talk)/.test(t)) return "human";
+        if (/(price|pricing|cost|rate|how much)/.test(t)) return "pricing";
+        if (/(avail|slot|appointment|when|schedule|open)/.test(t)) return "availability";
+        if (/(service|organize|organizing|staging|decor)/.test(t)) return "services";
+        if (/(book|booking|schedule now)/.test(t)) return "book";
+        if (/(which|help|recommend|not sure|choose)/.test(t)) return "recommend";
+        return "fallback";
+      }
+      function answer(intent){
+const intakeLink = `<a href="${CFG.intakeAnchor}">Start Home Reset Intake</a>`;
+switch(intent){
+case "pricing":
+return [
+"Home Resets start at $65 per hour with a 4 hour minimum per visit.",
+"Your quote depends on home size, number of children, and the tasks you choose.",
+intakeLink
+].join("<br>");
+case "availability":
+return [
+"We schedule Home Resets Monday through Friday, weekly, every other week, or as a one time reset.",
+intakeLink + " and we’ll follow up with open days."
+].join("<br>");
+case "services":
+return [
+"Home Resets cover dishes, laundry, snack and meal prep, wiping counters, playroom resets, pet bed and couch covers, light vacuuming, and getting the family set for the week.",
+"Mirrors, showers, toilets, and mopping are part of our <a href=\"cleaning.html\">cleaning services</a>.",
+intakeLink
+].join("<br>");
+case "book":
+return "The best first step is the intake so we can quote your household: " + intakeLink;
+case "human":
+return isWithinBusinessHours()
+? `You can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> for the fastest reply.`
+: `We’re currently offline, but you can <a href="${CFG.messenger}" target="_blank" rel="noopener">message us on Facebook</a> or email <a href="mailto:${CFG.email}">${CFG.email}</a> and we’ll reply as soon as we’re back.`;
+case "recommend":
+return [
+"<strong>Not sure what you need?</strong>",
+"Home Resets are light weekly upkeep. Cleaning is a deeper top to bottom clean. Many families pair a weekly reset with a monthly clean.",
+intakeLink
+].join("<br>");
+default:
+return [
+"Hi! I can help with Home Reset pricing, availability, and what’s included.",
+"Say “human” anytime to talk to a person."
+].join("<br>");
+}
+}
+
+launcher.addEventListener("click", ()=>{
+        const open = panel.style.display !== "block";
+        panel.style.display = open ? "block" : "none";
+        if (open && !thread.dataset.greeted){
+          add("Hi! I’m your Home Reset concierge for The Finishing Touch. Ask me about pricing, availability, or services. Say “human” anytime.","bot");
+          thread.dataset.greeted = "1";
+        }
+        if (open) input.focus();
+      });
+      closeBtn.addEventListener("click", ()=>{ panel.style.display = "none"; });
+
+      form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        add(text, "me"); input.value = "";
+        setTimeout(()=> add(answer(detectIntent(text))), 120);
+      });
+      quick.addEventListener("click",(e)=>{
+        if (e.target.matches("button[data-q]")){
+          const map={pricing:"pricing",availability:"availability",services:"services",book:"book",human:"human",help:"recommend"};
+          const intent = map[e.target.getAttribute("data-q")] || "fallback";
+          add(e.target.textContent, "me");
+          setTimeout(()=> add(answer(intent)), 80);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Smart auth button -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const btn = document.querySelector('.btn-auth');
+    onAuthStateChanged(auth, (user) => {
+      if (!btn) return;
+      if (user) {
+        btn.textContent = 'Sign out';
+        btn.href = '#';
+        btn.onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        btn.textContent = 'Sign in / Create account';
+        btn.href = 'login.html';
+        btn.onclick = null;
+      }
+    });
+  </script>
+
+  <!-- Base Firebase import -->
+  <script type="module">
+    import { auth } from "./ft-firebase.js";
+  </script>
+</body>
+</html>
