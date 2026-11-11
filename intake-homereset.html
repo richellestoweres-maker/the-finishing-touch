@@ -227,7 +227,7 @@ Home Resets start at $260 per visit, Monday through Friday. Tell us about your h
 <input name="hr_pet_bed_covers" type="number" min="0" value="0">
 </label>
 </div>
-<p class="hint" style="margin:0;">If sheets or covers need washing too, include them in your laundry loads.</p>
+<p class="hint" style="margin:0;">Up to 3 loads are included. Extra time is $45 per hour. If sheets or covers need washing too, include them in your laundry loads.</p>
 <label>Snack Prep and Fridge Reset
 <select name="hr_snack_prep">
 <option value="No" selected>No thanks</option>
@@ -434,8 +434,9 @@ Photos of your kitchen, laundry area, and the rooms you’d like reset help us c
 var HR_SETTINGS = {
 minimumPrice: 260,          // flat price for the four hour minimum visit
 minimumLaborMinutes: 240,   // labor available in the minimum visit
-extensionEnabled: true,     // proposed, needs owner approval
-extensionPricePerHalfHour: 35,
+extensionEnabled: true,
+extensionPricePerHour: 45,  // one team member, billed in half hours after the first four hours
+includedLaundryLoads: 3,
 laborRateLow: 30,           // configured team rate per hour
 laborRateHigh: 35,
 washerMinutes: 45,          // appliance timing check
@@ -463,7 +464,8 @@ function hrNum(v){ var n = parseFloat(String(v == null ? "" : v).replace(/,/g, "
 function hrRound5(n){ return Math.round(n / 5) * 5; }
 function hrHalfHourUp(min){ return Math.ceil(min / 30) * 30; }
 function hrFmt(min){ var h = Math.floor(min / 60), m = Math.round(min % 60); return h + "h" + (m ? " " + m + "m" : ""); }
-function hrPriceFor(min, s){ s = s || HR_SETTINGS; var over = Math.max(0, min - s.minimumLaborMinutes); return s.minimumPrice + Math.ceil(over / 30) * s.extensionPricePerHalfHour; }
+function hrPriceFor(min, s){ s = s || HR_SETTINGS; var over = Math.max(0, min - s.minimumLaborMinutes); return s.minimumPrice + Math.ceil(over / 30) * (s.extensionPricePerHour / 2); }
+function hrMoney(n){ return "$" + (n % 1 ? n.toFixed(2) : n); }
 
 function hrEstimate(d, opts){
 var s = HR_SETTINGS, M = s.minutes;
@@ -526,10 +528,12 @@ var applianceMin = loads > 0 ? s.washerMinutes + loads * s.dryerMinutes + s.fold
 var applianceNote = loads > 0
 ? loads + " load(s) need about " + hrFmt(applianceMin) + " of washer and dryer time"
 : "No laundry";
-if (applianceMin > s.minimumLaborMinutes){
-applianceNote += ", more than the visit allows even with two people";
-review.push("Washer and dryer time for " + loads + " loads runs past the visit");
+if (loads > s.includedLaundryLoads){
+applianceNote += ", more than the " + s.includedLaundryLoads + " loads included, so the visit runs longer";
 }
+// laundry can set the visit length even when hands-on work is lighter
+var vLow = Math.max(low, applianceMin), vHigh = Math.max(high, applianceMin);
+var laundrySetsLength = applianceMin > high;
 
 // priorities first, then everything else, to see what may need to wait
 var pr = [d.hr_priority_1, d.hr_priority_2, d.hr_priority_3].filter(function(p){ return p; });
@@ -544,38 +548,38 @@ else mayWait.push(t.label + (t.qty > 1 && t.key !== "vacuum" ? " x" + t.qty : ""
 });
 
 var cap = s.minimumLaborMinutes, status, suggestion, options = [], staffing, appointment, costLow, costHigh;
-var fullLow = hrPriceFor(low), fullHigh = hrPriceFor(high);
-var fullPrice = fullLow === fullHigh ? "$" + fullLow : "$" + fullLow + " to $" + fullHigh;
+var fullLow = hrPriceFor(vLow), fullHigh = hrPriceFor(vHigh);
+var fullPrice = fullLow === fullHigh ? hrMoney(fullLow) : hrMoney(fullLow) + " to " + hrMoney(fullHigh);
 
-if (high <= cap){
+if (vHigh <= cap){
 status = "fits";
 suggestion = "$" + s.minimumPrice + " flat suggested. One team member, four hour booking.";
 options.push("$" + s.minimumPrice + " flat, four hour visit");
 staffing = "One team member";
 appointment = "4h booking";
 costLow = 4 * rateLow; costHigh = 4 * rateHigh;
-} else if (low <= cap){
+} else if (vLow <= cap){
 status = "crosses";
 suggestion = "$" + s.minimumPrice + " priority visit available. Review the full scope.";
 options.push("$" + s.minimumPrice + " priority visit, four hours on the ranked priorities");
-if (s.extensionEnabled) options.push("Full list: " + fullPrice + " (proposed extension rate, needs your approval)");
+if (s.extensionEnabled) options.push("Full list: " + fullPrice + " ($" + s.extensionPricePerHour + "/hr after four hours, one team member)");
 review.push("Estimated range crosses four hours");
 staffing = "One team member";
-appointment = "4h booking for the priority visit, up to " + hrFmt(hrHalfHourUp(high)) + " for the full list";
-costLow = 4 * rateLow; costHigh = (hrHalfHourUp(high) / 60) * rateHigh;
+appointment = "4h booking for the priority visit, up to " + hrFmt(hrHalfHourUp(vHigh)) + " for the full list";
+costLow = 4 * rateLow; costHigh = (hrHalfHourUp(vHigh) / 60) * rateHigh;
 } else {
 status = "over";
 suggestion = "$" + s.minimumPrice + " priority option, plus a separate estimate for the full list.";
 options.push("$" + s.minimumPrice + " priority visit, four hours on the ranked priorities");
-if (s.extensionEnabled) options.push("Full list: " + fullPrice + " (proposed extension rate, needs your approval)");
+if (s.extensionEnabled) options.push("Full list: " + fullPrice + " ($" + s.extensionPricePerHour + "/hr after four hours, one team member)");
 review.push("Full scope is over four hours");
-staffing = "One person for about " + hrFmt(hrHalfHourUp(low)) + (low !== high ? " to " + hrFmt(hrHalfHourUp(high)) : "");
+staffing = "One person for about " + hrFmt(hrHalfHourUp(vLow)) + (vLow !== vHigh ? " to " + hrFmt(hrHalfHourUp(vHigh)) : "");
 var groups = {}; tasks.forEach(function(t){ groups[t.group] = 1; });
-if (Object.keys(groups).length >= 2){
+if (Object.keys(groups).length >= 2 && !laundrySetsLength){
 staffing += ", or two people for about " + hrFmt(hrHalfHourUp(low / 2)) + (low !== high ? " to " + hrFmt(hrHalfHourUp(high / 2)) : "") + " each (same total labor hours)";
 }
-appointment = "Longer solo visit or a shorter two person visit, your call";
-costLow = (low / 60) * rateLow; costHigh = (high / 60) * rateHigh;
+appointment = laundrySetsLength ? "Longer solo visit, laundry sets the length" : "Longer solo visit or a shorter two person visit, your call";
+costLow = (hrHalfHourUp(vLow) / 60) * rateLow; costHigh = (hrHalfHourUp(vHigh) / 60) * rateHigh;
 }
 
 var freq = d.hr_frequency || "";
@@ -592,6 +596,7 @@ recurring: recurring,
 lowMinutes: low,
 highMinutes: high,
 laborRange: hrFmt(low) + " to " + hrFmt(high) + " (" + low + " to " + high + " min)",
+visitLength: vLow === vHigh ? hrFmt(vLow) : hrFmt(vLow) + " to " + hrFmt(vHigh),
 suggestion: suggestion,
 options: options,
 staffing: staffing,
@@ -752,7 +757,8 @@ setClear("REQUEST_SUMMARY_CLEAR", summaryClear);
 setClear("INTERNAL_app_intake_type", "home_reset");
 setClear("INTERNAL_quote_suggestion", est.suggestion);
 setClear("INTERNAL_quote_options", est.options.join(" || "));
-setClear("INTERNAL_labor_range", est.laborRange + ", likely about " + est.likely);
+setClear("INTERNAL_labor_range", "Hands-on: " + est.laborRange + ", likely about " + est.likely);
+setClear("INTERNAL_visit_length", est.visitLength);
 setClear("INTERNAL_priorities", prioritiesClear);
 setClear("INTERNAL_scope_preference", est.scopePref || "Not given");
 setClear("INTERNAL_estimate_breakdown", est.breakdown.length ? est.breakdown.join(" | ") : "No tasks selected");
@@ -776,6 +782,7 @@ status: est.status,
 laborMinutesLow: est.lowMinutes,
 laborMinutesHigh: est.highMinutes,
 laborRange: est.laborRange,
+visitLength: est.visitLength,
 suggestion: est.suggestion,
 quoteOptions: est.options,
 priorities: est.priorities,
