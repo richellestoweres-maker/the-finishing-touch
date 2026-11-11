@@ -91,7 +91,7 @@
 
 <p class="intake-note">
 Tell us about your household and the help you’d like, and we’ll follow up with your quote and available days.
-Home Resets start at $65 per hour with a 4 hour minimum, Monday through Friday.
+Home Resets start at $260 per reset, Monday through Friday.
 </p>
 
 <form id="intakeFormHomeReset" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" enctype="multipart/form-data" novalidate>
@@ -120,7 +120,7 @@ Home Resets start at $65 per hour with a 4 hour minimum, Monday through Friday.
 
 <label>Hours per Visit
 <select name="hr_hours" required>
-<option value="4" selected>4 hours (minimum)</option>
+<option value="4" selected>4 hours</option>
 <option value="5">5 hours</option>
 <option value="6">6 hours</option>
 <option value="Not sure">Not sure (recommend for me)</option>
@@ -149,6 +149,14 @@ Home Resets start at $65 per hour with a 4 hour minimum, Monday through Friday.
 
 <!-- Household -->
 <div class="fieldset grid-2">
+<label>How Cluttered Is the Home Right Now?
+<select name="hr_clutter" required>
+<option>Light</option>
+<option selected>Moderate</option>
+<option>Heavy</option>
+</select>
+</label>
+
 <label>Number of Children at Home
 <input name="hr_children" type="number" min="0" value="0">
 </label>
@@ -380,6 +388,7 @@ data.hr_products ? "Products: " + data.hr_products : null
 
 var householdClear = [
 data.home_sqft ? "Home Size: " + data.home_sqft : null,
+data.hr_clutter ? "Clutter: " + data.hr_clutter : null,
 (data.hr_children !== undefined && data.hr_children !== "") ? "Children: " + data.hr_children : null,
 data.hr_child_ages ? "Ages: " + data.hr_child_ages : null,
 data.hr_pets ? "Pets: " + data.hr_pets : null,
