@@ -90,8 +90,7 @@
 <div class="intake-script">Home Reset Intake Form</div>
 
 <p class="intake-note">
-Tell us about your household and the help you’d like, and we’ll follow up with your quote and available days.
-Home Resets start at $260 per reset, Monday through Friday.
+Home Resets start at $260 per visit, Monday through Friday. Tell us about your home and what you’d like done, and we’ll follow up with your flat rate quote.
 </p>
 
 <form id="intakeFormHomeReset" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" enctype="multipart/form-data" novalidate>
@@ -105,126 +104,128 @@ Home Resets start at $260 per reset, Monday through Friday.
 <label>Service Address<input name="address" autocomplete="street-address" required></label>
 <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
 <label>Referred by a friend? (optional)<input name="referred_by" autocomplete="off" placeholder="Their name, so we can thank them"></label>
-</div>
-
-<!-- Visit Details -->
-<div class="fieldset grid-2">
 <label>How Often
 <select name="hr_frequency" required>
-<option value="Weekly" selected>Weekly (recommended)</option>
+<option value="Weekly" selected>Weekly</option>
 <option value="Every other week">Every other week</option>
 <option value="One time reset">One time reset</option>
 <option value="Not sure">Not sure yet</option>
 </select>
 </label>
-
-<label>Hours per Visit
-<select name="hr_hours" required>
-<option value="4" selected>4 hours</option>
-<option value="5">5 hours</option>
-<option value="6">6 hours</option>
-<option value="Not sure">Not sure (recommend for me)</option>
-</select>
-</label>
-
-<label>Approx. Home Size (sq ft)
-<select name="home_sqft">
-<option value="">Prefer not to say</option>
-<option>Under 1,500</option>
-<option>1,500 to 2,500</option>
-<option>2,500 to 3,500</option>
-<option>3,500 to 4,500</option>
-<option>4,500+</option>
-</select>
-</label>
-
-<label>Will someone be home during visits?
-<select name="hr_home_during">
-<option>Yes</option>
-<option>No</option>
-<option selected>Sometimes</option>
-</select>
-</label>
 </div>
 
-<!-- Household -->
-<div class="fieldset grid-2">
-<label>How Cluttered Is the Home Right Now?
-<select name="hr_clutter" required>
-<option>Light</option>
-<option selected>Moderate</option>
-<option>Heavy</option>
-</select>
-</label>
-
-<label>Number of Children at Home
-<input name="hr_children" type="number" min="0" value="0">
-</label>
-
-<label>Children’s Ages (optional)
-<input name="hr_child_ages" placeholder="4 and 7">
-</label>
-
-<label>Pets
-<select name="hr_pets">
-<option selected>No pets</option>
-<option>Dog(s)</option>
-<option>Cat(s)</option>
-<option>Dogs and cats</option>
-<option>Other</option>
-</select>
-</label>
-
-<label>Cleaning Service
-<select name="hr_cleaning_service">
-<option>Just Home Resets for now</option>
-<option>I’d also like a monthly or twice monthly clean</option>
-<option>I already have cleaning with The Finishing Touch</option>
-<option>I have another cleaning service</option>
-</select>
-</label>
-</div>
-
-<!-- Tasks -->
+<!-- Home and Areas -->
 <fieldset class="fieldset grid-1">
-<legend style="font-weight:700;">What would you like help with?</legend>
-<div class="check-grid">
-<label><input type="checkbox" name="hr_tasks" value="Dishes and kitchen reset"> <span>Dishes and kitchen reset</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Wipe counters"> <span>Wipe counters</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Laundry: wash, dry, and fold"> <span>Laundry: wash, dry, and fold</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Put laundry away"> <span>Put laundry away</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Change bedding"> <span>Change bedding</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Snack and meal prep"> <span>Snack and meal prep</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Playroom reset"> <span>Playroom reset</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Kids’ bedrooms reset"> <span>Kids’ bedrooms reset</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Dog bed and couch covers"> <span>Dog bed and couch covers</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Light vacuuming"> <span>Light vacuuming</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Backpacks and drop zone reset"> <span>Backpacks and drop zone reset</span></label>
-<label><input type="checkbox" name="hr_tasks" value="Other (tell us in notes)"> <span>Other (tell us in notes)</span></label>
+<legend style="font-weight:700;">Your Home</legend>
+<div class="grid-2">
+<label>Total Home Size (sq ft)
+<input name="hr_total_sqft" type="number" min="0" placeholder="2,000">
+</label>
+<label>Size of the Areas You’d Like Reset
+<select name="hr_reset_area" required>
+<option value="Up to 1,500 sq ft" selected>Up to 1,500 sq ft</option>
+<option value="1,501 to 2,200 sq ft">1,501 to 2,200 sq ft</option>
+<option value="2,201 to 3,000 sq ft">2,201 to 3,000 sq ft</option>
+<option value="Over 3,000 sq ft">Over 3,000 sq ft</option>
+<option value="Not sure">Not sure</option>
+</select>
+</label>
+</div>
+<label>Which floors or rooms need service?
+<input name="hr_areas" placeholder="Downstairs living areas, kitchen, and the kids’ rooms">
+</label>
+<div class="grid-2">
+<label>Total Bedrooms
+<input name="hr_bedrooms_total" type="number" min="0" value="3">
+</label>
+<label>Bedrooms to Reset
+<input name="hr_bedrooms_reset" type="number" min="0" value="2">
+</label>
+<label>Total Bathrooms
+<input name="hr_bathrooms_total" type="number" min="0" value="2">
+</label>
+<label>Bathrooms to Refresh (counter and fresh towels)
+<input name="hr_bathrooms_refresh" type="number" min="0" value="0">
+</label>
 </div>
 </fieldset>
 
-<div class="fieldset grid-2">
-<label>Laundry Loads per Visit
-<select name="hr_laundry_loads">
-<option>No laundry</option>
-<option selected>1 to 2 loads</option>
-<option>3 to 4 loads</option>
-<option>5 or more loads</option>
-</select>
+<!-- Household -->
+<fieldset class="fieldset grid-1">
+<legend style="font-weight:700;">Your Household</legend>
+<div class="grid-2">
+<label>Children Living in the Home
+<input name="hr_children" type="number" min="0" value="0">
 </label>
-
-<label>Products
-<select name="hr_products">
-<option selected>Use my household products</option>
-<option>Please bring basic supplies</option>
-<option>Not sure</option>
+<label>Play Areas to Reset
+<input name="hr_play_areas" type="number" min="0" value="1">
+</label>
+<label>Pets Living in the Home
+<input name="hr_pets" type="number" min="0" value="0">
+</label>
+<label>Pet Hair in the Reset Areas
+<select name="hr_pet_hair">
+<option value="None" selected>None or no pets</option>
+<option value="Some">Some buildup</option>
+<option value="Heavy">Heavy buildup</option>
 </select>
 </label>
 </div>
+<label>Where does pet hair build up? (optional)
+<input name="hr_pet_hair_where" placeholder="Living room rug and the couch">
+</label>
+<label>What will our team walk into?
+<select name="hr_clutter" required>
+<option value="Mostly put away" selected>Things are mostly put away, or a few items are out</option>
+<option value="Spread out">Items are spread across several surfaces or floors</option>
+<option value="Heavy">Walkways are blocked, many items have no home, or I’d like help deciding what to keep</option>
+</select>
+</label>
+<p class="hint" id="clutterHint" style="margin:0;display:none;">Please upload photos below so we can review your space before quoting.</p>
+</fieldset>
+
+<!-- Tasks -->
+<fieldset class="fieldset grid-1">
+<legend style="font-weight:700;">Laundry, Dishes, and Extras</legend>
+<p class="hint" style="margin:0;">Your Basic Home Reset includes one load of laundry and one dishwasher load. Add anything extra here.</p>
+<div class="grid-2">
+<label>Laundry Loads to Wash
+<input name="hr_laundry_loads" type="number" min="0" value="1">
+</label>
+<label>Baskets of Clean Laundry to Fold
+<input name="hr_fold_baskets" type="number" min="0" value="0">
+</label>
+<label>Dishes
+<select name="hr_dishes">
+<option value="Standard" selected>One dishwasher load and a few hand-wash items</option>
+<option value="Extra">A second load or a sink full of hand-wash dishes</option>
+</select>
+</label>
+<label>Beds Needing Fresh Sheets
+<input name="hr_sheet_changes" type="number" min="0" value="0">
+</label>
+<label>Pet Bed Covers to Swap
+<input name="hr_pet_bed_covers" type="number" min="0" value="0">
+</label>
+<label>Sofas With Removable Covers to Swap
+<input name="hr_sofa_covers" type="number" min="0" value="0">
+</label>
+</div>
+<p class="hint" style="margin:0;">If sheets or covers need washing too, include them in your laundry loads.</p>
+<label>Snack Prep and Fridge Reset
+<select name="hr_snack_prep">
+<option value="No" selected>No thanks</option>
+<option value="Standard">Yes: up to 2 produce items washed and cut, up to 6 snacks portioned, fridge straightened</option>
+<option value="Larger">Yes, and I’d like more than that (we’ll review it with you)</option>
+</select>
+</label>
+<label>What would you like prepped? (optional)
+<input name="hr_snack_details" placeholder="Strawberries and grapes, 6 snack bags for school">
+</label>
+</fieldset>
 
 <label>Notes
-<textarea name="notes" rows="3" placeholder="Snack preferences, food allergies, where laundry goes, anything we should know"></textarea>
+<textarea name="notes" rows="3" placeholder="Food allergies, where laundry goes, anything we should know"></textarea>
 </label>
 
 <!-- Scheduling -->
@@ -245,22 +246,35 @@ Home Resets start at $260 per reset, Monday through Friday.
 <option>Morning</option>
 <option>Midday</option>
 <option>Afternoon</option>
-<option selected>Flexible</option>
+<option value="Flexible" selected>Flexible</option>
 </select>
 </label>
-
 <label>Ideal Start Date (optional)
 <input name="hr_start" type="date">
+</label>
+<label>Will someone be home during visits?
+<select name="hr_home_during">
+<option>Yes</option>
+<option>No</option>
+<option value="Sometimes" selected>Sometimes</option>
+</select>
+</label>
+<label>Products
+<select name="hr_products">
+<option value="Use my household products" selected>Use my household products</option>
+<option value="Please bring basic supplies">Please bring basic supplies</option>
+<option value="Not sure">Not sure</option>
+</select>
 </label>
 </div>
 
 <!-- Media Uploads -->
 <div class="fieldset grid-1">
 <p class="hint" style="margin:0 0 8px;">
-<strong>Photos/Video (optional):</strong> A few photos of your kitchen, laundry area, and playroom help us quote accurately.
+<strong>Photos/Video:</strong> A few photos of your kitchen, laundry area, and play areas help us quote accurately.
 </p>
 
-<label>Upload Photos (optional)
+<label>Upload Photos
 <input name="media_photos" id="mediaPhotos" type="file" accept="image/*" multiple>
 </label>
 
@@ -328,8 +342,60 @@ Home Resets start at $260 per reset, Monday through Friday.
 
   <!-- Submit: Formspree backup + app Intake Inbox save -->
 <script>
+function hrNum(v){ var n = parseInt(v, 10); return isNaN(n) || n < 0 ? 0 : n; }
+function hrPrice(d){
+var BASE = 260, BLOCK_PRICE = 35, BLOCK_MIN = 30;
+var extra = 0, parts = [], review = [];
+function add(min, why){ if (min > 0){ extra += min; parts.push(why + " +" + min + " min"); } }
+
+var area = d.hr_reset_area || "";
+if (area === "1,501 to 2,200 sq ft") add(15, "Reset area 1,501 to 2,200 sq ft");
+if (area === "2,201 to 3,000 sq ft") add(30, "Reset area 2,201 to 3,000 sq ft");
+if (area === "Over 3,000 sq ft") review.push("Reset area over 3,000 sq ft");
+if (area === "Not sure") review.push("Client unsure of reset area size");
+
+var beds = hrNum(d.hr_bedrooms_reset);
+if (beds > 2) add((beds - 2) * 15, (beds - 2) + " extra bedroom(s)");
+
+add(hrNum(d.hr_bathrooms_refresh) * 10, hrNum(d.hr_bathrooms_refresh) + " bathroom refresh(es)");
+
+var play = hrNum(d.hr_play_areas);
+if (play > 1) add((play - 1) * 20, (play - 1) + " extra play area(s)");
+
+if (d.hr_pet_hair === "Some") add(15, "Pet hair, some");
+if (d.hr_pet_hair === "Heavy") add(30, "Pet hair, heavy");
+
+if (d.hr_clutter === "Spread out") add(30, "Clutter spread across surfaces or floors");
+if (d.hr_clutter === "Heavy") review.push("Heavy clutter, photos needed");
+
+var loads = hrNum(d.hr_laundry_loads);
+if (loads > 1) add((loads - 1) * 15, (loads - 1) + " extra laundry load(s)");
+add(hrNum(d.hr_fold_baskets) * 15, hrNum(d.hr_fold_baskets) + " basket(s) to fold");
+
+if (d.hr_dishes === "Extra") add(15, "Second dish load or full sink");
+
+add(hrNum(d.hr_sheet_changes) * 10, hrNum(d.hr_sheet_changes) + " sheet change(s)");
+add(hrNum(d.hr_pet_bed_covers) * 10, hrNum(d.hr_pet_bed_covers) + " pet bed cover(s)");
+add(hrNum(d.hr_sofa_covers) * 20, hrNum(d.hr_sofa_covers) + " sofa cover set(s)");
+
+if (d.hr_snack_prep === "Standard") add(30, "Snack prep and fridge reset");
+if (d.hr_snack_prep === "Larger") { add(30, "Snack prep and fridge reset"); review.push("Larger snack prep request"); }
+
+if (loads > 3) review.push("Check washer and dryer capacity for " + loads + " loads");
+
+var blocks = Math.ceil(extra / BLOCK_MIN);
+return {
+price: BASE + blocks * BLOCK_PRICE,
+extraMinutes: extra,
+totalMinutes: 240 + extra,
+blocks: blocks,
+breakdown: parts,
+review: review
+};
+}
+
 (function(){
-var RATE = 65, SUB_MIN = 30, SUB_MAX = 35, MIN_HOURS = 4;
+var SUB_MIN = 30, SUB_MAX = 35;
 function list(v){ if (v == null || v === "") return ""; return Array.isArray(v) ? v.join(", ") : String(v); }
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -342,6 +408,8 @@ var uploadStatus = document.getElementById('uploadStatus');
 var successCard = document.getElementById('successCard');
 var photosEl = document.getElementById('mediaPhotos');
 var videoEl = document.getElementById('mediaVideo');
+var clutterEl = form.querySelector('[name="hr_clutter"]');
+var clutterHint = document.getElementById('clutterHint');
 
 function setUploadHint(){
 var pc = photosEl && photosEl.files ? photosEl.files.length : 0;
@@ -351,6 +419,13 @@ uploadStatus.textContent = (!pc && !vc) ? "" : ("Selected: " + pc + " photo(s)" 
 }
 if (photosEl) photosEl.addEventListener("change", setUploadHint);
 if (videoEl) videoEl.addEventListener("change", setUploadHint);
+
+function syncClutter(){
+var heavy = clutterEl && clutterEl.value === "Heavy";
+if (clutterHint) clutterHint.style.display = heavy ? "block" : "none";
+if (photosEl) photosEl.required = !!heavy;
+}
+if (clutterEl){ clutterEl.addEventListener("change", syncClutter); syncClutter(); }
 
 form.addEventListener('submit', async function(e){
 e.preventDefault();
@@ -377,28 +452,41 @@ data[k] = v;
 }
 });
 
-var hoursPicked = parseInt(data.hr_hours, 10);
-var hours = (!hoursPicked || hoursPicked < MIN_HOURS) ? MIN_HOURS : hoursPicked;
+var q = hrPrice(data);
+var hours = q.totalMinutes / 60;
 
-var scopeClear = [
-data.hr_tasks ? "Tasks: " + list(data.hr_tasks) : null,
-data.hr_laundry_loads ? "Laundry: " + data.hr_laundry_loads : null,
-data.hr_products ? "Products: " + data.hr_products : null
+var homeClear = [
+data.hr_total_sqft ? "Total Home: " + data.hr_total_sqft + " sq ft" : null,
+data.hr_reset_area ? "Reset Area: " + data.hr_reset_area : null,
+data.hr_areas ? "Areas: " + data.hr_areas : null,
+"Bedrooms: " + hrNum(data.hr_bedrooms_reset) + " of " + hrNum(data.hr_bedrooms_total) + " to reset",
+"Bathrooms: " + hrNum(data.hr_bathrooms_refresh) + " of " + hrNum(data.hr_bathrooms_total) + " to refresh"
 ].filter(Boolean).join(" | ");
 
 var householdClear = [
-data.home_sqft ? "Home Size: " + data.home_sqft : null,
+"Children: " + hrNum(data.hr_children),
+"Play Areas: " + hrNum(data.hr_play_areas),
+"Pets: " + hrNum(data.hr_pets),
+data.hr_pet_hair ? "Pet Hair: " + data.hr_pet_hair : null,
+data.hr_pet_hair_where ? "Hair Builds Up: " + data.hr_pet_hair_where : null,
 data.hr_clutter ? "Clutter: " + data.hr_clutter : null,
-(data.hr_children !== undefined && data.hr_children !== "") ? "Children: " + data.hr_children : null,
-data.hr_child_ages ? "Ages: " + data.hr_child_ages : null,
-data.hr_pets ? "Pets: " + data.hr_pets : null,
-data.hr_home_during ? "Home During Visit: " + data.hr_home_during : null,
-data.hr_cleaning_service ? "Cleaning: " + data.hr_cleaning_service : null
+data.hr_home_during ? "Home During Visit: " + data.hr_home_during : null
+].filter(Boolean).join(" | ");
+
+var scopeClear = [
+"Laundry Loads: " + hrNum(data.hr_laundry_loads),
+"Baskets to Fold: " + hrNum(data.hr_fold_baskets),
+data.hr_dishes ? "Dishes: " + data.hr_dishes : null,
+"Sheet Changes: " + hrNum(data.hr_sheet_changes),
+"Pet Bed Covers: " + hrNum(data.hr_pet_bed_covers),
+"Sofa Covers: " + hrNum(data.hr_sofa_covers),
+data.hr_snack_prep ? "Snack Prep: " + data.hr_snack_prep : null,
+data.hr_snack_details ? "Prep Details: " + data.hr_snack_details : null,
+data.hr_products ? "Products: " + data.hr_products : null
 ].filter(Boolean).join(" | ");
 
 var schedulingClear = [
 data.hr_frequency ? "Frequency: " + data.hr_frequency : null,
-data.hr_hours ? "Hours per Visit: " + data.hr_hours : null,
 data.hr_days ? "Days: " + list(data.hr_days) : null,
 data.hr_time ? "Time: " + data.hr_time : null,
 data.hr_start ? "Start: " + data.hr_start : null
@@ -413,8 +501,9 @@ data.address ? "Address: " + data.address : null
 
 var summaryClear = [
 "Home Reset",
-scopeClear,
+homeClear,
 householdClear,
+scopeClear,
 schedulingClear,
 data.notes ? "Notes: " + data.notes : null
 ].filter(Boolean).join(" | ");
@@ -425,21 +514,20 @@ data[key] = clean;
 fd.append(key, clean);
 }
 
-var clientPerVisit = RATE * hours;
-var subLow = SUB_MIN * hours;
-var subHigh = SUB_MAX * hours;
-
 setClear("intake_id", "hr_" + Date.now() + "_" + Math.random().toString(16).slice(2));
 setClear("SERVICE_CATEGORY_CLEAR", "Home Reset");
 setClear("CLIENT_CONTACT_CLEAR", contactClear);
-setClear("HOME_RESET_SCOPE_CLEAR", scopeClear);
+setClear("HOME_RESET_SCOPE_CLEAR", homeClear + " | " + scopeClear);
 setClear("HOME_RESET_HOUSEHOLD_CLEAR", householdClear);
 setClear("SCHEDULING_PREFERENCES_CLEAR", schedulingClear);
 setClear("REQUEST_SUMMARY_CLEAR", summaryClear);
 setClear("INTERNAL_app_intake_type", "home_reset");
-setClear("INTERNAL_estimate_per_visit", "$" + clientPerVisit + " (" + hours + " hrs at $" + RATE + "/hr)" + (hoursPicked ? "" : ", hours not chosen so minimum shown"));
-setClear("INTERNAL_sub_pay_per_visit", "$" + subLow + " to $" + subHigh + " ($" + SUB_MIN + " to $" + SUB_MAX + "/hr)");
-setClear("INTERNAL_notes", "Light upkeep only: no mirrors, showers, toilets, or mopping. Weekdays only.");
+setClear("INTERNAL_suggested_price", "$" + q.price);
+setClear("INTERNAL_extra_minutes", q.extraMinutes + " min (" + q.blocks + " block(s) of 30 min at $35)");
+setClear("INTERNAL_estimated_labor", q.totalMinutes + " min, one team member");
+setClear("INTERNAL_what_added_time", q.breakdown.length ? q.breakdown.join(" | ") : "Basic Home Reset, nothing added");
+setClear("INTERNAL_needs_manual_review", q.review.length ? "YES: " + q.review.join(" | ") : "No");
+setClear("INTERNAL_sub_pay_estimate", "$" + Math.round(SUB_MIN * hours) + " to $" + Math.round(SUB_MAX * hours) + " ($" + SUB_MIN + " to $" + SUB_MAX + "/hr)");
 
 try{
 if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
@@ -448,11 +536,14 @@ type: "home_reset",
 serviceType: "home_reset",
 intakeData: data,
 estimate: {
-hours: hours,
-ratePerHour: RATE,
-clientPerVisit: clientPerVisit,
-subPayLow: subLow,
-subPayHigh: subHigh
+suggestedPrice: q.price,
+extraMinutes: q.extraMinutes,
+totalMinutes: q.totalMinutes,
+addedTime: q.breakdown,
+needsManualReview: q.review.length > 0,
+reviewReasons: q.review,
+subPayLow: Math.round(SUB_MIN * hours),
+subPayHigh: Math.round(SUB_MAX * hours)
 },
 summary: summaryClear
 });
@@ -470,10 +561,11 @@ body: fd
 
 if (resp.ok){
 if (successCard){
-successCard.textContent = "Thanks! We’ve received your Home Reset intake. We’ll review your details and follow up with your quote and available days.";
+successCard.textContent = "Thanks! We’ve received your Home Reset intake. We’ll review your details and follow up with your flat rate quote and available days.";
 successCard.style.display = "block";
 }
 form.reset();
+syncClutter();
 if (uploadStatus) uploadStatus.textContent = "";
 } else {
 if (statusEl) statusEl.textContent = "We received your intake, but couldn’t reach our inbox right now. If needed, please email us and reference your submission.";

@@ -227,10 +227,10 @@ As a busy mom, I once had someone come every Monday to reset our home. Dishes, l
 </p>
 <p style="font-family:'Allura',cursive;font-size:1.6rem;margin:.2rem 0 1rem;">Richelle, Owner</p>
 <p>
-Home Resets are <strong>light upkeep, not cleaning</strong>. They pair beautifully with a monthly or twice monthly clean from our cleaning team.
+Home Resets start at <strong>$260 per visit</strong>. A Basic Home Reset helps you catch up on laundry, dishes, tidying, and light vacuuming in your priority areas.
 </p>
 <p>
-Home Resets start at <strong>$260 per reset</strong>. Your final price depends on your home’s size, how cluttered it is, the tasks you need, and how many kids and pets are in the home.
+Your flat rate quote is based on the size and condition of the areas you’d like reset and the tasks your household needs.
 </p>
 
 <div class="callout">
@@ -249,52 +249,71 @@ Home Resets start at <strong>$260 per reset</strong>. Your final price depends o
 </div>
 </section>
 
-<!-- What's Included -->
+<!-- Basic Home Reset -->
 <section class="section">
 <div class="container">
-<h2>What’s Included</h2>
-<p>You choose the tasks that matter most to your household. Here’s what a Home Reset can cover.</p>
+<h2>What a Basic Home Reset Includes</h2>
 
 <div class="org-grid">
 <div class="org-card">
-<span class="pill">Kitchen</span>
-<h3>Kitchen Reset</h3>
-<p>Dishes washed and put away, counters wiped, and the sink cleared.</p>
-</div>
-
-<div class="org-card">
 <span class="pill">Laundry</span>
-<h3>Wash, Dry, Fold</h3>
-<p>Laundry washed, dried, folded, and put away. Bedding changes on request.</p>
+<h3>One Load, Start to Finish</h3>
+<p>Gathered, sorted, washed, dried, folded, and put away.</p>
 </div>
 
 <div class="org-card">
-<span class="pill">Food Prep</span>
-<h3>Snack and Meal Prep</h3>
-<p>Snacks portioned, produce washed and cut, and lunches prepped for the week.</p>
+<span class="pill">Dishes and Trash</span>
+<h3>Kitchen Caught Up</h3>
+<p>One dishwasher load, a few items hand washed, small bins emptied, and trash taken out.</p>
 </div>
 
 <div class="org-card">
-<span class="pill">Kids’ Spaces</span>
-<h3>Playroom and Bedrooms</h3>
-<p>Toys back in their bins, books on the shelf, and beds made.</p>
+<span class="pill">Bedrooms</span>
+<h3>Up to Two Bedrooms</h3>
+<p>Beds made with the bedding already on them and rooms straightened.</p>
 </div>
 
 <div class="org-card">
-<span class="pill">Pets</span>
-<h3>Pet Touches</h3>
-<p>Dog bed covers and couch covers washed and put back on.</p>
+<span class="pill">Play and Living Areas</span>
+<h3>One Play Area and the Living Room</h3>
+<p>Toys and belongings back in place, cushions straightened, and blankets folded.</p>
 </div>
 
 <div class="org-card">
-<span class="pill">Week Ahead</span>
-<h3>Ready for Monday</h3>
-<p>Light vacuuming, drop zones and backpacks reset, and the house ready for the week.</p>
+<span class="pill">Kitchen and Entry</span>
+<h3>Everyday Tidy</h3>
+<p>Everyday items put away, crumbs and small spills wiped, and shoes, bags, and jackets straightened.</p>
+</div>
+
+<div class="org-card">
+<span class="pill">Floors</span>
+<h3>Light Vacuuming</h3>
+<p>Accessible floors and rugs in your reset areas.</p>
 </div>
 </div>
 
 <div class="callout">
-<strong>Not included:</strong> mirrors, showers, toilets, or mopping. Those are part of our <a href="cleaning.html">cleaning services</a>, which you can book separately.
+A Basic Home Reset covers about 1,500 sq ft of reset area. Larger homes can still qualify when the areas you choose fit the visit.
+</div>
+</div>
+</section>
+
+<!-- Add-Ons -->
+<section class="section">
+<div class="container">
+<h2>Add-Ons</h2>
+<p>Choose any of these on your intake form and we’ll include them in your flat rate quote.</p>
+<ul>
+<li>Extra laundry loads or clean laundry to fold</li>
+<li>Fresh sheets on beds</li>
+<li>Sofa and pet bed cover changes</li>
+<li>Snack prep and fridge reset</li>
+<li>Bathroom refresh: counters straightened and fresh towels</li>
+<li>Extra bedrooms or play areas</li>
+</ul>
+
+<div class="callout">
+<strong>Not included:</strong> mirrors, showers, toilets, or mopping are part of our <a href="cleaning.html">cleaning services</a>. Decluttering or new storage systems are part of <a href="organizing.html">Home Organizing</a>.
 </div>
 </div>
 </section>
@@ -448,8 +467,8 @@ const intakeLink = `<a href="${CFG.intakeAnchor}">Start Home Reset Intake</a>`;
 switch(intent){
 case "pricing":
 return [
-"Home Resets start at $260 per reset.",
-"Your final price depends on home size, clutter level, the tasks you need, and how many kids and pets are in the home.",
+"Home Resets start at $260 per visit.",
+"Your flat rate quote depends on the size and condition of your reset areas and the tasks you need.",
 intakeLink
 ].join("<br>");
 case "availability":
@@ -459,7 +478,8 @@ intakeLink + " and we’ll follow up with open days."
 ].join("<br>");
 case "services":
 return [
-"Home Resets cover dishes, laundry, snack and meal prep, wiping counters, playroom resets, pet bed and couch covers, light vacuuming, and getting the family set for the week.",
+"A Basic Home Reset covers one load of laundry, dishes, trash, up to two bedrooms, one play area, the living room, kitchen and entry tidying, and light vacuuming.",
+"Snack prep, extra laundry, fresh sheets, and sofa or pet bed covers can be added on the intake form.",
 "Mirrors, showers, toilets, and mopping are part of our <a href=\"cleaning.html\">cleaning services</a>.",
 intakeLink
 ].join("<br>");
