@@ -1,8 +1,8 @@
 // === Ivy: Square ===
 //
-// Read only. Ivy looks at Square Appointments and Square Invoices so the
-// briefing can say who is booked and who still owes money. She never creates,
-// changes or cancels anything in Square.
+// Ivy reads Square Appointments and Square Invoices so the briefing can say
+// who is booked and who still owes money. The one thing she writes is a client
+// invoice for a finished job, and only after Richelle has had the 4:30 text.
 //
 // Environment she expects:
 //   SQUARE_ACCESS_TOKEN   from Secret Manager: ivy-square-token. The Production
@@ -236,6 +236,97 @@ export async function invoicesForCustomer({ emails = [], phone = "" }) {
   return out
     .filter((i) => (seen.has(i.id) ? false : seen.add(i.id)))
     .sort((a, b) => String(b.sent).localeCompare(String(a.sent)));
+}
+
+/* ------------------------------------------------------------------
+   Sending invoices
+
+   The one place Ivy writes to Square. A client invoice for a finished job:
+   find or create the customer, build a one line order named for the
+   service (so the QuickBooks sync maps it like the invoices Richelle makes
+   by hand), then publish the invoice so Square emails it with a Pay button
+   and an optional tip. Each step uses an idempotency key built from the job
+   id, so a retry never makes a second invoice.
+   ------------------------------------------------------------------ */
+
+async function ensureCustomer({ email, name, phone, jobId }) {
+  if (email) {
+    const found = await sq("/customers/search", {
+      method: "POST",
+      body: { query: { filter: { email_address: { exact: email } } }, limit: 1 }
+    });
+    if ((found.customers || [])[0]) return found.customers[0].id;
+  }
+  const [given, ...rest] = String(name || "").trim().split(/\s+/);
+  const { customer } = await sq("/customers", {
+    method: "POST",
+    body: {
+      idempotency_key: `ivy-cust-${jobId}`,
+      given_name: given || undefined,
+      family_name: rest.join(" ") || undefined,
+      email_address: email || undefined,
+      phone_number: phone || undefined,
+      note: "Added by Ivy for a website booking"
+    }
+  });
+  return customer.id;
+}
+
+export async function sendJobInvoice({ jobId, email, name, phone, service, description, amount, dueDate }) {
+  const cents = Math.round(Number(amount) * 100);
+  if (!cents || cents < 100) throw new Error("No client price on this job");
+  if (!email) throw new Error("No client email on this job");
+  const locs = await locations();
+  const locationId = locs[0]?.id;
+  if (!locationId) throw new Error("No active Square location");
+
+  const customerId = await ensureCustomer({ email, name, phone, jobId });
+  const { order } = await sq("/orders", {
+    method: "POST",
+    body: {
+      idempotency_key: `ivy-order-${jobId}`,
+      order: {
+        location_id: locationId,
+        customer_id: customerId,
+        reference_id: jobId.slice(0, 40),
+        line_items: [{
+          name: String(service || "Service").slice(0, 500),
+          quantity: "1",
+          base_price_money: { amount: cents, currency: "USD" }
+        }]
+      }
+    }
+  });
+  const { invoice } = await sq("/invoices", {
+    method: "POST",
+    body: {
+      idempotency_key: `ivy-inv-${jobId}`,
+      invoice: {
+        location_id: locationId,
+        order_id: order.id,
+        primary_recipient: { customer_id: customerId },
+        payment_requests: [{ request_type: "BALANCE", due_date: dueDate, tipping_enabled: true }],
+        delivery_method: "EMAIL",
+        title: String(service || "Service").slice(0, 255),
+        description: String(description || "Thank you for choosing The Finishing Touch!").slice(0, 65536),
+        accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false }
+      }
+    }
+  });
+  const published = await sq(`/invoices/${invoice.id}/publish`, {
+    method: "POST",
+    body: { version: invoice.version, idempotency_key: `ivy-pub-${jobId}` }
+  });
+  const inv = published.invoice || invoice;
+  return { id: inv.id, number: inv.invoice_number || "", url: inv.public_url || "", status: inv.status || "" };
+}
+
+/** Which permissions the key has, so we know invoices will work before 4:30. */
+export async function squareScopes() {
+  const data = await sq("/../oauth2/token/status", { method: "POST", body: {} });
+  const scopes = data.scopes || [];
+  const need = ["CUSTOMERS_READ", "CUSTOMERS_WRITE", "ORDERS_WRITE", "INVOICES_READ", "INVOICES_WRITE"];
+  return { scopes, missing: need.filter((s) => !scopes.includes(s)), expires: data.expires_at || "" };
 }
 
 export async function squareCheck() {
