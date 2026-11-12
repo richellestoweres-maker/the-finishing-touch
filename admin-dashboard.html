@@ -1044,6 +1044,11 @@
       </section>
 
       <section id="panel-clients" class="panel" aria-live="polite">
+        <div class="card" style="margin-bottom:14px">
+          <div class="toprow"><strong>Client Requests</strong><span class="rolepill">From the client portal</span></div>
+          <p class="small">Scheduling requests clients send from their portal. VIP members are listed first.</p>
+          <div id="listClientRequests" class="grid"></div>
+        </div>
         <div id="listClients" class="grid"></div>
       </section>
 
@@ -1580,6 +1585,60 @@
       `;
     }
 
+
+    function escAdmin(v){ return String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+    /** What the client saved in their portal profile, plus the VIP switch. */
+    function clientDetailsHTML(p){
+      const pr = p.profile || {};
+      const addr = [pr.street, pr.unit, pr.city, pr.zip].filter(Boolean).join(", ");
+      const rows = [
+        ["Phone", pr.phone || p.phone], ["Address", addr], ["Home", pr.homeSize],
+        ["Getting in", pr.accessNotes], ["Parking", pr.parking], ["Pets", pr.pets],
+        ["Preferences", pr.preferences], ["Allergies", pr.allergies],
+        ["Reach by", pr.contactPref ? cap(pr.contactPref) : ""], ["Birthday", pr.birthday]
+      ].filter(r => r[1]);
+      const vip = !!p.vip;
+      return `
+        <div class="meta">${vip?`<span>⭐ VIP member</span>`:""}</div>
+        ${rows.length ? `<div class="profile-box">${rows.map(r=>`<div><strong>${r[0]}:</strong> ${escAdmin(r[1])}</div>`).join("")}</div>`
+                      : `<div class="small" style="margin-top:8px">No portal profile saved yet.</div>`}
+        <div class="actions">
+          <button class="btn ${vip?"btn-outline":"btn-solid"}" data-uid="${p.id}" data-vip="${vip?"1":"0"}" data-act="toggle-vip">${vip?"Remove VIP":"Make VIP"}</button>
+        </div>`;
+    }
+
+    /** Scheduling requests from the client portal, VIP first, newest first. */
+    function drawClientRequests(list){
+      const box = document.getElementById("listClientRequests");
+      if (!box) return;
+      const open = list.filter(r => r.requestKind === "scheduling_request" && r.status !== "handled");
+      if (!open.length){ box.innerHTML = `<div class="empty">No open client requests.</div>`; return; }
+      const ms = v => v?.toMillis ? v.toMillis() : 0;
+      open.sort((a,b) => (Number(!!b.vip) - Number(!!a.vip)) || (ms(b.createdAt) - ms(a.createdAt)));
+      box.innerHTML = open.map(r => `
+        <div class="card">
+          <div class="toprow">
+            <strong>${r.vip?"⭐ ":""}${escAdmin(cap(String(r.requestType||"request").replaceAll("_"," ")))}</strong>
+            <span class="rolepill">${escAdmin(r.status||"new")}</span>
+          </div>
+          <div class="meta">
+            ${r.clientEmail?`<span>📧 ${escAdmin(r.clientEmail)}</span>`:""}
+            ${r.serviceType?`<span>🧰 ${escAdmin(r.serviceType)}</span>`:""}
+            ${r.preferredDate?`<span>📅 ${escAdmin(r.preferredDate)}${r.preferredWindow?` · ${escAdmin(r.preferredWindow)}`:""}</span>`:""}
+          </div>
+          ${r.notes?`<div class="small">${escAdmin(r.notes)}</div>`:""}
+          <div class="actions">
+            <button class="btn btn-solid" data-req="${r.id}" data-act="req-handled">Mark Handled</button>
+          </div>
+        </div>`).join("");
+      box.querySelectorAll('[data-act="req-handled"]').forEach(b => b.addEventListener("click", async () => {
+        b.disabled = true;
+        try{ await updateDoc(doc(db,"bookingRequests",b.dataset.req), { status:"handled", updatedAt: serverTimestamp() }); }
+        catch(e){ console.warn(e); alert("Could not update: " + (e.message||e)); b.disabled = false; }
+      }));
+    }
+
     function drawPeople(container, people, role){
       if (!container) return;
       if (!people.length){ container.innerHTML = `<div class="empty">No ${role}s found.</div>`; return; }
@@ -1595,6 +1654,7 @@
             ${Array.isArray(p.serviceTypes)&&p.serviceTypes.length?`<span>🧰 ${p.serviceTypes.join(", ")}</span>`:""}
             ${p.applicationStatus?`<span>Status: ${p.applicationStatus}</span>`:""}
           </div>
+          ${role==="client"?clientDetailsHTML(p):""}
           ${role==="contractor"?`<div class="actions">
             <button class="btn btn-outline" data-uid="${p.id}" data-act="copy-id">Copy UID</button>
             <button class="btn btn-solid" data-uid="${p.id}" data-act="load-profile">View Scheduling Profile</button>
@@ -1602,6 +1662,19 @@
           <div class="contractor-profile" id="profile-${p.id}"></div>`:""}
         </div>
       `).join("");
+
+      container.querySelectorAll('[data-act="toggle-vip"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const on = b.dataset.vip !== "1";
+          b.disabled = true;
+          try{
+            await updateDoc(doc(db,"users",b.dataset.uid), on
+              ? { vip:true, vipSince: serverTimestamp() }
+              : { vip:false });
+          }catch(e){ console.warn(e); alert("Could not update VIP: " + (e.message||e)); }
+          b.disabled = false;
+        });
+      });
 
       container.querySelectorAll('[data-act="copy-id"]').forEach(b=>{
         b.addEventListener("click", async ()=>{
@@ -3007,6 +3080,15 @@
       onSnapshot(
         query(collection(db,"users"), where("role","==","client")),
         snap => { drawPeople(elClients, snap.docs.map(d=>({id:d.id, ...d.data()})), "client"); }
+      );
+      onSnapshot(
+        query(collection(db,"bookingRequests"), orderBy("createdAt","desc"), limit(100)),
+        snap => { drawClientRequests(snap.docs.map(d=>({id:d.id, ...d.data()}))); },
+        err => {
+          console.warn("client requests:", err);
+          const box = document.getElementById("listClientRequests");
+          if (box) box.innerHTML = `<div class="empty">Could not load client requests.</div>`;
+        }
       );
       onSnapshot(
         query(collection(db,"users"), where("role","==","pending")),
