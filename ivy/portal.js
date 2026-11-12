@@ -49,7 +49,7 @@ const TEXT_FIELDS = {
 const CONTACT_PREFS = new Set(["text", "email", "call", "portal"]);
 
 /** Who is signed in, from the Firebase ID token the browser sends. */
-async function signedInUser(req) {
+export async function signedInUser(req) {
   const m = String(req.header("Authorization") || "").match(/^Bearer\s+(.+)$/);
   if (!m) return null;
   const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_WEB_API_KEY}`, {
