@@ -479,6 +479,11 @@ async function createJobFromIntake(opts = {}){
       } catch {}
     }
 
+    // Let Ivy know right away, so the sub hears about it in seconds, not minutes.
+    try {
+      fetch("https://ivy-591177706994.us-central1.run.app/pipeline/poke", { method: "POST", keepalive: true }).catch(() => {});
+    } catch {}
+
     return ref.id;
   } catch(err){
     window.FTAutoLastError = err;
