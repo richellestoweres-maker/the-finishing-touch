@@ -133,6 +133,7 @@ function assignedSubNote(j) {
 
 function prefSummary(j) {
   const p = j.clientDatePref || {};
+  if (p.mode === "options") return `Client can do ${(p.options || []).map((o) => `<strong>${esc(prettyDate(o.date))}</strong> ${esc(windowLabel(o.window))}`).join(", ")}${j.ivyManaged ? " · Ivy is handling this one" : ""}`;
   if (p.mode === "specific") return `Client wants <strong>${esc(prettyDate(p.date))}</strong> · ${esc(windowLabel(p.window))}`;
   if (p.mode === "flexible") return `Flexible — <strong>by ${esc(prettyDate(p.byDate))}</strong> · ${esc(windowLabel(p.window))}`;
   return "";
