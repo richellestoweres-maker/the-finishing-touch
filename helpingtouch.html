@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A Helping Touch | The Finishing Touch</title>
+  <meta name="description" content="A Helping Touch is The Finishing Touch's community program. Apply for yourself or nominate someone who truly needs help with their home.">
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css?v=8" />
+
+  <style>
+    body{background:#fbf8f4}
+    .ht-intro{width:min(920px,92%);margin:34px auto 0;text-align:center}
+    .ht-intro .ht-icon{font-size:34px;color:#2e2a27;opacity:.9}
+    .ht-intro h1{font-family:"Playfair Display",serif;margin:10px 0 0}
+    .ht-intro .ht-script{font-family:"Allura",cursive;font-size:2rem;color:#524a46;margin:0 0 10px}
+    .ht-intro p{max-width:720px;margin:0 auto 10px;opacity:.92;line-height:1.6}
+    .ht-points{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(920px,92%);margin:22px auto 0}
+    .ht-point{background:#fff;border-radius:14px;padding:16px;text-align:center;box-shadow:0 10px 26px rgba(0,0,0,.06)}
+    .ht-point i{font-size:22px;color:#524a46}
+    .ht-point h3{font-family:"Playfair Display",serif;font-size:1.05rem;margin:8px 0 4px}
+    .ht-point p{margin:0;font-size:.95rem;opacity:.9}
+    @media (max-width:760px){.ht-points{grid-template-columns:1fr}}
+
+    .intake-wrap{width:min(920px,92%);margin:24px auto 60px;background:#fff;padding:28px 24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    .intake-script{text-align:center;font-family:"Allura",cursive;font-size:2rem;margin:0 0 12px;color:#524a46}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid-1{display:grid;gap:14px}
+    @media (max-width:640px){.grid-2{grid-template-columns:1fr}}
+    .fieldset{border:0;border-top:1px solid #e8ddd1;margin:16px 0 0;padding:16px 0 0}
+    .fieldset legend{font-weight:700;padding:0}
+    .submit-row{text-align:center;margin-top:16px}
+    .hint{font-size:.95rem;opacity:.9;margin:0}
+    .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+    .check-grid label,.consent{display:flex;gap:.6rem;align-items:flex-start}
+    @media (max-width:640px){.check-grid{grid-template-columns:1fr}}
+    .hidden{display:none !important}
+    .success-card{margin-top:14px;background:#fbf5ee;border:1px solid #ecdccc;border-radius:14px;padding:14px 16px;font-size:.98rem;display:none;text-align:center}
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="index.html" class="brand-link" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none">
+          <span class="vase-logo" aria-hidden="true"></span>
+          <span class="brand-name">The Finishing Touch</span>
+        </a>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Intro -->
+  <section class="ht-intro">
+    <i class="fa-solid fa-hand-holding-heart ht-icon" aria-hidden="true"></i>
+    <h1>A Helping Touch</h1>
+    <div class="ht-script">For neighbors who truly need it</div>
+    <p>Some homes need help and the budget just isn't there. Each quarter, our team gives free or reduced cost service to local households going through a hard season.</p>
+    <p>Apply for yourself, or nominate someone you love.</p>
+  </section>
+
+  <section class="ht-points" aria-label="Who we help">
+    <div class="ht-point">
+      <i class="fa-solid fa-people-roof" aria-hidden="true"></i>
+      <h3>Who we help</h3>
+      <p>Seniors, neighbors living with a disability or illness, single parents, caregivers, and anyone whose home has become too much.</p>
+    </div>
+    <div class="ht-point">
+      <i class="fa-solid fa-camera" aria-hidden="true"></i>
+      <h3>Show us the space</h3>
+      <p>Tell us what's needed and add a few photos or a short video. Everything you share stays private.</p>
+    </div>
+    <div class="ht-point">
+      <i class="fa-regular fa-calendar-check" aria-hidden="true"></i>
+      <h3>Chosen each quarter</h3>
+      <p>We review every application and reach out to the households we're able to help.</p>
+    </div>
+  </section>
+
+  <main class="intake-wrap">
+    <div class="intake-script">Application</div>
+
+    <form id="helpingTouchForm" class="grid-1" method="POST" action="https://formspree.io/f/mzzaogbv" enctype="multipart/form-data" novalidate>
+      <input type="hidden" name="_subject" value="New A Helping Touch Application · The Finishing Touch" />
+      <input type="hidden" name="page" value="helpingtouch.html" />
+
+      <!-- Who -->
+      <label>Who is this application for?
+        <select name="ht_applying_for" id="htApplyingFor" required>
+          <option value="Myself" selected>Myself</option>
+          <option value="Someone I'm nominating">Someone I'm nominating</option>
+        </select>
+      </label>
+
+      <div class="grid-2">
+        <label>Your Full Name<input name="name" autocomplete="name" required></label>
+        <label>Your Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Your Phone<input name="phone" type="tel" autocomplete="tel" required></label>
+        <label id="htRelationWrap" class="hidden">Your Relationship to Them<input name="ht_relationship" placeholder="Daughter, neighbor, church member"></label>
+      </div>
+
+      <fieldset id="htNomineeBlock" class="fieldset grid-1 hidden">
+        <legend>The Person You're Nominating</legend>
+        <div class="grid-2">
+          <label>Their Name<input name="ht_nominee_name" id="htNomineeName"></label>
+          <label>Their Phone or Email (optional)<input name="ht_nominee_contact"></label>
+        </div>
+        <label>Do they know you're nominating them?
+          <select name="ht_nominee_aware" id="htNomineeAware">
+            <option value="">Choose one</option>
+            <option value="Yes, and they'd welcome the help">Yes, and they'd welcome the help</option>
+            <option value="Not yet">Not yet</option>
+          </select>
+        </label>
+        <p class="hint">We always talk with the person first and only help with their permission.</p>
+      </fieldset>
+
+      <!-- Home -->
+      <fieldset class="fieldset grid-1">
+        <legend>The Home</legend>
+        <label>Home Address<input name="address" autocomplete="street-address" required placeholder="Street, city, ZIP"></label>
+        <div class="grid-2">
+          <label>Type of Home
+            <select name="ht_home_type" required>
+              <option value="">Choose one</option>
+              <option>House</option>
+              <option>Apartment or condo</option>
+              <option>Mobile or manufactured home</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label>About How Big? (sq ft, optional)<input name="ht_sqft" type="number" min="0" placeholder="1,400"></label>
+          <label>Bedrooms<input name="ht_bedrooms" type="number" min="0" placeholder="3"></label>
+          <label>Bathrooms<input name="ht_bathrooms" type="number" min="0" step="0.5" placeholder="2"></label>
+          <label>Pets in the Home<input name="ht_pets" placeholder="1 dog, 2 cats, or none"></label>
+          <label>Who lives in the home?<input name="ht_household" placeholder="Me and my two kids"></label>
+        </div>
+      </fieldset>
+
+      <!-- Situation -->
+      <fieldset class="fieldset grid-1">
+        <legend>What Fits Your Situation? (optional, choose any)</legend>
+        <div class="check-grid">
+          <label><input type="checkbox" name="ht_situation" value="Senior"> <span>Senior</span></label>
+          <label><input type="checkbox" name="ht_situation" value="Living with a disability"> <span>Living with a disability</span></label>
+          <label><input type="checkbox" name="ht_situation" value="Illness, injury, or recovery"> <span>Illness, injury, or recovery</span></label>
+          <label><input type="checkbox" name="ht_situation" value="Single parent"> <span>Single parent</span></label>
+          <label><input type="checkbox" name="ht_situation" value="Caregiver"> <span>Caregiver for a loved one</span></label>
+          <label><input type="checkbox" name="ht_situation" value="Financial hardship"> <span>Going through a financial hardship</span></label>
+          <label><input type="checkbox" name="ht_situation" value="Home has become overwhelming"> <span>The home has become overwhelming</span></label>
+          <label><input type="checkbox" name="ht_situation" value="Other"> <span>Something else</span></label>
+        </div>
+      </fieldset>
+
+      <!-- Help needed -->
+      <fieldset class="fieldset grid-1">
+        <legend>What Help Is Needed? (choose at least one)</legend>
+        <div class="check-grid" id="htHelpGrid">
+          <label><input type="checkbox" name="ht_help" value="Cleaning"> <span>Cleaning</span></label>
+          <label><input type="checkbox" name="ht_help" value="Deep clean"> <span>Deep clean</span></label>
+          <label><input type="checkbox" name="ht_help" value="Decluttering and organizing"> <span>Decluttering and organizing</span></label>
+          <label><input type="checkbox" name="ht_help" value="Laundry, dishes, and a home reset"> <span>Laundry, dishes, and a home reset</span></label>
+          <label><input type="checkbox" name="ht_help" value="Help after a move"> <span>Help after a move</span></label>
+          <label><input type="checkbox" name="ht_help" value="Not sure"> <span>Not sure, please advise</span></label>
+        </div>
+        <label>Which rooms need the most help?<input name="ht_rooms" placeholder="Kitchen, bathroom, and the back bedroom"></label>
+        <label>Is any of this in the home? (so we send the right team and keep everyone safe)
+          <select name="ht_safety" required>
+            <option value="">Choose one</option>
+            <option value="None of these">None of these</option>
+            <option value="Pests such as roaches, rodents, or bed bugs">Pests such as roaches, rodents, or bed bugs</option>
+            <option value="Mold or water damage">Mold or water damage</option>
+            <option value="Pet or human waste">Pet or human waste</option>
+            <option value="Needles or sharps">Needles or sharps</option>
+            <option value="More than one of these">More than one of these</option>
+            <option value="Not sure">Not sure</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <!-- Story -->
+      <fieldset class="fieldset grid-1">
+        <legend>Tell Us a Little About It</legend>
+        <label>What's going on, and how would this help?
+          <textarea name="ht_story" rows="5" required placeholder="Share as much or as little as you're comfortable with."></textarea>
+        </label>
+        <label>Could you cover any part of the cost?
+          <select name="ht_contribution" required>
+            <option value="">Choose one</option>
+            <option value="No, I need it to be free">No, I need it to be free</option>
+            <option value="Yes, a small part">Yes, a small part</option>
+            <option value="Not sure">Not sure</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <!-- Days -->
+      <fieldset class="fieldset grid-1">
+        <legend>Days That Work (Monday through Friday)</legend>
+        <div class="check-grid">
+          <label><input type="checkbox" name="ht_days" value="Monday"> <span>Monday</span></label>
+          <label><input type="checkbox" name="ht_days" value="Tuesday"> <span>Tuesday</span></label>
+          <label><input type="checkbox" name="ht_days" value="Wednesday"> <span>Wednesday</span></label>
+          <label><input type="checkbox" name="ht_days" value="Thursday"> <span>Thursday</span></label>
+          <label><input type="checkbox" name="ht_days" value="Friday"> <span>Friday</span></label>
+        </div>
+      </fieldset>
+
+      <!-- Media -->
+      <fieldset class="fieldset grid-1">
+        <legend>Photos and Video</legend>
+        <p class="hint">Add 3 to 10 photos of the rooms that need help, or one short walkthrough video.</p>
+        <label>Upload Photos<input name="media_photos" id="mediaPhotos" type="file" accept="image/*" multiple></label>
+        <label>Upload Video (optional, short)<input name="media_video" id="mediaVideo" type="file" accept="video/*"></label>
+        <p class="hint" id="uploadStatus"></p>
+      </fieldset>
+
+      <!-- Consents -->
+      <fieldset class="fieldset grid-1">
+        <legend>Consents</legend>
+        <label class="consent">
+          <input type="checkbox" name="consent_sms_email" value="Yes" required>
+          <span>Okay to contact me by email or text about this application.</span>
+        </label>
+        <label class="consent">
+          <input type="checkbox" name="consent_not_guaranteed" value="Yes" required>
+          <span>I understand that applying does not guarantee service, and recipients are chosen each quarter.</span>
+        </label>
+        <label class="consent">
+          <input type="checkbox" name="consent_photos_doc" value="Yes" required>
+          <span>I consent to before and after photos for job documentation (internal only).</span>
+        </label>
+        <label class="consent">
+          <input type="checkbox" name="consent_story_share" value="Yes">
+          <span>If selected, I'd be open to sharing my story and photos (we always ask again first).</span>
+        </label>
+        <label class="consent">
+          <input type="checkbox" name="consent_terms" value="Yes" required>
+          <span>I agree to the service terms. <a href="terms.html#client-terms" target="_blank" rel="noopener">Read terms</a>.</span>
+        </label>
+      </fieldset>
+
+      <div class="submit-row">
+        <button class="btn btn-solid" type="submit" id="htSubmitBtn">Submit Application</button>
+        <p id="htStatus" class="hint"></p>
+        <div id="successCard" class="success-card" aria-live="polite"></div>
+      </div>
+    </form>
+  </main>
+
+  <script src="script.js?v=8" defer></script>
+  <script type="module" src="ft-auto.js"></script>
+
+  <script>
+  (function(){
+    function list(v){ if (v == null || v === "") return ""; return Array.isArray(v) ? v.join(", ") : String(v); }
+
+    document.addEventListener("DOMContentLoaded", function(){
+      var form = document.getElementById("helpingTouchForm");
+      if (!form) return;
+
+      var applyingFor = document.getElementById("htApplyingFor");
+      var nomineeBlock = document.getElementById("htNomineeBlock");
+      var relationWrap = document.getElementById("htRelationWrap");
+      var nomineeName = document.getElementById("htNomineeName");
+      var nomineeAware = document.getElementById("htNomineeAware");
+      var statusEl = document.getElementById("htStatus");
+      var submitBtn = document.getElementById("htSubmitBtn");
+      var uploadStatus = document.getElementById("uploadStatus");
+      var successCard = document.getElementById("successCard");
+      var photosEl = document.getElementById("mediaPhotos");
+      var videoEl = document.getElementById("mediaVideo");
+
+      function syncNominee(){
+        var nominating = applyingFor.value !== "Myself";
+        nomineeBlock.classList.toggle("hidden", !nominating);
+        relationWrap.classList.toggle("hidden", !nominating);
+        nomineeName.required = nominating;
+        nomineeAware.required = nominating;
+      }
+      applyingFor.addEventListener("change", syncNominee);
+      syncNominee();
+
+      function fileCount(){
+        return {
+          pc: photosEl && photosEl.files ? photosEl.files.length : 0,
+          vc: videoEl && videoEl.files ? videoEl.files.length : 0
+        };
+      }
+      function setUploadHint(){
+        var c = fileCount();
+        uploadStatus.textContent = (!c.pc && !c.vc) ? "" : ("Selected: " + c.pc + " photo(s)" + (c.vc ? " + 1 video" : "") + ".");
+      }
+      photosEl.addEventListener("change", setUploadHint);
+      videoEl.addEventListener("change", setUploadHint);
+
+      form.addEventListener("submit", async function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        if (!form.checkValidity()){ form.reportValidity(); return; }
+        if (!form.querySelector('input[name="ht_help"]:checked')){
+          statusEl.textContent = "Choose at least one kind of help that's needed.";
+          document.getElementById("htHelpGrid").scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+        var fc = fileCount();
+        if (!fc.pc && !fc.vc){
+          statusEl.textContent = "Add a few photos or a short video of the space.";
+          photosEl.focus();
+          return;
+        }
+
+        statusEl.textContent = "";
+        successCard.style.display = "none";
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting…";
+
+        var fd = new FormData(form);
+        var data = {};
+        fd.forEach(function(v, k){
+          if (k === "media_photos" || k === "media_video") return;
+          if (data[k] != null){
+            if (Array.isArray(data[k])) data[k].push(v); else data[k] = [data[k], v];
+          } else {
+            data[k] = v;
+          }
+        });
+
+        var nominating = data.ht_applying_for !== "Myself";
+
+        var contactClear = [
+          "Applicant: " + (data.name || ""),
+          data.email ? "Email: " + data.email : null,
+          data.phone ? "Phone: " + data.phone : null,
+          data.address ? "Address: " + data.address : null,
+          nominating ? "Nominating: " + (data.ht_nominee_name || "") + (data.ht_relationship ? " (" + data.ht_relationship + ")" : "") : "Applying for themselves",
+          nominating && data.ht_nominee_contact ? "Nominee Contact: " + data.ht_nominee_contact : null,
+          nominating && data.ht_nominee_aware ? "Nominee Knows: " + data.ht_nominee_aware : null
+        ].filter(Boolean).join(" | ");
+
+        var homeClear = [
+          data.ht_home_type ? "Home: " + data.ht_home_type : null,
+          data.ht_sqft ? data.ht_sqft + " sq ft" : null,
+          data.ht_bedrooms ? "Bedrooms: " + data.ht_bedrooms : null,
+          data.ht_bathrooms ? "Bathrooms: " + data.ht_bathrooms : null,
+          data.ht_pets ? "Pets: " + data.ht_pets : null,
+          data.ht_household ? "Household: " + data.ht_household : null
+        ].filter(Boolean).join(" | ");
+
+        var needClear = [
+          "Help Needed: " + list(data.ht_help),
+          data.ht_rooms ? "Rooms: " + data.ht_rooms : null,
+          "Safety: " + (data.ht_safety || "Not given"),
+          data.ht_situation ? "Situation: " + list(data.ht_situation) : null,
+          "Can Contribute: " + (data.ht_contribution || "Not given"),
+          data.ht_days ? "Days: " + list(data.ht_days) : null
+        ].filter(Boolean).join(" | ");
+
+        var summaryClear = [
+          "A Helping Touch Application",
+          needClear,
+          homeClear,
+          data.ht_story ? "Story: " + data.ht_story : null
+        ].filter(Boolean).join(" | ");
+
+        function setClear(key, value){
+          var clean = value == null ? "" : String(value);
+          data[key] = clean;
+          fd.append(key, clean);
+        }
+        setClear("intake_id", "ht_" + Date.now() + "_" + Math.random().toString(16).slice(2));
+        setClear("SERVICE_CATEGORY_CLEAR", "A Helping Touch Application");
+        setClear("CLIENT_CONTACT_CLEAR", contactClear);
+        setClear("PROPERTY_DETAILS_CLEAR", homeClear);
+        setClear("SCHEDULING_PREFERENCES_CLEAR", data.ht_days ? "Days: " + list(data.ht_days) : "No days given");
+        setClear("REQUEST_SUMMARY_CLEAR", summaryClear);
+        setClear("INTERNAL_app_intake_type", "helping_touch");
+        setClear("INTERNAL_needs_manual_review", data.ht_safety && data.ht_safety !== "None of these" ? "YES: " + data.ht_safety : "No");
+
+        try{
+          if (window.FTAuto && typeof FTAuto.createJobFromIntake === "function"){
+            await FTAuto.createJobFromIntake({ type: "helping_touch", serviceType: "helping_touch", intakeData: data, summary: summaryClear });
+          }
+        } catch(err){
+          console.warn("Could not save application to the Intake Inbox (Formspree backup will still send):", err);
+        }
+
+        try{
+          var resp = await fetch(form.action, { method: "POST", headers: { "Accept": "application/json" }, body: fd });
+          if (resp.ok){
+            successCard.textContent = "Thank you for reaching out. We've received your application, and we'll be in touch after this quarter's review.";
+            successCard.style.display = "block";
+            form.reset();
+            syncNominee();
+            uploadStatus.textContent = "";
+          } else {
+            statusEl.textContent = "We received your application, but couldn't reach our inbox right now. If you don't hear from us, please email us.";
+          }
+        } catch(err){
+          console.warn(err);
+          statusEl.textContent = "We received your application, but your connection seems unstable. If you don't hear from us, please email us.";
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Application";
+        }
+      }, true);
+    });
+  })();
+  </script>
+
+  <script src="ftt-chat.js" defer></script>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 The Finishing Touch | Serving Galveston, Harris, and Brazoria County</p>
+      <p class="legal-dba" style="margin-top:6px;font-size:13px;opacity:.8">The Finishing Touch is a DBA of Johnnie and Jane Boutique LLC</p>
+      <p style="margin:0;padding:0 0 16px;text-align:center;font-size:13px;font-weight:500;opacity:.85"><a href="privacy.html" style="color:inherit">Privacy Policy</a> | <a href="terms.html" style="color:inherit">Terms of Service</a> | <a href="sms-terms.html" style="color:inherit">SMS Terms</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
