@@ -431,6 +431,18 @@ a{color:inherit}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
 
 .danger-zone{border-color:#ebc6c6;background:#fff7f6}
+.msg-card{padding:0;overflow:hidden}
+.msg-thread{height:min(52vh,460px);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--panel)}
+.msg-thread .empty{margin:auto}
+.msg{max-width:78%;padding:10px 13px;border-radius:16px;line-height:1.4;white-space:pre-wrap;word-wrap:break-word}
+.msg.ivy{background:var(--paper);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.msg.me{background:var(--charcoal);color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
+.msg time{display:block;font-size:.72rem;opacity:.65;margin-top:4px}
+.msg-day{align-self:center;font-size:.75rem;color:var(--muted2);margin:6px 0}
+.msg-bar{display:flex;gap:10px;align-items:flex-end;padding:12px;border-top:1px solid var(--line);background:var(--paper)}
+.msg-bar textarea{flex:1;border:1px solid var(--line2);border-radius:16px;padding:10px 12px;font:inherit;resize:none;min-height:44px;max-height:140px;background:#fff}
+.inv-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.inv-amount{font-family:Playfair Display,serif;font-size:1.3rem}
 .danger-zone h3{color:var(--danger)}
 .setting-row{
   border:1px solid var(--line);
@@ -577,8 +589,8 @@ a{color:inherit}
 <span>Requests</span>
 </div>
 <div class="stat">
-<strong>VIP</strong>
-<span>Future Membership</span>
+<strong id="vipStat">VIP</strong>
+<span id="vipStatLabel">Home Care</span>
 </div>
 </div>
 </section>
@@ -654,6 +666,7 @@ a{color:inherit}
         <select id="requestService" required>
           <option value="cleaning">Cleaning</option>
           <option value="organizing">Organizing</option>
+          <option value="homereset">Home Reset</option>
           <option value="decor">Interior Decorating</option>
           <option value="holiday">Holiday/Event Decorating</option>
           <option value="airbnb">Airbnb Turnover</option>
@@ -701,10 +714,16 @@ a{color:inherit}
 <section id="messagesPanel" class="client-panel">
   <div class="panel-shell">
     <h2 style="font-family:Playfair Display,serif;margin:0 0 10px">Messages</h2>
-    <div class="card">
-      <h3>Concierge Messaging</h3>
-      <p>Direct client-to-admin and client-to-team messaging will be added here. For now, use Scheduling Requests for booking or rescheduling needs.</p>
-      <button class="btn btn-solid" type="button" data-jump-scheduling>Send Scheduling Request</button>
+    <p class="small">Message Ivy, our client care assistant. Anything that needs Richelle goes straight to her, and her answer shows up right here.</p>
+    <div class="card msg-card">
+      <div id="msgThread" class="msg-thread" aria-live="polite">
+        <div class="empty">Loading your messages…</div>
+      </div>
+      <form id="msgForm" class="msg-bar" autocomplete="off">
+        <textarea id="msgInput" rows="2" maxlength="2000" placeholder="Type your message…" aria-label="Message" required></textarea>
+        <button id="msgSend" class="btn btn-solid" type="submit">Send</button>
+      </form>
+      <p id="msgNote" class="small" style="margin:8px 2px 0"></p>
     </div>
   </div>
 </section>
@@ -727,10 +746,13 @@ a{color:inherit}
           <p id="perkNote" style="margin:8px 0 0;font-size:.85rem;color:#7b746e"></p>
         </div>
       </article>
-      <article class="card">
+      <article class="card" id="vipCard">
         <h3>VIP Home Care</h3>
-        <p>Priority scheduling, loyalty rewards, and add ons reserved for members. This one switches on once billing moves in house, with recurring plans and cards on file running through the site, so member perks can be applied automatically.</p>
-        <span class="status-pill">Coming Soon</span>
+        <p id="vipText">For clients on a recurring plan. Your scheduling requests go to the front of the line, and Richelle is alerted the moment you send one.</p>
+        <span class="status-pill" id="vipPill">Checking…</span>
+        <div style="margin-top:12px">
+          <button class="btn btn-outline" type="button" id="vipAsk" hidden>Ask about VIP</button>
+        </div>
       </article>
     </div>
   </div>
@@ -739,10 +761,9 @@ a{color:inherit}
 <section id="invoicesPanel" class="client-panel">
   <div class="panel-shell">
     <h2 style="font-family:Playfair Display,serif;margin:0 0 10px">Invoices</h2>
-    <div class="card">
-      <h3>Invoices & Payments</h3>
-      <p>Invoice history, payment status, deposits, and receipts will be added in a future phase.</p>
-      <span class="status-pill">Future Stripe / Square Sync</span>
+    <p class="small">Every invoice we have sent you, matched by the email you sign in with. Tap Pay to pay securely through Square.</p>
+    <div id="invoiceList" class="grid">
+      <div class="empty">Loading your invoices…</div>
     </div>
   </div>
 </section>
@@ -752,10 +773,69 @@ a{color:inherit}
     <h2>Profile / Settings</h2>
 
     <div class="grid">
-      <article class="card">
-        <h3>Client Profile</h3>
-        <p>Your saved contact details, home notes, pets, access preferences, and recurring service preferences will be managed here later.</p>
-        <span id="profileEmail" class="status-pill">Signed in</span>
+      <article class="card" style="grid-column:1/-1">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <h3 style="margin:0">Client Profile</h3>
+          <span id="profileEmail" class="status-pill">Signed in</span>
+        </div>
+        <p class="small">Saved once, used on every visit, so the team arrives knowing your home.</p>
+        <form id="profileForm" class="portal-form">
+          <label>Full Name
+            <input id="pfFullName" type="text" maxlength="80" autocomplete="name" />
+          </label>
+          <label>Mobile Phone
+            <input id="pfPhone" type="tel" maxlength="30" autocomplete="tel" placeholder="(281) 555 0123" />
+          </label>
+          <label class="form-full">Street Address
+            <input id="pfStreet" type="text" maxlength="120" autocomplete="address-line1" />
+          </label>
+          <label>Apt / Unit / Gate
+            <input id="pfUnit" type="text" maxlength="40" autocomplete="address-line2" />
+          </label>
+          <label>City
+            <input id="pfCity" type="text" maxlength="60" autocomplete="address-level2" />
+          </label>
+          <label>ZIP
+            <input id="pfZip" type="text" maxlength="10" inputmode="numeric" autocomplete="postal-code" />
+          </label>
+          <label>Home Size
+            <input id="pfHomeSize" type="text" maxlength="40" placeholder="Example: 2,000 sq ft, 4 bed 2.5 bath" />
+          </label>
+          <label class="form-full">Getting In
+            <textarea id="pfAccess" maxlength="600" placeholder="Door or gate code, lockbox, garage, front desk name and ID rules, who will be home"></textarea>
+          </label>
+          <label class="form-full">Parking
+            <input id="pfParking" type="text" maxlength="300" placeholder="Driveway, street, visitor spots" />
+          </label>
+          <label class="form-full">Pets
+            <input id="pfPets" type="text" maxlength="300" placeholder="Example: 1 friendly dog, crated during visits" />
+          </label>
+          <label class="form-full">Home Preferences
+            <textarea id="pfPrefs" maxlength="800" placeholder="Products you prefer or provide, rooms to skip, same team each visit, anything we should always do"></textarea>
+          </label>
+          <label class="form-full">Allergies or Sensitivities
+            <input id="pfAllergies" type="text" maxlength="300" placeholder="Fragrance, products, or anything else to avoid" />
+          </label>
+          <label>Best Way to Reach You
+            <select id="pfContact">
+              <option value="">No preference</option>
+              <option value="text">Text</option>
+              <option value="email">Email</option>
+              <option value="call">Phone call</option>
+              <option value="portal">Portal messages</option>
+            </select>
+          </label>
+          <label>Birthday
+            <span style="display:flex;gap:8px">
+              <select id="pfBdayMonth" aria-label="Birthday month"><option value="">Month</option></select>
+              <select id="pfBdayDay" aria-label="Birthday day"><option value="">Day</option></select>
+            </span>
+          </label>
+          <div class="form-full actions">
+            <button id="profileSave" class="btn btn-solid" type="submit">Save Profile</button>
+            <span id="profileMsg" class="success-note"></span>
+          </div>
+        </form>
       </article>
 
       <article class="card">
@@ -823,6 +903,24 @@ const el = {
 let currentUser = null;
 let currentUserData = {};
 let lastJobs = [];
+let isVip = false;
+
+const IVY_URL = "https://ivy-591177706994.us-central1.run.app";
+const esc = (v)=> String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/** Call Ivy as the signed in client. */
+async function ivy(path, opts = {}){
+  if (!currentUser) throw new Error("Not signed in");
+  const token = await currentUser.getIdToken();
+  const res = await fetch(IVY_URL + path, {
+    method: opts.method || "GET",
+    headers: { "Authorization": "Bearer " + token, ...(opts.body ? { "Content-Type": "application/json" } : {}) },
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.ok === false) throw new Error(data.error || "Something went wrong");
+  return data;
+}
 
 const money = (n)=> (n!=null && !isNaN(Number(n))) ? `$${Math.round(Number(n))}` : "";
 const cap = (s)=> s ? String(s).replaceAll("_"," ").replace(/\b\w/g, c => c.toUpperCase()) : "";
@@ -1002,8 +1100,9 @@ el.scheduleRequestForm.addEventListener("submit", async (e) => {
   const notes = document.getElementById("requestNotes").value.trim();
 
   try {
-    await addDoc(collection(db, "bookingRequests"), {
+    const reqRef = await addDoc(collection(db, "bookingRequests"), {
       requestKind: "scheduling_request",
+      vip: isVip,
       requestType,
       serviceType,
       preferredDate,
@@ -1019,6 +1118,7 @@ el.scheduleRequestForm.addEventListener("submit", async (e) => {
       updatedAt: serverTimestamp()
     });
 
+    ivy("/portal/request-alert", { method: "POST", body: { requestId: reqRef.id } }).catch(() => {});
     el.scheduleRequestForm.reset();
     el.scheduleRequestMsg.textContent = "Sent. We’ll review and confirm options.";
     setTimeout(()=> el.scheduleRequestMsg.textContent = "", 3500);
@@ -1029,6 +1129,218 @@ el.scheduleRequestForm.addEventListener("submit", async (e) => {
   } finally {
     el.scheduleRequestBtn.disabled = false;
   }
+});
+
+
+/* ===================== Profile ===================== */
+const pf = {
+  form: document.getElementById("profileForm"),
+  save: document.getElementById("profileSave"),
+  msg: document.getElementById("profileMsg"),
+  fields: {
+    fullName: "pfFullName", phone: "pfPhone", street: "pfStreet", unit: "pfUnit",
+    city: "pfCity", zip: "pfZip", homeSize: "pfHomeSize", accessNotes: "pfAccess",
+    parking: "pfParking", pets: "pfPets", preferences: "pfPrefs", allergies: "pfAllergies",
+    contactPref: "pfContact"
+  }
+};
+const bMonth = document.getElementById("pfBdayMonth");
+const bDay = document.getElementById("pfBdayDay");
+["January","February","March","April","May","June","July","August","September","October","November","December"]
+  .forEach((m, i) => bMonth.insertAdjacentHTML("beforeend", `<option value="${String(i+1).padStart(2,"0")}">${m}</option>`));
+for (let d = 1; d <= 31; d++) bDay.insertAdjacentHTML("beforeend", `<option value="${String(d).padStart(2,"0")}">${d}</option>`);
+
+async function loadProfile(){
+  try {
+    const { profile } = await ivy("/portal/profile");
+    for (const [key, id] of Object.entries(pf.fields)) {
+      const input = document.getElementById(id);
+      if (input) input.value = profile[key] || "";
+    }
+    const [m, d] = String(profile.birthday || "").split("-");
+    bMonth.value = m || ""; bDay.value = d || "";
+    paintVip(profile.vip);
+  } catch (err) {
+    console.warn("profile load:", err);
+    pf.msg.textContent = "Could not load your saved details just now.";
+  }
+}
+
+pf.form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {};
+  for (const [key, id] of Object.entries(pf.fields)) body[key] = document.getElementById(id).value.trim();
+  body.birthday = bMonth.value && bDay.value ? `${bMonth.value}-${bDay.value}` : "";
+  pf.save.disabled = true;
+  pf.msg.textContent = "Saving…";
+  try {
+    await ivy("/portal/profile", { method: "POST", body });
+    pf.msg.textContent = "Saved.";
+    if (body.fullName) el.heroName.textContent = `Hi, ${body.fullName.split(" ")[0]}`;
+    if (body.phone) loadMessages();
+    setTimeout(() => { pf.msg.textContent = ""; }, 3500);
+  } catch (err) {
+    pf.msg.textContent = err.message || "Could not save.";
+  } finally {
+    pf.save.disabled = false;
+  }
+});
+
+/* ===================== VIP ===================== */
+function paintVip(on){
+  isVip = Boolean(on);
+  const pill = document.getElementById("vipPill");
+  const ask = document.getElementById("vipAsk");
+  const stat = document.getElementById("vipStat");
+  const label = document.getElementById("vipStatLabel");
+  if (pill){ pill.textContent = isVip ? "Active" : "Not active"; pill.className = isVip ? "status-pill good" : "status-pill"; }
+  if (ask) ask.hidden = isVip;
+  if (stat) stat.textContent = isVip ? "VIP" : "Standard";
+  if (label) label.textContent = isVip ? "Member" : "Client";
+  const text = document.getElementById("vipText");
+  if (text && isVip) text.textContent = "You are a VIP member. Your scheduling requests go to the front of the line, and Richelle is alerted the moment you send one.";
+}
+document.getElementById("vipAsk")?.addEventListener("click", () => {
+  setPanel("messages");
+  loadMessages();
+  const box = document.getElementById("msgInput");
+  box.value = "Hi! I'd love to hear more about VIP Home Care.";
+  box.focus();
+});
+
+/* ===================== Messages ===================== */
+const msg = {
+  thread: document.getElementById("msgThread"),
+  form: document.getElementById("msgForm"),
+  input: document.getElementById("msgInput"),
+  send: document.getElementById("msgSend"),
+  note: document.getElementById("msgNote")
+};
+let msgCount = -1;
+let msgTimer = null;
+
+function drawMessages(list){
+  if (!list.length){
+    msg.thread.innerHTML = `<div class="empty">No messages yet. Say hello, ask a question, or tell us what you need.</div>`;
+    msgCount = 0;
+    return;
+  }
+  if (list.length === msgCount) return;
+  msgCount = list.length;
+  let lastDay = "";
+  msg.thread.innerHTML = list.map(m => {
+    const d = m.at ? new Date(m.at) : null;
+    const day = d ? d.toLocaleDateString(undefined, { weekday:"short", month:"short", day:"numeric" }) : "";
+    const time = d ? d.toLocaleTimeString(undefined, { hour:"numeric", minute:"2-digit" }) : "";
+    const via = m.channel === "sms" ? " · by text" : "";
+    const sep = day && day !== lastDay ? `<div class="msg-day">${esc(day)}</div>` : "";
+    lastDay = day || lastDay;
+    return `${sep}<div class="msg ${m.from === "me" ? "me" : "ivy"}">${esc(m.body)}<time>${esc(time)}${via}</time></div>`;
+  }).join("");
+  msg.thread.scrollTop = msg.thread.scrollHeight;
+}
+
+async function loadMessages(){
+  try {
+    const { messages } = await ivy("/portal/messages");
+    drawMessages(messages || []);
+  } catch (err) {
+    console.warn("messages load:", err);
+    if (msgCount < 0) msg.thread.innerHTML = `<div class="empty">Could not load messages just now.</div>`;
+  }
+}
+
+function startMessagePolling(){
+  clearInterval(msgTimer);
+  msgTimer = setInterval(() => {
+    if (document.getElementById("messagesPanel").classList.contains("active") && !document.hidden) loadMessages();
+  }, 10000);
+}
+
+msg.input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); msg.form.requestSubmit(); }
+});
+
+msg.form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = msg.input.value.trim();
+  if (!text) return;
+  msg.send.disabled = true;
+  msg.note.textContent = "";
+  const empty = msg.thread.querySelector(".empty");
+  if (empty) msg.thread.innerHTML = "";
+  msg.thread.insertAdjacentHTML("beforeend", `<div class="msg me">${esc(text)}<time>Sending…</time></div><div class="msg ivy" id="msgTyping">Ivy is typing…</div>`);
+  msg.thread.scrollTop = msg.thread.scrollHeight;
+  msg.input.value = "";
+  try {
+    const r = await ivy("/portal/messages", { method: "POST", body: { text } });
+    if (r.waitingOnRichelle) msg.note.textContent = "Richelle has your message and will answer here.";
+  } catch (err) {
+    msg.note.textContent = err.message;
+  } finally {
+    msg.send.disabled = false;
+    msgCount = -1;
+    await loadMessages();
+  }
+});
+
+/* ===================== Invoices ===================== */
+const INV_STATUS = {
+  PAID: ["Paid", "good"], UNPAID: ["Due", "warn"], PARTIALLY_PAID: ["Partly paid", "warn"],
+  SCHEDULED: ["Scheduled", ""], CANCELED: ["Canceled", ""], REFUNDED: ["Refunded", ""],
+  PARTIALLY_REFUNDED: ["Partly refunded", ""], FAILED: ["Payment failed", "danger"], PAYMENT_PENDING: ["Processing", ""]
+};
+
+async function loadInvoices(){
+  const box = document.getElementById("invoiceList");
+  try {
+    const { invoices } = await ivy("/portal/invoices");
+    if (!invoices.length){
+      box.innerHTML = `<div class="empty">No invoices yet. If you were billed under a different email, send us a message and we'll link it.</div>`;
+      return;
+    }
+    const today = new Date().toISOString().slice(0, 10);
+    box.innerHTML = invoices.map(inv => {
+      let [label, tone] = INV_STATUS[inv.status] || [cap(inv.status.toLowerCase()), ""];
+      const owes = inv.status === "UNPAID" || inv.status === "PARTIALLY_PAID";
+      if (owes && inv.due && inv.due < today){ label = "Past due"; tone = "danger"; }
+      const due = inv.due ? dateText(inv.due) : "";
+      return `
+        <article class="card ${owes ? "accent" : ""}">
+          <div class="inv-row">
+            <div>
+              <strong style="font-family:Playfair Display,serif;font-size:1.12rem">${esc(inv.title || "Invoice")}</strong>
+              <div class="meta">
+                ${inv.number ? `<span>#${esc(inv.number)}</span>` : ""}
+                ${inv.sent ? `<span>Sent ${esc(dateText(inv.sent))}</span>` : ""}
+                ${due && owes ? `<span>Due ${esc(due)}</span>` : ""}
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="inv-amount">${esc(inv.amount)}</div>
+              <span class="status-pill ${tone}">${esc(label)}</span>
+            </div>
+          </div>
+          ${inv.link ? `<div class="actions">
+            <a class="btn ${owes ? "btn-solid" : "btn-outline"}" href="${esc(inv.link)}" target="_blank" rel="noopener">${owes ? "Pay Now" : "View Receipt"}</a>
+          </div>` : ""}
+        </article>`;
+    }).join("");
+  } catch (err) {
+    console.warn("invoices load:", err);
+    box.innerHTML = `<div class="empty">Could not load invoices just now. Please try again in a moment.</div>`;
+  }
+}
+
+/* Load each tab the first time it is opened, and refresh messages when reopened. */
+const loaded = new Set();
+function onPanelOpen(key){
+  if (!currentUser) return;
+  if (key === "messages"){ loadMessages(); }
+  if (key === "invoices" && !loaded.has(key)){ loaded.add(key); loadInvoices(); }
+}
+document.querySelectorAll("[data-side],[data-side-jump]").forEach(btn => {
+  btn.addEventListener("click", () => onPanelOpen(btn.dataset.side || btn.dataset.sideJump));
 });
 
 onAuthStateChanged(auth, async (user) => {
@@ -1099,7 +1411,11 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(doc(db,"users",user.uid));
     const name = snap.exists() ? (snap.data().fullName || snap.data().displayName) : "";
     el.heroName.textContent = name ? `Hi, ${name.split(" ")[0]}` : "Your Client Suite";
+    if (snap.exists()) paintVip(snap.data().vip);
   } catch {}
+
+  loadProfile();
+  startMessagePolling();
 
   const jobsQ = query(collection(db,"jobs"), where("clientId","==",user.uid), orderBy("createdAt","desc"));
   onSnapshot(jobsQ, (snap) => {
