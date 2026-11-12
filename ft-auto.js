@@ -113,6 +113,10 @@ function normalizeServiceType(type, intakeData = {}){
 
   const page = safeString(intakeData.page).toLowerCase();
 
+  if (page.includes("helpingtouch") || raw.includes("helping_touch")){
+    return "helping_touch";
+  }
+
   if (page.includes("homereset") || raw.includes("home_reset") || raw.includes("home reset")){
     return "home_reset";
   }
@@ -170,6 +174,7 @@ function serviceLabel(serviceType){
     commercial: "Commercial Cleaning",
     organizing: "Home Organizing",
     home_reset: "Home Reset",
+    helping_touch: "A Helping Touch Application",
     decor: "Interior Decorating / Styling",
     holiday: "Holiday Decorating",
     staging: "Staging & Styling",
