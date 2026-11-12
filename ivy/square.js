@@ -176,6 +176,68 @@ export async function openInvoices(todayIso) {
   return { unpaid, drafts };
 }
 
+/**
+ * Every invoice for one client, for their portal. Found by the email they
+ * sign in with (and their phone, when their profile has one), since that is
+ * how Square knows them. Drafts are left out: a client never sees an invoice
+ * Richelle has not sent.
+ */
+export async function invoicesForCustomer({ emails = [], phone = "" }) {
+  const ids = new Set();
+  for (const email of emails.slice(0, 3)) {
+    const data = await sq("/customers/search", {
+      method: "POST",
+      body: { query: { filter: { email_address: { exact: email } } }, limit: 10 }
+    });
+    (data.customers || []).forEach((c) => ids.add(c.id));
+  }
+  if (phone) {
+    try {
+      const data = await sq("/customers/search", {
+        method: "POST",
+        body: { query: { filter: { phone_number: { exact: phone } } }, limit: 10 }
+      });
+      (data.customers || []).forEach((c) => ids.add(c.id));
+    } catch { /* phone search is a bonus, email is the main match */ }
+  }
+  if (!ids.size) return [];
+
+  const locs = await locations();
+  const out = [];
+  // Square only takes one customer per invoice search.
+  for (const id of [...ids].slice(0, 5)) {
+    const data = await sq("/invoices/search", {
+      method: "POST",
+      body: {
+        query: {
+          filter: { location_ids: locs.map((l) => l.id), customer_ids: [id] },
+          sort: { field: "INVOICE_SORT_DATE", order: "DESC" }
+        },
+        limit: 50
+      }
+    });
+    for (const inv of data.invoices || []) {
+      if (inv.status === "DRAFT") continue;
+      const req = (inv.payment_requests || [])[0] || {};
+      out.push({
+        id: inv.id,
+        number: inv.invoice_number || "",
+        title: inv.title || "",
+        status: inv.status || "",
+        amount: money(req.computed_amount_money) || money(req.total_completed_amount_money),
+        paid: money(req.total_completed_amount_money),
+        due: req.due_date || "",
+        sent: (inv.created_at || "").slice(0, 10),
+        link: inv.public_url || ""
+      });
+    }
+  }
+  const seen = new Set();
+  return out
+    .filter((i) => (seen.has(i.id) ? false : seen.add(i.id)))
+    .sort((a, b) => String(b.sent).localeCompare(String(a.sent)));
+}
+
 export async function squareCheck() {
   if (!squareConfigured()) return { ok: false, detail: "not set up" };
   try {
