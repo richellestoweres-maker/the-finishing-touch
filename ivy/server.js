@@ -17,6 +17,11 @@
 //                           needs her today (needs TASK_KEY)
 //   POST /briefing/run      the dashboard's Refresh button (needs a signed in
 //                           owner account)
+//   POST /tasks/pipeline    Cloud Scheduler, every 10 minutes: Ivy moves every
+//                           job along, intake to quote to booking to invoice
+//                           (needs TASK_KEY). See pipeline.js.
+//   /quote/*, /pipeline/*   the client's quote page and the sub's schedule
+//                           buttons, plus a poke the website sends
 //   /portal/*               the client dashboard: profile, messages with Ivy,
 //                           invoices and scheduling request alerts (needs the
 //                           client's own Firebase sign in)
@@ -54,7 +59,8 @@ import { decide, compose, speak, anthropicCheck, readCall } from "./brain.js";
 import { runBriefing } from "./briefing.js";
 import { consentUrl, finishConnect, googleConfigured, googleCheck } from "./google.js";
 import { squareCheck } from "./square.js";
-import { registerPortal } from "./portal.js";
+import { registerPortal, signedInUser } from "./portal.js";
+import { registerPipeline, handleMarkupCommand, handleInvoiceCommand } from "./pipeline.js";
 import { db, FieldValue } from "./store.js";
 import {
   greetingTwiml, thanksTwiml, emptyTwiml,
@@ -523,6 +529,18 @@ async function handleOwnerCommand(body) {
 
   const relay = await handleRelayCommand(text);
   if (relay) return relay;
+
+  // The job pipeline: her markup on a sub's quote ("25", "Q2 20", "SKIP"),
+  // and GO / HOLD on the 4:30 invoice list.
+  try {
+    const markup = await handleMarkupCommand(text, notifyOwner);
+    if (markup) return markup;
+    const invoices = await handleInvoiceCommand(text);
+    if (invoices) return invoices;
+  } catch (err) {
+    console.error("[ivy] pipeline command failed:", err);
+    return `That didn't go through: ${String(err.message).slice(0, 160)}`;
+  }
 
   const m = text.match(/^\s*(y|yes|ok|send|n|no|nope)\s*(\d{1,2})?\s*$/i);
 
@@ -1306,6 +1324,7 @@ app.get("/google/callback", async (req, res) => {
    ================================================================== */
 
 registerPortal(app, { notifyOwner });
+registerPipeline(app, { notifyOwner, taskKey: TASK_KEY, signedInUser, signedInOwner });
 
 /* ==================================================================
    Start
