@@ -22,6 +22,22 @@ const TIME_WINDOWS = [
   ["anytime", "Anytime that day"]
 ];
 const windowLabel = (w) => (TIME_WINDOWS.find((x) => x[0] === w) || [w, w || ""])[1];
+
+// Schedule answers go through Ivy, so the client hears back the moment the sub
+// taps, and the job's protected fields are written on the server.
+const IVY_URL = "https://ivy-591177706994.us-central1.run.app";
+async function ivySchedule(body) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Please sign in again.");
+  const res = await fetch(IVY_URL + "/pipeline/sub-schedule", {
+    method: "POST",
+    headers: { "Authorization": "Bearer " + await user.getIdToken(), "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.ok === false) throw new Error(data.error || "That didn't save. Please try again.");
+  return data;
+}
 const esc = (v) => (v == null ? "" : String(v)).replace(/[&<>"']/g, (c) => (
   { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
 ));
@@ -97,6 +113,7 @@ function slotRow(idx) {
   return `<div class="sc-slot">
       <input type="date" class="sc-sdate" min="${todayStr()}">
       <select class="sc-swin">${TIME_WINDOWS.map((w) => `<option value="${w[0]}">${w[1]}</option>`).join("")}</select>
+      <input type="time" class="sc-sarr" aria-label="Arrival time (optional)" title="Arrival time (optional)">
     </div>`;
 }
 
@@ -109,8 +126,28 @@ function proposeBlock() {
     </div>`;
 }
 
+function optionsCard(j) {
+  const p = j.clientDatePref || {};
+  const opts = p.options || [];
+  return `
+    <div class="sc-card" data-id="${esc(j.id)}">
+      <div class="sc-head"><strong>${esc(jobTitle(j))}</strong><span class="sc-pill sc-need">Needs a time</span></div>
+      ${j.area ? `<div class="sc-meta">📍 ${esc(j.area)}</div>` : ""}
+      ${j.subRate ? `<div class="sc-meta">Pay: $${esc(j.subRate)} flat rate</div>` : ""}
+      <div class="sc-ask">🗓️ The client can do any of these. Tap the one that works for you.</div>
+      <div class="sc-meta" style="margin:8px 0 4px">Arrival time (optional)
+        <input type="time" class="sc-arrival" style="margin-left:6px;padding:6px 8px;border:1px solid #d8cdc0;border-radius:10px"></div>
+      <div class="sc-actions">
+        ${opts.map((o) => `<button class="btn btn-primary" data-act="accept" data-date="${esc(o.date)}" data-window="${esc(o.window)}">✓ ${esc(prettyDate(o.date))} · ${esc(windowLabel(o.window))}</button>`).join("")}
+        <button class="btn btn-outline" data-act="showPropose">None of these work</button>
+      </div>
+      <div class="sc-hideprop" style="display:none">${proposeBlock()}</div>
+    </div>`;
+}
+
 function needCard(j) {
   const p = j.clientDatePref || {};
+  if (p.mode === "options") return optionsCard(j);
   const specific = p.mode === "specific";
   const ask = specific
     ? `Client wants <strong>${esc(prettyDate(p.date))}</strong> — ${esc(windowLabel(p.window))}.`
@@ -135,7 +172,8 @@ function upcomingCard(j) {
     <div class="sc-card" data-id="${esc(j.id)}">
       <div class="sc-head"><strong>${esc(jobTitle(j))}</strong><span class="sc-pill sc-conf">Confirmed</span>
         <span class="sc-when">${esc(j.area || "")}</span></div>
-      <div class="sc-confline">🗓️ ${esc(prettyDate(j.scheduledDate))} · ${esc(windowLabel(j.scheduledWindow))}</div>
+      <div class="sc-confline">🗓️ ${esc(prettyDate(j.scheduledDate))} · ${esc(j.arrivalTime ? "arrive " + j.arrivalTime : windowLabel(j.scheduledWindow))}</div>
+      ${j.address ? `<div class="sc-meta">📍 ${esc(j.address)}</div>` : ""}
     </div>`;
 }
 
@@ -164,7 +202,8 @@ function readSlots(el) {
   el.querySelectorAll(".sc-slot").forEach((row) => {
     const d = row.querySelector(".sc-sdate")?.value;
     const w = row.querySelector(".sc-swin")?.value;
-    if (d) slots.push({ date: d, window: w });
+    const a = row.querySelector(".sc-sarr")?.value || "";
+    if (d) slots.push({ date: d, window: w, arrival: a });
   });
   return slots;
 }
@@ -182,25 +221,24 @@ function hookActions(root) {
             return;
           }
           if (act === "accept") {
-            if (!confirm(`Accept ${btn.dataset.date}? This confirms the appointment.`)) return;
-            await updateDoc(doc(db, "jobs", id), {
-              schedStatus: "confirmed", subDecision: "accepted",
-              scheduledDate: btn.dataset.date, scheduledWindow: btn.dataset.window,
-              scheduledAt: serverTimestamp(), updatedAt: serverTimestamp()
+            if (!confirm(`Accept ${prettyDate(btn.dataset.date)}? This confirms the appointment with the client.`)) return;
+            btn.disabled = true;
+            await ivySchedule({
+              jobId: id, action: "accept", date: btn.dataset.date, window: btn.dataset.window,
+              arrival: el.querySelector(".sc-arrival")?.value || ""
             });
           } else if (act === "propose") {
             const scope = btn.closest("[data-propose]") || el;
             const slots = readSlots(scope);
             const note = (scope.querySelector(".sc-pnote")?.value || "").trim();
             if (!slots.length) { alert("Add at least one date you can do."); return; }
-            await updateDoc(doc(db, "jobs", id), {
-              schedStatus: "sub_proposed", subDecision: "proposed",
-              subProposedSlots: slots, subResponseNote: note, updatedAt: serverTimestamp()
-            });
+            btn.disabled = true;
+            await ivySchedule({ jobId: id, action: "propose", slots, note });
           }
         } catch (err) {
           console.warn("Contractor schedule error:", err);
-          alert("That didn't save (likely a permission rule). Details in the console.");
+          btn.disabled = false;
+          alert(err.message || "That didn't save. Please try again.");
         }
       });
     });
