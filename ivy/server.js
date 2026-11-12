@@ -17,6 +17,9 @@
 //                           needs her today (needs TASK_KEY)
 //   POST /briefing/run      the dashboard's Refresh button (needs a signed in
 //                           owner account)
+//   /portal/*               the client dashboard: profile, messages with Ivy,
+//                           invoices and scheduling request alerts (needs the
+//                           client's own Firebase sign in)
 //   GET  /google/connect    one time: connect the business Gmail and Calendar,
 //                           read only (needs ?key=TASK_KEY)
 //
@@ -51,6 +54,7 @@ import { decide, compose, speak, anthropicCheck, readCall } from "./brain.js";
 import { runBriefing } from "./briefing.js";
 import { consentUrl, finishConnect, googleConfigured, googleCheck } from "./google.js";
 import { squareCheck } from "./square.js";
+import { registerPortal } from "./portal.js";
 import { db, FieldValue } from "./store.js";
 import {
   greetingTwiml, thanksTwiml, emptyTwiml,
@@ -147,6 +151,21 @@ function draftLine(draft, n) {
 }
 
 async function sendDraft(draft) {
+  // A portal draft is answered in the portal, never by text.
+  if (draft.channel === "portal") {
+    try {
+      await appendMessage(draft.conversationKey, {
+        direction: "out", channel: "portal", body: draft.body,
+        language: draft.language || "en", englishText: draft.bodyEnglish || "",
+        meta: { approvedDraft: draft.id }
+      });
+      await resolveDraft(draft.id, "sent");
+      return `Posted in ${draft.toName || "the client"}'s portal.`;
+    } catch (err) {
+      await resolveDraft(draft.id, "failed", { error: err.message });
+      return `That didn't post: ${err.message}`;
+    }
+  }
   try {
     await sendSms(draft.toPhone, draft.body);
     await resolveDraft(draft.id, "sent");
@@ -1281,6 +1300,12 @@ app.get("/google/callback", async (req, res) => {
     res.status(500).send(page("Something went wrong", String(err.message).replace(/[<>&]/g, "")));
   }
 });
+
+/* ==================================================================
+   The client portal (profile, messages, invoices, request alerts)
+   ================================================================== */
+
+registerPortal(app, { notifyOwner });
 
 /* ==================================================================
    Start
