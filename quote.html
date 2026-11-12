@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex"/>
+<title>Your Quote | The Finishing Touch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f1eb;--paper:#fffdf9;--ink:#241f1c;--muted:#746a63;--line:#e5d9cf;--line2:#d7c5b8;--charcoal:#2f2926;--champagne:#efe4d7;--success:#496b52;--danger:#8a4444}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55}
+.wrap{max-width:620px;margin:0 auto;padding:28px 16px 60px}
+.brand{text-align:center;font-family:"Playfair Display",Georgia,serif;font-size:1.7rem;margin:6px 0 18px}
+.brand a{color:inherit;text-decoration:none}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:24px 22px;box-shadow:0 12px 30px rgba(42,34,28,.07);margin-bottom:16px}
+h1{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:1.6rem;margin:0 0 6px}
+h2{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:1.25rem;margin:0 0 8px}
+.muted{color:var(--muted)}
+.price{font-family:"Playfair Display",Georgia,serif;font-size:2.6rem;text-align:center;margin:14px 0 6px}
+ul{margin:8px 0 0 18px;padding:0}
+li{margin:0 0 6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:13px 22px;font-weight:800;font-size:1rem;border:1px solid var(--charcoal);background:var(--charcoal);color:#fff;cursor:pointer;font-family:inherit;width:100%}
+.btn.outline{background:#fff;color:var(--ink);border-color:var(--line2)}
+.btn:disabled{opacity:.6;cursor:default}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px}
+label{display:block;font-weight:700;font-size:.85rem;color:var(--muted);margin-bottom:4px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line2);border-radius:12px;font:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:80px;resize:vertical}
+.choice{display:block;border:1px solid var(--line2);border-radius:14px;padding:13px 14px;margin:0 0 10px;cursor:pointer;background:#fff}
+.choice input{width:auto;margin-right:10px}
+.note{font-size:.9rem;margin-top:10px}
+.err{color:var(--danger);font-weight:700;margin-top:10px}
+.ok{color:var(--success);font-weight:800}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
+.center{text-align:center}
+.hide{display:none}
+@media(max-width:480px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><a href="index.html">The Finishing Touch</a></div>
+  <div id="app"><div class="card center muted">Loading your quote…</div></div>
+  <p class="center muted" style="font-size:.85rem">Questions? Call or text <a href="tel:+12816203963" style="color:inherit">(281) 620-3963</a></p>
+</div>
+
+<script>
+const IVY = "https://ivy-591177706994.us-central1.run.app";
+const params = new URLSearchParams(location.search);
+const token = params.get("t") || "";
+const app = document.getElementById("app");
+const WINDOWS = [["morning","Morning (8 to 12)"],["midday","Midday (11 to 2)"],["afternoon","Afternoon (12 to 4)"],["evening","Evening (4 to 7)"],["anytime","Anytime that day"]];
+const winLabel = (w) => (WINDOWS.find((x) => x[0] === w) || [w, w || ""])[1];
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = (n) => "$" + Number(n || 0).toFixed(2).replace(/\.00$/, "");
+const prettyDate = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", month: "long", day: "numeric" });
+
+function minDate(){
+  const d = new Date(); d.setDate(d.getDate() + 2);
+  return d.toISOString().slice(0, 10);
+}
+function isWeekday(iso){ const wd = new Date(iso + "T12:00:00Z").getUTCDay(); return wd >= 1 && wd <= 5; }
+
+async function api(path, body){
+  const res = await fetch(IVY + path, body
+    ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ t: token, ...body }) }
+    : {});
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.ok === false) throw new Error(data.error || "Something went wrong. Please try again.");
+  return data;
+}
+
+function dayRow(i){
+  return `<div class="row">
+    <div><label>${i === 0 ? "First choice" : i === 1 ? "Second choice" : "Third choice"}${i ? " (optional)" : ""}</label>
+      <input type="date" class="opt-date" min="${minDate()}"></div>
+    <div><label>Time of day</label>
+      <select class="opt-win">${WINDOWS.map((w) => `<option value="${w[0]}">${w[1]}</option>`).join("")}</select></div>
+  </div>`;
+}
+
+function render(v){
+  if (v.stage === "declined"){
+    app.innerHTML = `<div class="card center"><h1>Thank you, ${esc(v.firstName)}</h1><p class="muted">We've let Richelle know. If anything changes, we'd love to help another time.</p></div>`;
+    return;
+  }
+  if (v.stage === "booked"){
+    const b = v.booked;
+    app.innerHTML = `<div class="card center"><h1>You're booked!</h1>
+      <p class="price" style="font-size:1.5rem">${esc(prettyDate(b.date))}</p>
+      <p class="muted">${esc(winLabel(b.window))}${b.arrival ? `, arriving around ${esc(b.arrival)}` : ""}</p>
+      <p>${esc(v.service)}, ${money(v.price)}</p>
+      <p class="muted">A confirmation is on its way to your email, and we'll send a reminder the week before.</p></div>`;
+    return;
+  }
+  if (v.stage === "waiting"){
+    const opts = (v.options || []).map((o) => `<li>${esc(prettyDate(o.date))}, ${esc(winLabel(o.window).toLowerCase())}</li>`).join("");
+    app.innerHTML = `<div class="card"><h1>Thank you, ${esc(v.firstName)}!</h1>
+      <p>We're confirming your day with the team now. You'll get an email as soon as it's set.</p>
+      ${opts ? `<p class="muted" style="margin-bottom:0">The days you gave us:</p><ul>${opts}</ul>` : ""}</div>`;
+    return;
+  }
+  if (v.stage === "pick"){
+    app.innerHTML = `<div class="card"><h1>Pick your day</h1>
+      <p class="muted">Our team can come on any of these. Choose the one that works best.</p>
+      <form id="pickForm">
+        ${v.slots.map((s, i) => `<label class="choice"><input type="radio" name="slot" value="${i}" ${i === 0 ? "checked" : ""}>
+          <strong>${esc(prettyDate(s.date))}</strong>, ${esc(winLabel(s.window).toLowerCase())}${s.arrival ? `, arriving around ${esc(s.arrival)}` : ""}</label>`).join("")}
+        <button class="btn" type="submit">Book this day</button>
+        <p class="center note"><button type="button" class="link" id="noneWork">None of these work for me</button></p>
+        <div id="noneBox" class="hide"><label>What works better for you?</label><textarea id="noneNote" placeholder="Example: any Thursday after the 20th"></textarea>
+          <button class="btn outline" type="button" id="noneSend" style="margin-top:10px">Send to Richelle</button></div>
+        <div id="msg" class="err"></div>
+      </form></div>`;
+    const form = document.getElementById("pickForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+      try { await api("/quote/respond", { decision: "pick", index: Number(form.slot.value) }); load(); }
+      catch (err) { document.getElementById("msg").textContent = err.message; btn.disabled = false; }
+    });
+    document.getElementById("noneWork").onclick = () => document.getElementById("noneBox").classList.remove("hide");
+    document.getElementById("noneSend").onclick = async () => {
+      try { await api("/quote/respond", { decision: "pick", none: true, note: document.getElementById("noneNote").value });
+        app.innerHTML = `<div class="card center"><h1>Got it</h1><p class="muted">Richelle will reach out to find a day that works.</p></div>`; }
+      catch (err) { document.getElementById("msg").textContent = err.message; }
+    };
+    return;
+  }
+
+  // The quote itself.
+  app.innerHTML = `<div class="card">
+      <p class="muted" style="margin:0">Hi ${esc(v.firstName)}, here's your quote</p>
+      <h1>${esc(v.service)}${v.area ? `<span class="muted" style="font-size:1rem;font-family:Manrope"> · ${esc(v.area)}</span>` : ""}</h1>
+      <div class="price">${money(v.price)}</div>
+      ${v.summary.length ? `<ul>${v.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>` : ""}
+      <p class="muted note">We schedule Monday through Friday. Your invoice comes by email through Square when the job is done and is due on receipt.</p>
+    </div>
+    <div class="card" id="acceptCard">
+      <h2>Accept and choose your days</h2>
+      <p class="muted">Give us up to three weekdays that work for you, and we'll confirm one with the team.${v.clientDays ? ` You mentioned: <strong>${esc(v.clientDays)}</strong>.` : ""}</p>
+      <form id="acceptForm">
+        ${dayRow(0)}${dayRow(1)}${dayRow(2)}
+        <label>Anything else we should know? (optional)</label>
+        <textarea id="acceptNote" placeholder="Gate code, parking, pets, or timing notes"></textarea>
+        <div style="margin-top:14px"><button class="btn" type="submit">Accept quote</button></div>
+        <div id="msg" class="err"></div>
+      </form>
+      <p class="center note"><button type="button" class="link" id="declineLink">No thanks</button></p>
+    </div>
+    <div class="card hide" id="declineCard">
+      <h2>No problem</h2>
+      <p class="muted">Mind sharing why? It helps us a lot. (optional)</p>
+      <textarea id="declineNote"></textarea>
+      <div style="margin-top:12px;display:grid;gap:8px">
+        <button class="btn outline" type="button" id="declineSend">Decline quote</button>
+        <button class="link" type="button" id="declineBack">Go back</button>
+      </div>
+      <div id="msg2" class="err"></div>
+    </div>`;
+
+  const form = document.getElementById("acceptForm");
+  form.querySelectorAll(".opt-date").forEach((input) => input.addEventListener("change", () => {
+    if (input.value && !isWeekday(input.value)) { input.value = ""; document.getElementById("msg").textContent = "We schedule Monday through Friday. Please choose a weekday."; }
+    else document.getElementById("msg").textContent = "";
+  }));
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const dates = [...form.querySelectorAll(".opt-date")];
+    const wins = [...form.querySelectorAll(".opt-win")];
+    const options = dates.map((d, i) => ({ date: d.value, window: wins[i].value })).filter((o) => o.date);
+    if (!options.length){ document.getElementById("msg").textContent = "Please pick at least one weekday."; return; }
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true; btn.textContent = "Sending…";
+    try { await api("/quote/respond", { decision: "accept", options, note: document.getElementById("acceptNote").value }); load(); }
+    catch (err) { document.getElementById("msg").textContent = err.message; btn.disabled = false; btn.textContent = "Accept quote"; }
+  });
+  const showDecline = (on) => {
+    document.getElementById("acceptCard").classList.toggle("hide", on);
+    document.getElementById("declineCard").classList.toggle("hide", !on);
+  };
+  document.getElementById("declineLink").onclick = () => showDecline(true);
+  document.getElementById("declineBack").onclick = () => showDecline(false);
+  document.getElementById("declineSend").onclick = async () => {
+    try { await api("/quote/respond", { decision: "decline", note: document.getElementById("declineNote").value }); load(); }
+    catch (err) { document.getElementById("msg2").textContent = err.message; }
+  };
+  if (params.get("no") === "1") showDecline(true);
+}
+
+async function load(){
+  if (!token){ app.innerHTML = `<div class="card center"><p>This link is missing its quote. Please use the button in your email.</p></div>`; return; }
+  try { render(await api("/quote/view?t=" + encodeURIComponent(token))); }
+  catch (err) { app.innerHTML = `<div class="card center"><p>${esc(err.message)}</p></div>`; }
+}
+load();
+</script>
+</body>
+</html>
