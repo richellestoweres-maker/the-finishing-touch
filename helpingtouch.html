@@ -188,6 +188,56 @@
         </label>
       </fieldset>
 
+      <!-- Removal -->
+      <fieldset class="fieldset grid-1">
+        <legend>Trash, Donations, and Keepsakes</legend>
+        <p class="hint">Will anything need to leave the home? (choose any)</p>
+        <div class="check-grid">
+          <label><input type="checkbox" name="ht_removal" value="Trash"> <span>Trash</span></label>
+          <label><input type="checkbox" name="ht_removal" value="Donations"> <span>Donations</span></label>
+          <label><input type="checkbox" name="ht_removal" value="Junk or large items hauled away"> <span>Junk or large items hauled away</span></label>
+          <label><input type="checkbox" name="ht_removal" value="Recycling"> <span>Recycling</span></label>
+          <label><input type="checkbox" name="ht_removal" value="Nothing needs to leave"> <span>Nothing needs to leave</span></label>
+          <label><input type="checkbox" name="ht_removal" value="Not sure"> <span>Not sure</span></label>
+        </div>
+        <div class="grid-2">
+          <label>About how much?
+            <select name="ht_removal_amount">
+              <option value="">Choose one</option>
+              <option>A few bags</option>
+              <option>About a pickup truck load</option>
+              <option>More than a truckload</option>
+              <option>Not sure</option>
+            </select>
+          </label>
+          <label>Who decides what stays or goes?
+            <select name="ht_decider" required>
+              <option value="">Choose one</option>
+              <option>I'll be there to decide</option>
+              <option>Someone else will be there to decide</option>
+              <option>Use your judgment on obvious trash</option>
+            </select>
+          </label>
+        </div>
+        <label>Large items to haul away (optional)<input name="ht_large_items" placeholder="Old mattress, broken recliner"></label>
+        <label>Anything we must keep or not touch?<input name="ht_keep" placeholder="Family photos, paperwork, the sewing room"></label>
+      </fieldset>
+
+      <!-- On hand -->
+      <fieldset class="fieldset grid-1">
+        <legend>What's Already in the Home? (choose any)</legend>
+        <div class="check-grid">
+          <label><input type="checkbox" name="ht_on_hand" value="Trash bags"> <span>Trash bags</span></label>
+          <label><input type="checkbox" name="ht_on_hand" value="Cleaning products"> <span>Cleaning products</span></label>
+          <label><input type="checkbox" name="ht_on_hand" value="Vacuum"> <span>Vacuum</span></label>
+          <label><input type="checkbox" name="ht_on_hand" value="Mop or broom"> <span>Mop or broom</span></label>
+          <label><input type="checkbox" name="ht_on_hand" value="Bins or storage containers"> <span>Bins or storage containers</span></label>
+          <label><input type="checkbox" name="ht_on_hand" value="Working washer and dryer"> <span>Working washer and dryer</span></label>
+          <label><input type="checkbox" name="ht_on_hand" value="Outdoor trash can or dumpster"> <span>Outdoor trash can or dumpster</span></label>
+          <label><input type="checkbox" name="ht_on_hand" value="None of these"> <span>None of these</span></label>
+        </div>
+      </fieldset>
+
       <!-- Story -->
       <fieldset class="fieldset grid-1">
         <legend>Tell Us a Little About It</legend>
@@ -367,9 +417,19 @@
           data.ht_days ? "Days: " + list(data.ht_days) : null
         ].filter(Boolean).join(" | ");
 
+        var removalClear = [
+          "Leaving the Home: " + (list(data.ht_removal) || "Not given"),
+          data.ht_removal_amount ? "Amount: " + data.ht_removal_amount : null,
+          data.ht_large_items ? "Large Items: " + data.ht_large_items : null,
+          data.ht_keep ? "Keep or Don't Touch: " + data.ht_keep : null,
+          data.ht_decider ? "Decides: " + data.ht_decider : null,
+          "Already in Home: " + (list(data.ht_on_hand) || "Not given")
+        ].filter(Boolean).join(" | ");
+
         var summaryClear = [
           "A Helping Touch Application",
           needClear,
+          removalClear,
           homeClear,
           data.ht_story ? "Story: " + data.ht_story : null
         ].filter(Boolean).join(" | ");
