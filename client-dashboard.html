@@ -1417,18 +1417,22 @@ onAuthStateChanged(auth, async (user) => {
   loadProfile();
   startMessagePolling();
 
-  const jobsQ = query(collection(db,"jobs"), where("clientId","==",user.uid), orderBy("createdAt","desc"));
+  // No orderBy in these two queries: pairing it with where() needs a Firestore
+  // composite index, and without one the lists never loaded. Sorted here instead.
+  const newestFirst = (a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0);
+  const jobsQ = query(collection(db,"jobs"), where("clientId","==",user.uid));
   onSnapshot(jobsQ, (snap) => {
-    drawJobs(snap.docs.map(d => ({ id:d.id, ...d.data() })));
+    drawJobs(snap.docs.map(d => ({ id:d.id, ...d.data() })).sort(newestFirst));
   }, (err) => {
     console.warn("client jobs listener error:", err);
     el.jobList.innerHTML = `<div class="empty">Could not load jobs.</div>`;
   });
 
-  const reqQ = query(collection(db,"bookingRequests"), where("clientUid","==",user.uid), orderBy("createdAt","desc"), limit(50));
+  const reqQ = query(collection(db,"bookingRequests"), where("clientUid","==",user.uid), limit(100));
   onSnapshot(reqQ, (snap) => {
     const requests = snap.docs
       .map(d => ({ id:d.id, ...d.data() }))
+      .sort(newestFirst)
       .filter(r => r.requestKind === "scheduling_request");
     drawRequests(requests);
   }, (err) => {
