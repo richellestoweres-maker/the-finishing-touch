@@ -303,7 +303,7 @@ function OWNER_INSTRUCTIONS(ctx) {
  * Work out Ivy's response to one incoming message.
  * Returns { mode, message, holding_reply, reason, learned_name }.
  */
-export async function decide({ knowledge, person, history, incoming, ownerContext, openThreads }) {
+export async function decide({ knowledge, person, history, incoming, ownerContext, openThreads, channel }) {
   const isOwner = person && person.kind === "owner";
   const system = [
     knowledgeBlock(knowledge, person, history, incoming),
@@ -314,7 +314,9 @@ export async function decide({ knowledge, person, history, incoming, ownerContex
     "",
     isOwner ? OWNER_INSTRUCTIONS(ownerContext) : "",
     isOwner ? "" : "## HOW TO ANSWER",
-    "You are replying by text message. Be brief. Answer only from the knowledge above.",
+    channel === "portal"
+      ? "You are replying in the client's private portal on the website, where they are signed in. Keep it short and warm, a few sentences at most, no signature block. Answer only from the knowledge above."
+      : "You are replying by text message. Be brief. Answer only from the knowledge above.",
     "If the knowledge does not cover it, escalate rather than inventing an answer.",
     "Always answer by calling the respond tool. Never reply with plain text.",
     "",
