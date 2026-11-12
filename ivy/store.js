@@ -315,7 +315,7 @@ export async function appendMessage(key, { direction, channel, body, from, meta,
   );
   await convo.collection("messages").add({
     direction,           // "in" from them, "out" from us
-    channel,             // "sms" for now; "email" and "portal" later
+    channel,             // "sms" or "portal"
     body: String(body || "").slice(0, 8000),
     // When the exchange was not in English, englishText carries the translation so
     // Richelle can read the thread back without needing Ivy to re-translate it.
@@ -343,7 +343,7 @@ export async function recentMessages(key, limit = 16) {
 
 export async function createDraft({
   toPhone, toName, body, reason, conversationKey, incoming,
-  language, bodyEnglish, incomingEnglish, noteForRichelle
+  language, bodyEnglish, incomingEnglish, noteForRichelle, channel
 }) {
   const ref = await db.collection("ivyDrafts").add({
     status: "pending",
@@ -359,7 +359,8 @@ export async function createDraft({
     incoming: incoming || "",
     incomingEnglish: incomingEnglish || "",
     noteForRichelle: noteForRichelle || "",
-    channel: "sms",
+    // "sms" sends a text on approval; "portal" posts the reply in their portal.
+    channel: channel === "portal" ? "portal" : "sms",
     createdAt: FieldValue.serverTimestamp()
   });
   return { id: ref.id };
