@@ -129,6 +129,8 @@ function openCard(q) {
       ${q.area ? `<div class="qr-meta">📍 Area: ${esc(q.area)}</div>` : ""}
       ${q.layout ? `<div class="qr-meta">🏠 ${esc(q.layout)}</div>` : ""}
       ${q.addons ? `<div class="qr-meta">✨ ${esc(q.addons)}</div>` : ""}
+      ${q.addonNotes ? `<div class="qr-meta">📝 ${esc(q.addonNotes)}</div>` : ""}
+      ${q.clientDays ? `<div class="qr-meta">🗓️ Client's best days: ${esc(q.clientDays)}</div>` : ""}
       ${q.scopeSummary ? `<div class="qr-scope">${esc(q.scopeSummary)}</div>` : ""}
       ${mediaHtml(q)}
       <div class="qr-form">
@@ -265,6 +267,7 @@ function hookSubmits(wrap) {
           status: "sub_quoted",
           updatedAt: serverTimestamp()
         });
+        fetch("https://ivy-591177706994.us-central1.run.app/pipeline/poke", { method: "POST", keepalive: true }).catch(() => {});
         // onSnapshot will move it into "Rates you've submitted" automatically
       } catch (err) {
         console.warn("Submit rate error:", err);
