@@ -182,6 +182,8 @@
             <option>Standard Clean</option>
             <option>Deep Clean</option>
             <option>Move-In / Move-Out Clean</option>
+            <option>Move-In Ready Package (Clean + Unpacking)</option>
+            <option>Move-Out Package (Clean + Optional Packing)</option>
             <option>Airbnb Turnover</option>
             <option>Commercial Cleaning</option>
             <option>Post-Construction Final Clean</option>
@@ -253,6 +255,62 @@
 
         <label>Areas of Focus
           <input name="notes" placeholder="e.g., bathrooms, baseboards, kitchen detail">
+        </label>
+      </div>
+
+      <!-- Move Package Details -->
+      <div class="fieldset grid-2 soft-hidden conditional-section" id="movePackageSection">
+        <p class="section-intro">
+          Unpacking and packing time is estimated from your answers and photos, then billed at actual hours.
+        </p>
+
+        <label>Move Date
+          <input name="move_date" type="date">
+        </label>
+
+        <label>Help Needed
+          <select name="move_help">
+            <option>Unpacking &amp; setup</option>
+            <option>Packing help</option>
+            <option>Both</option>
+            <option>Cleaning only</option>
+          </select>
+        </label>
+
+        <label>Rooms to Unpack or Pack
+          <input name="move_rooms" placeholder="e.g., kitchen, primary closet, 2 kids rooms">
+        </label>
+
+        <label>Approximate Number of Boxes
+          <input name="move_box_count" type="number" min="0" placeholder="e.g., 40">
+        </label>
+
+        <label>Are Boxes Labeled by Room?
+          <select name="move_boxes_labeled">
+            <option>Yes</option>
+            <option>Some</option>
+            <option>No</option>
+          </select>
+        </label>
+
+        <label>Kitchen &amp; Fragile Items
+          <select name="move_kitchen">
+            <option>Full kitchen</option>
+            <option>Some fragile items</option>
+            <option>No kitchen or fragile items</option>
+          </select>
+        </label>
+
+        <label>Furniture Assembly Needed?
+          <select name="move_assembly">
+            <option>No</option>
+            <option>Yes, a few pieces</option>
+            <option>Yes, several pieces</option>
+          </select>
+        </label>
+
+        <label>Move Notes
+          <input name="move_notes" placeholder="e.g., movers arrive at 9am, kids rooms first">
         </label>
       </div>
 
@@ -781,6 +839,7 @@
         setSectionActive(airbnbSection, propertyType === "airbnb");
         setSectionActive(commercialSection, propertyType === "commercial");
         setSectionActive(postConstructionSection, shouldShowPostConstruction);
+        setSectionActive(document.getElementById("movePackageSection"), /package/i.test(serviceValue));
 
         if (serviceType){
           if (propertyType === "airbnb"){
@@ -881,7 +940,7 @@
           else rate = 0.18;
         } else if (service === "Deep Clean"){
           rate = 0.25;
-        } else if (service === "Move-In / Move-Out Clean"){
+        } else if ((service === "Move-In / Move-Out Clean" || /package/i.test(service))){
           rate = 0.30;
         } else if (service === "Airbnb Turnover"){
           rate = 0.25;
@@ -917,7 +976,7 @@
         if (stories === "3+") solo += 0.75;
 
         if (service === "Deep Clean") solo *= 1.5;
-        if (service === "Move-In / Move-Out Clean") solo *= 2;
+        if ((service === "Move-In / Move-Out Clean" || /package/i.test(service))) solo *= 2;
         if (service === "Initial Clean") solo *= 1.2;
         if (service === "Airbnb Turnover") solo *= 1.1;
         if (propertyType === "commercial") solo *= 1.25;
