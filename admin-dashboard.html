@@ -1040,6 +1040,27 @@
           <div class="toprow"><strong>Team Scheduling Profiles</strong><span class="rolepill">Availability + Territory + Capacity</span></div>
           <p class="small">Use this section to view each contractor’s TFT-only availability, ZIP preferences, travel rules, capacity, service capabilities, and hidden W2-ready worker type.</p>
         </div>
+        <form id="addContractorForm" class="form-grid" autocomplete="off" style="margin-bottom:14px">
+          <div style="grid-column:1/-1"><strong>Add Contractor</strong></div>
+          <label>Full Name <input name="fullName" required /></label>
+          <label>Email <input name="email" type="email" required /></label>
+          <label>Phone <input name="phone" type="tel" /></label>
+          <label>Business Name <input name="businessName" /></label>
+          <div style="grid-column:1/-1">
+            <strong>Services</strong>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px">
+              <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" name="serviceTypes" value="cleaning" style="width:auto"> Cleaning</label>
+              <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" name="serviceTypes" value="organizing" style="width:auto"> Organizing</label>
+              <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" name="serviceTypes" value="decor" style="width:auto"> Decorating</label>
+              <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" name="serviceTypes" value="holiday" style="width:auto"> Holiday Decor</label>
+              <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" name="serviceTypes" value="home_reset" style="width:auto"> Home Reset</label>
+            </div>
+          </div>
+          <div style="grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-solid" type="submit">Add Contractor</button>
+            <span id="addContractorMsg" class="small"></span>
+          </div>
+        </form>
         <div id="listContractors" class="grid"></div>
       </section>
 
@@ -1370,11 +1391,12 @@
 
   <!-- App logic -->
   <script type="module">
-    import { auth, db } from "./ft-firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { app, auth, db } from "./ft-firebase.js";
+    import { onAuthStateChanged, signOut, getAuth, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import {
       collection, query, where, orderBy, onSnapshot, limit,
-      doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+      doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, getFirestore,
       serverTimestamp, runTransaction, Timestamp
     } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
@@ -1407,6 +1429,90 @@
     const elAll  = document.getElementById('listAll');
     const elWorkflow = document.getElementById('listWorkflow');
     const elCons = document.getElementById('listContractors');
+
+    // ---- Manually add a contractor ----
+    const addConForm = document.getElementById('addContractorForm');
+    const addConMsg  = document.getElementById('addContractorMsg');
+    let addConAuth = null;
+    function getAddConAuth(){
+      // A second Firebase instance, so creating their login never signs you out
+      if (!addConAuth) addConAuth = getAuth(initializeApp(app.options, "tft-add-contractor"));
+      return addConAuth;
+    }
+
+    addConForm?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(addConForm);
+      const fullName = String(fd.get('fullName')||'').trim();
+      const rawEmail = String(fd.get('email')||'').trim();
+      const email = rawEmail.toLowerCase();
+      const phone = String(fd.get('phone')||'').trim();
+      const businessName = String(fd.get('businessName')||'').trim();
+      const serviceTypes = fd.getAll('serviceTypes').map(String);
+      if (!fullName || !email) return;
+
+      const btn = addConForm.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      addConMsg.textContent = "Adding…";
+
+      const approved = {
+        role:"contractor",
+        applicationStatus:"approved",
+        approvedAt: serverTimestamp(),
+        accountStatus:"active",
+        portalAccess:"active",
+        addedManually:true,
+        updatedAt: serverTimestamp()
+      };
+
+      try{
+        let snap = await getDocs(query(collection(db,"users"), where("email","==",email)));
+        if (snap.empty && rawEmail !== email){
+          snap = await getDocs(query(collection(db,"users"), where("email","==",rawEmail)));
+        }
+
+        if (!snap.empty){
+          const d = snap.docs[0];
+          const cur = d.data();
+          if (String(cur.role||"").toLowerCase() === "admin"){
+            addConMsg.textContent = "That email belongs to an admin account.";
+            return;
+          }
+          const upd = { ...approved };
+          if (!cur.displayName) upd.displayName = fullName;
+          if (!cur.fullName) upd.fullName = fullName;
+          if (phone && !cur.phone) upd.phone = phone;
+          if (businessName && !cur.businessName) upd.businessName = businessName;
+          if (serviceTypes.length) upd.serviceTypes = serviceTypes;
+          await updateDoc(doc(db,"users",d.id), upd);
+          addConMsg.textContent = fullName + " added. They sign in with their existing login.";
+        } else {
+          const a2 = getAddConAuth();
+          const tempPw = Array.from(crypto.getRandomValues(new Uint32Array(4))).join("-") + "Aa!";
+          const cred = await createUserWithEmailAndPassword(a2, email, tempPw);
+          const uid = cred.user.uid;
+          await setDoc(doc(getFirestore(a2.app),"users",uid), {
+            role:"pending",
+            applicationStatus:"submitted",
+            fullName, displayName: fullName, email, phone, businessName, serviceTypes,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          }, { merge:true });
+          await signOut(a2);
+          await updateDoc(doc(db,"users",uid), approved);
+          await sendPasswordResetEmail(auth, email);
+          addConMsg.textContent = fullName + " added. A set password email went to " + email + ".";
+        }
+        addConForm.reset();
+      }catch(err){
+        console.warn(err);
+        addConMsg.textContent = err.code === "auth/email-already-in-use"
+          ? "That email has a login but no profile yet. Have them sign in once at contractor-apply.html, then add them again."
+          : "Could not add: " + (err.message||err);
+      }finally{
+        btn.disabled = false;
+      }
+    });
     const elClients = document.getElementById('listClients');
     const elApps = document.getElementById('listApps');
     const elWalkthroughs = document.getElementById('listWalkthroughs');
@@ -1658,6 +1764,7 @@
           ${role==="contractor"?`<div class="actions">
             <button class="btn btn-outline" data-uid="${p.id}" data-act="copy-id">Copy UID</button>
             <button class="btn btn-solid" data-uid="${p.id}" data-act="load-profile">View Scheduling Profile</button>
+            ${String(p.role||"").toLowerCase()==="contractor"?`<button class="btn btn-danger" data-uid="${p.id}" data-act="remove-contractor">Remove</button>`:""}
           </div>
           <div class="contractor-profile" id="profile-${p.id}"></div>`:""}
         </div>
@@ -1673,6 +1780,33 @@
               : { vip:false });
           }catch(e){ console.warn(e); alert("Could not update VIP: " + (e.message||e)); }
           b.disabled = false;
+        });
+      });
+
+      container.querySelectorAll('[data-act="remove-contractor"]').forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          if (b.dataset.armed !== "1"){
+            b.dataset.armed = "1";
+            b.textContent = "Tap again to remove";
+            setTimeout(()=>{ if (b.dataset.armed === "1"){ b.dataset.armed = ""; b.textContent = "Remove"; } }, 4000);
+            return;
+          }
+          b.disabled = true;
+          b.textContent = "Removing…";
+          try{
+            await updateDoc(doc(db,"users",b.dataset.uid), {
+              role:"former_contractor",
+              contractorStatus:"inactive",
+              accountStatus:"archived",
+              portalAccess:"removed",
+              removedAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+          }catch(e){
+            console.warn(e);
+            alert("Could not remove: " + (e.message||e));
+            b.disabled = false; b.dataset.armed = ""; b.textContent = "Remove";
+          }
         });
       });
 
