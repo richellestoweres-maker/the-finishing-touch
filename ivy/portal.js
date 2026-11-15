@@ -10,6 +10,7 @@
 //   POST /portal/messages       send Ivy a message from the portal
 //   GET  /portal/invoices       their Square invoices
 //   POST /portal/request-alert  tell Richelle a scheduling request just came in
+//   POST /portal/sub-alert      email subs that a quote request is waiting (admin only)
 //
 // The conversation is the same one Ivy keeps for texts. A client whose
 // profile has their mobile number shares one thread across text and portal,
@@ -80,6 +81,57 @@ function millis(v) {
   if (v._seconds) return v._seconds * 1000;
   const t = new Date(v).getTime();
   return Number.isFinite(t) ? t : 0;
+}
+
+
+/* ---------------- Sub quote request emails ---------------- */
+// A short heads up through Resend that a quote request is waiting in the
+// sub's portal. No client details go in the email. Nothing sends until
+// RESEND_API_KEY is set on this service.
+const SUB_PORTAL_URL = "https://www.thefinishingtouch-tx.com/contractor-dashboard.html";
+
+function firstNameOf(d) {
+  const full = (d.profile && d.profile.fullName) || d.fullName || d.displayName || "";
+  return String(full).trim().split(/\s+/)[0] || "";
+}
+
+function escHtml(v) {
+  return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+async function sendSubAlertEmail(to, first, q) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return false;
+  const service = q.serviceLabel || String(q.serviceType || "").replaceAll("_", " ") || "new";
+  const area = q.area ? " in " + q.area : "";
+  const hello = first ? "Hi " + first + "," : "Hi,";
+  const line = "You have a new " + service + " job" + area + " to review in your contractor portal. Open Quote Requests to see the details and photos, then send your arrival time and flat rate.";
+  const text = [hello, "", line, "", SUB_PORTAL_URL, "", "Thank you so much!", "Richelle", "The Finishing Touch"].join("\n");
+  const html = '<!doctype html><html><body style="margin:0;padding:0;background:#f6f1ea;font-family:Georgia,serif;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f1ea;padding:28px 12px;"><tr><td align="center">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:20px;padding:28px;">' +
+    '<tr><td style="font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9a7b6a;padding-bottom:12px;">The Finishing Touch</td></tr>' +
+    '<tr><td style="font-size:16px;line-height:1.6;color:#3d3430;padding-bottom:12px;">' + escHtml(hello) + '</td></tr>' +
+    '<tr><td style="font-size:16px;line-height:1.6;color:#3d3430;padding-bottom:22px;">' + escHtml(line) + '</td></tr>' +
+    '<tr><td><a href="' + SUB_PORTAL_URL + '" style="display:inline-block;padding:13px 22px;border-radius:999px;background:#3d3430;color:#ffffff;font-family:Helvetica,Arial,sans-serif;font-size:15px;text-decoration:none;">Open my portal</a></td></tr>' +
+    '<tr><td style="font-size:15px;line-height:1.6;color:#3d3430;padding-top:22px;">Thank you so much!<br>Richelle<br>The Finishing Touch</td></tr>' +
+    '</table></td></tr></table></body></html>';
+  const r = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: process.env.ALERT_FROM || "The Finishing Touch <hello@thefinishingtouch-tx.com>",
+      to: [to],
+      reply_to: process.env.ALERT_REPLY_TO || "contact.thefinishingtouch.tx@gmail.com",
+      subject: "New " + service + " job to review",
+      text, html
+    })
+  });
+  if (!r.ok) {
+    console.error("resend error", r.status, await r.text().catch(() => ""));
+    return false;
+  }
+  return true;
 }
 
 export function registerPortal(app, { notifyOwner }) {
@@ -312,6 +364,37 @@ export function registerPortal(app, { notifyOwner }) {
   });
 
   /* ---------------- Scheduling request alert ---------------- */
+
+  /* ---------------- Sub quote request alerts (admin only) ---------------- */
+
+  app.post("/portal/sub-alert", async (req, res) => {
+    const { uid } = req.portalUser;
+    try {
+      const me = await userDoc(uid);
+      if (String(me.role || "").toLowerCase() !== "admin") return res.status(403).json({ ok: false });
+      const quoteId = String((req.body || {}).quoteId || "");
+      if (!quoteId) return res.status(400).json({ ok: false });
+      const ref = db.collection("quoteRequests").doc(quoteId);
+      const snap = await ref.get();
+      if (!snap.exists) return res.status(404).json({ ok: false });
+      const q = snap.data();
+      const already = new Set(Array.isArray(q.emailedTo) ? q.emailedTo : []);
+      const targets = (Array.isArray(q.offeredTo) ? q.offeredTo : []).filter((id) => !already.has(id));
+      const sent = [];
+      for (const subUid of targets) {
+        const d = await userDoc(subUid);
+        const to = String(d.email || "").trim();
+        if (to && await sendSubAlertEmail(to, firstNameOf(d), q)) sent.push(subUid);
+      }
+      if (sent.length) {
+        await ref.set({ emailedTo: FieldValue.arrayUnion(...sent), emailedAt: FieldValue.serverTimestamp() }, { merge: true });
+      }
+      res.json({ ok: true, sent: sent.length, emailReady: !!process.env.RESEND_API_KEY });
+    } catch (err) {
+      console.error("sub-alert error", err);
+      res.status(500).json({ ok: false });
+    }
+  });
 
   app.post("/portal/request-alert", async (req, res) => {
     const { uid, email } = req.portalUser;
