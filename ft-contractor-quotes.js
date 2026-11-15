@@ -126,12 +126,13 @@ function openCard(q) {
         <span class="qr-pill qr-open">Needs your rate</span>
         <span class="qr-when">${esc(fmtDate(q.createdAt))}</span>
       </div>
+      ${Array.isArray(q.jobLines) && q.jobLines.length ? `<div class="qr-lines">${q.jobLines.map((x) => `<div class="qr-meta"><strong>${esc(x.label)}:</strong> ${esc(x.value)}</div>`).join("")}</div><div class="qr-meta" style="margin-top:6px">The full service address is shared once the job is assigned to you.</div>` : `
       ${q.area ? `<div class="qr-meta">📍 Area: ${esc(q.area)}</div>` : ""}
       ${q.layout ? `<div class="qr-meta">🏠 ${esc(q.layout)}</div>` : ""}
       ${q.addons ? `<div class="qr-meta">✨ ${esc(q.addons)}</div>` : ""}
       ${q.addonNotes ? `<div class="qr-meta">📝 ${esc(q.addonNotes)}</div>` : ""}
       ${q.clientDays ? `<div class="qr-meta">🗓️ Client's best days: ${esc(q.clientDays)}</div>` : ""}
-      ${q.scopeSummary ? `<div class="qr-scope">${esc(q.scopeSummary)}</div>` : ""}
+      ${q.scopeSummary ? `<div class="qr-scope">${esc(q.scopeSummary)}</div>` : ""}`}
       ${mediaHtml(q)}
       <div class="qr-form">
         <div>

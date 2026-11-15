@@ -358,8 +358,8 @@ function summaryField(r, key) {
   return hit ? hit.slice(key.length + 1).trim() : "";
 }
 
-// What a sub sees: job details only. No client schedule, notes, budget, people, or contact info.
-const SUB_HIDDEN_KEYS = /^(preferred days\/times|days|time|start|timeline|1st choice|2nd choice|walkthrough.*|.*notes|home during visit|attending|household|own\/rent|.*budget|space review|name|email|phone|address|contact.*)$/i;
+// What a sub sees: everything on the intake except the client's contact info and street address.
+const SUB_HIDDEN_KEYS = /^(name|full name|email|phone|address|street|contact.*)$/i;
 function subSummary(r) {
   const parts = String(r.REQUEST_SUMMARY_CLEAR || r.summary || "").split(" | ");
   return parts.filter((p) => {
@@ -375,6 +375,41 @@ function subSummary(r) {
   .join(" | ");
 }
 
+function clientShortName(r) {
+  const d = r.intakeData || {};
+  const full = String(r.clientName || d.name || "").trim().split(/\s+/).filter(Boolean);
+  if (!full.length) return "";
+  return full.length > 1 ? full[0] + " " + full[full.length - 1][0].toUpperCase() : full[0];
+}
+
+function cleanVal(v) {
+  const s = String(Array.isArray(v) ? v.join(", ") : (v ?? "")).trim();
+  return (!s || /^none selected$/i.test(s)) ? "" : s;
+}
+
+// Lines a sub sees, in the same order as the quote request emails
+function subJobLines(r) {
+  const d = r.intakeData || {};
+  const isCleaning = normService(r.serviceType || r.serviceLabel) === "cleaning";
+  const focus = summaryField(r, "Focus Areas");
+  const notes = [cleanVal(d.notes), focus ? "Focus areas: " + focus : "", cleanVal(d.specialty_addon_notes || r.SPECIALTY_ADDON_NOTES_CLEAR)]
+    .filter(Boolean).join(" | ");
+  const lines = [
+    ["Client", clientShortName(r)],
+    ["Service type", cleanVal(d.service) || summaryField(r, "Service") || r.serviceLabel || ""],
+    ["Service area", areaOf(r)],
+    ["Square footage", cleanVal(d.sqft || d.hr_total_sqft) || summaryField(r, "Sq Ft")],
+    ["Home layout", cleanVal(r.HOME_LAYOUT_CLEAR) || summaryField(r, "Layout")],
+    ["Occupied status", cleanVal(d.occupied_status)],
+    ["Pets", cleanVal(d.pets || d.hr_pets) || summaryField(r, "Pets")],
+    ["Preferred date/availability", cleanVal(d.availability) || cleanVal(r.SCHEDULING_PREFERENCES_CLEAR)],
+    ["Client notes/focus areas", notes],
+    ["Requested add-ons", cleanVal(r.SPECIALTY_ADDONS_CLEAR)]
+  ];
+  if (!isCleaning) lines.push(["Job details", subSummary(r)]);
+  return lines.filter((x) => x[1]).map((x) => ({ label: x[0], value: x[1] }));
+}
+
 async function createSubQuoteRequest(r, picked = []) {
   const user = auth.currentUser;
   const payload = {
@@ -385,6 +420,7 @@ async function createSubQuoteRequest(r, picked = []) {
     serviceType: r.serviceType || "cleaning",
     serviceLabel: r.serviceLabel || "",
     scopeSummary: subSummary(r),
+    jobLines: subJobLines(r),
     layout: r.HOME_LAYOUT_CLEAR || r.PROPERTY_DETAILS_CLEAR || "",
     addons: (r.SPECIALTY_ADDONS_CLEAR && r.SPECIALTY_ADDONS_CLEAR !== "None selected") ? r.SPECIALTY_ADDONS_CLEAR : "",
     area: areaOf(r),
@@ -484,31 +520,33 @@ function firstName(n) { return String(n || "").trim().split(/\s+/)[0] || "there"
 
 function jobEmail(r, picked) {
   const service = SERVICE_NAME[normService(r.serviceType)] || r.serviceLabel || r.serviceType || "new";
-  const layout = r.HOME_LAYOUT_CLEAR || r.PROPERTY_DETAILS_CLEAR || "";
-  const addons = (r.SPECIALTY_ADDONS_CLEAR && r.SPECIALTY_ADDONS_CLEAR !== "None selected") ? r.SPECIALTY_ADDONS_CLEAR : "";
-  const scope = subSummary(r);
-  const photos = (Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls.length : 0) +
-    (Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls.length : 0);
-  const hello = picked.length === 1 ? `Hi ${firstName(picked[0].name)},` : "Hi everyone,";
+  const photos = Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls.length : 0;
+  const videos = Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls.length : 0;
+  const hello = picked.length === 1 ? "Hi " + firstName(picked[0].name) + "," : "Hi,";
+  const media = [photos ? photos + (photos === 1 ? " photo" : " photos") : "", videos ? videos + (videos === 1 ? " video" : " videos") : ""].filter(Boolean).join(" and ");
   const lines = [
     hello,
     "",
-    `I have a new ${service} job I'd love for you to take a look at.`,
+    "I have a potential job opportunity for you to review.",
     "",
-    areaOf(r) ? `Area: ${areaOf(r)}` : null,
-    layout ? `Home: ${layout}` : null,
-    addons ? `Add ons: ${addons}` : null,
-    scope ? `What they're looking for: ${scope}` : null,
-    photos ? `Photos and video: ${photos} in your portal` : null,
+    ...subJobLines(r).map((x) => x.label + ": " + x.value),
+    media ? "Photos/videos: " + media + " in your contractor portal" : null,
     "",
-    "Sign in to your contractor portal and open Quote Requests. You can send me your rate and the days you're free, or tap Pass if it isn't a fit.",
+    "Based on the information provided, please reply with:",
+    "",
+    "1. Your available arrival time/date",
+    "2. Your flat-rate fee for this job",
+    "",
+    "You can send both in your contractor portal under Quote Requests:",
     "https://www.thefinishingtouch-tx.com/contractor-dashboard.html",
+    "",
+    "Once the rate is approved and the job is officially assigned, the full service address will be provided.",
     "",
     "Thank you so much!",
     "Richelle",
     "The Finishing Touch"
   ].filter((x) => x !== null).filter((x, i, a) => !(x === "" && a[i - 1] === ""));
-  const subject = `New ${service} job for you to look at`;
+  const subject = "Potential " + service + " job for you to review";
   return { subject, body: lines.join("\n") };
 }
 
@@ -532,7 +570,7 @@ function openPicker(r) {
   wrap.innerHTML = `
     <div class="sp-box" role="dialog" aria-label="Send to a sub">
       <h3>Send to a sub</h3>
-      <p class="sp-sub">${esc(SERVICE_NAME[jobService] || r.serviceLabel || "Job")} · they'll see the job details and area, never the client's name or contact.</p>
+      <p class="sp-sub">${esc(SERVICE_NAME[jobService] || r.serviceLabel || "Job")} · they'll see the job details, first name and last initial, and photos. Never the client's contact info or address.</p>
       <label class="sp-toggle"><input type="checkbox" id="spAll"> Show everyone, not just ${esc(SERVICE_NAME[jobService] || "matching")} contractors</label>
       <div id="spList"></div>
       <div class="sp-msg" id="spMsg"></div>
