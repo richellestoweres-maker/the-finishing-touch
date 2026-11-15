@@ -336,7 +336,43 @@ function areaOf(r) {
   const d = r.intakeData || {};
   const zip = d.zip || d.zipcode || d.zip_code || r.zip || "";
   const city = d.city || r.city || "";
+  if (zip || city) return [zip, city].filter(Boolean).join(" · ");
+  return areaFromAddress(d.address || r.address || "") || summaryField(r, "Area");
+}
+
+// City and ZIP only, never the street
+function areaFromAddress(addr) {
+  const parts = String(addr || "").split(",").map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2) return "";
+  const last = parts[parts.length - 1];
+  const zipM = last.match(/\b\d{5}\b/);
+  const zip = zipM ? zipM[0] : "";
+  let city = parts.length >= 3 ? parts[parts.length - 2] : "";
+  if (/^\d/.test(city)) city = "";
   return [zip, city].filter(Boolean).join(" · ");
+}
+
+function summaryField(r, key) {
+  const parts = String(r.REQUEST_SUMMARY_CLEAR || r.summary || "").split(" | ");
+  const hit = parts.find((p) => p.toLowerCase().startsWith(key.toLowerCase() + ":"));
+  return hit ? hit.slice(key.length + 1).trim() : "";
+}
+
+// What a sub sees: job details only. No client schedule, notes, budget, people, or contact info.
+const SUB_HIDDEN_KEYS = /^(preferred days\/times|days|time|start|timeline|1st choice|2nd choice|walkthrough.*|.*notes|home during visit|attending|household|own\/rent|.*budget|space review|name|email|phone|address|contact.*)$/i;
+function subSummary(r) {
+  const parts = String(r.REQUEST_SUMMARY_CLEAR || r.summary || "").split(" | ");
+  return parts.filter((p) => {
+    const m = p.match(/^([^:]{2,40}):/);
+    return !(m && SUB_HIDDEN_KEYS.test(m[1].trim()));
+  })
+  .filter((p) => !/^walkthrough requested$/i.test(p.trim()))
+  .map((p) => p
+    .replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, "")
+    .replace(/(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g, "")
+    .trim())
+  .filter(Boolean)
+  .join(" | ");
 }
 
 async function createSubQuoteRequest(r, picked = []) {
@@ -348,7 +384,7 @@ async function createSubQuoteRequest(r, picked = []) {
     status: "awaiting_sub_quote",
     serviceType: r.serviceType || "cleaning",
     serviceLabel: r.serviceLabel || "",
-    scopeSummary: r.REQUEST_SUMMARY_CLEAR || r.summary || "",
+    scopeSummary: subSummary(r),
     layout: r.HOME_LAYOUT_CLEAR || r.PROPERTY_DETAILS_CLEAR || "",
     addons: (r.SPECIALTY_ADDONS_CLEAR && r.SPECIALTY_ADDONS_CLEAR !== "None selected") ? r.SPECIALTY_ADDONS_CLEAR : "",
     area: areaOf(r),
@@ -450,7 +486,7 @@ function jobEmail(r, picked) {
   const service = SERVICE_NAME[normService(r.serviceType)] || r.serviceLabel || r.serviceType || "new";
   const layout = r.HOME_LAYOUT_CLEAR || r.PROPERTY_DETAILS_CLEAR || "";
   const addons = (r.SPECIALTY_ADDONS_CLEAR && r.SPECIALTY_ADDONS_CLEAR !== "None selected") ? r.SPECIALTY_ADDONS_CLEAR : "";
-  const scope = r.REQUEST_SUMMARY_CLEAR || r.summary || "";
+  const scope = subSummary(r);
   const photos = (Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls.length : 0) +
     (Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls.length : 0);
   const hello = picked.length === 1 ? `Hi ${firstName(picked[0].name)},` : "Hi everyone,";
