@@ -558,6 +558,24 @@ function gmailComposeUrl(picked, subject, body) {
   return `https://mail.google.com/mail/?authuser=contact.thefinishingtouch.tx@gmail.com&${p}`;
 }
 
+// Ivy emails each sub a heads up that the request is waiting in their portal.
+const IVY_URL = "https://ivy-591177706994.us-central1.run.app";
+async function alertSubs(quoteId) {
+  if (!quoteId || !auth.currentUser) return null;
+  try {
+    const token = await auth.currentUser.getIdToken();
+    const res = await fetch(IVY_URL + "/portal/sub-alert", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ quoteId })
+    });
+    return res.ok ? await res.json() : null;
+  } catch (err) {
+    console.warn("sub alert failed:", err);
+    return null;
+  }
+}
+
 function openPicker(r) {
   document.getElementById("subPicker")?.remove();
   const jobService = normService(r.serviceType || r.serviceLabel);
@@ -638,6 +656,7 @@ function openPicker(r) {
     if (!picked.length) { msg.textContent = "Tick at least one name first."; return; }
 
     const btn = wrap.querySelector("#spSend");
+    let quoteId = q ? q.id : "";
     btn.disabled = true; btn.textContent = "Sending…";
     try {
       if (q) {
@@ -647,10 +666,11 @@ function openPicker(r) {
           updatedAt: serverTimestamp()
         });
       } else {
-        await createSubQuoteRequest(r, picked);
+        quoteId = (await createSubQuoteRequest(r, picked)).id;
       }
       await updateDoc(doc(db, "intakeRequests", r.id), { subQuoteRequested: true, updatedAt: serverTimestamp() });
-      btn.textContent = "Sent to their portal";
+      const alert = await alertSubs(quoteId);
+      btn.textContent = alert && alert.sent ? "Sent and emailed" : "Sent to their portal";
       setTimeout(() => wrap.remove(), 1200);
     } catch (err) {
       console.warn("send to sub error:", err);
