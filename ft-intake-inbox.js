@@ -637,8 +637,6 @@ function openPicker(r) {
     const picked = contractors.filter((c) => ids.includes(c.id));
     if (!picked.length) { msg.textContent = "Tick at least one name first."; return; }
 
-    // Opened now, while the click still counts, or the browser blocks it as a popup.
-    const mailTab = window.open("about:blank", "_blank");
     const btn = wrap.querySelector("#spSend");
     btn.disabled = true; btn.textContent = "Sending…";
     try {
@@ -652,13 +650,10 @@ function openPicker(r) {
         await createSubQuoteRequest(r, picked);
       }
       await updateDoc(doc(db, "intakeRequests", r.id), { subQuoteRequested: true, updatedAt: serverTimestamp() });
-      const { subject, body } = jobEmail(r, picked);
-      const url = gmailComposeUrl(picked, subject, body);
-      if (mailTab) mailTab.location.href = url; else window.open(url, "_blank");
-      wrap.remove();
+      btn.textContent = "Sent to their portal";
+      setTimeout(() => wrap.remove(), 1200);
     } catch (err) {
       console.warn("send to sub error:", err);
-      if (mailTab) mailTab.close();
       btn.disabled = false; btn.textContent = "Send";
       msg.textContent = "That didn't save. Try again in a moment.";
     }
