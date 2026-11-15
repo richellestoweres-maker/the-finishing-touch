@@ -120,7 +120,7 @@ async function sendSubAlertEmail(to, first, q) {
     method: "POST",
     headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: process.env.ALERT_FROM || "The Finishing Touch <hello@thefinishingtouch-tx.com>",
+      from: process.env.ALERT_FROM || "The Finishing Touch <hello@notify.thefinishingtouch-tx.com>",
       to: [to],
       reply_to: process.env.ALERT_REPLY_TO || "contact.thefinishingtouch.tx@gmail.com",
       subject: "New " + service + " job to review",
