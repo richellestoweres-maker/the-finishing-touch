@@ -1506,9 +1506,17 @@
         addConForm.reset();
       }catch(err){
         console.warn(err);
-        addConMsg.textContent = err.code === "auth/email-already-in-use"
-          ? "That email has a login but no profile yet. Have them sign in once at contractor-apply.html, then add them again."
-          : "Could not add: " + (err.message||err);
+        if (err.code === "auth/email-already-in-use"){
+          try{
+            await sendPasswordResetEmail(auth, email);
+            addConMsg.textContent = fullName + " already has a login. We emailed a set password link to " + email + ". After they sign in at login.html, click Add Contractor again.";
+          }catch(e2){
+            console.warn(e2);
+            addConMsg.textContent = fullName + " already has a login. After they sign in at login.html, click Add Contractor again.";
+          }
+        } else {
+          addConMsg.textContent = "Could not add: " + (err.message||err);
+        }
       }finally{
         btn.disabled = false;
       }
