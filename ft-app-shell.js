@@ -124,6 +124,10 @@
     "html.ft-app .chip,html.ft-app .fa-chip,html.ft-app #filterChips button{background:transparent !important;border:1px solid " + FIELD + " !important;border-radius:10px !important;color:" + INK + " !important;box-shadow:none !important}",
     "html.ft-app input:not([type=checkbox]):not([type=radio]),html.ft-app select,html.ft-app textarea{background:#fffdf9 !important;border:1px solid " + FIELD + " !important;border-radius:10px !important;box-shadow:none !important;color:" + INK + " !important}",
     "html.ft-app .rolepill,html.ft-app .status-pill{background:#f1e6d8 !important;border:0 !important;color:" + INK + " !important}",
+    "html.ft-app .bar,html.ft-app .toolbar{background:transparent !important;background-image:none !important;box-shadow:none !important;border:0 !important;padding-left:0 !important;padding-right:0 !important;justify-content:flex-start !important}",
+    "html.ft-app .stat::before,html.ft-app .stat::after,html.ft-app .hero-card::before,html.ft-app .hero-card::after,html.ft-app .toolbar::before,html.ft-app .toolbar::after{display:none !important}",
+    "html.ft-app .stats-row{align-items:start !important;align-self:start !important}",
+    "html.ft-app #searchBox{min-width:min(420px,100%)}",
     "#ftAppBar .ft-page h1{font-family:" + SERIF + ";font-style:italic;font-weight:500;color:" + INK + ";margin:0;letter-spacing:-.01em;line-height:1.02}",
     "#ftAppBar .ft-page p{font:400 16px/1.5 " + SANS + ";color:#3d2b20;margin:10px 0 0}",
     "#ftAppBar .ft-page:empty{display:none}",
@@ -191,6 +195,8 @@
     "html.ft-app .chip,html.ft-app .fa-chip,html.ft-app #filterChips button{min-height:42px}",
     "html.ft-app input:not([type=checkbox]):not([type=radio]),html.ft-app select,html.ft-app textarea{font-size:16px !important;min-height:48px}",
     "html.ft-app .form-grid{grid-template-columns:1fr !important}",
+    "html.ft-app .stats-row{grid-template-columns:repeat(3,1fr) !important;gap:8px !important}",
+    "html.ft-app #ftt-chat-launcher,html.ft-app #admin-help-launcher{bottom:calc(96px + env(safe-area-inset-bottom)) !important}",
     "}"
   ].join("\n");
 
