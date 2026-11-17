@@ -88,7 +88,11 @@ function injectUI() {
     #subPicker .sp-toggle{font-size:13px;color:#7a6f68;margin:4px 0 12px;display:flex;align-items:center;gap:6px}
     #subPicker .sp-empty{color:#7a6f68;font-size:13.5px;padding:14px;border:1px dashed #eadfd8;border-radius:14px}
     #subPicker .sp-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
-    #subPicker .sp-msg{font-size:12.5px;color:#7d4f59;margin-top:8px;min-height:1em}`;
+    #subPicker .sp-msg{font-size:12.5px;color:#7d4f59;margin-top:8px;min-height:1em}
+    #subPicker .sp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:0 0 12px}
+    #subPicker .sp-grid label{display:grid;gap:4px;font-size:12.5px;font-weight:700;color:#2f2926}
+    #subPicker .sp-grid input,#subPicker .sp-grid select{padding:9px 10px;border:1px solid #d8cdc0;border-radius:10px;font-size:14px}
+    #subPicker .sp-tag{font-size:11.5px;color:#7a6f68;margin-left:6px}`;
   document.head.appendChild(style);
 
   // tab button — placed right after the first tab (Job Inbox)
@@ -202,6 +206,7 @@ function card(r) {
       ${sentNames(r).length ? `<div class="sent-to">Sent to: <strong>${esc(sentNames(r).join(", "))}</strong>${passNames(r).length ? ` · Passed: ${esc(passNames(r).join(", "))}` : ""}</div>` : ""}
       <div class="intake-actions">
         <button class="btn btn-outline" data-act="sendToSub">${sentNames(r).length ? "＋ Send to another sub" : (r.subQuoteRequested ? "→ Send to a sub" : "→ Send to a sub for quote")}</button>
+        <button class="btn btn-outline" data-act="sendWalk">${r.walkthroughSentTo ? "Walkthrough sent to " + esc(r.walkthroughSentTo) : "Send on walkthrough"}</button>
         <button class="btn btn-outline" data-act="createJob" ${converted ? "disabled" : ""}>${converted ? "✓ Job created" : "＋ Create Job"}</button>
         ${st === "new" ? `<button class="btn btn-outline" data-act="review">Mark reviewed</button>` : ""}
         <button class="btn btn-outline" data-act="archive">Archive</button>
@@ -244,6 +249,9 @@ function hookActions(wrap) {
             await updateDoc(doc(db, "intakeRequests", id), { intakeStatus: "converted", updatedAt: serverTimestamp() });
           } else if (act === "sendToSub") {
             openPicker(rec);
+            return;
+          } else if (act === "sendWalk") {
+            openWalkPicker(rec);
             return;
           } else if (act === "pick") {
             const inp = el.querySelector(".qr-price");
@@ -410,7 +418,7 @@ function subJobLines(r) {
   return lines.filter((x) => x[1]).map((x) => ({ label: x[0], value: x[1] }));
 }
 
-async function createSubQuoteRequest(r, picked = []) {
+async function createSubQuoteRequest(r, picked = [], pay = 0) {
   const user = auth.currentUser;
   const payload = {
     intakeId: r.id,
@@ -426,6 +434,7 @@ async function createSubQuoteRequest(r, picked = []) {
     area: areaOf(r),
     mediaPhotoUrls: Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls : [],
     mediaVideoUrls: Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls : [],
+    flatPay: pay > 0 ? pay : null,
     subRate: null,
     subUid: "",
     subNote: "",
@@ -509,7 +518,7 @@ function listenContractors() {
     (snap) => {
       contractors = snap.docs.map((d) => {
         const u = { id: d.id, ...d.data() };
-        return { id: u.id, name: contractorName(u), email: u.email || "", services: contractorServicesOf(u), approved: isApproved(u) };
+        return { id: u.id, name: contractorName(u), email: u.email || "", services: contractorServicesOf(u), approved: isApproved(u), pricing: u.pricingMode === "quotes" ? "quotes" : "flat" };
       }).sort((a, b) => a.name.localeCompare(b.name));
     },
     (err) => console.warn("contractor list error:", err)
@@ -576,6 +585,151 @@ async function alertSubs(quoteId) {
   }
 }
 
+/* ---------- send a sub on a walkthrough ---------- */
+// The sub gets the client's name and address (they're going to the home), plus
+// everything the intake already answered so they only need to talk with the
+// client, take the photos and add notes. A walkthrough goes to one sub, and
+// only that sub can read it.
+function walkFields(r) {
+  const d = r.intakeData || {};
+  const focus = summaryField(r, "Focus Areas");
+  return {
+    intakeId: r.id,
+    serviceType: normService(r.serviceType || r.serviceLabel) || "cleaning",
+    serviceLabel: cleanVal(d.service) || r.serviceLabel || "",
+    clientName: String(r.clientName || d.name || "").trim(),
+    propertyAddress: String(d.address || r.address || "").trim(),
+    area: areaOf(r),
+    beds: cleanVal(d.beds || d.hr_bedrooms_total),
+    baths: cleanVal(d.baths || d.hr_bathrooms_total),
+    sqft: cleanVal(d.sqft || d.hr_total_sqft) || summaryField(r, "Sq Ft"),
+    stories: cleanVal(d.stories),
+    pets: cleanVal(d.pets || d.hr_pets) || summaryField(r, "Pets"),
+    addons: cleanVal(r.SPECIALTY_ADDONS_CLEAR),
+    schedulingNotes: cleanVal(d.availability) || cleanVal(r.SCHEDULING_PREFERENCES_CLEAR),
+    clientNotes: [cleanVal(d.notes), focus ? "Focus areas: " + focus : "", cleanVal(d.specialty_addon_notes || r.SPECIALTY_ADDON_NOTES_CLEAR)].filter(Boolean).join(" | "),
+    intakeSummary: subSummary(r),
+    mediaPhotoUrls: Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls : [],
+    mediaVideoUrls: Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls : []
+  };
+}
+
+function openWalkPicker(r) {
+  document.getElementById("subPicker")?.remove();
+  const svc = r ? normService(r.serviceType || r.serviceLabel) : "";
+  const wrap = document.createElement("div");
+  wrap.id = "subPicker";
+  wrap.innerHTML = `
+    <div class="sp-box" role="dialog" aria-label="Send on walkthrough">
+      <h3>${r ? "Send on walkthrough" : "New walkthrough"}</h3>
+      <p class="sp-sub">${r ? `${esc(SERVICE_NAME[svc] || r.serviceLabel || "Job")} for ${esc(r.clientName || (r.intakeData || {}).name || "this client")}. Their intake answers fill in for the sub.` : "For a client with no intake. The sub fills in the details on site."}</p>
+      ${r ? "" : `<div class="sp-grid">
+        <label>Client name<input id="wkName"></label>
+        <label>Service address<input id="wkAddr"></label>
+        <label>Service<select id="wkSvc">${SERVICE_OPTIONS.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></label>
+      </div>`}
+      <div class="sp-grid">
+        <label>Pay for the walkthrough<input id="wkPay" type="number" min="0" step="1" placeholder="$"></label>
+        <label>Date and time<input id="wkWhen" type="datetime-local"></label>
+      </div>
+      <label class="sp-toggle"><input type="checkbox" id="spAll"> Show everyone</label>
+      <div id="spList"></div>
+      <div class="sp-msg" id="spMsg"></div>
+      <div class="sp-actions">
+        <button class="btn btn-outline" type="button" id="spCancel">Cancel</button>
+        <button class="btn btn-solid" type="button" id="spSend">Send</button>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+
+  const listEl = wrap.querySelector("#spList");
+  const msg = wrap.querySelector("#spMsg");
+  let showAll = !r;
+  wrap.querySelector("#spAll").checked = showAll;
+
+  function draw() {
+    const service = r ? svc : wrap.querySelector("#wkSvc").value;
+    const approved = contractors.filter((c) => c.approved);
+    const shown = showAll ? approved : approved.filter((c) => c.services.includes(service));
+    listEl.innerHTML = shown.length ? shown.map((c) => `
+      <div class="sp-row" data-uid="${esc(c.id)}">
+        <label class="sp-main">
+          <input type="radio" name="wkSub" class="sp-pick">
+          <span><span class="sp-name">${esc(c.name)}</span><br><span class="sp-email">${esc(c.email || "No email on file")}</span></span>
+        </label>
+      </div>`).join("")
+      : `<div class="sp-empty">No approved contractors for this service. Tick "Show everyone".</div>`;
+  }
+
+  wrap.querySelector("#spAll").addEventListener("change", (e) => { showAll = e.target.checked; draw(); });
+  wrap.querySelector("#wkSvc")?.addEventListener("change", draw);
+  wrap.querySelector("#spCancel").addEventListener("click", () => wrap.remove());
+  wrap.addEventListener("click", (e) => { if (e.target === wrap) wrap.remove(); });
+
+  wrap.querySelector("#spSend").addEventListener("click", async () => {
+    const row = [...listEl.querySelectorAll(".sp-row")].find((x) => x.querySelector(".sp-pick").checked);
+    const sub = row ? contractors.find((c) => c.id === row.dataset.uid) : null;
+    const pay = Number(wrap.querySelector("#wkPay").value);
+    const whenRaw = wrap.querySelector("#wkWhen").value;
+    if (!sub) { msg.textContent = "Pick who's doing the walkthrough."; return; }
+    if (!(pay > 0)) { msg.textContent = "Enter the pay for the walkthrough."; return; }
+    let fields;
+    if (r) {
+      fields = walkFields(r);
+    } else {
+      const name = wrap.querySelector("#wkName").value.trim();
+      const addr = wrap.querySelector("#wkAddr").value.trim();
+      if (!name || !addr) { msg.textContent = "Add the client's name and address."; return; }
+      const service = wrap.querySelector("#wkSvc").value;
+      fields = { intakeId: "", serviceType: service, serviceLabel: SERVICE_NAME[service] || "", clientName: name, propertyAddress: addr, area: areaFromAddress(addr) };
+    }
+    const btn = wrap.querySelector("#spSend");
+    btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      const user = auth.currentUser;
+      await addDoc(collection(db, "walkthroughs"), {
+        ...fields,
+        assignment: true,
+        status: "draft",
+        offerStatus: "offered",
+        submittedByUid: sub.id,
+        submittedByName: sub.name,
+        submittedByEmail: sub.email || "",
+        pay,
+        appointmentAt: whenRaw || "",
+        appointment: whenRaw ? new Date(whenRaw).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "",
+        shots: {},
+        source: "admin_assignment",
+        createdBy: user?.email || user?.uid || "admin",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      if (r) await updateDoc(doc(db, "intakeRequests", r.id), { walkthroughSentTo: sub.name, updatedAt: serverTimestamp() });
+      btn.textContent = "Sent to their portal";
+      setTimeout(() => wrap.remove(), 1200);
+    } catch (err) {
+      console.warn("send walkthrough error:", err);
+      btn.disabled = false; btn.textContent = "Send";
+      msg.textContent = "That didn't save. Try again in a moment.";
+    }
+  });
+
+  draw();
+}
+
+// "New walkthrough" button on the Walkthroughs tab, for clients with no intake.
+function addWalkButton() {
+  const top = document.querySelector("#panel-walkthroughs .card .toprow");
+  if (!top || document.getElementById("newWalkBtn")) return;
+  const b = document.createElement("button");
+  b.id = "newWalkBtn";
+  b.className = "btn btn-solid";
+  b.type = "button";
+  b.textContent = "New walkthrough";
+  b.addEventListener("click", () => openWalkPicker(null));
+  top.appendChild(b);
+}
+
 function openPicker(r) {
   document.getElementById("subPicker")?.remove();
   const jobService = normService(r.serviceType || r.serviceLabel);
@@ -589,6 +743,7 @@ function openPicker(r) {
     <div class="sp-box" role="dialog" aria-label="Send to a sub">
       <h3>Send to a sub</h3>
       <p class="sp-sub">${esc(SERVICE_NAME[jobService] || r.serviceLabel || "Job")} · they'll see the job details, first name and last initial, and photos. Never the client's contact info or address.</p>
+      <div class="sp-grid"><label>Flat pay for this job<input id="spPay" type="number" min="0" step="1" placeholder="$ for flat rate subs"></label></div>
       <label class="sp-toggle"><input type="checkbox" id="spAll"> Show everyone, not just ${esc(SERVICE_NAME[jobService] || "matching")} contractors</label>
       <div id="spList"></div>
       <div class="sp-msg" id="spMsg"></div>
@@ -615,13 +770,14 @@ function openPicker(r) {
       <div class="sp-row" data-uid="${esc(c.id)}">
         <label class="sp-main">
           <input type="checkbox" class="sp-pick">
-          <span><span class="sp-name">${esc(c.name)}</span><br><span class="sp-email">${esc(c.email || "No email on file")}</span></span>
+          <span><span class="sp-name">${esc(c.name)}</span><span class="sp-tag">${c.pricing === "quotes" ? "Quotes own price" : "Flat rate"}</span><br><span class="sp-email">${esc(c.email || "No email on file")}</span></span>
           <button class="sp-edit" type="button">Services</button>
         </label>
         <div class="sp-chips">${c.services.length ? c.services.map((s) => `<span class="sp-chip">${esc(SERVICE_NAME[s] || s)}</span>`).join("") : '<span class="sp-email">No services set</span>'}</div>
         <div class="sp-svc">
           ${SERVICE_OPTIONS.map(([k, label]) => `<label><input type="checkbox" value="${k}" ${c.services.includes(k) ? "checked" : ""}> ${esc(label)}</label>`).join("")}
-          <div><button class="btn btn-outline sp-save" type="button">Save services</button></div>
+          <div><label><input type="checkbox" class="sp-quotes" ${c.pricing === "quotes" ? "checked" : ""}> Quotes their own price</label></div>
+          <div><button class="btn btn-outline sp-save" type="button">Save</button></div>
         </div>
       </div>`).join("");
 
@@ -631,12 +787,13 @@ function openPicker(r) {
         row.querySelector(".sp-svc").classList.toggle("open");
       });
       row.querySelector(".sp-save").addEventListener("click", async () => {
-        const chosen = [...row.querySelectorAll(".sp-svc input:checked")].map((x) => x.value);
+        const chosen = [...row.querySelectorAll(".sp-svc input[value]:checked")].map((x) => x.value);
+        const pricing = row.querySelector(".sp-quotes").checked ? "quotes" : "flat";
         try {
-          await updateDoc(doc(db, "users", row.dataset.uid), { approvedServiceTypes: chosen, updatedAt: serverTimestamp() });
+          await updateDoc(doc(db, "users", row.dataset.uid), { approvedServiceTypes: chosen, pricingMode: pricing, updatedAt: serverTimestamp() });
           const c = contractors.find((x) => x.id === row.dataset.uid);
-          if (c) c.services = chosen;
-          msg.textContent = "Services saved.";
+          if (c) { c.services = chosen; c.pricing = pricing; }
+          msg.textContent = "Saved.";
           draw();
         } catch (err) {
           console.warn(err);
@@ -654,6 +811,8 @@ function openPicker(r) {
     const ids = [...listEl.querySelectorAll(".sp-row")].filter((row) => row.querySelector(".sp-pick").checked).map((row) => row.dataset.uid);
     const picked = contractors.filter((c) => ids.includes(c.id));
     if (!picked.length) { msg.textContent = "Tick at least one name first."; return; }
+    const pay = Number(wrap.querySelector("#spPay").value);
+    if (picked.some((c) => c.pricing === "flat") && !(pay > 0)) { msg.textContent = "Enter the flat pay for this job."; return; }
 
     const btn = wrap.querySelector("#spSend");
     let quoteId = q ? q.id : "";
@@ -663,10 +822,11 @@ function openPicker(r) {
         await updateDoc(doc(db, "quoteRequests", q.id), {
           offeredTo: arrayUnion(...picked.map((c) => c.id)),
           offeredNames: arrayUnion(...picked.map((c) => c.name)),
+          ...(pay > 0 ? { flatPay: pay } : {}),
           updatedAt: serverTimestamp()
         });
       } else {
-        quoteId = (await createSubQuoteRequest(r, picked)).id;
+        quoteId = (await createSubQuoteRequest(r, picked, pay)).id;
       }
       await updateDoc(doc(db, "intakeRequests", r.id), { subQuoteRequested: true, updatedAt: serverTimestamp() });
       const alert = await alertSubs(quoteId);
@@ -688,6 +848,7 @@ function boot() {
     if (!user) return; // dashboard's own guard will redirect
     if (!injectUI()) return;
     listenContractors();
+    addWalkButton();
     onSnapshot(
       query(collection(db, "intakeRequests"), orderBy("createdAt", "desc"), limit(300)),
       (snap) => { latest = snap.docs.map((d) => ({ id: d.id, ...d.data() })); draw(latest); },

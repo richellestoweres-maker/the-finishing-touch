@@ -66,8 +66,8 @@ function injectUI() {
   view.className = "app-card appview";
   view.innerHTML = `
     <p class="mini-kicker">Quote Requests</p>
-    <h2 class="screen-title">Jobs to price</h2>
-    <p class="screen-copy">The Finishing Touch sent you these jobs to quote. Enter <strong>your</strong> rate — the price you'll do the job for. The client never sees your rate, and their name and contact details are kept private from this screen.</p>
+    <h2 class="screen-title">Job requests</h2>
+    <p class="screen-copy">Jobs The Finishing Touch sent you. The client's contact details stay private until the job is assigned.</p>
     <div id="qrCount" class="screen-copy" style="font-weight:700"></div>
     <div id="qrOpenList"></div>
     <div id="qrMineWrap" style="margin-top:22px"></div>`;
@@ -120,10 +120,10 @@ function mediaHtml(q) {
 function openCard(q) {
   const title = q.serviceLabel || q.serviceType || "Job";
   return `
-    <div class="qr-card" data-qid="${esc(q.id)}">
+    <div class="qr-card" data-qid="${esc(q.id)}" data-flat="${isFlat(q) ? esc(q.flatPay) : ""}">
       <div class="qr-head">
         <strong>${esc(title)}</strong>
-        <span class="qr-pill qr-open">Needs your rate</span>
+        <span class="qr-pill qr-open">${isFlat(q) ? "Needs your answer" : "Needs your rate"}</span>
         <span class="qr-when">${esc(fmtDate(q.createdAt))}</span>
       </div>
       ${Array.isArray(q.jobLines) && q.jobLines.length ? `<div class="qr-lines">${q.jobLines.map((x) => `<div class="qr-meta"><strong>${esc(x.label)}:</strong> ${esc(x.value)}</div>`).join("")}</div><div class="qr-meta" style="margin-top:6px">The full service address is shared once the job is assigned to you.</div>` : `
@@ -134,6 +134,22 @@ function openCard(q) {
       ${q.clientDays ? `<div class="qr-meta">🗓️ Client's best days: ${esc(q.clientDays)}</div>` : ""}
       ${q.scopeSummary ? `<div class="qr-scope">${esc(q.scopeSummary)}</div>` : ""}`}
       ${mediaHtml(q)}
+${isFlat(q) ? `
+      <div class="qr-form">
+        <div class="qr-meta" style="font-size:16px">Pay: <strong>${money(q.flatPay)}</strong></div>
+        <div>
+          <label class="qr-lab">When you can do it</label>
+          <input class="qr-in qr-avail-in" type="text" placeholder="Tue or Thu morning">
+        </div>
+        <div>
+          <label class="qr-lab">Note for Richelle (optional)</label>
+          <textarea class="qr-in qr-note-in"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary qr-submit" type="button">Accept</button>
+          <button class="btn btn-soft qr-pass" type="button">Pass</button>
+        </div>
+` : `
       <div class="qr-form">
         <div>
           <label class="qr-lab">Your rate for this job (what you'll do it for)</label>
@@ -152,6 +168,7 @@ function openCard(q) {
           <button class="btn btn-primary qr-submit" type="button">Submit my rate</button>
           <button class="btn btn-soft qr-pass" type="button">Pass on this one</button>
         </div>
+`}
       </div>
     </div>`;
 }
@@ -167,7 +184,7 @@ function mineCard(q) {
         <span class="qr-when">${esc(fmtDate(q.createdAt))}</span>
       </div>
       ${q.area ? `<div class="qr-meta">📍 Area: ${esc(q.area)}</div>` : ""}
-      <div class="qr-meta">Your rate: <strong>${money(q.subRate)}</strong></div>
+      <div class="qr-meta">${Number(q.flatPay) > 0 && Number(q.subRate) === Number(q.flatPay) ? "Accepted at" : "Your rate:"} <strong>${money(q.subRate)}</strong></div>
       ${q.subAvailability ? `<div class="qr-meta">📅 You offered: ${esc(q.subAvailability)}</div>` : ""}
     </div>`;
 }
@@ -176,6 +193,13 @@ let openList = [];
 let mineList = [];
 let allOpen = [];
 let myServices = null; // null until loaded
+let myPricing = "flat"; // "quotes" for subs who set their own price (Maggie)
+
+// Flat rate subs get Richelle's pay amount to accept or pass. Subs who quote
+// their own price, or any request sent without a pay amount, get the rate box.
+function isFlat(q) {
+  return myPricing !== "quotes" && Number(q.flatPay) > 0;
+}
 const passed = new Set();
 
 // Same service grouping the admin dashboard uses when picking who gets a job.
@@ -216,14 +240,14 @@ function draw() {
   filterOpen();
 
   count.textContent = openList.length
-    ? `${openList.length} job${openList.length === 1 ? "" : "s"} waiting for your rate`
-    : "No jobs to price right now. New ones will appear here when The Finishing Touch sends them.";
+    ? `${openList.length} job${openList.length === 1 ? "" : "s"} waiting for you`
+    : "No job requests right now.";
   openWrap.innerHTML = openList.map(openCard).join("");
   hookSubmits(openWrap);
 
   if (mineWrap) {
     mineWrap.innerHTML = mineList.length
-      ? `<h3 class="screen-title" style="font-size:1.1rem">Rates you've submitted</h3>` + mineList.map(mineCard).join("")
+      ? `<h3 class="screen-title" style="font-size:1.1rem">Answered</h3>` + mineList.map(mineCard).join("")
       : "";
   }
 }
@@ -236,7 +260,7 @@ function hookSubmits(wrap) {
     if (!btn) return;
     const pass = el.querySelector(".qr-pass");
     if (pass) pass.addEventListener("click", async () => {
-      if (!confirm("Pass on this job? It will be removed from your list.")) return;
+      if (!confirm("Pass on this job?")) return;
       pass.disabled = true;
       try {
         await updateDoc(doc(db, "quoteRequests", qid), {
@@ -252,11 +276,12 @@ function hookSubmits(wrap) {
       }
     });
     btn.addEventListener("click", async () => {
-      const rate = Number(el.querySelector(".qr-rate-in")?.value);
+      const flat = Number(el.dataset.flat || 0);
+      const rate = flat > 0 ? flat : Number(el.querySelector(".qr-rate-in")?.value);
       const avail = (el.querySelector(".qr-avail-in")?.value || "").trim();
       const note = (el.querySelector(".qr-note-in")?.value || "").trim();
       if (!(rate > 0)) { alert("Please enter your rate (a number above 0) first."); return; }
-      if (!confirm(`Submit ${money(rate)} as your rate for this job? This locks in and can't be changed here.`)) return;
+      if (!confirm(flat > 0 ? `Accept this job at ${money(rate)}?` : `Submit ${money(rate)} as your rate for this job? This locks in and can't be changed here.`)) return;
       btn.disabled = true; btn.textContent = "Submitting…";
       try {
         const me = auth.currentUser;
@@ -272,7 +297,7 @@ function hookSubmits(wrap) {
         // onSnapshot will move it into "Rates you've submitted" automatically
       } catch (err) {
         console.warn("Submit rate error:", err);
-        btn.disabled = false; btn.textContent = "Submit my rate";
+        btn.disabled = false; btn.textContent = flat > 0 ? "Accept" : "Submit my rate";
         alert("Sorry — that didn't save (likely a permission rule). Details are in the console.");
       }
     });
@@ -301,6 +326,7 @@ function startListeners(user) {
     const raw = u.approvedServiceTypes || u.approvedServices || u.serviceTypes || u.application?.serviceTypes || [];
     const list = Array.isArray(raw) ? raw : String(raw).split(",");
     myServices = [...new Set(list.map(normService).filter(Boolean))];
+    myPricing = u.pricingMode === "quotes" ? "quotes" : "flat";
     draw();
   }).catch(() => { myServices = []; draw(); });
   // open requests to bid on

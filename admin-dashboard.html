@@ -1280,7 +1280,7 @@
             <strong>Walkthrough Queue</strong>
             <span class="rolepill">Review → Quote Queue</span>
           </div>
-          <p class="small">Review submitted walkthroughs, media, contractor estimates, notes, and the auto-calculated TFT +30% draft quote. Approved walkthroughs create quote records for the Quote Queue.</p>
+          <p class="small">Walkthroughs you've sent, and the photos and notes subs send back.</p>
           <div class="meta">
             <span>Pending Review</span>
             <span>Approved Quotes</span>
@@ -1963,7 +1963,44 @@
       `).join("") + `</div>`;
     }
 
+    function escW(v){
+      return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    }
+
+    // Walkthroughs Richelle sent a sub (from an intake or the New walkthrough button).
+    function assignmentCard(w){
+      const state = w.status !== "draft"
+        ? (w.status === "reviewed" ? "Reviewed" : "Submitted")
+        : ({ offered: "Waiting on sub", accepted: "Accepted", passed: "Passed", cancelled: "Cancelled" }[w.offerStatus] || "Sent");
+      const shots = w.shots || {};
+      const groups = Object.keys(shots).filter(k => (shots[k] || []).length);
+      const thumbs = files => files.map(f => f.type === "video"
+        ? `<a class="walk-media-link" href="${escW(f.url)}" target="_blank" rel="noopener">Video</a>`
+        : `<a href="${escW(f.url)}" target="_blank" rel="noopener"><img src="${escW(f.url)}" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid #e2d4c0"></a>`).join("");
+      const details = [["Bedrooms", w.beds], ["Bathrooms", w.baths], ["Square footage", w.sqft], ["Stories", w.stories], ["Pets", w.pets], ["Add-ons", w.addons], ["Scheduling and access", w.schedulingNotes], ["Client notes", w.clientNotes], ["Walkthrough notes", w.walkNotes]].filter(x => x[1]);
+      return `
+        <div class="card" data-walkid="${escW(w.id)}">
+          <div class="toprow">
+            <strong>${escW(w.clientName || "Walkthrough")}</strong>
+            <span class="rolepill">${state}</span>
+          </div>
+          <div class="meta">
+            ${w.serviceLabel || w.serviceType ? `<span>${escW(w.serviceLabel || readable(w.serviceType))}</span>` : ""}
+            ${w.propertyAddress ? `<span>${escW(w.propertyAddress)}</span>` : ""}
+            <span>${escW(w.submittedByName || w.submittedByEmail || "Sub")} · ${money(w.pay)}</span>
+            ${w.appointment ? `<span>${escW(w.appointment)}</span>` : ""}
+          </div>
+          ${details.length ? `<div class="small">${details.map(([k, v]) => `<strong>${k}:</strong> ${escW(v)}`).join("<br>")}</div>` : ""}
+          ${groups.map(k => `<div class="small" style="margin-top:8px"><strong>${escW((w.shotLabels || {})[k] || readable(k))}</strong><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${thumbs(shots[k])}</div></div>`).join("")}
+          <div class="actions">
+            ${w.status === "pending_review" ? `<button class="btn btn-solid" data-act="review-assign">Mark reviewed</button>` : ""}
+            ${w.status === "draft" && w.offerStatus !== "cancelled" && w.offerStatus !== "passed" ? `<button class="btn btn-outline" data-act="cancel-assign">Cancel request</button>` : ""}
+          </div>
+        </div>`;
+    }
+
     function walkthroughCard(w){
+      if (w.assignment) return assignmentCard(w);
       const estimate = Number(w.contractorEstimate || 0);
       const quote = Number(w.tftClientQuote || Math.round(estimate * 1.30));
       const photos = Array.isArray(w.photos) ? w.photos : [];
@@ -2057,6 +2094,25 @@
 
     function hookWalkthroughActions(container, list){
       const byId = new Map(list.map(w => [w.id, w]));
+
+      container.querySelectorAll('[data-act="review-assign"],[data-act="cancel-assign"]').forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.closest("[data-walkid]")?.dataset.walkid;
+          if (!id) return;
+          const cancel = btn.dataset.act === "cancel-assign";
+          if (cancel && !confirm("Cancel this walkthrough request?")) return;
+          btn.disabled = true;
+          try {
+            await updateDoc(doc(db, "walkthroughs", id), cancel
+              ? { offerStatus: "cancelled", updatedAt: serverTimestamp() }
+              : { status: "reviewed", reviewedAt: serverTimestamp(), updatedAt: serverTimestamp() });
+          } catch (e) {
+            console.warn(e);
+            alert("Couldn't update: " + (e.message || e));
+            btn.disabled = false;
+          }
+        });
+      });
 
       container.querySelectorAll('[data-act="approve-walk"]').forEach(btn => {
         btn.addEventListener("click", async () => {

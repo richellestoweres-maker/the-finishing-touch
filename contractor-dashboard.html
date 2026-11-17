@@ -457,7 +457,7 @@ a{color:inherit}
     <nav class="rail-nav" aria-label="Contractor app navigation">
       <button class="navbtn active" data-view="home"><span class="ico">01</span>Home</button>
       <button class="navbtn" data-view="jobs"><span class="ico">02</span>Jobs</button>
-      <button class="navbtn" data-view="walkthrough" id="projectNavBtn"><span class="ico">03</span>Project Notes</button>
+      <button class="navbtn" data-view="walkthrough" id="projectNavBtn"><span class="ico">03</span>Walkthroughs</button>
       <button class="navbtn" data-view="availability"><span class="ico">04</span>Availability</button>
       <button class="navbtn" data-view="documents"><span class="ico">05</span>Documents</button>
       <button class="navbtn" data-view="resources"><span class="ico">06</span>Resources</button>
@@ -497,7 +497,7 @@ a{color:inherit}
   </main>
 </div>
 <nav class="bottom-nav" aria-label="Mobile contractor navigation">
-  <button class="active" data-view="home"><span class="bico"></span>Home</button><button data-view="jobs"><span class="bico"></span>Jobs</button><button data-view="walkthrough"><span class="bico"></span>Notes</button><button data-view="availability"><span class="bico"></span>Avail.</button><button data-view="documents"><span class="bico"></span>Docs</button><button data-view="resources"><span class="bico"></span>Help</button><button data-view="settings"><span class="bico"></span>Settings</button>
+  <button class="active" data-view="home"><span class="bico"></span>Home</button><button data-view="jobs"><span class="bico"></span>Jobs</button><button data-view="walkthrough"><span class="bico"></span>Walks</button><button data-view="availability"><span class="bico"></span>Avail.</button><button data-view="documents"><span class="bico"></span>Docs</button><button data-view="resources"><span class="bico"></span>Help</button><button data-view="settings"><span class="bico"></span>Settings</button>
 </nav>
 <div id="toast" class="toast"></div>
 <script type="module">
@@ -544,7 +544,7 @@ function serviceOptionsHTML(){return contractorServices().map(s=>`<option value=
 function serviceMatchesJob(job){const allowed=contractorServices(); const service=normalizeService(job.serviceType||job.service||job.category||''); if(allowed.includes(service))return true; if(['move_in_out','airbnb','commercial'].includes(service)&&allowed.includes('cleaning'))return true; return false;}
 function visibleOpenJobs(){return openJobs.filter(serviceMatchesJob)}
 function visibleMyJobs(){return myJobs.filter(serviceMatchesJob)}
-function projectModuleLabel(){const s=contractorServices(); if(s.length===1&&['cleaning','move_in_out','airbnb','commercial'].includes(s[0]))return'Walkthrough'; if(s.length===1&&s[0]==='organizing')return'Organizing Notes'; if(s.length===1&&s[0]==='decor')return'Styling Notes'; if(s.length===1&&s[0]==='holiday')return'Holiday Notes'; return'Project Notes';}
+function projectModuleLabel(){return'Walkthroughs';}
 function isActive(data){ const c=data.compliance||{}; return data.contractorStatus==='active' || data.status==='active' || c.overallStatus==='active' || data.active===true || (data.role==='admin'); }
 function submitted(data){ return !!(data.compliance?.onboarding?.submittedAt || data.compliance?.agreement?.signedAt || data.contractorStatus==='pending_admin_review'); }
 function docs(){ return userData.compliance?.documents || {}; }
@@ -786,7 +786,7 @@ function renderActiveApp(){
  $('railNote').textContent=`Approved services: ${services}. Your suite only shows work that matches your approved service categories.`;
  const pbtn=$('projectNavBtn'); if(pbtn) pbtn.lastChild.textContent=label;
  document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('locked'));
- $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Your private workspace is filtered to your approved service type(s): <strong>${services}</strong>.</p><div class="grid"><div class="tile"><h3>Open Work</h3><p>${openCount} available opportunities matched to your approved services.</p></div><div class="tile"><h3>My Work</h3><p>${mineCount} accepted or assigned project(s).</p></div><div class="tile"><h3>${label}</h3><p>Submit notes, photos, estimate details, or project-specific updates for admin review.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div><div class="actions"><button class="btn btn-primary" data-view="walkthrough" type="button">${label}</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`;
+ $('view-home').innerHTML=`<p class="mini-kicker">Today</p><h2 class="screen-title">Contractor Home</h2><p class="screen-copy">Your private workspace is filtered to your approved service type(s): <strong>${services}</strong>.</p><div class="grid"><div class="tile"><h3>Open Work</h3><p>${openCount} available opportunities matched to your approved services.</p></div><div class="tile"><h3>My Work</h3><p>${mineCount} accepted or assigned project(s).</p></div><div class="tile"><h3>${label}</h3><p>Walkthroughs sent to you, with the photo checklist.</p></div><div class="tile"><h3>Compliance</h3><p>${cap(userData.compliance?.overallStatus||userData.contractorStatus||'active')}</p></div></div><div class="actions"><button class="btn btn-primary" data-view="walkthrough" type="button">${label}</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`;
  renderJobs(); renderWalkthrough(); renderAvailability(); renderDocumentsView(); renderResources(); renderSettings();
 }
 function renderLockedApp(){ document.querySelectorAll('.navbtn').forEach(b=>{ if(!['home','documents','settings'].includes(b.dataset.view)) b.classList.add('locked'); }); $('view-home').innerHTML=`<p class="mini-kicker">Onboarding</p><h2 class="screen-title">Finish onboarding first</h2><p class="screen-copy">Jobs, availability, territory, and workflow unlock after The Finishing Touch reviews your documents and marks your contractor profile active.</p><div class="actions"><button class="btn btn-primary" type="button" onclick="document.getElementById('onboardingScreen').classList.add('active');document.getElementById('appScreen').classList.remove('active')">Go to Onboarding</button><button class="btn btn-soft" data-view="settings" type="button">Profile / Settings</button></div>`; renderDocumentsView(); renderSettings(); }
@@ -933,6 +933,7 @@ function projectGuidance(service){
  return{title:'Project Details',help:'Use this for project notes, photos, pricing recommendations, and admin review.',size:'Project size / spaces',notes:'Project notes',pay:'Recommended contractor pay',quote:'Suggested TFT client quote'};
 }
 function renderWalkthrough(){
+ if(window.FTWalkSub){ window.FTWalkSub.render(); return; }
  const label=projectModuleLabel(), defaultService=contractorServices()[0]||'cleaning', g=projectGuidance(defaultService);
  $('view-walkthrough').innerHTML=`<p class="mini-kicker">${label}</p><h2 class="screen-title">${label}</h2><p class="screen-copy">This form changes based on your approved service type. Cleaning contractors see cleaning walkthrough language. Organizers, stylists, and holiday decorators see project-specific notes instead.</p><div id="projectHelp" class="lock-banner" style="margin-top:14px"><strong>${g.title}</strong><br>${g.help}</div><div class="form-grid" style="margin-top:14px"><label class="field">Service Type<select id="projectServiceType">${serviceOptionsHTML()}</select></label><label class="field">Related Job, optional<select id="projectJobId"><option value="">No related job / new estimate</option>${visibleMyJobs().map(j=>`<option value="${j.id}">${cap(j.serviceType||'Job')} ${j.serviceDate?.toDate ? '— '+j.serviceDate.toDate().toLocaleDateString([], {month:'short',day:'numeric'}) : ''}</option>`).join('')}</select></label><label class="field full">Client Name / Property Label<input id="projectClientName" placeholder="Example: Antonella C. / Holiday mantel install"></label><label class="field full">Property Address<input id="projectAddress" placeholder="Street, city, ZIP if available"></label><label class="field full">Project Size / Spaces<input id="projectSize" placeholder="${g.size}"></label><label class="field">Estimated Team Hours<input id="projectHours" type="number" min="0" step=".25" placeholder="Example: 5"></label><label class="field">Recommended Pay<input id="projectContractorEstimate" type="number" min="0" step="1" placeholder="${g.pay}"></label><label class="field">Suggested Client Quote<input id="projectClientQuote" type="number" min="0" step="1" placeholder="${g.quote}"></label><label class="field">Scheduling / Access Notes<input id="projectSchedulingNotes" placeholder="Example: earliest morning preferred, gate code, parking, install timing, takedown timing"></label><label class="field full">Notes<textarea id="projectNotes" placeholder="${g.notes}"></textarea></label><label class="field full">Photos / Videos / PDFs<input id="projectFiles" type="file" accept="image/*,video/*,.pdf" multiple><span class="hint">Optional. Add photos, videos, PDFs, measurements, inspiration, room photos, or walkthrough documentation.</span></label></div><div class="actions"><button class="btn btn-primary" id="submitProjectNotes" type="button">Submit for Admin Review</button></div>`;
  $('projectServiceType')?.addEventListener('change',updateProjectHelp); $('submitProjectNotes')?.addEventListener('click',submitProjectNotes);
@@ -961,6 +962,7 @@ onAuthStateChanged(auth, async user=>{ if(!user){ me=null; $('rolePill').textCon
 <script type="module" src="ft-contractor-schedule.js"></script>
 <script type="module" src="ft-job-run.js"></script>
 <script type="module" src="ft-availability.js"></script>
+<script type="module" src="ft-walkthroughs-sub.js"></script>
   <script src="ft-app-shell.js" defer></script>
 </body>
 </html>
