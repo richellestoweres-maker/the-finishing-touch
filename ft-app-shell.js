@@ -197,6 +197,9 @@
     "html.ft-app .form-grid{grid-template-columns:1fr !important}",
     "html.ft-app .stats-row{grid-template-columns:repeat(3,1fr) !important;gap:8px !important}",
     "html.ft-app #ftt-chat-launcher,html.ft-app #admin-help-launcher{bottom:calc(96px + env(safe-area-inset-bottom)) !important}",
+    /* The crew's Open job bar sits just above the tabs, never on top of them. */
+    "html.ft-app #ftjr-launch{bottom:calc(73px + env(safe-area-inset-bottom)) !important;padding-bottom:12px !important;z-index:940 !important;border-bottom:1px solid " + LINE + "}",
+    "html.ft-app body:has(#ftjr-launch.on){padding-bottom:calc(170px + env(safe-area-inset-bottom)) !important}",
     "}"
   ].join("\n");
 
