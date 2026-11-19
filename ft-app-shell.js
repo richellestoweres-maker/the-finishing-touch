@@ -182,7 +182,7 @@
     "html.ft-app #ftSheet{display:block;position:fixed;inset:0;z-index:1000;pointer-events:none}",
     "#ftSheet .ft-dim{position:absolute;inset:0;background:rgba(43,26,16,.28);opacity:0;transition:opacity .2s}",
     "#ftSheet .ft-panel{position:absolute;left:0;right:0;bottom:0;max-height:80vh;overflow:auto;background:" + IVORY + ";border-radius:22px 22px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .25s ease}",
-    "#ftSheet.open{pointer-events:auto}",
+    "html.ft-app #ftSheet.open{pointer-events:auto}",
     "#ftSheet.open .ft-dim{opacity:1}",
     "#ftSheet.open .ft-panel{transform:none}",
     "#ftSheet .ft-grab{width:40px;height:4px;border-radius:9px;background:" + LINE + ";margin:4px auto 10px}",
