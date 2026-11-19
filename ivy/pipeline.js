@@ -227,7 +227,6 @@ async function routeNewIntakes(settings, notifyOwner, log) {
       layout: r.HOME_LAYOUT_CLEAR || r.PROPERTY_DETAILS_CLEAR || "",
       addons: (r.SPECIALTY_ADDONS_CLEAR && r.SPECIALTY_ADDONS_CLEAR !== "None selected") ? r.SPECIALTY_ADDONS_CLEAR : "",
       addonNotes: r.SPECIALTY_ADDON_NOTES_CLEAR || "",
-      clientDays: intakeDays(r),
       area: intakeArea(r),
       mediaPhotoUrls: Array.isArray(r.mediaPhotoUrls) ? r.mediaPhotoUrls : [],
       mediaVideoUrls: Array.isArray(r.mediaVideoUrls) ? r.mediaVideoUrls : [],
@@ -236,7 +235,7 @@ async function routeNewIntakes(settings, notifyOwner, log) {
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
       createdBy: "ivy"
-      // No client name, contact or street address: the sub sees those only once it is booked.
+      // No client name, contact, schedule or street address: the sub sees those only once it is booked.
     };
     const ref = await db.collection("quoteRequests").add(q);
     await d.ref.set({ pipelineStage: "sent_to_sub", quoteRequestId: ref.id, intakeStatus: "sent_to_sub", updatedAt: FieldValue.serverTimestamp() }, { merge: true });
@@ -244,8 +243,7 @@ async function routeNewIntakes(settings, notifyOwner, log) {
     const what = r.serviceLabel || service;
     const texted = await text(personPhone(sub),
       `Hi ${firstName(personName(sub))}! New ${what} to price${q.area ? ` in ${q.area}` : ""}. ` +
-      `Photos and details are in your portal under Quote Requests: ${SITE}/contractor-dashboard.html` +
-      `${q.clientDays ? `\nClient's best days: ${q.clientDays}` : ""}\nThank you!`, "sub");
+      `Photos and details are in your portal under Quote Requests: ${SITE}/contractor-dashboard.html\nThank you!`, "sub");
     if (!texted) await notifyOwner(`I put a new ${what} in ${personName(sub) || "the sub"}'s portal to price, but couldn't text them. Their profile has no phone number.`);
     log.push(`sent intake ${r.id} to ${personName(sub)}`);
   }
@@ -375,7 +373,7 @@ export async function quoteView(token) {
     area: q.area || "",
     price: q.clientPrice,
     summary: [q.scopeSummary, q.layout, q.addons].filter(Boolean),
-    clientDays: q.clientDays || "",
+    clientDays: intakeDays(r),
     options: job?.clientDatePref?.options || [],
     slots: stage === "pick" ? (job.subProposedSlots || []) : [],
     booked: stage === "booked" ? { date: job.scheduledDate, window: job.scheduledWindow, arrival: job.arrivalTime || "" } : null
