@@ -874,6 +874,7 @@ a{color:inherit}
 </main>
 </div>
 
+<script src="ft-summary.js"></script>
 <script type="module">
 import { auth, db } from "./ft-firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
@@ -995,7 +996,7 @@ function jobCard(j){
         ${price?`<span>${price}</span>`:""}
         ${packageStatus?`<span>Package: ${cap(packageStatus)}</span>`:""}
       </div>
-      ${j.summary ? `<div>${j.summary}</div>` : ""}
+      ${j.summary ? window.ftSummary.html(j.summary) : ""}
       ${j.notes ? `<div class="small" style="opacity:.85">${j.notes}</div>` : ""}
       <div class="actions">
         <button class="btn btn-outline" type="button" data-request-for-job="${j.id}">Ask to Reschedule</button>
