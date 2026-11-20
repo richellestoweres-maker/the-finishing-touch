@@ -132,7 +132,7 @@ function openCard(q) {
       ${q.addons ? `<div class="qr-meta">✨ ${esc(q.addons)}</div>` : ""}
       ${q.addonNotes ? `<div class="qr-meta">📝 ${esc(q.addonNotes)}</div>` : ""}
       ${q.clientDays ? `<div class="qr-meta">🗓️ Client's best days: ${esc(q.clientDays)}</div>` : ""}
-      ${q.scopeSummary ? `<div class="qr-scope">${esc(q.scopeSummary)}</div>` : ""}`}
+      ${q.scopeSummary ? (window.ftSummary ? window.ftSummary.html(q.scopeSummary) : `<div class="qr-scope">${esc(q.scopeSummary)}</div>`) : ""}`}
       ${mediaHtml(q)}
 ${isFlat(q) ? `
       <div class="qr-form">
