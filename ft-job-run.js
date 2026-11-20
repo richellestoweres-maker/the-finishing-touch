@@ -423,10 +423,19 @@ function tierLabel() {
 function summaryParts(j) {
   const parts = String(j?.summary || "").split(/\s*\|\s*/).map(s => s.trim()).filter(Boolean);
   const title = parts.length && !/:\s/.test(parts[0]) ? parts.shift() : "";
-  const details = parts.map(p => {
+  const details = [];
+  parts.forEach(p => {
     const i = p.indexOf(":");
-    return i > 0 ? { label: p.slice(0, i).trim(), value: p.slice(i + 1).trim() } : { label: "", value: p };
-  }).filter(d => d.value);
+    if (i > 0 && i < 40) {
+      const value = p.slice(i + 1).trim();
+      if (value) details.push({ label: p.slice(0, i).trim(), value });
+    } else if (details.length) {
+      // a piece with no label of its own, like "4 bed", joins the line before
+      details[details.length - 1].value += ", " + p;
+    } else {
+      details.push({ label: "", value: p });
+    }
+  });
   return { title, details };
 }
 function jobTitle(j) {
