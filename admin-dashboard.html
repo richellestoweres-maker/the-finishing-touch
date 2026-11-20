@@ -2079,11 +2079,41 @@
       `;
     }
 
+    let walkAll = [], walkShowCleared = false;
     function drawWalkthroughs(list){
       if (!elWalkthroughs) return;
-      if (!list.length){ elWalkthroughs.innerHTML = `<div class="empty">No walkthroughs submitted yet.</div>`; return; }
-      elWalkthroughs.innerHTML = list.map(walkthroughCard).join("");
-      hookWalkthroughActions(elWalkthroughs, list);
+      walkAll = list;
+      const cleared = list.filter(w => w.closed);
+      const shown = walkShowCleared ? cleared : list.filter(w => !w.closed);
+      const toggle = cleared.length || walkShowCleared
+        ? `<div style="grid-column:1/-1"><button type="button" class="btn btn-outline" id="walkClearedToggle">${walkShowCleared ? "Back to open walkthroughs" : `Show cleared (${cleared.length})`}</button></div>`
+        : "";
+      elWalkthroughs.innerHTML = toggle + (shown.length
+        ? shown.map(walkthroughCard).join("")
+        : `<div class="empty">${walkShowCleared ? "Nothing cleared." : "No open walkthroughs."}</div>`);
+      const tg = document.getElementById("walkClearedToggle");
+      if (tg) tg.onclick = () => { walkShowCleared = !walkShowCleared; drawWalkthroughs(walkAll); };
+      elWalkthroughs.querySelectorAll("[data-walkid]").forEach(card => {
+        const w = shown.find(x => x.id === card.dataset.walkid);
+        if (!w) return;
+        let row = card.querySelector(".actions");
+        if (!row){ row = document.createElement("div"); row.className = "actions"; card.appendChild(row); }
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn btn-outline";
+        b.textContent = w.closed ? "Restore" : "Clear";
+        b.title = w.closed ? "Put this back in the list" : "Hide this from the list";
+        b.onclick = async () => {
+          b.disabled = true;
+          try {
+            await updateDoc(doc(db, "walkthroughs", w.id), w.closed
+              ? { closed: false, updatedAt: serverTimestamp() }
+              : { closed: true, ...(w.offerStatus === "offered" ? { offerStatus: "cancelled" } : {}), updatedAt: serverTimestamp() });
+          } catch (e) { console.warn(e); b.disabled = false; }
+        };
+        row.appendChild(b);
+      });
+      hookWalkthroughActions(elWalkthroughs, shown);
     }
 
     function drawQuotes(list){
