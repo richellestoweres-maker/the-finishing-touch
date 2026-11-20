@@ -200,7 +200,7 @@ function card(r) {
       <div class="intake-meta">👤 ${esc(contactLine(r)) || "No contact captured"}</div>
       ${layout ? `<div class="intake-meta">🏠 ${esc(layout)}</div>` : ""}
       ${addons ? `<div class="intake-meta">✨ ${esc(addons)}</div>` : ""}
-      ${summary ? `<div class="intake-sum">${esc(summary)}</div>` : ""}
+      ${summary ? (window.ftSummary ? window.ftSummary.html(summary) : `<div class="intake-sum">${esc(summary)}</div>`) : ""}
       ${mediaHtml(r)}
       ${pricingHtml(r)}
       ${sentNames(r).length ? `<div class="sent-to">Sent to: <strong>${esc(sentNames(r).join(", "))}</strong>${passNames(r).length ? ` · Passed: ${esc(passNames(r).join(", "))}` : ""}</div>` : ""}
