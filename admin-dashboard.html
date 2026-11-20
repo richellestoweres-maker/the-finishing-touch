@@ -1387,6 +1387,7 @@
   </div>
 
   <!-- Pricing calculators (exposes calc* fns used by estimator) -->
+  <script src="ft-summary.js"></script>
   <script src="script.js" defer></script>
 
   <!-- App logic -->
@@ -1608,7 +1609,7 @@
             ${leftTxt}
             ${payLine}
           </div>
-          ${j.summary?`<div>${j.summary}</div>`:""}
+          ${j.summary?window.ftSummary.html(j.summary):""}
           ${j.notes?`<div class="small" style="opacity:.8">${j.notes}</div>`:""}
 
           <div class="actions">
@@ -2067,7 +2068,7 @@
             Recommended hours: <strong>${q.recommendedHours || "Not provided"}</strong><br>
             Recommended team size: <strong>${q.recommendedTeamSize || "Not provided"}</strong>
           </div>
-          ${q.summary ? `<div class="small"><strong>Quote Summary:</strong><br>${q.summary}</div>` : ""}
+          ${q.summary ? `<div class="small"><strong>Quote Summary:</strong></div>${window.ftSummary.html(q.summary)}` : ""}
           ${q.adminNote ? `<div class="small"><strong>Admin Note:</strong><br>${q.adminNote}</div>` : ""}
           <div class="actions">
             <button class="btn btn-solid" data-act="mark-sent">Mark Sent</button>
@@ -2687,7 +2688,7 @@
             <strong>GPS:</strong> ${job.gpsCheckInRequired === false ? "Optional" : "Required"}<br>
             <strong>Checklist:</strong> ${readable(job.checklistType || job.serviceType || "standard")}
           </div>
-          ${job.summary ? `<div>${job.summary}</div>` : ""}
+          ${job.summary ? window.ftSummary.html(job.summary) : ""}
           ${job.notes ? `<div class="small" style="opacity:.82">${job.notes}</div>` : ""}
           <div class="actions">
             <select class="workflow-select" data-workflow-action="status">
