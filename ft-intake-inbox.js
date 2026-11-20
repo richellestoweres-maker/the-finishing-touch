@@ -10,7 +10,8 @@
 import { db, auth } from "./ft-firebase.js";
 import {
   collection, query, orderBy, limit, onSnapshot, where,
-  doc, addDoc, updateDoc, serverTimestamp, arrayUnion
+  doc, addDoc, updateDoc, serverTimestamp, arrayUnion,
+  getDoc, getDocs, setDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
@@ -33,7 +34,9 @@ const statusPill = (s) => {
     new: ["New", "#92400e", "#fef3c7"],
     reviewed: ["Reviewed", "#1e40af", "#dbeafe"],
     converted: ["Job created", "#166534", "#dcfce7"],
-    archived: ["Archived", "#475569", "#f1f5f9"]
+    archived: ["Archived", "#475569", "#f1f5f9"],
+    closed: ["Closed", "#475569", "#f1f5f9"],
+    declined: ["Declined", "#475569", "#f1f5f9"]
   };
   const [t, fg, bg] = map[s] || ["New", "#92400e", "#fef3c7"];
   return `<span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;color:${fg};background:${bg}">${t}</span>`;
@@ -54,6 +57,15 @@ function injectUI() {
     #panel-intake .intake-meta{color:#64748b;font-size:12.5px;margin:2px 0}
     #panel-intake .intake-sum{font-size:13.5px;margin:8px 0}
     #panel-intake .intake-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    #panel-intake .close-box{margin-top:10px;padding:12px 14px;border:1px solid #e2d4c0;border-radius:12px;background:#fbf8f3}
+    #panel-intake .close-box .cb-title{font-weight:700;margin-bottom:8px}
+    #panel-intake .cb-reasons{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    #panel-intake .cb-chip{cursor:pointer;font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:20px;border:1px solid #d6c7b0;background:#fff;color:#334155}
+    #panel-intake .cb-chip.on{background:#1f2937;color:#fff;border-color:#1f2937}
+    #panel-intake .cb-mkt{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin-bottom:10px}
+    #panel-intake .cb-btns{display:flex;gap:8px;flex-wrap:wrap}
+    #panel-intake .btn-del{color:#b91c1c;border-color:#fca5a5}
+    #panel-intake .closed-toggle{margin-left:8px;font-size:12.5px;font-weight:700;background:none;border:0;color:#1e40af;cursor:pointer;text-decoration:underline}
     #panel-intake .intake-count{color:#64748b;font-size:13px;margin-bottom:12px}
     #panel-intake .qr-box{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0;background:#f8fafc}
     #panel-intake .qr-wait{color:#92400e;background:#fffbeb;border-color:#fde68a;font-size:13px;font-weight:600}
@@ -209,24 +221,95 @@ function card(r) {
         <button class="btn btn-outline" data-act="sendWalk">${r.walkthroughSentTo ? "Walkthrough sent to " + esc(r.walkthroughSentTo) : "Send on walkthrough"}</button>
         <button class="btn btn-outline" data-act="createJob" ${converted ? "disabled" : ""}>${converted ? "✓ Job created" : "＋ Create Job"}</button>
         ${st === "new" ? `<button class="btn btn-outline" data-act="review">Mark reviewed</button>` : ""}
-        <button class="btn btn-outline" data-act="archive">Archive</button>
+        ${isClosed(r)
+          ? `<button class="btn btn-outline" data-act="reopen">Reopen</button>`
+          : `<button class="btn btn-outline" data-act="closeOut">Close out</button>`}
+      </div>
+      <div class="close-box" hidden>
+        <div class="cb-title">${isClosed(r) ? "Delete this request?" : "Why are we closing this?"}</div>
+        ${isClosed(r) ? "" : `<div class="cb-reasons">
+          ${["Client passed", "No response", "Not a fit", "Test"].map((t, i) => `<button class="cb-chip${i === 0 ? " on" : ""}" data-act="reason" data-val="${t}">${t}</button>`).join("")}
+        </div>`}
+        ${emailOf(r) ? `<label class="cb-mkt"><input type="checkbox" class="cb-keep" checked> <span>Keep sending ${esc(emailOf(r))} marketing emails until they unsubscribe</span></label>` : ""}
+        <div class="cb-btns">
+          ${isClosed(r) ? "" : `<button class="btn" data-act="doClose">Close out</button>`}
+          <button class="btn btn-outline btn-del" data-act="doDelete">Delete for good</button>
+          <button class="btn btn-outline" data-act="cancelClose">Never mind</button>
+        </div>
       </div>
     </div>`;
 }
 
+function emailOf(r) {
+  const m = String(r.clientEmail || r.email || r.CLIENT_CONTACT_CLEAR || "").match(/[^\s@:]+@[^\s@]+\.[^\s@,;]+/);
+  return m ? m[0] : "";
+}
+
+function isClosed(r) {
+  const st = r.intakeStatus || r.status;
+  return st === "archived" || st === "closed" || st === "declined";
+}
+
 let latest = [];
+let showClosed = false;
 let subQuotes = {}; // keyed by intakeId -> quoteRequests doc
 
 function draw(list) {
   const wrap = document.getElementById("listIntake");
   const count = document.getElementById("intakeCount");
   if (!wrap) return;
-  const active = list.filter((r) => (r.intakeStatus || r.status) !== "archived");
-  count.textContent = active.length
-    ? `${active.length} quote request${active.length === 1 ? "" : "s"} — newest first`
-    : "No quote requests yet. When someone submits an intake form, it will appear here.";
-  wrap.innerHTML = active.length ? active.map(card).join("") : "";
+  const active = list.filter((r) => !isClosed(r));
+  const closed = list.filter(isClosed);
+  const shown = showClosed ? closed : active;
+  count.innerHTML = (showClosed
+    ? `${closed.length} closed request${closed.length === 1 ? "" : "s"}`
+    : (active.length
+      ? `${active.length} quote request${active.length === 1 ? "" : "s"}, newest first`
+      : "No open quote requests."))
+    + (closed.length || showClosed ? ` <button class="closed-toggle" id="intakeClosedToggle">${showClosed ? "Back to open requests" : `Show closed (${closed.length})`}</button>` : "");
+  const tog = document.getElementById("intakeClosedToggle");
+  if (tog) tog.onclick = () => { showClosed = !showClosed; draw(latest); };
+  wrap.innerHTML = shown.length ? shown.map(card).join("") : "";
   hookActions(wrap);
+}
+
+/* ---------- close out / delete ---------- */
+// Marketing lives in the subscribers list, separate from intakes. Closing or
+// deleting a request never removes anyone from it, and we never re-add someone
+// who already unsubscribed.
+async function keepOnMarketing(r) {
+  const email = emailOf(r);
+  if (!email) return;
+  const slug = email.toLowerCase().replace(/[^a-z0-9]/gi, "_").slice(0, 60);
+  try {
+    const ref = doc(db, "subscribers", slug);
+    const cur = await getDoc(ref);
+    if (cur.exists() && cur.data().subscribed === false) return;
+    const name = r.name || r.clientName || [r.firstName, r.lastName].filter(Boolean).join(" ");
+    await setDoc(ref, {
+      email, name: name || "", phone: r.clientPhone || r.phone || "",
+      subscribed: true, source: cur.exists() ? (cur.data().source || "intake") : "past_intake",
+      updatedAt: serverTimestamp(), ...(cur.exists() ? {} : { createdAt: serverTimestamp() })
+    }, { merge: true });
+  } catch (e) { console.warn("Marketing list update skipped:", e); }
+}
+
+// Clears the walkthroughs and sub quote requests tied to this intake so they
+// stop showing for you and the subs. Jobs are never touched.
+async function closeLinked(intakeId, hardDelete) {
+  for (const col of ["walkthroughs", "quoteRequests"]) {
+    try {
+      const snap = await getDocs(query(collection(db, col), where("intakeId", "==", intakeId)));
+      for (const d of snap.docs) {
+        const data = d.data();
+        if (col === "quoteRequests" && data.status === "converted") continue;
+        if (hardDelete) await deleteDoc(d.ref).catch((e) => console.warn(col, "delete skipped:", e));
+        else await updateDoc(d.ref, col === "walkthroughs"
+          ? { closed: true, ...(data.offerStatus === "offered" ? { offerStatus: "cancelled" } : {}), updatedAt: serverTimestamp() }
+          : { status: "closed", updatedAt: serverTimestamp() }).catch((e) => console.warn(col, "close skipped:", e));
+      }
+    } catch (e) { console.warn("Linked", col, "lookup skipped:", e); }
+  }
 }
 
 /* ---------- actions ---------- */
@@ -240,9 +323,37 @@ function hookActions(wrap) {
         try {
           if (act === "review") {
             await updateDoc(doc(db, "intakeRequests", id), { intakeStatus: "reviewed", updatedAt: serverTimestamp() });
-          } else if (act === "archive") {
-            if (!confirm("Archive this request? It will be hidden from the inbox (not deleted).")) return;
-            await updateDoc(doc(db, "intakeRequests", id), { intakeStatus: "archived", updatedAt: serverTimestamp() });
+          } else if (act === "closeOut") {
+            const box = el.querySelector(".close-box");
+            if (box) box.hidden = !box.hidden;
+            return;
+          } else if (act === "reason") {
+            el.querySelectorAll(".cb-chip").forEach((c) => c.classList.toggle("on", c === btn));
+            return;
+          } else if (act === "cancelClose") {
+            const box = el.querySelector(".close-box");
+            if (box) box.hidden = true;
+            return;
+          } else if (act === "doClose") {
+            const reason = el.querySelector(".cb-chip.on")?.dataset.val || "Closed";
+            btn.disabled = true;
+            if (el.querySelector(".cb-keep")?.checked) await keepOnMarketing(rec);
+            await closeLinked(id, false);
+            await updateDoc(doc(db, "intakeRequests", id), {
+              intakeStatus: "closed", pipelineStage: rec.pipelineStage || "closed",
+              closedReason: reason, closedAt: serverTimestamp(), updatedAt: serverTimestamp()
+            });
+            return;
+          } else if (act === "doDelete") {
+            if (!confirm("Delete this request for good? This also clears its walkthrough and sub quote. It can't be undone.")) return;
+            btn.disabled = true;
+            if (el.querySelector(".cb-keep")?.checked) await keepOnMarketing(rec);
+            await closeLinked(id, true);
+            await deleteDoc(doc(db, "intakeRequests", id));
+            return;
+          } else if (act === "reopen") {
+            await updateDoc(doc(db, "intakeRequests", id), { intakeStatus: "reviewed", closedReason: "", updatedAt: serverTimestamp() });
+            return;
           } else if (act === "createJob") {
             if (!confirm("Create an open job from this request?")) return;
             await createJob(rec);
