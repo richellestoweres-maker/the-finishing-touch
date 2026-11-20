@@ -55,6 +55,28 @@ const shortName = (n) => {
 };
 const winLabel = (w) => WINDOWS[w] || w || "";
 
+/** "Cleaning | Layout: 2 Stories | 4 bed" into ["Layout: 2 Stories, 4 bed"]. */
+function summaryLines(summary) {
+  const bits = String(summary || "").split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
+  if (bits.length && !/:\s/.test(bits[0])) bits.shift();
+  const out = [];
+  bits.forEach((b) => {
+    const i = b.indexOf(":");
+    if (i > 0 && i < 40) out.push(b);
+    else if (out.length) out[out.length - 1] += `, ${b}`;
+    else out.push(b);
+  });
+  return out;
+}
+function scopeLines(q) {
+  const lines = summaryLines(q.scopeSummary);
+  return lines.length ? lines : [q.layout, q.addons].filter(Boolean);
+}
+const lineHtml = (t) => {
+  const i = t.indexOf(":");
+  return i > 0 && i < 40 ? `<strong>${esc(t.slice(0, i))}:</strong> ${esc(t.slice(i + 1).trim())}` : esc(t);
+};
+
 /** Today in Texas as YYYY-MM-DD, plus the weekday and minutes since midnight. */
 export function texasNow(d = new Date()) {
   const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
@@ -326,8 +348,8 @@ async function sendQuoteEmail(q) {
   if (!r.clientEmail) return "";
   const token = await linkFor(q.id);
   const service = q.serviceLabel || q.serviceType || "service";
-  const include = [q.scopeSummary, q.layout, q.addons].filter(Boolean)
-    .map((t) => `<li style="margin:0 0 6px 0;">${esc(t)}</li>`).join("");
+  const include = scopeLines(q)
+    .map((t) => `<li style="margin:0 0 6px 0;">${lineHtml(t)}</li>`).join("");
 
   const inner =
     p(`Hi ${esc(firstName(r.clientName))},`) +
@@ -372,7 +394,7 @@ export async function quoteView(token) {
     service: q.serviceLabel || q.serviceType || "Service",
     area: q.area || "",
     price: q.clientPrice,
-    summary: [q.scopeSummary, q.layout, q.addons].filter(Boolean),
+    summary: scopeLines(q),
     clientDays: intakeDays(r),
     options: job?.clientDatePref?.options || [],
     slots: stage === "pick" ? (job.subProposedSlots || []) : [],
