@@ -81,6 +81,29 @@ export const PROBLEM_KINDS = [
 // confirm the reader is on a real job before releasing the SOP.
 const _cache = new Map();
 
+// Used for any job type that has no checklist of its own yet. Nothing
+// proprietary here, so it can live in this public file.
+export const BASIC_CHECKLIST = {
+  title: { en: "Job checklist", es: "Lista del trabajo" },
+  start: [{
+    id: "basic-start",
+    title: { en: "Before you start", es: "Antes de empezar" },
+    items: [
+      { id: "b-walk", t: { en: "Walk through with the client and confirm today's work", es: "Recorre la casa con el cliente y confirma el trabajo de hoy" } },
+      { id: "b-before", t: { en: "Before photos of every area you'll work in", es: "Fotos de antes de cada área donde vas a trabajar" }, photo: "before" }
+    ]
+  }],
+  end: [{
+    id: "basic-end",
+    title: { en: "Before you leave", es: "Antes de irte" },
+    items: [
+      { id: "b-after", t: { en: "After photos of the same areas", es: "Fotos de después de las mismas áreas" }, photo: "after" },
+      { id: "b-tidy", t: { en: "Everything back in its place, trash and supplies out with you", es: "Todo en su lugar, y llévate la basura y tus materiales" } },
+      { id: "b-client", t: { en: "Show the client the finished work if they're home", es: "Muéstrale al cliente el trabajo terminado si está en casa" } }
+    ]
+  }]
+};
+
 export async function loadChecklist(type, jobId, db, fs) {
   const key = String(type || 'organizing').toLowerCase();
   if (_cache.has(key)) return _cache.get(key);
@@ -99,7 +122,9 @@ export async function loadChecklist(type, jobId, db, fs) {
   }
 
   const snap = await getDoc(doc(db, 'checklists', key));
-  if (!snap.exists()) return null;
+  // No checklist written for this kind of job yet: run the basic one, so the
+  // crew can still check in, take before and after photos, and check out.
+  if (!snap.exists()) return BASIC_CHECKLIST;
   const data = snap.data();
   _cache.set(key, data);
   return data;
