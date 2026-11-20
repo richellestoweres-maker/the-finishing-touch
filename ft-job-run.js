@@ -105,6 +105,11 @@ function injectStyles() {
 #ftjr .jr-kicker{font:800 11px/1.4 Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#9c6b74;margin:0 0 8px}
 #ftjr h2.jr-h{font:700 25px/1.25 Manrope,sans-serif;margin:0 0 6px;letter-spacing:-.01em}
 #ftjr .jr-sub{font:500 15px/1.55 Manrope,sans-serif;color:#5d534d;margin:0 0 20px}
+#ftjr .jr-details{list-style:none;margin:6px 0 18px;padding:4px 0;border:1px solid #eadfd5;border-radius:14px;background:#fffdf9}
+#ftjr .jr-details li{display:flex;gap:10px;padding:9px 16px;font:500 15px/1.45 Manrope,sans-serif;color:#3d3531}
+#ftjr .jr-details li+li{border-top:1px solid #f3ebe3}
+#ftjr .jr-details li::before{content:"";flex:none;width:6px;height:6px;margin-top:8px;border-radius:50%;background:#9c6b74}
+#ftjr .jr-details b{font-weight:700;color:#2f2926}
 #ftjr .jr-count{font:700 12px/1 Manrope,sans-serif;color:#8a7d75;margin-bottom:14px;font-variant-numeric:tabular-nums}
 
 /* the one item on screen */
@@ -413,13 +418,34 @@ function tierLabel() {
   return t ? say(t.label) : "";
 }
 
+// The intake summary arrives as one long "Label: value | Label: value" line.
+// The first part is the service; the rest read better as a list.
+function summaryParts(j) {
+  const parts = String(j?.summary || "").split(/\s*\|\s*/).map(s => s.trim()).filter(Boolean);
+  const title = parts.length && !/:\s/.test(parts[0]) ? parts.shift() : "";
+  const details = parts.map(p => {
+    const i = p.indexOf(":");
+    return i > 0 ? { label: p.slice(0, i).trim(), value: p.slice(i + 1).trim() } : { label: "", value: p };
+  }).filter(d => d.value);
+  return { title, details };
+}
+function jobTitle(j) {
+  return summaryParts(j).title || j?.serviceLabel || (j?.serviceType ? j.serviceType.charAt(0).toUpperCase() + j.serviceType.slice(1) : "") || say(list?.title) || "Job";
+}
+function detailsHtml(j) {
+  const { details } = summaryParts(j);
+  if (!details.length) return "";
+  return `<ul class="jr-details">${details.map(d =>
+    `<li><span>${d.label ? `<b>${esc(d.label)}:</b> ` : ""}${esc(d.value)}</span></li>`).join("")}</ul>`;
+}
+
 function render() {
   const step = steps[at];
   if (!step) return;
 
   const pct = Math.round(((at + 1) / steps.length) * 100);
   $("ftjr-bar").style.width = pct + "%";
-  $("ftjr-jobname").textContent = job.summary || say(list.title);
+  $("ftjr-jobname").textContent = jobTitle(job);
   $("ftjr-kicker").textContent = step.room ? say(step.room.label) : (job.area || job.zip || say(list.title));
 
   const body = $("ftjr-body");
@@ -484,10 +510,11 @@ function paintArrive(body, foot) {
   const enRoute = !!prog?.enRouteAt;
   body.innerHTML = `${watermark()}<div class="jr-inner">
     <p class="jr-kicker">${esc(job.serviceDate?.toDate ? job.serviceDate.toDate().toLocaleDateString([], { weekday:"long", month:"short", day:"numeric" }) : "")}</p>
-    <h2 class="jr-h">${esc(job.summary || say(list.title))}</h2>
+    <h2 class="jr-h">${esc(jobTitle(job))}</h2>
     <p class="jr-sub">${esc([job.area, job.zip].filter(Boolean).join(" · "))}</p>
     ${tierLabel() ? `<span class="jr-tierpill">${esc(tierLabel())}</span>` : ""}
-    <div class="jr-item"><p>${esc(job.notes || job.summary || "")}</p></div>
+    ${detailsHtml(job)}
+    ${job.notes ? `<div class="jr-item"><p>${esc(job.notes)}</p></div>` : ""}
   </div>`;
   foot.innerHTML = `<div class="jr-frow">
     <button class="jr-b soft" id="jr-enroute" ${enRoute ? "disabled" : ""}>${esc(say(UI.onMyWay))}</button>
@@ -892,7 +919,7 @@ function paintLauncher() {
 
   const j = jobs[0];
   const d = j.serviceDate?.toDate?.();
-  $("ftjr-lname").textContent = j.summary || (j.serviceType || "Job");
+  $("ftjr-lname").textContent = jobTitle(j);
   $("ftjr-ltime").textContent = [
     d ? d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) : "",
     d ? d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "",
