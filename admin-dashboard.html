@@ -3104,7 +3104,7 @@
           out.innerHTML = `
             ${maggie != null || maggieNote ? `<strong>Maggie's rate</strong><br>${maggieNote}${maggie != null ? `<br>Sub cost: <strong>$${maggie}</strong>` : ""}${hr}` : ""}
             ${subCost ? `${subEstimate ? `Sub estimate (typed in): <strong>$${subEstimate}</strong><br>` : ""}TFT +${markupPct}% client quote: <strong>$${marked}</strong><br>Your margin: <strong>$${marked - subCost}</strong>${hr}` : ""}
-            <span class="hint">Old formula draft: $${draft}. Internal only.</span>
+            ${maggie == null && !maggieNote && !subCost ? `<span class="hint">Type the sub's estimate above to get a client price.</span>` : ""}
           `;
         });
         return;
