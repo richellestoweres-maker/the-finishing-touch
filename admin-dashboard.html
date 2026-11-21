@@ -1154,6 +1154,14 @@
         </select>
       </label>
 
+      <label id="resFreqWrap">How Often
+        <select id="resFreq">
+          <option value="weekly" selected>Weekly</option>
+          <option value="biweekly">Every two weeks</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </label>
+
       <!-- Commercial sub-type -->
       <label id="comTypeWrap" style="display:none">Type
         <select id="comType">
@@ -3042,6 +3050,11 @@
           btn.click();
         }));
 
+        const freqWrap = document.getElementById("resFreqWrap");
+        const syncFreq = () => { if (freqWrap) freqWrap.style.display = (getVal("estCategory","residential") === "residential" && getVal("resService","standard") === "standard") ? "" : "none"; };
+        ["estCategory","resService"].forEach(id => document.getElementById(id)?.addEventListener("change", syncFreq));
+        syncFreq();
+
         btn.addEventListener("click", () => {
           const category = getVal("estCategory","residential");
           const sqft = Math.max(200, getNum("sqft",1600));
@@ -3080,8 +3093,13 @@
             } else {
               const ci = condIdx[soil] ?? 0;
               const baseRate = tier[1][ci];
-              const lines = [[`${table === "recurring" ? "Recurring" : "Deep"} clean, ${condName[table][ci]}, up to ${tier[0].toLocaleString()} sq ft`, baseRate]];
+              const lines = [[`${table === "recurring" ? "Weekly rate" : "Deep clean"}, ${condName[table][ci]}, up to ${tier[0].toLocaleString()} sq ft`, baseRate]];
               const add = (label, amt) => { if (amt > 0) lines.push([label, amt]); };
+              if (table === "recurring") {
+                const freq = getVal("resFreq","weekly");
+                add({ biweekly: "Every two weeks", monthly: "Monthly" }[freq] || "", { biweekly: 15, monthly: 30 }[freq] || 0);
+                if (freq !== "weekly" && lines.length > 1) lines[1][2] = "+";
+              }
               add(`Inside oven x${getNum("addOvens",0)}`, getNum("addOvens",0) * 30);
               add(`Inside fridge x${getNum("addFridges",0)}`, getNum("addFridges",0) * 30);
               add("Inside cabinets / drawers", getNum("addCabinets",0));
@@ -3090,7 +3108,7 @@
               add("Wall spot cleaning", getNum("addWalls",0));
               add("Heavy floor scrubbing", getNum("addFloors",0));
               maggie = Math.max(135, lines.reduce((t, l) => t + l[1], 0));
-              maggieNote = lines.map(([l, a]) => `• ${l}: $${a}`).join("<br>")
+              maggieNote = lines.map(([l, a, plus]) => `• ${l}: ${plus || ""}$${a}`).join("<br>")
                 + (soil === "major" ? "<br><em>Major Impact is past her Very Dirty tier. Confirm with Maggie.</em>" : "")
                 + (service === "move" ? "<br><em>Move-in / out priced on her deep clean sheet. Confirm with Maggie.</em>" : "")
                 + (service === "initial" ? "<br><em>First visit priced on her deep clean sheet.</em>" : "");
