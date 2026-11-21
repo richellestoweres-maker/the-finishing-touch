@@ -1251,6 +1251,32 @@
       <label>Fridges (count)
         <input id="addFridges" type="number" min="0" value="0">
       </label>
+      <label>Inside Cabinets / Drawers
+        <select id="addCabinets">
+          <option value="0" selected>None</option>
+          <option value="55">Some ($55)</option>
+          <option value="85">Whole kitchen ($85)</option>
+        </select>
+      </label>
+      <label>Soap Scum / Hard Water (baths)
+        <input id="addSoapScum" type="number" min="0" value="0">
+      </label>
+      <label>Wall Spot Cleaning
+        <select id="addWalls">
+          <option value="0" selected>None</option>
+          <option value="35">Light ($35)</option>
+          <option value="55">Moderate ($55)</option>
+          <option value="75">Heavy ($75)</option>
+        </select>
+      </label>
+      <label>Heavy Floor Scrubbing
+        <select id="addFloors">
+          <option value="0" selected>None</option>
+          <option value="35">Light ($35)</option>
+          <option value="65">Moderate ($65)</option>
+          <option value="95">Heavy ($95)</option>
+        </select>
+      </label>
 
       <label style="grid-column:1/-1">Notes (optional)
         <input id="estNotes" placeholder="Entry, parking, special requests (admin only)">
@@ -3037,13 +3063,48 @@
           base += getNum("addFans",0)*8 + getNum("addBlinds",0)*10 + getNum("addWindows",0)*5 + getNum("addOvens",0)*35 + getNum("addFridges",0)*35;
 
           const draft = round5(base);
-          const marked = subEstimate ? round5(subEstimate * (1 + markupPct / 100)) : null;
+
+          // Maggie's subcontractor rates (Nov 2026), residential only.
+          const MAGGIE = {
+            recurring: [[1200, [135, 165, 210]], [2000, [165, 205, 260]], [3000, [205, 255, 300]]],
+            deep:      [[1200, [210, 270, 330]], [2000, [260, 340, 420]], [3000, [330, 430, 550]]]
+          };
+          const condIdx = { standard: 0, lived: 1, dirty: 2, major: 2 };
+          const condName = { recurring: ["Clean", "Moderate", "Very Dirty"], deep: ["Clean Baseline", "Moderate", "Heavy Buildup"] };
+          let maggie = null, maggieNote = "";
+          if (category === "residential") {
+            const table = service === "standard" ? "recurring" : "deep";
+            const tier = MAGGIE[table].find(([max]) => sqft <= max);
+            if (!tier) {
+              maggieNote = "Over 3,000 sq ft is past Maggie's price sheet. Ask her for this one.";
+            } else {
+              const ci = condIdx[soil] ?? 0;
+              const baseRate = tier[1][ci];
+              const lines = [[`${table === "recurring" ? "Recurring" : "Deep"} clean, ${condName[table][ci]}, up to ${tier[0].toLocaleString()} sq ft`, baseRate]];
+              const add = (label, amt) => { if (amt > 0) lines.push([label, amt]); };
+              add(`Inside oven x${getNum("addOvens",0)}`, getNum("addOvens",0) * 30);
+              add(`Inside fridge x${getNum("addFridges",0)}`, getNum("addFridges",0) * 30);
+              add("Inside cabinets / drawers", getNum("addCabinets",0));
+              add(`Soap scum / hard water x${getNum("addSoapScum",0)} bath`, getNum("addSoapScum",0) * 25);
+              add(`Interior windows x${getNum("addWindows",0)} at $5`, getNum("addWindows",0) * 5);
+              add("Wall spot cleaning", getNum("addWalls",0));
+              add("Heavy floor scrubbing", getNum("addFloors",0));
+              maggie = Math.max(135, lines.reduce((t, l) => t + l[1], 0));
+              maggieNote = lines.map(([l, a]) => `• ${l}: $${a}`).join("<br>")
+                + (soil === "major" ? "<br><em>Major Impact is past her Very Dirty tier. Confirm with Maggie.</em>" : "")
+                + (service === "move" ? "<br><em>Move-in / out priced on her deep clean sheet. Confirm with Maggie.</em>" : "")
+                + (service === "initial" ? "<br><em>First visit priced on her deep clean sheet.</em>" : "");
+            }
+          }
+
+          const subCost = subEstimate || maggie || 0;
+          const marked = subCost ? round5(subCost * (1 + markupPct / 100)) : null;
+          const hr = `<hr style="border:0;border-top:1px solid #eadfd8;margin:10px 0">`;
 
           out.innerHTML = `
-            <strong>Internal Draft Estimate</strong><br>
-            System draft client estimate: <strong>$${draft}</strong><br>
-            <span class="hint">This is internal only. Approve before sending to client.</span>
-            ${subEstimate ? `<hr style="border:0;border-top:1px solid #eadfd8;margin:10px 0">Sub estimate: <strong>$${subEstimate}</strong><br>TFT +${markupPct}% client quote: <strong>$${marked}</strong><br>Your margin: <strong>$${marked - subEstimate}</strong>` : ""}
+            ${maggie != null || maggieNote ? `<strong>Maggie's rate</strong><br>${maggieNote}${maggie != null ? `<br>Sub cost: <strong>$${maggie}</strong>` : ""}${hr}` : ""}
+            ${subCost ? `${subEstimate ? `Sub estimate (typed in): <strong>$${subEstimate}</strong><br>` : ""}TFT +${markupPct}% client quote: <strong>$${marked}</strong><br>Your margin: <strong>$${marked - subCost}</strong>${hr}` : ""}
+            <span class="hint">Old formula draft: $${draft}. Internal only.</span>
           `;
         });
         return;
