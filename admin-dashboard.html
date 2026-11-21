@@ -1235,11 +1235,8 @@
       <!-- Pet Impact quick picker (hidden in total per your choice B) -->
       <label>Pet Impact
         <select id="petImpact">
-          <option value="none" selected>None</option>
-          <option value="light">Light</option>
-          <option value="moderate">Moderate</option>
-          <option value="high">High</option>
-          <option value="foster">Foster / Rescue</option>
+          <option value="none" selected>None or short hair</option>
+          <option value="longhair">Long haired dogs inside</option>
         </select>
       </label>
 
@@ -3107,8 +3104,10 @@
               add(`Interior windows x${getNum("addWindows",0)} at $5`, getNum("addWindows",0) * 5);
               add("Wall spot cleaning", getNum("addWalls",0));
               add("Heavy floor scrubbing", getNum("addFloors",0));
+              if (pet === "longhair" && table === "recurring") add("Long haired dogs", 25);
               maggie = Math.max(135, lines.reduce((t, l) => t + l[1], 0));
               maggieNote = lines.map(([l, a, plus]) => `• ${l}: ${plus || ""}$${a}`).join("<br>")
+                + (pet === "longhair" && table === "recurring" ? "<br><em>Maggie suggests a deep clean first for long haired dogs.</em>" : "")
                 + (soil === "major" ? "<br><em>Major Impact is past her Very Dirty tier. Confirm with Maggie.</em>" : "")
                 + (service === "move" ? "<br><em>Move-in / out priced on her deep clean sheet. Confirm with Maggie.</em>" : "")
                 + (service === "initial" ? "<br><em>First visit priced on her deep clean sheet.</em>" : "");
